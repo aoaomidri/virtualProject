@@ -633,10 +633,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
 
 	//緯度の方向に分割-π/2～π/2
-	for (uint32_t latIndex = 0; latIndex <= kSubdivision; ++latIndex) {
-		float lat = -float(((M_PI) / 2.0f) + (kLatEvery * latIndex));//現在の緯度(θ)
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = float(-M_PI) / 2.0f + (kLatEvery * latIndex);//現在の緯度(θ)
 		//経度の方向に分割 0～2π
-		for (uint32_t lonIndex = 0; lonIndex <= kSubdivision; ++lonIndex) {
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
 			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
 			float lon = lonIndex * kLonEvery;//現在の経度(φ)
 
@@ -655,14 +655,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexDate[start + 1].position.w = 1.0f;
 			vertexDate[start + 1].texcoord =
 			{ float(lonIndex) / float(kSubdivision) ,
-				1.0f - float(latIndex) / float(kSubdivision) };
+				1.0f - float(latIndex+1) / float(kSubdivision) };
 			//基準点c
 			vertexDate[start + 2].position.x = cos(lat) * cos(lon + kLonEvery);
 			vertexDate[start + 2].position.y = sin(lat);
 			vertexDate[start + 2].position.z = cos(lat) * sin(lon + kLonEvery);
 			vertexDate[start + 2].position.w = 1.0f;
 			vertexDate[start + 2].texcoord =
-			{ float(lonIndex) / float(kSubdivision) ,
+			{ float(lonIndex+1) / float(kSubdivision) ,
 				1.0f - float(latIndex) / float(kSubdivision) };
 			//基準点c
 			vertexDate[start + 3].position.x = cos(lat) * cos(lon + kLonEvery);
@@ -670,7 +670,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexDate[start + 3].position.z = cos(lat) * sin(lon + kLonEvery);
 			vertexDate[start + 3].position.w = 1.0f;
 			vertexDate[start + 3].texcoord =
-			{ float(lonIndex) / float(kSubdivision) ,
+			{ float(lonIndex+1) / float(kSubdivision) ,
 				1.0f - float(latIndex) / float(kSubdivision) };
 			//基準点b
 			vertexDate[start + 4].position.x = cos(lat + kLatEvery) * cos(lon);
@@ -679,37 +679,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexDate[start + 4].position.w = 1.0f;
 			vertexDate[start + 4].texcoord =
 			{ float(lonIndex) / float(kSubdivision) ,
-				1.0f - float(latIndex) / float(kSubdivision) };
+				1.0f - float(latIndex+1) / float(kSubdivision) };
 			//基準点d
 			vertexDate[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
 			vertexDate[start + 5].position.y = sin(lat + kLatEvery);
 			vertexDate[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLonEvery);
 			vertexDate[start + 5].position.w = 1.0f;
 			vertexDate[start + 5].texcoord =
-			{ float(lonIndex) / float(kSubdivision) ,
-				1.0f - float(latIndex) / float(kSubdivision) };
+			{ float(lonIndex+1) / float(kSubdivision) ,
+				1.0f - float(latIndex+1) / float(kSubdivision) };
 			
 		}
 	}
 
-	//左下
-	vertexDate[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	vertexDate[0].texcoord = { 0.0f,1.0f };
-	//上
-	vertexDate[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	vertexDate[1].texcoord = { 0.5f,0.0f };
-	//右下
-	vertexDate[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	vertexDate[2].texcoord = { 1.0f,1.0f };
-	//左下
-	vertexDate[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-	vertexDate[3].texcoord = { 0.0f,1.0f };
-	//上
-	vertexDate[4].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDate[4].texcoord = { 0.5f,0.0f };
-	//右下
-	vertexDate[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-	vertexDate[5].texcoord = { 1.0f,1.0f };
+	////左下
+	//vertexDate[0].position = { -0.5f,-0.5f,0.0f,1.0f };
+	//vertexDate[0].texcoord = { 0.0f,1.0f };
+	////上
+	//vertexDate[1].position = { 0.0f,0.5f,0.0f,1.0f };
+	//vertexDate[1].texcoord = { 0.5f,0.0f };
+	////右下
+	//vertexDate[2].position = { 0.5f,-0.5f,0.0f,1.0f };
+	//vertexDate[2].texcoord = { 1.0f,1.0f };
+	////左下
+	//vertexDate[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	//vertexDate[3].texcoord = { 0.0f,1.0f };
+	////上
+	//vertexDate[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	//vertexDate[4].texcoord = { 0.5f,0.0f };
+	////右下
+	//vertexDate[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	//vertexDate[5].texcoord = { 1.0f,1.0f };
 	//マテリアル用のリソース
 	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(VertexData));
 	//マテリアルにデータを書き込む

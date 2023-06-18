@@ -608,15 +608,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 
+	const uint32_t kSubdivision = 16;
+	const float kLatEvery = float(M_PI / kSubdivision);//緯度一つ分の角度
+	const float kLonEvery = float((M_PI * 2.0f) / kSubdivision);//経度一つ分の角度
+	
+
 	//頂点リソースの作成
-	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * 6);
+	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * 6 * kSubdivision * kSubdivision);
 
 	//頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6 * kSubdivision * kSubdivision;
 	//1頂点当たりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -624,6 +629,69 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexDate = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
+
+	
+
+	//緯度の方向に分割-π/2～π/2
+	for (uint32_t latIndex = 0; latIndex <= kSubdivision; ++latIndex) {
+		float lat = -float(((M_PI) / 2.0f) + (kLatEvery * latIndex));//現在の緯度(θ)
+		//経度の方向に分割 0～2π
+		for (uint32_t lonIndex = 0; lonIndex <= kSubdivision; ++lonIndex) {
+			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+			float lon = lonIndex * kLonEvery;//現在の経度(φ)
+
+			//頂点にデータを入力していく。基準点a
+			vertexDate[start].position.x = cos(lat) * cos(lon);
+			vertexDate[start].position.y = sin(lat);
+			vertexDate[start].position.z = cos(lat) * sin(lon);
+			vertexDate[start].position.w = 1.0f;
+			vertexDate[start].texcoord = 
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			//基準点b
+			vertexDate[start + 1].position.x = cos(lat + kLatEvery) * cos(lon);
+			vertexDate[start + 1].position.y = sin(lat + kLatEvery);
+			vertexDate[start + 1].position.z = cos(lat + kLatEvery) * sin(lon);
+			vertexDate[start + 1].position.w = 1.0f;
+			vertexDate[start + 1].texcoord =
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			//基準点c
+			vertexDate[start + 2].position.x = cos(lat) * cos(lon + kLonEvery);
+			vertexDate[start + 2].position.y = sin(lat);
+			vertexDate[start + 2].position.z = cos(lat) * sin(lon + kLonEvery);
+			vertexDate[start + 2].position.w = 1.0f;
+			vertexDate[start + 2].texcoord =
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			//基準点c
+			vertexDate[start + 3].position.x = cos(lat) * cos(lon + kLonEvery);
+			vertexDate[start + 3].position.y = sin(lat);
+			vertexDate[start + 3].position.z = cos(lat) * sin(lon + kLonEvery);
+			vertexDate[start + 3].position.w = 1.0f;
+			vertexDate[start + 3].texcoord =
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			//基準点b
+			vertexDate[start + 4].position.x = cos(lat + kLatEvery) * cos(lon);
+			vertexDate[start + 4].position.y = sin(lat + kLatEvery);
+			vertexDate[start + 4].position.z = cos(lat + kLatEvery) * sin(lon);
+			vertexDate[start + 4].position.w = 1.0f;
+			vertexDate[start + 4].texcoord =
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			//基準点d
+			vertexDate[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
+			vertexDate[start + 5].position.y = sin(lat + kLatEvery);
+			vertexDate[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLonEvery);
+			vertexDate[start + 5].position.w = 1.0f;
+			vertexDate[start + 5].texcoord =
+			{ float(lonIndex) / float(kSubdivision) ,
+				1.0f - float(latIndex) / float(kSubdivision) };
+			
+		}
+	}
+
 	//左下
 	vertexDate[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexDate[0].texcoord = { 0.0f,1.0f };
@@ -702,6 +770,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+
+	Transform CameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
@@ -854,6 +924,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::ShowDemoWindow();
 			ImGui::DragFloat4("color", &materialDate->x, 0.01f);
 			ImGui::DragFloat3("Transform", &transformSprite.translate.x, 1.0f);
+			ImGui::DragFloat3("CameraTransform", & CameraTransform.translate.x, 0.1f);
 			if (materialDate->x < 0.0f) {
 				materialDate->x = 0.0f;
 			}
@@ -876,7 +947,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//三角形のWorldMatrix
 			transform.rotate.y += 0.02f;
 			Matrix4x4 worldMatrix = matrix->MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-			Matrix4x4 cameraMatrix = matrix->MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-5.0f });
+			Matrix4x4 cameraMatrix = matrix->MakeAffineMatrix(CameraTransform.scale,CameraTransform.rotate,CameraTransform.translate);
 			Matrix4x4 viewMatrix = matrix->Inverce(cameraMatrix);
 			Matrix4x4 projectionMatrix = matrix->MakePerspectiveFovMatrix(0.45f, (1280.0f / 720.0f), 0.1f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrix = matrix->Multiply(worldMatrix, matrix->Multiply(viewMatrix, projectionMatrix));
@@ -884,7 +955,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//Sprite用のWorldViewProjectMatrixを作る
 			Matrix4x4 worldMatrixSprite = matrix->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-			Matrix4x4 cameraMatrixSprite = matrix->MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-5.0f });
+			Matrix4x4 cameraMatrixSprite = matrix->MakeAffineMatrix(CameraTransform.scale, CameraTransform.rotate, CameraTransform.translate);
 			Matrix4x4 viewMatrixSprite = matrix->Inverce(cameraMatrixSprite);
 			Matrix4x4 projectionMatrixSprite = matrix->MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrixSprite = matrix->Multiply(worldMatrixSprite, matrix->Multiply(viewMatrixSprite, projectionMatrixSprite));
@@ -937,7 +1008,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//描画
 			commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 			//3D三角の描画
-			commandList->DrawInstanced(6, 1, 0, 0);
+			commandList->DrawInstanced(1536, 1, 0, 0);
 			//2Dの描画
 			//Spriteの描画。変更が必要なものだけ変更する
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);//VBVを設定

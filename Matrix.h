@@ -1,4 +1,5 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include<math.h>
 struct Matrix4x4 {
 	float m[4][4];

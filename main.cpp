@@ -31,9 +31,15 @@ struct VertexData {
 	Vector3 normal;
 };
 
+struct MaterialData {
+	std::string textureFilePath;
+};
+
 struct ModelData {
 	std::vector<VertexData> vertices;
+	MaterialData material;
 };
+
 
 struct Transform {
 	Vector3 scale;
@@ -106,6 +112,37 @@ void Log(const std::string& messaga) {
 	OutputDebugStringA(messaga.c_str());
 }
 
+MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+	//1,中で必要となる変数の宣言
+	MaterialData materialData;//構築するMaterialData
+	std::string line;//ファイルから読んだ1行を格納するもの	
+
+	//2,ファイルを開く
+	std::ifstream file(directoryPath + "/" + filename);
+	assert(file.is_open());//とりあえず開けなかったら止める
+
+	//3,実際にファイルを読み、MaterialDataを構築していく
+	while (std::getline(file, line)) {
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		//identifierに応じた処理
+		if (identifier == "map_Kd") {
+			std::string textureFilename;
+			s >> textureFilename;
+			//連結してファイルパスにする
+			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+		}
+
+	}
+
+
+	//4,MaterialDataを返す
+	return materialData;
+}
+
+
 ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 	//1,中で必要になる変数の宣言
 	ModelData modelData;//構築するModelData
@@ -129,19 +166,23 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			Vector4 position{};
 			s >> position.x >> position.y >> position.z;
 			position.w = 1.0f;
+			position.x *= -1;
 			positions.push_back(position);
 		}
 		else if (identifier == "vt") {
 			Vector2 texcoord{};
 			s >> texcoord.x >> texcoord.y;
+			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
 		else if (identifier == "vn") {
 			Vector3 normal{};
 			s >> normal.x >> normal.y >> normal.z;
+			normal.x *= -1;
 			normals.push_back(normal);
 		}
 		else if (identifier == "f") {
+			VertexData triangle[3]{};
 			//面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex){
 				std::string vertexDefinition;
@@ -159,17 +200,30 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
-				modelData.vertices.push_back(vertex);
+				/*VertexData vertex = { position,texcoord,normal };
+				modelData.vertices.push_back(vertex);*/
+				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
+			modelData.vertices.push_back(triangle[2]);
+			modelData.vertices.push_back(triangle[1]);
+			modelData.vertices.push_back(triangle[0]);
 		}
+		else if (identifier == "mtllib") {
+			//materialTemplateLibraryファイルの名前を取得する
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
+			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+		}
+
 	}
 	
 	//4,ModelDataを返す
 	return modelData;
 
 }
+
 
 //void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
 //	//Meta情報を取得
@@ -551,13 +605,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//コマンドリストの生成が上手くいかなかったので起動しない
 	assert(SUCCEEDED(hr));
 
+	//モデル読み込み
+	ModelData modelData = LoadObjFile("resources/plane", "plane.obj");
 
 	//Textureを読んで転送する
 	DirectX::ScratchImage mipImages[2]{};
 	ID3D12Resource* textureResource[2]{};
 	ID3D12Resource* intermediateResource[2]{};
 
-	mipImages[0] = LoadTexture("resources/uvChecker.png");
+	mipImages[0] = LoadTexture(modelData.material.textureFilePath);
 	mipImages[1] = LoadTexture("resources/monsterBall.png");
 	const DirectX::TexMetadata& metadata = mipImages[0].GetMetadata();
 	const DirectX::TexMetadata& metadata2 = mipImages[1].GetMetadata();
@@ -728,9 +784,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const float kLatEvery = float(M_PI / kSubdivision);//緯度一つ分の角度
 	const float kLonEvery = float((M_PI * 2.0f) / kSubdivision);//経度一つ分の角度
 	
-	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources/plane", "plane.obj");
-
 	//頂点リソースの作成
 	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 
@@ -900,7 +953,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	uint32_t* indexDataSprite = nullptr;
 	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
 	indexDataSprite[0] = 0;	indexDataSprite[1] = 1;	indexDataSprite[2] = 2;
-	indexDataSprite[3] = 2;	indexDataSprite[4] = 3;	indexDataSprite[5] = 1;
+	indexDataSprite[3] = 1;	indexDataSprite[4] = 3;	indexDataSprite[5] = 2;
 
 	//Sprite用のTransformationMatrix用リソースを作る。TransformationMatrix 一つ分のサイズを用意する
 	ID3D12Resource* transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));

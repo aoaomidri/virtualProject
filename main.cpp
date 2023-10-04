@@ -50,6 +50,8 @@ struct Transform {
 struct Material{
 	Vector4 color;
 	int32_t enableLighting;
+	float padding[3];
+	Matrix4x4 uvTransform;
 };
 
 struct TransformationMatrix{
@@ -878,6 +880,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	materialDate->enableLighting = false;
 
+	materialDate->uvTransform = MakeIdentity4x4();
+
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
 	ID3D12Resource* wvpResource = CreateBufferResource(device, sizeof(TransformationMatrix));
 	//データを書き込む
@@ -901,6 +905,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//SpriteはLightingしないのでfalseを設定しておく
 	materialDateSprite->enableLighting = false;
+
+	materialDateSprite->uvTransform = MakeIdentity4x4();
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
@@ -969,6 +975,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{640.0f,320.0f,0.0f} };
 
 	Transform CameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+
+	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
@@ -1160,9 +1168,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Checkbox("DrawSphere", &DrawSphere);
 			ImGui::Checkbox("isRotate", &isMoveRotate);
 			if (DrawTexture) {
-				ImGui::DragFloat3("TransformSprite", &transformSprite.translate.x, 1.0f);
-				ImGui::DragFloat3("RotateSprite", &transformSprite.rotate.x, 0.01f);
-				ImGui::DragFloat3("ScaleSprite", &transformSprite.scale.x, 0.01f);
+				ImGui::DragFloat2("TransformSprite", &transformSprite.translate.x, 1.0f);
+				ImGui::DragFloat2("RotateSprite", &transformSprite.rotate.x, 0.01f);
+				ImGui::DragFloat2("ScaleSprite", &transformSprite.scale.x, 0.01f);
+
+				ImGui::DragFloat2("UVTransform", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			}
 			if (materialDate->color.x < 0.0f) {
 				materialDate->color.x = 0.0f;
@@ -1233,6 +1245,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 worldViewProjectionMatrixSprite = matrix->Multiply(worldMatrixSprite, matrix->Multiply(viewMatrixSprite, projectionMatrixSprite));
 			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 			transformationMatrixDataSprite->World = worldMatrixSprite;
+
+			Matrix4x4 uvTransformMatrix = matrix->MakeScaleMatrix(uvTransformSprite.scale);
+			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeRotateMatrixZ(uvTransformSprite.rotate));
+			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeTranslateMatrix(uvTransformSprite.translate));
+			materialDateSprite->uvTransform = uvTransformMatrix;
+
 			ImGui::Render();
 
 			//これから書き込むバックバッファのインデックスを取得

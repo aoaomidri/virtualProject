@@ -624,7 +624,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(hr));
 
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources/skyDome", "skyDome.obj");
+	ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
 
 	//Textureを読んで転送する
 	DirectX::ScratchImage mipImages[2]{};
@@ -746,8 +746,69 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
+
+	enum BlendMode {
+		//ブレンド無し
+		kBlendModeNone,
+		//通常のブレンド
+		kBlendModeNormal,
+		//加算合成
+		kBlendModeAdd,
+		//減算合成
+		kBlendModeSubtract,
+		//乗算合成
+		kBlendModeMultily,
+		//スクリーン合成
+		kBlendModeScreen
+	};
+
+	BlendMode blendMode_ = kBlendModeNone;
+
 	//全ての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	switch (blendMode_)
+	{
+	case kBlendModeNone:
+		blendDesc.RenderTarget[0].BlendEnable = false;
+		break;
+	case kBlendModeNormal:
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		
+		break;
+	case kBlendModeAdd:
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	case kBlendModeSubtract:
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	case kBlendModeMultily:
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+		break;
+	case kBlendModeScreen:
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	default:
+		break;
+	}
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
 	//RasiterzerStateの設定
 	D3D12_RASTERIZER_DESC rasterrizerDesc{};
 	//裏面(時計回り)を表示しない
@@ -992,6 +1053,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Transform CameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
+	Transform uvTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+
 	Transform uvTransformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
 	//ビューポート
@@ -1151,6 +1214,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float rotateSpeed = 0.06f;
 
+	int selectNumber = 0;
+
 	//ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 
@@ -1170,14 +1235,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("Transform", &transform.translate.x, 0.01f);
 			ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
 			ImGui::SliderFloat("RotateSpeed", &rotateSpeed, -0.1f, 0.1f);
-			ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);	
+			ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
+			ImGui::DragFloat2("UVTransform", &uvTransform.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat2("UVScale", &uvTransform.scale.x, 0.01f, -10.0f, 10.0f);
+			ImGui::SliderAngle("UVRotate", &uvTransform.rotate.z);
 			
 			ImGui::DragFloat3("CameraTransform", & CameraTransform.translate.x, 0.01f);
 			ImGui::DragFloat3("CameraRotate", &CameraTransform.rotate.x, 0.01f);
-
-			ImGui::ColorEdit4("DirectionalLight.Color", &directionalLightDate->color.x);
-			ImGui::DragFloat3("DirectionalLight.Direction", &directionalLightDate->direction.x, 0.01f);
-			ImGui::DragFloat("DirectionalLight.intensity", &directionalLightDate->intensity, 0.01f);
+			if (useDirectionLight) {
+				ImGui::ColorEdit4("DirectionalLight.Color", &directionalLightDate->color.x);
+				ImGui::DragFloat3("DirectionalLight.Direction", &directionalLightDate->direction.x, 0.01f);
+				ImGui::DragFloat("DirectionalLight.intensity", &directionalLightDate->intensity, 0.01f);
+			}
 			ImGui::Checkbox("useDirectionLight", &useDirectionLight);
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 			ImGui::Checkbox("DrawTexture", &DrawTexture);
@@ -1191,6 +1260,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 			}
+
+			/*ImGui::Begin("BlendMode");
+			ImGui::RadioButton("None", &selectNumber, kBlendModeNone);
+			ImGui::RadioButton("Normal", &selectNumber, kBlendModeNormal);
+			ImGui::RadioButton("Add", &selectNumber, kBlendModeAdd);
+			ImGui::RadioButton("Subtract", &selectNumber, kBlendModeSubtract);
+			ImGui::RadioButton("Multily", &selectNumber, kBlendModeMultily);
+			ImGui::RadioButton("Screen", &selectNumber, kBlendModeScreen);
+			ImGui::End();*/
+			/*if (selectNumber == kBlendModeNone) {
+				blendMode_ = kBlendModeNone;
+			}
+			else if (selectNumber == kBlendModeNormal) {
+				blendMode_ = kBlendModeNormal;
+			}
+			else if (selectNumber == kBlendModeAdd) {
+				blendMode_ = kBlendModeAdd;
+			}
+			else if (selectNumber == kBlendModeSubtract) {
+				blendMode_ = kBlendModeSubtract;
+			}
+			else if (selectNumber == kBlendModeMultily) {
+				blendMode_ = kBlendModeMultily;
+			}
+			else if (selectNumber == kBlendModeScreen) {
+				blendMode_ = kBlendModeScreen;
+			}*/
+			
 			if (materialDate->color.x < 0.0f) {
 				materialDate->color.x = 0.0f;
 			}
@@ -1252,6 +1349,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			wvpData->WVP = worldViewProjectionMatrix;
 			wvpData->World = worldMatrix;
 
+			Matrix4x4 uvTransformMatrix = matrix->MakeScaleMatrix(uvTransform.scale);
+			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeRotateMatrixZ(uvTransform.rotate));
+			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeTranslateMatrix(uvTransform.translate));
+			materialDate->uvTransform = uvTransformMatrix;
+
 			//Sprite用のWorldViewProjectMatrixを作る
 			Matrix4x4 worldMatrixSprite = matrix->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 			Matrix4x4 cameraMatrixSprite = matrix->MakeAffineMatrix(CameraTransform.scale, CameraTransform.rotate, CameraTransform.translate);
@@ -1261,10 +1363,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 			transformationMatrixDataSprite->World = worldMatrixSprite;
 
-			Matrix4x4 uvTransformMatrix = matrix->MakeScaleMatrix(uvTransformSprite.scale);
-			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeRotateMatrixZ(uvTransformSprite.rotate));
-			uvTransformMatrix = matrix->Multiply(uvTransformMatrix, matrix->MakeTranslateMatrix(uvTransformSprite.translate));
-			materialDateSprite->uvTransform = uvTransformMatrix;
+			Matrix4x4 uvTransformMatrixSprite = matrix->MakeScaleMatrix(uvTransformSprite.scale);
+			uvTransformMatrixSprite = matrix->Multiply(uvTransformMatrixSprite, matrix->MakeRotateMatrixZ(uvTransformSprite.rotate));
+			uvTransformMatrixSprite = matrix->Multiply(uvTransformMatrixSprite, matrix->MakeTranslateMatrix(uvTransformSprite.translate));
+			materialDateSprite->uvTransform = uvTransformMatrixSprite;
 
 			ImGui::Render();
 

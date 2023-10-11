@@ -24,6 +24,12 @@
 #include<vector>
 #include<wrl.h>
 
+#define DIRECTINPUT_VERSION  0x0800
+#include<dinput.h>
+
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 struct VertexData {
@@ -481,6 +487,10 @@ struct D3DResourceLeakChecker {
 	}
 };
 
+bool isTriger(uint8_t keyNumber) {
+
+}
+
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -603,6 +613,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//デバイスの生成が上手くいかなかったので起動できない
 	assert(device != nullptr);
 	Log("Conplete create D3D12Device!!!\n");//初期化完了のログ
+
+	/*キー入力の初期化処理*/
+	IDirectInput8* directInput = nullptr;
+	hr = DirectInput8Create
+	(wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	assert(SUCCEEDED(hr));
+
+	//キーボードデバイスの作成
+	IDirectInputDevice8* keyboard = nullptr;
+	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	assert(SUCCEEDED(hr));
+	//入力データ形式のセット
+	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
+	assert(SUCCEEDED(hr));
+	//排他制御レベルのセット
+	hr = keyboard->SetCooperativeLevel
+	(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	assert(SUCCEEDED(hr));
 
 	//コマンドキューを作成する
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
@@ -1216,6 +1244,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	int selectNumber = 0;
 
+	BYTE key[256] = {};
+	BYTE prekey[256] = {};
+	
 	//ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 
@@ -1230,6 +1261,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 			//ゲームの処理
+			//キーボード情報の取得開始
+			keyboard->Acquire();
+			//全キーの入力状態を取得する
+			
+			keyboard->GetDeviceState(sizeof(key), key);
+
+			if (key[DIK_RIGHT]) {
+				transform.translate.x += 0.05f;
+			}
+			if (key[DIK_LEFT]) {
+				transform.translate.x -= 0.05f;
+			}
+
 			ImGui::ShowDemoWindow();
 			ImGui::ColorEdit4("Color", &materialDate->color.x);
 			ImGui::DragFloat3("Transform", &transform.translate.x, 0.01f);
@@ -1470,7 +1514,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 			hr = commandList->Reset(commandAllocator.Get(), nullptr);
 			assert(SUCCEEDED(hr));
+
+			if (key[DIK_ESCAPE]){
+				break;
+			}
 		}
+
+		
+
 	}
 	CoUninitialize();
 

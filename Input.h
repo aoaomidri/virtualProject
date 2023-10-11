@@ -1,5 +1,5 @@
 #pragma once
-#include<Windows.h>
+#include"WinApp.h"
 #include<wrl.h>
 #define DIRECTINPUT_VERSION  0x0800
 #include<dinput.h>
@@ -13,7 +13,7 @@ public:
 	Input();
 
 	//初期化
-	void Initialize(WNDCLASS wc, HWND hwnd);
+	void Initialize(WinApp* winapp);
 	//更新
 	void Update();
 
@@ -44,6 +44,8 @@ public:
 private:
 	BYTE key[256] = {};
 	BYTE prekey[256] = {};
+
+	WinApp* winapp_ = nullptr;
 
 	ComPtr<IDirectInputDevice8> keyboard;
 

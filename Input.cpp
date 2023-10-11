@@ -5,15 +5,18 @@
 Input::Input() {
 	keyboard = nullptr;
 	directInput = nullptr;
+	
 }
 
 
-void Input::Initialize(WNDCLASS wc, HWND hwnd) {
+void Input::Initialize(WinApp* winapp) {
+	this->winapp_ = winapp;
+
 	HRESULT hr;
 
 	/*キー入力の初期化処理*/	
 	hr = DirectInput8Create
-	(wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	(winapp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(hr));
 
 	//キーボードデバイスの作成
@@ -24,7 +27,7 @@ void Input::Initialize(WNDCLASS wc, HWND hwnd) {
 	assert(SUCCEEDED(hr));
 	//排他制御レベルのセット
 	hr = keyboard->SetCooperativeLevel
-	(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	(winapp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 }

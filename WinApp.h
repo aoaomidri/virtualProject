@@ -1,13 +1,20 @@
 #pragma once
 #include<Windows.h>
 #include<cstdint>
+#include<wrl.h>
+#include <cassert>
+#include"externals/imgui/imgui.h"
+#include"externals/imgui/imgui_impl_dx12.h"
+#include"externals/imgui/imgui_impl_win32.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class WinApp
 {
 public: // 静的メンバ変数
 	// ウィンドウサイズ
-	static const int kWindowWidth = 1280; // 横幅
-	static const int kWindowHeight = 720; // 縦幅
+	const int32_t kWindowWidth = 1280; // 横幅
+	const int32_t kWindowHeight = 720; // 縦幅
 	// ウィンドウクラス名
 	static const wchar_t kWindowClassName[];
 
@@ -18,11 +25,16 @@ public: // 静的メンバ変数
 	};
 
 public: // 静的メンバ関数
+	//初期化
+	void Initialize();
+	//終了処理
+	void Finalize();
+
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns>シングルトンインスタンス</returns>
-	static WinApp* GetInstance();
+	//static WinApp* GetInstance();
 
 	/// <summary>
 	/// ウィンドウプロシージャ
@@ -42,14 +54,14 @@ public: // メンバ関数
 	/// <param name="clientWidth">ウィンドウのクライアント領域の初期幅</param>
 	/// <param name="clientHeight">ウィンドウのクライアント領域の初期高さ</param>
 	/// </summary>
-	void CreateGameWindow(
+	/*void CreateGameWindow(
 		const wchar_t* title = L"DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
-		int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);
+		int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);*/
 
 	/// <summary>
 	/// ゲームウィンドウの破棄
 	/// </summary>
-	void TerminateGameWindow();
+	//void TerminateGameWindow();
 
 	/// <summary>
 	/// メッセージの処理
@@ -63,45 +75,47 @@ public: // メンバ関数
 	/// <returns></returns>
 	HWND GetHwnd() const { return hwnd_; }
 
+	WNDCLASS GetWnClass() const { return wndClass_; }
+
 	HINSTANCE GetHInstance() const { return wndClass_.hInstance; }
 
 	/// <summary>
 	/// フルスクリーン設定
 	/// </summary>
 	/// <param name="fullscreen">フルスクリーンにするかどうか</param>
-	void SetFullscreen(bool fullscreen);
+	//void SetFullscreen(bool fullscreen);
 
 	/// <summary>
 	/// フルスクリーンかどうか
 	/// </summary>
 	/// <returns></returns>
-	bool IsFullscreen() const;
+	//bool IsFullscreen() const;
 
 	/// <summary>
 	/// サイズ変更モードの設定
 	/// </summary>
 	/// <returns></returns>
-	void SetSizeChangeMode(SizeChangeMode sizeChangeMode);
+	//void SetSizeChangeMode(SizeChangeMode sizeChangeMode);
 
 	/// <summary>
 	/// サイズ変更モードの取得
 	/// </summary>
 	/// <returns></returns>
-	SizeChangeMode GetSizeChangeMode() const;
+	//SizeChangeMode GetSizeChangeMode() const;
 
 private: // メンバ関数
-	WinApp() = default;
+	/*WinApp() = default;
 	~WinApp() = default;
 	WinApp(const WinApp&) = delete;
-	const WinApp& operator=(const WinApp&) = delete;
+	const WinApp& operator=(const WinApp&) = delete;*/
 
 private: // メンバ変数
 	// Window関連
 	HWND hwnd_ = nullptr;   // ウィンドウハンドル
-	WNDCLASSEX wndClass_{}; // ウィンドウクラス
+	WNDCLASS wndClass_{}; // ウィンドウクラス
 	UINT windowStyle_;
 	bool isFullscreen_ = false;
-	RECT windowRect_;
+	
 	SizeChangeMode sizeChangeMode_ = SizeChangeMode::kNormal;
 	float aspectRatio_;
 

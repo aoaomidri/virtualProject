@@ -487,9 +487,6 @@ struct D3DResourceLeakChecker {
 	}
 };
 
-bool isTriger(uint8_t keyNumber) {
-
-}
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -1264,11 +1261,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//キーボード情報の取得開始
 			keyboard->Acquire();
 			//全キーの入力状態を取得する
-			
+			memcpy(prekey, key, 256);
 			keyboard->GetDeviceState(sizeof(key), key);
 
-			if (key[DIK_RIGHT]) {
-				transform.translate.x += 0.05f;
+			if (key[DIK_RIGHT]&&!prekey[DIK_RIGHT]) {
+				transform.translate.x += 1.0f;
 			}
 			if (key[DIK_LEFT]) {
 				transform.translate.x -= 0.05f;

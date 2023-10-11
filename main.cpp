@@ -22,13 +22,7 @@
 #include"externals/DirectXTex/DirectXTex.h"
 #include"externals/DirectXTex/d3dx12.h"
 #include<vector>
-#include<wrl.h>
-
-#define DIRECTINPUT_VERSION  0x0800
-#include<dinput.h>
-
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
+#include"Input.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -612,23 +606,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Log("Conplete create D3D12Device!!!\n");//初期化完了のログ
 
 	/*キー入力の初期化処理*/
-	IDirectInput8* directInput = nullptr;
-	hr = DirectInput8Create
-	(wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
-	assert(SUCCEEDED(hr));
+	std::unique_ptr<Input> input = std::make_unique<Input>();
 
-	//キーボードデバイスの作成
-	IDirectInputDevice8* keyboard = nullptr;
-	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(hr));
-	//入力データ形式のセット
-	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
-	assert(SUCCEEDED(hr));
-	//排他制御レベルのセット
-	hr = keyboard->SetCooperativeLevel
-	(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(hr));
-
+	input->Initialize(wc, hwnd);
+	
 	//コマンドキューを作成する
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
@@ -1240,14 +1221,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float rotateSpeed = 0.06f;
 
 	int selectNumber = 0;
-
-	BYTE key[256] = {};
-	BYTE prekey[256] = {};
 	
 	//ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
-
-
 		//Windowにメッセージが来てたら最優先で処理させる
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -1258,17 +1234,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 			//ゲームの処理
-			//キーボード情報の取得開始
-			keyboard->Acquire();
-			//全キーの入力状態を取得する
-			memcpy(prekey, key, 256);
-			keyboard->GetDeviceState(sizeof(key), key);
 
-			if (key[DIK_RIGHT]&&!prekey[DIK_RIGHT]) {
+			input->Update();
+
+			if (input->TrigerRight()) {
 				transform.translate.x += 1.0f;
 			}
-			if (key[DIK_LEFT]) {
-				transform.translate.x -= 0.05f;
+			if (input->TrigerLeft()) {
+				transform.translate.x -= 1.0f;
 			}
 
 			ImGui::ShowDemoWindow();
@@ -1512,7 +1485,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			hr = commandList->Reset(commandAllocator.Get(), nullptr);
 			assert(SUCCEEDED(hr));
 
-			if (key[DIK_ESCAPE]){
+			if (input->Trigerkey(DIK_ESCAPE)){
 				break;
 			}
 		}

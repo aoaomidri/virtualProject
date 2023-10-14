@@ -7,10 +7,13 @@
 #pragma comment(lib,"dxguid.lib")
 #include<dxcapi.h>
 #pragma comment(lib,"dxcompiler.lib")
+#pragma comment(lib,"winmm.lib")
 
 void WinApp::Initialize() {
 	// COM初期化
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	//システムタイマーの分解能を上げる
+	timeBeginPeriod(1);
 
 	//ウィンドウプロシージャ
 	wndClass_.lpfnWndProc = WindowProc;

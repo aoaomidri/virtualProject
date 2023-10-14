@@ -7,6 +7,7 @@
 #include<wrl.h>
 #include"WinApp.h"
 #include<vector>
+#include<chrono>
 
 
 class DirectXCommon{
@@ -133,6 +134,16 @@ private://メンバ変数
 
 	//WindowsAPI
 	WinApp* winapp_ = nullptr;
+private:
+	/*FPS固定用*/
+
+	//記録時間
+	std::chrono::steady_clock::time_point reference_;
+	 
+	//FPS固定初期化
+	void InitializeFixFPS();
+	//FPS固定更新
+	void UpdateFixFPS();
 
 };
 

@@ -438,7 +438,7 @@ struct D3DResourceLeakChecker {
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+	//CoInitializeEx(0, COINIT_MULTITHREADED);
 
 	 D3DResourceLeakChecker leakCheck;
 
@@ -1153,6 +1153,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		ImGui::ShowDemoWindow();
+		ImGui::Begin("FPS");
+		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+		ImGui::End();
 		ImGui::ColorEdit4("Color", &materialDate->color.x);
 		ImGui::DragFloat3("Transform", &transform.translate.x, 0.01f);
 		ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);

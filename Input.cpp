@@ -8,6 +8,10 @@ Input::Input() {
 	
 }
 
+Input::~Input(){
+	
+}
+
 
 void Input::Initialize(WinApp* winapp) {
 	this->winapp_ = winapp;

@@ -11,6 +11,7 @@ class Input
 {
 public:
 	Input();
+	~Input();
 
 	//初期化
 	void Initialize(WinApp* winapp);

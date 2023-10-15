@@ -1,38 +1,7 @@
-#include <format>
-#include <string>
-#include<fstream>
-#include<sstream>
-
-#include <d3d12.h> 
-#pragma comment(lib,"d3d12.lib")
-#include <dxgi1_6.h>
-#pragma comment(lib,"dxgi.lib")
-#include<dxgidebug.h>
-#pragma comment(lib,"dxguid.lib")
-#include<dxcapi.h>
-#pragma comment(lib,"dxcompiler.lib")
-
-#include"Matrix.h"
-#include"externals/DirectXTex/DirectXTex.h"
-#include"externals/DirectXTex/d3dx12.h"
 #include"Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
-
-struct VertexData {
-	Vector4 position;
-	Vector2 texcoord;	
-	Vector3 normal;
-};
-
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
-};
+#include"TextureManager.h"
 
 
 struct Transform {
@@ -58,148 +27,6 @@ struct DirectionalLight {
 	Vector3 direction;	//ライトの向き
 	float intensity;	//輝度
 };
-
-std::wstring ConvertString(const std::string& str) {
-	if (str.empty()) {
-		return std::wstring();
-	}
-
-	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-	if (sizeNeeded == 0) {
-		return std::wstring();
-	}
-	std::wstring result(sizeNeeded, 0);
-	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
-	return result;
-}
-
-std::string ConvertString(const std::wstring& str) {
-	if (str.empty()) {
-		return std::string();
-	}
-
-	auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
-	if (sizeNeeded == 0) {
-		return std::string();
-	}
-	std::string result(sizeNeeded, 0);
-	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
-	return result;
-}
-
-void Log(const std::string& messaga) {
-	OutputDebugStringA(messaga.c_str());
-}
-
-MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-	//1,中で必要となる変数の宣言
-	MaterialData materialData;//構築するMaterialData
-	std::string line;//ファイルから読んだ1行を格納するもの	
-
-	//2,ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);
-	assert(file.is_open());//とりあえず開けなかったら止める
-
-	//3,実際にファイルを読み、MaterialDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		//identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-
-	}
-	//4,MaterialDataを返す
-	return materialData;
-}
-
-
-ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
-	//1,中で必要になる変数の宣言
-	ModelData modelData;//構築するModelData
-	std::vector<Vector4> positions;//位置
-	std::vector<Vector3> normals;//法線
-	std::vector<Vector2> texcoords;//テクスチャ座標
-	std::string line;//ファイルから読んだ1行を格納するもの
-
-	//2,ファイルを開く
-
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());//とりあえず開けなかったら止める
-	
-	//3,実際にファイルを読み、ModelDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;//先頭の識別子を読む
-		//identifierに応じた処理
-		if (identifier == "v"){
-			Vector4 position{};
-			s >> position.x >> position.y >> position.z;
-			position.w = 1.0f;
-			position.x *= -1;
-			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
-			Vector2 texcoord{};
-			s >> texcoord.x >> texcoord.y;
-			texcoord.y = 1.0f - texcoord.y;
-			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal{};
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1;
-			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
-			VertexData triangle[3]{};
-			//面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex){
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				//頂点の要素へのindexは「位置/UV/法線」で格納されているので、分解してindexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndices[3]{};
-				for (int32_t element = 0; element < 3; ++element){
-					std::string index;
-					std::getline(v, index, '/');// /区切りでインデックスを読んでいく
-					elementIndices[element] = std::stoi(index);
-
-				}
-				//要素へのindexから、実際の要素の値を取得して、頂点を構築する
-				Vector4 position = positions[elementIndices[0] - 1];
-				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				/*VertexData vertex = { position,texcoord,normal };
-				modelData.vertices.push_back(vertex);*/
-				triangle[faceVertex] = { position,texcoord,normal };
-
-			}
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
-		}
-		else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
-		}
-
-	}
-	
-	//4,ModelDataを返す
-	return modelData;
-
-}
 
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 result = { 0.0f };
@@ -329,24 +156,6 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(Microsoft::WRL::Com
 	return resource;
 }
 
-[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages, Microsoft::WRL::ComPtr<ID3D12Device> device, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList) {
-	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
-	DirectX::PrepareUpload(device.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
-	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.Get(), 0, UINT(subresources.size()));
-	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(device, intermediateSize);
-	UpdateSubresources(commandList.Get(), texture.Get(), intermediateResource.Get(), 0, 0, UINT(subresources.size()), subresources.data());
-	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	commandList->ResourceBarrier(1, &barrier);
-	return intermediateResource;
-}
-
 Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height) {
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = width;
@@ -405,23 +214,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12
 	return handleCPU;
 }
 
-
-DirectX::ScratchImage LoadTexture(const std::string& filePath) {
-	//テクスチャファイルを読んでプログラムで扱えるようにする
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(hr));
-
-	//ミップマップの作成
-	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
-
-	//ミップマップ付きのデータを返す
-	return mipImages;
-}
-
 struct D3DResourceLeakChecker {
 	~D3DResourceLeakChecker()
 	{
@@ -447,11 +239,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	auto window_ = std::make_unique<WinApp>();
 	window_->Initialize();
 
-	//クライアント領域のサイズ
-
-	const int32_t kWindowWidth = 1280;
-	const int32_t kWindowHeight = 720;
-
 	HRESULT hr;
 
 	/*キー入力の初期化処理*/
@@ -461,113 +248,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
 	dxCommon_->Initialize(window_.get());
-	////DXGIファクトリーの生成
-	//Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 
-	////HRESULTはWindows系のエラーコード
-	////関数が成功したかどうかをSUCCEEDEDマクロで判定できる
-	//HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	auto textureManager_ = std::make_unique<TextureManager>();
 
-	////初期化の根本的な部分でエラーがでた場合はプログラムが間違っているか、
-	////どうにもできない場合が多いのでassertにしておく
-	//assert(SUCCEEDED(hr));
-
-	////使用するアダプタ用の変数。最初にnullptrを入れておく
-	//Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter = nullptr;
-
-	////いい順番にアダプタを頼む
-	//for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) !=
-	//	DXGI_ERROR_NOT_FOUND; ++i) {
-	//	//アダプター情報を取得する
-	//	DXGI_ADAPTER_DESC3 adapterDesc{};
-	//	hr = useAdapter->GetDesc3(&adapterDesc);
-	//	assert(SUCCEEDED(hr));//取得できないのは一番危ない
-	//	//ソフトウェアアダプタでなければ採用
-	//	if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
-	//		//採用したアダプタの情報をログに出力。wstringの方なので注意
-	//		Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
-	//		break;
-	//	}
-	//	useAdapter = nullptr;//ソフトウェアアダプタの場合は見なかったことにする
-
-	//}
-	////適切なアダプタが見つからなかったので起動できない
-	//assert(useAdapter != nullptr);
-
-	//Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
-	////機能レベルとログ出力用の文字列
-	//D3D_FEATURE_LEVEL featureLevels[] = {
-	//	D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
-	//};
-	//const char* featureLevelStrings[] = { "12.2","12.1","12.0" };
-	////高い順に生成できるか試していく
-	//for (size_t i = 0; i < _countof(featureLevels); ++i) {
-	//	//採用したアダプターでデバイスを生成
-	//	hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(&device));
-	//	//指定した機能レベルでデバイスが生成できたかを確認
-	//	if (SUCCEEDED(hr)) {
-	//		//生成できたのでログ出力を行ってループを抜ける
-	//		Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
-	//		break;
-	//	}
-
-	//}
-
-	////デバイスの生成が上手くいかなかったので起動できない
-	//assert(device != nullptr);
-	//Log("Conplete create D3D12Device!!!\n");//初期化完了のログ
-
-	
-	
-	////コマンドキューを作成する
-	//Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
-	//D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-	//hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	////コマンドキューの生成が上手くいかなかったので起動できない
-	//assert(SUCCEEDED(hr));
-
-	////コマンドアロケータを生成する
-	//Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-	//hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-	////コマンドアロケータの生成が上手くいかなかったので起動しない
-	//assert(SUCCEEDED(hr));
-
-	////コマンドリストを生成
-	//Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
-	//hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
-	////コマンドリストの生成が上手くいかなかったので起動しない
-	//assert(SUCCEEDED(hr));
 
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
+	ModelData modelData = textureManager_->LoadObjFile("resources/fence", "fence.obj");
 
 	//Textureを読んで転送する
 	DirectX::ScratchImage mipImages[2]{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource[2]{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource[2]{};
-
-	mipImages[0] = LoadTexture(modelData.material.textureFilePath);
-	mipImages[1] = LoadTexture("resources/monsterBall.png");
+	mipImages[0] = textureManager_->LoadTexture(modelData.material.textureFilePath);
+	mipImages[1] = textureManager_->LoadTexture("resources/monsterBall.png");
 	const DirectX::TexMetadata& metadata = mipImages[0].GetMetadata();
 	const DirectX::TexMetadata& metadata2 = mipImages[1].GetMetadata();
 
 	textureResource[0] = CreateTextureResource(dxCommon_->GetDevice(), metadata);
 	textureResource[1] = CreateTextureResource(dxCommon_->GetDevice(), metadata2);
-	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device, kWindowWidth, kWindowHeight);
-	intermediateResource[0] = UploadTextureData(textureResource[0], mipImages[0], dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	intermediateResource[1] = UploadTextureData(textureResource[1], mipImages[1], dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	intermediateResource[0] = textureManager_->UploadTextureData(textureResource[0], mipImages[0], dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	intermediateResource[1] = textureManager_->UploadTextureData(textureResource[1], mipImages[1], dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	
-
-
-	////初期値0でFenceを作る
-	//Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
-	//uint64_t fenceValue = 0;
-	//hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-	//assert(SUCCEEDED(hr));
-
-	////FenceのSignalを待つためのイベントを作成する
-	//HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//assert(fenceEvent != nullptr);
 
 	//dxcCompilerを初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -797,69 +498,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::memcpy(vertexDate, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
 	
 
-	////緯度の方向に分割-π/2～π/2
-	//for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-	//	float lat = float(-M_PI) / 2.0f + (kLatEvery * latIndex);//現在の緯度(θ)
-	//	//経度の方向に分割 0～2π
-	//	for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-	//		uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
-	//		float lon = lonIndex * kLonEvery;//現在の経度(φ)
-
-	//		//頂点にデータを入力していく。基準点a
-	//		vertexDate[start].position.x = cos(lat) * cos(lon);
-	//		vertexDate[start].position.y = sin(lat);
-	//		vertexDate[start].position.z = cos(lat) * sin(lon);
-	//		vertexDate[start].position.w = 1.0f;
-	//		vertexDate[start].texcoord = 
-	//		{ float(lonIndex) / float(kSubdivision) ,
-	//			1.0f - float(latIndex) / float(kSubdivision) };
-	//		vertexDate[start].normal.x = vertexDate[start + 6].position.x;
-	//		vertexDate[start].normal.y = vertexDate[start + 6].position.y;
-	//		vertexDate[start].normal.z = vertexDate[start + 6].position.z;
-
-	//		//基準点b
-	//		vertexDate[start + 1].position.x = cos(lat + kLatEvery) * cos(lon);
-	//		vertexDate[start + 1].position.y = sin(lat + kLatEvery);
-	//		vertexDate[start + 1].position.z = cos(lat + kLatEvery) * sin(lon);
-	//		vertexDate[start + 1].position.w = 1.0f;
-	//		vertexDate[start + 1].texcoord =
-	//		{ float(lonIndex) / float(kSubdivision) ,
-	//			1.0f - float(latIndex+1) / float(kSubdivision) };
-	//		//基準点c
-	//		vertexDate[start + 2].position.x = cos(lat) * cos(lon + kLonEvery);
-	//		vertexDate[start + 2].position.y = sin(lat);
-	//		vertexDate[start + 2].position.z = cos(lat) * sin(lon + kLonEvery);
-	//		vertexDate[start + 2].position.w = 1.0f;
-	//		vertexDate[start + 2].texcoord =
-	//		{ float(lonIndex+1) / float(kSubdivision) ,
-	//			1.0f - float(latIndex) / float(kSubdivision) };
-	//		//基準点c
-	//		vertexDate[start + 3].position.x = cos(lat) * cos(lon + kLonEvery);
-	//		vertexDate[start + 3].position.y = sin(lat);
-	//		vertexDate[start + 3].position.z = cos(lat) * sin(lon + kLonEvery);
-	//		vertexDate[start + 3].position.w = 1.0f;
-	//		vertexDate[start + 3].texcoord =
-	//		{ float(lonIndex+1) / float(kSubdivision) ,
-	//			1.0f - float(latIndex) / float(kSubdivision) };
-	//		//基準点b
-	//		vertexDate[start + 4].position.x = cos(lat + kLatEvery) * cos(lon);
-	//		vertexDate[start + 4].position.y = sin(lat + kLatEvery);
-	//		vertexDate[start + 4].position.z = cos(lat + kLatEvery) * sin(lon);
-	//		vertexDate[start + 4].position.w = 1.0f;
-	//		vertexDate[start + 4].texcoord =
-	//		{ float(lonIndex) / float(kSubdivision) ,
-	//			1.0f - float(latIndex+1) / float(kSubdivision) };
-	//		//基準点d
-	//		vertexDate[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
-	//		vertexDate[start + 5].position.y = sin(lat + kLatEvery);
-	//		vertexDate[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLonEvery);
-	//		vertexDate[start + 5].position.w = 1.0f;
-	//		vertexDate[start + 5].texcoord =
-	//		{ float(lonIndex+1) / float(kSubdivision) ,
-	//			1.0f - float(latIndex+1) / float(kSubdivision) };
-	//	}
-	//}
-
 	//マテリアル用のリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Material));
 	//マテリアルにデータを書き込む
@@ -989,36 +627,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//scissorRect.right = kWindowWidth;
 	//scissorRect.top = 0;
 	//scissorRect.bottom = kWindowHeight;
-
-
-#ifdef _DEBUG
-	ID3D12InfoQueue* infoQueue = nullptr;
-	if (SUCCEEDED(dxCommon_->GetDevice()->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
-		//やばいエラー時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-		//エラー時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-		//警告時に止まる
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-		//抑制するメッセージのID
-		D3D12_MESSAGE_ID denyIds[] = {
-			//windows11でのDXGIデバッグレイヤーとDX12デバッグレイヤーの相互作用バグによるエラーメッセージ
-			//http://stackoverflow.com/questions/69805245/directx-12-application-is-crashing-in-windows-11
-			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
-		};
-		//抑制するレベル
-		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
-		D3D12_INFO_QUEUE_FILTER filter{};
-		filter.DenyList.NumIDs = _countof(denyIds);
-		filter.DenyList.pIDList = denyIds;
-		filter.DenyList.NumSeverities = _countof(severities);
-		filter.DenyList.pSeverityList = severities;
-		//指定してメッセージの表示を抑制する
-		infoQueue->PushStorageFilter(&filter);
-		//解放
-		infoQueue->Release();
-	}
-#endif // _DEBUG
 
 	////スワップチェーンを生成
 	//Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
@@ -1256,7 +864,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 worldMatrixSprite = matrix->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 		Matrix4x4 cameraMatrixSprite = matrix->MakeAffineMatrix(CameraTransform.scale, CameraTransform.rotate, CameraTransform.translate);
 		Matrix4x4 viewMatrixSprite = matrix->Inverce(cameraMatrixSprite);
-		Matrix4x4 projectionMatrixSprite = matrix->MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 100.0f);
+		Matrix4x4 projectionMatrixSprite = matrix->MakeOrthographicMatrix(0.0f, 0.0f, float(window_->kWindowWidth), float(window_->kWindowHeight), 0.0f, 100.0f);
 		Matrix4x4 worldViewProjectionMatrixSprite = matrix->Multiply(worldMatrixSprite, matrix->Multiply(viewMatrixSprite, projectionMatrixSprite));
 		transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 		transformationMatrixDataSprite->World = worldMatrixSprite;
@@ -1270,40 +878,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		dxCommon_->PreDraw();
 
-		////これから書き込むバックバッファのインデックスを取得
-		//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-		////TransitionBarrierの設定
-		//D3D12_RESOURCE_BARRIER barrier{};
-		////今回のバリアはTransition
-		//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		////Noneにしておく
-		//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		////バリアを張る対象のリソース。現在のバックバッファに対して行う
-		//barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
-		////遷移前(現在)のResouceState
-		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		////遷移後のResouceState
-		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		////TransitionBarrierを張る
-		//commandList->ResourceBarrier(1, &barrier);
-
-		//描画先のRTVを設定する
-		//commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
-		////指定した色で画面全体をクリアする
-		//float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色、RGBAの順番
-		//commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
-
-		//描画用のDescriptorHeapの設定
-	/*	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap };
-		dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());*/
-
-		////描画先のRTVとDSVを設定する
-		//D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		//commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
-
-		//画面に描く処理は全て終わり、画面に映すので、状態を遷移
-		/*commandList->RSSetViewports(1, &viewport);
-		commandList->RSSetScissorRects(1, &scissorRect);*/
 		//RootSignatureを設定。PSOに設定しているが別途設定が必要
 		dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 		dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
@@ -1339,39 +913,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon_->GetCommandList());
 
 		dxCommon_->PostDraw();
-		////今回はRenderTargetからPresentにする
-		//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		////TransitionのBarrierを張る
-		//commandList->ResourceBarrier(1, &barrier);
-
-		////コマンドリストの内容を確定させる
-		//hr = commandList->Close();
-		//assert(SUCCEEDED(hr));
-
-		////GPUにコマンドリストの実行を行わせる
-		//Microsoft::WRL::ComPtr<ID3D12CommandList> commandLists[] = { commandList };
-		//commandQueue->ExecuteCommandLists(1, commandLists->GetAddressOf());
-		////GPUとOSに画面の交換を行うよう通知する
-		//swapChain->Present(1, 0);
-		////Fenceの値を更新
-		//fenceValue++;
-		////GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		//commandQueue->Signal(fence.Get(), fenceValue);
-		////Fenceの値が指定したSignal値のたどり着いているか確認する
-		////GetCompletedValueの初期値はFence作成時に渡した初期値
-		//if (fence->GetCompletedValue() < fenceValue) {
-		//	//指定したSignalにたどりついてないので、たどり着くまで待つようにイベントを設定する
-		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		//	//イベント待つ
-		//	WaitForSingleObject(fenceEvent, INFINITE);
-		//}
-
-		////次のフレーム用のコマンドリストを準備
-		//hr = commandAllocator->Reset();
-		//assert(SUCCEEDED(hr));
-		//hr = commandList->Reset(commandAllocator.Get(), nullptr);
-		//assert(SUCCEEDED(hr));
 
 		if (input_->Trigerkey(DIK_ESCAPE)){
 			break;
@@ -1448,4 +989,66 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	return 0;
 }
+//球の
+////緯度の方向に分割-π/2～π/2
+//for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+//	float lat = float(-M_PI) / 2.0f + (kLatEvery * latIndex);//現在の緯度(θ)
+//	//経度の方向に分割 0～2π
+//	for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+//		uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+//		float lon = lonIndex * kLonEvery;//現在の経度(φ)
 
+//		//頂点にデータを入力していく。基準点a
+//		vertexDate[start].position.x = cos(lat) * cos(lon);
+//		vertexDate[start].position.y = sin(lat);
+//		vertexDate[start].position.z = cos(lat) * sin(lon);
+//		vertexDate[start].position.w = 1.0f;
+//		vertexDate[start].texcoord = 
+//		{ float(lonIndex) / float(kSubdivision) ,
+//			1.0f - float(latIndex) / float(kSubdivision) };
+//		vertexDate[start].normal.x = vertexDate[start + 6].position.x;
+//		vertexDate[start].normal.y = vertexDate[start + 6].position.y;
+//		vertexDate[start].normal.z = vertexDate[start + 6].position.z;
+
+//		//基準点b
+//		vertexDate[start + 1].position.x = cos(lat + kLatEvery) * cos(lon);
+//		vertexDate[start + 1].position.y = sin(lat + kLatEvery);
+//		vertexDate[start + 1].position.z = cos(lat + kLatEvery) * sin(lon);
+//		vertexDate[start + 1].position.w = 1.0f;
+//		vertexDate[start + 1].texcoord =
+//		{ float(lonIndex) / float(kSubdivision) ,
+//			1.0f - float(latIndex+1) / float(kSubdivision) };
+//		//基準点c
+//		vertexDate[start + 2].position.x = cos(lat) * cos(lon + kLonEvery);
+//		vertexDate[start + 2].position.y = sin(lat);
+//		vertexDate[start + 2].position.z = cos(lat) * sin(lon + kLonEvery);
+//		vertexDate[start + 2].position.w = 1.0f;
+//		vertexDate[start + 2].texcoord =
+//		{ float(lonIndex+1) / float(kSubdivision) ,
+//			1.0f - float(latIndex) / float(kSubdivision) };
+//		//基準点c
+//		vertexDate[start + 3].position.x = cos(lat) * cos(lon + kLonEvery);
+//		vertexDate[start + 3].position.y = sin(lat);
+//		vertexDate[start + 3].position.z = cos(lat) * sin(lon + kLonEvery);
+//		vertexDate[start + 3].position.w = 1.0f;
+//		vertexDate[start + 3].texcoord =
+//		{ float(lonIndex+1) / float(kSubdivision) ,
+//			1.0f - float(latIndex) / float(kSubdivision) };
+//		//基準点b
+//		vertexDate[start + 4].position.x = cos(lat + kLatEvery) * cos(lon);
+//		vertexDate[start + 4].position.y = sin(lat + kLatEvery);
+//		vertexDate[start + 4].position.z = cos(lat + kLatEvery) * sin(lon);
+//		vertexDate[start + 4].position.w = 1.0f;
+//		vertexDate[start + 4].texcoord =
+//		{ float(lonIndex) / float(kSubdivision) ,
+//			1.0f - float(latIndex+1) / float(kSubdivision) };
+//		//基準点d
+//		vertexDate[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
+//		vertexDate[start + 5].position.y = sin(lat + kLatEvery);
+//		vertexDate[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLonEvery);
+//		vertexDate[start + 5].position.w = 1.0f;
+//		vertexDate[start + 5].texcoord =
+//		{ float(lonIndex+1) / float(kSubdivision) ,
+//			1.0f - float(latIndex+1) / float(kSubdivision) };
+//	}
+//}

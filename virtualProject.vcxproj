@@ -102,8 +102,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="math\Matrix.cpp" />
     <ClCompile Include="ResourceObject.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -117,8 +119,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="math\Matrix.h" />
+    <ClInclude Include="math\Vector2.h" />
+    <ClInclude Include="math\Vector3.h" />
+    <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="ResourceObject.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <ItemGroup>

@@ -19,12 +19,12 @@
     <Filter Include="シェーダーファイル">
       <UniqueIdentifier>{0b1af4e0-3d13-43db-9035-7129f87c73ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{56d68de0-d420-4ec0-b031-b630d81bc856}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -60,11 +60,17 @@
     <ClCompile Include="DirectXCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Matrix.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Matrix.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -99,6 +105,27 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Matrix.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

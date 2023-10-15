@@ -1,6 +1,10 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include<math.h>
+#include"Vector2.h"
+#include"Vector3.h"
+#include"Vector4.h"
+
 struct Matrix4x4 {
 	float m[4][4];
 };
@@ -8,25 +12,6 @@ struct Matrix4x4 {
 struct Matrix3x3{
 	float m[3][3];
 };
-
-struct Vector2 {
-	float x;
-	float y;
-};
-
-struct Vector3 {
-	float x;
-	float y;
-	float z;
-};
-
-struct Vector4 {
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
 
 class Matrix {
 public:
@@ -56,9 +41,6 @@ private:
 	Vector3 v1;
 
 	Vector3 v2;
-
-	char keys[256] = { 0 };
-	char preKeys[256] = { 0 };
 
 public:
 	Vector3 cross;

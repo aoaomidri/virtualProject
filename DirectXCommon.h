@@ -9,6 +9,7 @@
 #include <dxgi1_6.h>
 #pragma comment(lib,"dxgi.lib")
 
+
 class DirectXCommon{
 public:
 	DirectXCommon();
@@ -17,6 +18,8 @@ public:
 
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	static DirectXCommon* GetInstance();
 
 	//初期化
 	void Initialize(WinApp* winapp);
@@ -39,6 +42,10 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height);
+
+	void StartImgui();
+
+	void EndImgui();
 
 	//デバイス取得
 	ID3D12Device* GetDevice() const { return device.Get(); }
@@ -77,7 +84,8 @@ private://メンバ関数
 	//フェンスの初期化
 	void FenceInitialize();
 
-	
+	//Imguiの初期化
+	void ImguiInitialize();
 	
 
 private://メンバ変数
@@ -143,6 +151,6 @@ private:
 	void InitializeFixFPS();
 	//FPS固定更新
 	void UpdateFixFPS();
-
+	
 };
 

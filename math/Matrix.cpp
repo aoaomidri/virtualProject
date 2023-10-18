@@ -31,7 +31,12 @@ Matrix::Matrix(){
 	cross = { 0.0f,0.0f,0.0f };
 	v1 = { 1.2f,-3.9f,2.5f };
 	v2 = { 2.8f,0.4f,-1.3f };
-};
+}
+Matrix* Matrix::GetInstance(){
+	static Matrix instance;
+	return &instance;
+}
+;
 
 void Matrix::Update() {
 	
@@ -295,5 +300,13 @@ Matrix4x4 Matrix::MakeViewportMatrix(float left, float top, float width, float h
 	result.m[3][2] = minDepth;
 	result.m[3][3] = 1.0f;
 
+	return result;
+}
+
+Matrix4x4 Matrix::MakeIdentity4x4() {
+	Matrix4x4 result = { 0.0f };
+	for (int i = 0; i < 4; i++) {
+		result.m[i][i] = 1.0f;
+	}
 	return result;
 }

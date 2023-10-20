@@ -36,7 +36,7 @@ public:
 private:
 	HRESULT hr;
 
-	std::unique_ptr<GraphicsPipeline>GPL;
+	std::unique_ptr<GraphicsPipeline>GraphicsPipeline_;
 
 	ID3D12Device* device_ = nullptr;
 

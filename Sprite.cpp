@@ -9,12 +9,12 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
-	GPL = std::make_unique<GraphicsPipeline>();
+	GraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
 
 	device_ = device;
 	commandList_ = commandList;
 
-	GPL->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
+	GraphicsPipeline_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
 
 	makeSpriteResource();
 
@@ -53,8 +53,8 @@ void Sprite::Update(){
 void Sprite::Draw(ID3D12GraphicsCommandList* commandList){
 	
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	commandList->SetGraphicsRootSignature(GPL->GetRootSignature());
-	commandList->SetPipelineState(GPL->GetPipeLineState());
+	commandList->SetGraphicsRootSignature(GraphicsPipeline_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipeline_->GetPipeLineState());
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

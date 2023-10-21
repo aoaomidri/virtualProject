@@ -241,85 +241,85 @@ MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const st
 }
 
 
-ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
-	//1,中で必要になる変数の宣言
-	ModelData modelData;//構築するModelData
-	std::vector<Vector4> positions;//位置
-	std::vector<Vector3> normals;//法線
-	std::vector<Vector2> texcoords;//テクスチャ座標
-	std::string line;//ファイルから読んだ1行を格納するもの
-
-	//2,ファイルを開く
-
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());//とりあえず開けなかったら止める
-
-	//3,実際にファイルを読み、ModelDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;//先頭の識別子を読む
-		//identifierに応じた処理
-		if (identifier == "v") {
-			Vector4 position{};
-			s >> position.x >> position.y >> position.z;
-			position.w = 1.0f;
-			position.x *= -1;
-			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
-			Vector2 texcoord{};
-			s >> texcoord.x >> texcoord.y;
-			texcoord.y = 1.0f - texcoord.y;
-			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal{};
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1;
-			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
-			VertexData triangle[3]{};
-			//面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				//頂点の要素へのindexは「位置/UV/法線」で格納されているので、分解してindexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndices[3]{};
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');// /区切りでインデックスを読んでいく
-					elementIndices[element] = std::stoi(index);
-
-				}
-				//要素へのindexから、実際の要素の値を取得して、頂点を構築する
-				Vector4 position = positions[elementIndices[0] - 1];
-				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				/*VertexData vertex = { position,texcoord,normal };
-				modelData.vertices.push_back(vertex);*/
-				triangle[faceVertex] = { position,texcoord,normal };
-
-			}
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
-		}
-		else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
-		}
-
-	}
-
-	//4,ModelDataを返す
-	return modelData;
-}
+//ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+//	//1,中で必要になる変数の宣言
+//	ModelData modelData;//構築するModelData
+//	std::vector<Vector4> positions;//位置
+//	std::vector<Vector3> normals;//法線
+//	std::vector<Vector2> texcoords;//テクスチャ座標
+//	std::string line;//ファイルから読んだ1行を格納するもの
+//
+//	//2,ファイルを開く
+//
+//	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
+//	assert(file.is_open());//とりあえず開けなかったら止める
+//
+//	//3,実際にファイルを読み、ModelDataを構築していく
+//	while (std::getline(file, line)) {
+//		std::string identifier;
+//		std::istringstream s(line);
+//		s >> identifier;//先頭の識別子を読む
+//		//identifierに応じた処理
+//		if (identifier == "v") {
+//			Vector4 position{};
+//			s >> position.x >> position.y >> position.z;
+//			position.w = 1.0f;
+//			position.x *= -1;
+//			positions.push_back(position);
+//		}
+//		else if (identifier == "vt") {
+//			Vector2 texcoord{};
+//			s >> texcoord.x >> texcoord.y;
+//			texcoord.y = 1.0f - texcoord.y;
+//			texcoords.push_back(texcoord);
+//		}
+//		else if (identifier == "vn") {
+//			Vector3 normal{};
+//			s >> normal.x >> normal.y >> normal.z;
+//			normal.x *= -1;
+//			normals.push_back(normal);
+//		}
+//		else if (identifier == "f") {
+//			VertexData triangle[3]{};
+//			//面は三角形限定。その他は未対応
+//			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
+//				std::string vertexDefinition;
+//				s >> vertexDefinition;
+//				//頂点の要素へのindexは「位置/UV/法線」で格納されているので、分解してindexを取得する
+//				std::istringstream v(vertexDefinition);
+//				uint32_t elementIndices[3]{};
+//				for (int32_t element = 0; element < 3; ++element) {
+//					std::string index;
+//					std::getline(v, index, '/');// /区切りでインデックスを読んでいく
+//					elementIndices[element] = std::stoi(index);
+//
+//				}
+//				//要素へのindexから、実際の要素の値を取得して、頂点を構築する
+//				Vector4 position = positions[elementIndices[0] - 1];
+//				Vector2 texcoord = texcoords[elementIndices[1] - 1];
+//				Vector3 normal = normals[elementIndices[2] - 1];
+//				/*VertexData vertex = { position,texcoord,normal };
+//				modelData.vertices.push_back(vertex);*/
+//				triangle[faceVertex] = { position,texcoord,normal };
+//
+//			}
+//			modelData.vertices.push_back(triangle[2]);
+//			modelData.vertices.push_back(triangle[1]);
+//			modelData.vertices.push_back(triangle[0]);
+//		}
+//		else if (identifier == "mtllib") {
+//			//materialTemplateLibraryファイルの名前を取得する
+//			std::string materialFilename;
+//			s >> materialFilename;
+//			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
+//			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+//		}
+//
+//	}
+//
+//	//4,ModelDataを返す
+//	return modelData;
+//}
 
 
 
@@ -344,11 +344,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
 	dxCommon_->Initialize(window_.get());
 
+	auto textureManager = std::make_unique<TextureManager>();
+	textureManager->Initialize(dxCommon_->GetDevice(),
+		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
+
+	textureManager->Load("resources/uvChecker.png");
+	textureManager->MakeShaderResourceView();
+
 	auto sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	sprite_->SetIsDraw(false);
+	Vector2 position_ = { 100.0f,100.0f };
 
-
-
+	auto sprite2_ = std::make_unique<Sprite>();
+	sprite2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	sprite2_->SetPosition(position_);
+	sprite2_->SetIsDraw(false);
 	/*ここから先整理前なのでごちゃごちゃしてるゾーン*/
 
 	////モデル読み込み
@@ -777,18 +788,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//device->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
 
 
-	//ImGuiの初期化
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(window_->GetHwnd());
-	ImGui_ImplDX12_Init(dxCommon_->GetDevice(),
-		dxCommon_->GetSwapChainDesc().BufferCount,
-		dxCommon_->GetRTVDesc().Format,
-		dxCommon_->GetSRVHeap(),
-		dxCommon_->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
-		dxCommon_->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart());*/
-
 	MSG msg{};
 	/*ShaderResourceViewの生成*/
 	////mateDataを基にSRVの設定
@@ -851,6 +850,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		input_->Update();
 
 		sprite_->Update();
+		sprite2_->Update();
 		//if (input_->TrigerRight()) {
 		//	transform.translate.x += 1.0f;
 		//}
@@ -976,7 +976,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxCommon_->PreDraw();
 
 
-		sprite_->Draw(dxCommon_->GetCommandList());
+		sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle());
+		sprite2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle());
 		////RootSignatureを設定。PSOに設定しているが別途設定が必要
 		//dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 		//dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());

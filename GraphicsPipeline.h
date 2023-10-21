@@ -60,7 +60,7 @@ private:
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 

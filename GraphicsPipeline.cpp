@@ -23,18 +23,18 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	//RootSignature作成
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	////DescriptorRangeの設定
-	//D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	//descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	//descriptorRange[0].NumDescriptors = 1;//数は1つ
-	//descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	//descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+	//DescriptorRangeの設定
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRange[0].NumDescriptors = 1;//数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[2] = {};
+	D3D12_ROOT_PARAMETER rootParameter[3] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[0].Descriptor.ShaderRegister = 0;
+	rootParameter[0].Descriptor.ShaderRegister = 1;
 
 	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
@@ -43,28 +43,28 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
 
-	//rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	//rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	//rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-	//rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
 
 	//rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	//rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	//rootParameter[3].Descriptor.ShaderRegister = 2;
 
-	////Samplerの設定
-	//D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
-	//staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
-	//staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0～1の範囲外をリピート
-	//staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	//staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	//staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
-	//staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
-	//staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
-	//staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	//Samplerの設定
+	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
+	staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0～1の範囲外をリピート
+	staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
+	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
+	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 
-	/*descriptionRootSignature.pStaticSamplers = staticSampler;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSampler);*/
+	descriptionRootSignature.pStaticSamplers = staticSampler;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSampler);
 
 	//シリアライズしてバイナリする
 	
@@ -89,10 +89,10 @@ void GraphicsPipeline::makeInputLayout(){
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	//inputElementDescs[1].SemanticName = "TEXCOORD";
-	//inputElementDescs[1].SemanticIndex = 0;
-	//inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	//inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs[1].SemanticName = "TEXCOORD";
+	inputElementDescs[1].SemanticIndex = 0;
+	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	//inputElementDescs[2].SemanticName = "NORMAL";
 	//inputElementDescs[2].SemanticIndex = 0;
 	//inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;

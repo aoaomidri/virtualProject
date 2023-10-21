@@ -353,13 +353,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	auto sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	//sprite_->SetIsDraw(false);
+	sprite_->SetIsDraw(false);
 	Vector2 position_ = { 100.0f,100.0f };
 
 	auto sprite2_ = std::make_unique<Sprite>();
 	sprite2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	sprite2_->SetPosition(position_);
-	//sprite2_->SetIsDraw(false);
+	sprite2_->SetIsDraw(false);
 	/*ここから先整理前なのでごちゃごちゃしてるゾーン*/
 
 	////モデル読み込み

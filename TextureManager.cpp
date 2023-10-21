@@ -21,6 +21,8 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	device_ = device;
 	commandList_ = commandList;
 	srvDescriptorHeap_ = srvDescriptorHeap;
+	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipeline2D_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
 
 }
 
@@ -29,26 +31,41 @@ void TextureManager::Finalize() {
 }
 
 
-void TextureManager::Load(const std::string& filePath){
+void TextureManager::Load(const std::string& filePath, uint32_t index){
 	mipImages = LoadTexture(filePath);
 	metadata = mipImages.GetMetadata();
-	textureResource = CreateTextureResource(device_, metadata);
-	intermediateResource = UploadTextureData(textureResource, mipImages, device_, commandList_);
-}
+	textureBuffers_[index] = CreateTextureResource(device_, metadata);
+	intermediateBuffers_[index] = UploadTextureData(textureBuffers_[index], mipImages, device_, commandList_);
 
-void TextureManager::MakeShaderResourceView() {
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);	
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	textureSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1);
-	textureSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1);
+	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1 + index);
+	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1 + index);
 
 	//SRVの生成
-	device_->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
+	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
+}
+
+void TextureManager::PreDraw2D(){
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList_->SetGraphicsRootSignature(GraphicsPipeline2D_->GetRootSignature());
+	commandList_->SetPipelineState(GraphicsPipeline2D_->GetPipeLineState());
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void TextureManager::PostDraw2D()
+{
+}
+
+void TextureManager::MakeShaderResourceView() {
+	
 
 
 

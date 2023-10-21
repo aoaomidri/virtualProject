@@ -2,7 +2,8 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-
+#include<array>
+#include"GraphicsPipeline.h"
 #include"Texture.h"
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -20,9 +21,13 @@ public:
 	//	シングルトンインスタンスの取得
 	static TextureManager* GetInstance();
 
-	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle()const { return textureSrvHandleGPU; }
+	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU[index]; }
 
-	void Load(const std::string& filePath);
+	void Load(const std::string& filePath, uint32_t index);
+
+	void PreDraw2D();
+	
+	void PostDraw2D();
 
 	void MakeShaderResourceView();
 
@@ -46,16 +51,27 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap,
 		uint32_t descriptorSize, uint32_t index);
 private:
+	//SRVの最大個数
+	static const size_t kMaxSRVConst = 257;
+
+	//テクスチャバッファ
+	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> textureBuffers_;
+
+	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> intermediateBuffers_;
+
 
 	ID3D12Device* device_ = nullptr;
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
+
 
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;
 
 	////SRVを作成するDescripterHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kMaxSRVConst]{};
 
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;

@@ -1,5 +1,4 @@
 #include "Sprite.h"
-#include "TextureManager.h"
 #include"DirectXCommon.h"
 #include <cassert>
 #include <d3dcompiler.h>
@@ -9,12 +8,12 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
-	GraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
+	//GraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
 
 	device_ = device;
 	commandList_ = commandList;
 
-	GraphicsPipeline_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
+	//GraphicsPipeline_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
 
 	makeSpriteResource();
 
@@ -64,12 +63,12 @@ void Sprite::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_H
 		return;
 	}
 	
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	commandList->SetGraphicsRootSignature(GraphicsPipeline_->GetRootSignature());
-	commandList->SetPipelineState(GraphicsPipeline_->GetPipeLineState());
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	////RootSignatureを設定。PSOに設定しているが別途設定が必要
+	//commandList->SetGraphicsRootSignature(GraphicsPipeline_->GetRootSignature());
+	//commandList->SetPipelineState(GraphicsPipeline_->GetPipeLineState());
+	////commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
@@ -203,13 +202,13 @@ void Sprite::makeSpriteResource(){
 	//今回は赤を書き込んでみる
 	*materialDate = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	//リソースを作る
-	wvpResource = CreateBufferResource(device_, sizeof(Matrix4x4));
-	
-	//アドレス取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	//単位行列を書き込む
-	*wvpData = Matrix::GetInstance()->MakeIdentity4x4();
+	////リソースを作る
+	//wvpResource = CreateBufferResource(device_, sizeof(Matrix4x4));
+	//
+	////アドレス取得
+	//wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	////単位行列を書き込む
+	//*wvpData = Matrix::GetInstance()->MakeIdentity4x4();
 
 }
 

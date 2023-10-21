@@ -44,7 +44,7 @@ public:
 private:
 	HRESULT hr;
 
-	std::unique_ptr<GraphicsPipeline>GraphicsPipeline_;
+	//std::unique_ptr<GraphicsPipeline>GraphicsPipeline_;
 
 	ID3D12Device* device_ = nullptr;
 

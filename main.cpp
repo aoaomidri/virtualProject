@@ -348,18 +348,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureManager->Initialize(dxCommon_->GetDevice(),
 		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
 
-	textureManager->Load("resources/uvChecker.png");
-	textureManager->MakeShaderResourceView();
+	textureManager->Load("resources/uvChecker.png", 0);
+	textureManager->Load("resources/rock.png", 1);
 
 	auto sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	sprite_->SetIsDraw(false);
+	//sprite_->SetIsDraw(false);
 	Vector2 position_ = { 100.0f,100.0f };
 
 	auto sprite2_ = std::make_unique<Sprite>();
 	sprite2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	sprite2_->SetPosition(position_);
-	sprite2_->SetIsDraw(false);
+	//sprite2_->SetIsDraw(false);
 	/*ここから先整理前なのでごちゃごちゃしてるゾーン*/
 
 	////モデル読み込み
@@ -759,7 +759,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	//DescriptorSizeを取得しておく
-	const uint32_t descriptorSizeSRV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//const uint32_t descriptorSizeSRV = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//const uint32_t descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
@@ -974,10 +974,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxCommon_->EndImgui();
 
 		dxCommon_->PreDraw();
+		textureManager->PreDraw2D();
 
-
-		sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle());
-		sprite2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle());
+		sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle(0));
+		sprite2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(1));
 		////RootSignatureを設定。PSOに設定しているが別途設定が必要
 		//dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 		//dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
@@ -1011,7 +1011,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			
 		//実際ののCommandListのImGuiの描画コマンドを積む
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon_->GetCommandList());
-
+		textureManager->PostDraw2D();
 		dxCommon_->PostDraw();
 
 		if (input_->Trigerkey(DIK_ESCAPE)){

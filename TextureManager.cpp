@@ -8,7 +8,7 @@
 //}
 
 TextureManager::~TextureManager(){
-
+	
 }
 
 
@@ -23,6 +23,8 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	srvDescriptorHeap_ = srvDescriptorHeap;
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline2D_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
+	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipeline3D_->Initialize(device_, L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl");
 
 }
 
@@ -61,6 +63,19 @@ void TextureManager::PreDraw2D(){
 }
 
 void TextureManager::PostDraw2D()
+{
+}
+
+void TextureManager::PreDraw3D(){
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList_->SetGraphicsRootSignature(GraphicsPipeline3D_->GetRootSignature());
+	commandList_->SetPipelineState(GraphicsPipeline3D_->GetPipeLineState());
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void TextureManager::PostDraw3D()
 {
 }
 

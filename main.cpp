@@ -3,9 +3,8 @@
 #include"DirectXCommon.h"
 #include"TextureManager.h"
 #include"Sprite.h"
+#include"Object3D.h"
 #include <cassert>
-#include<fstream>
-#include<sstream>
 
 
 //struct VertexData {
@@ -14,41 +13,41 @@
 //	Vector3 normal;
 //};
 
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
-};
-
-
-struct Material{
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
+//struct MaterialData {
+//	std::string textureFilePath;
+//};
+//
+//struct ModelData {
+//	std::vector<VertexData> vertices;
+//	MaterialData material;
+//};
+//
+//
+//struct Material{
+//	Vector4 color;
+//	int32_t enableLighting;
+//	float padding[3];
+//	Matrix4x4 uvTransform;
+//};
 
 //struct TransformationMatrix{
 //	Matrix4x4 WVP;
 //	Matrix4x4 World;
 //};
-
-struct DirectionalLight {
-	Vector4 color;		//ライトの色
-	Vector3 direction;	//ライトの向き
-	float intensity;	//輝度
-};
-
-Matrix4x4 MakeIdentity4x4() {
-	Matrix4x4 result = { 0.0f };
-	for (int i = 0; i < 4; i++) {
-		result.m[i][i] = 1.0f;
-	}
-	return result;
-}
+//
+//struct DirectionalLight {
+//	Vector4 color;		//ライトの色
+//	Vector3 direction;	//ライトの向き
+//	float intensity;	//輝度
+//};
+//
+//Matrix4x4 MakeIdentity4x4() {
+//	Matrix4x4 result = { 0.0f };
+//	for (int i = 0; i < 4; i++) {
+//		result.m[i][i] = 1.0f;
+//	}
+//	return result;
+//}
 
 IDxcBlob* CompileShader(
 	//CompilerするShaderファイルへのパス
@@ -212,33 +211,33 @@ struct D3DResourceLeakChecker {
 	}
 };
 
-MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-	//1,中で必要となる変数の宣言
-	MaterialData materialData;//構築するMaterialData
-	std::string line;//ファイルから読んだ1行を格納するもの	
-
-	//2,ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);
-	assert(file.is_open());//とりあえず開けなかったら止める
-
-	//3,実際にファイルを読み、MaterialDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		//identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-
-	}
-	//4,MaterialDataを返す
-	return materialData;
-}
+//MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+//	//1,中で必要となる変数の宣言
+//	MaterialData materialData;//構築するMaterialData
+//	std::string line;//ファイルから読んだ1行を格納するもの	
+//
+//	//2,ファイルを開く
+//	std::ifstream file(directoryPath + "/" + filename);
+//	assert(file.is_open());//とりあえず開けなかったら止める
+//
+//	//3,実際にファイルを読み、MaterialDataを構築していく
+//	while (std::getline(file, line)) {
+//		std::string identifier;
+//		std::istringstream s(line);
+//		s >> identifier;
+//
+//		//identifierに応じた処理
+//		if (identifier == "map_Kd") {
+//			std::string textureFilename;
+//			s >> textureFilename;
+//			//連結してファイルパスにする
+//			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+//		}
+//
+//	}
+//	//4,MaterialDataを返す
+//	return materialData;
+//}
 
 
 //ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
@@ -329,16 +328,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	D3DResourceLeakChecker leakCheck;
 
-	Matrix* matrix = new Matrix;
-
 	auto window_ = std::make_unique<WinApp>();
 	window_->Initialize();
 
-	//HRESULT hr;
-
 	/*キー入力の初期化処理*/
 	auto input_ = std::make_unique<Input>();
-
 	input_->Initialize(window_.get());
 
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
@@ -350,6 +344,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	textureManager->Load("resources/uvChecker.png", 0);
 	textureManager->Load("resources/rock.png", 1);
+
+	auto object3D_ = std::make_unique<Object3D>();
+	object3D_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	object3D_->SetPosition(Vector3{ 1.0f,0.0f,1.0f });
+	object3D_->SetRotate(Vector3{ 0.0f,1.0f,0.0f });
+	object3D_->SetScale(Vector3{ 1.0f,1.0f, 1.0f });
+	
+
+
+	auto object3D2_ = std::make_unique<Object3D>();
+	object3D2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	Vector3 scale3D_ = { 1.0f,1.0f,1.0f };
+	Vector3 position3D_ = { 0.0f,0.0f,0.0f };
+	object3D2_->SetPosition(position3D_);
+	object3D2_->SetScale(scale3D_);
 
 	auto sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
@@ -851,6 +860,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		sprite_->Update();
 		sprite2_->Update();
+
+		object3D_->Update();
+		object3D2_->Update();
+
 		//if (input_->TrigerRight()) {
 		//	transform.translate.x += 1.0f;
 		//}
@@ -972,8 +985,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//uvTransformMatrixSprite = matrix->Multiply(uvTransformMatrixSprite, matrix->MakeTranslateMatrix(uvTransformSprite.translate));
 		//materialDateSprite->uvTransform = uvTransformMatrixSprite;
 		dxCommon_->EndImgui();
-
 		dxCommon_->PreDraw();
+		textureManager->PreDraw3D();
+
+		object3D_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(0));
+		object3D2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(1));
+		
+
+		textureManager->PostDraw3D();
 		textureManager->PreDraw2D();
 
 		sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle(0));
@@ -1077,7 +1096,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureResource[1]->Release();
 	textureResource[1].Reset();*/
 
-	delete matrix;
 
 #ifdef _DEBUG
 	//debugController->Release();

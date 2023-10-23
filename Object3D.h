@@ -1,0 +1,111 @@
+#pragma once
+#include "math/Matrix.h"
+#include <Windows.h>
+#include <wrl.h>
+#include"Transform.h"
+#include"Log.h"
+#include<vector>
+#include<fstream>
+#include<sstream>
+struct MaterialData {
+	std::string textureFilePath;
+};
+
+struct ModelData {
+	std::vector<VertexData> vertices;
+	MaterialData material;
+};
+
+struct Material {
+	Vector4 color;
+	int32_t enableLighting;
+	float padding[3];
+	Matrix4x4 uvTransform;
+};
+struct DirectionalLight {
+	Vector4 color;		//ライトの色
+	Vector3 direction;	//ライトの向き
+	float intensity;	//輝度
+};
+
+
+class Object3D{
+public:	
+public:
+
+
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	
+	void Update();
+
+	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+
+	void SetPosition(const Vector3& position) { position_ = position; }
+
+	void SetScale(const Vector3& scale) { scale_ = scale; }
+
+	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+
+	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
+
+	const Vector3& GetPosition()const { return position_; }
+
+	const bool& GetIsDraw()const { return isDraw_; }
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
+		ID3D12Device* device, size_t sizeInBytes);
+
+	void makeResource();
+	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+private:
+	
+
+
+
+	HRESULT hr;
+
+	ID3D12Device* device_ = nullptr;
+
+	ID3D12GraphicsCommandList* commandList_ = nullptr;
+
+	//頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
+	//頂点リソースにデータを書き込む
+	VertexData* vertexDate = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+	//マテリアルにデータを書き込む
+	Material* materialDate = nullptr;
+
+	//モデル読み込み
+	ModelData modelData = LoadObjFile("resources/skyDome", "skyDome.obj");
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
+
+	//データを書き込む
+	TransformationMatrix* wvpData = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
+
+	//マテリアルにデータを書き込む
+	DirectionalLight* directionalLightDate = nullptr;
+
+	//データを書き込む
+
+	Vector3 position_ = { 0.0f,0.0f ,0.0f };
+
+	Vector3 scale_ = { 1.0f,1.0f ,1.0f };
+
+	Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
+
+	Transform transform{};
+
+	Transform cameraTransform{};
+
+	bool isDraw_ = true;
+};
+

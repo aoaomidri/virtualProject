@@ -19,6 +19,8 @@ enum BlendMode {
 
 class GraphicsPipeline{
 public:
+	~GraphicsPipeline();
+
 	static GraphicsPipeline* GetInstance();
 
 	void Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname);
@@ -60,7 +62,7 @@ private:
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 

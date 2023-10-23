@@ -7,21 +7,17 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+Sprite::~Sprite(){
+	
+	
+}
+
 void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
-	//GraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
 
 	device_ = device;
 	commandList_ = commandList;
 
-	//GraphicsPipeline_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl");
-
 	makeSpriteResource();
-
-	transform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};
 
 	transformSprite = {
 		{1.0f,1.0f,1.0f},

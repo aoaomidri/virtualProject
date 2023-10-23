@@ -1,6 +1,10 @@
 #include "GraphicsPipeline.h"
 #include <cassert>
 
+GraphicsPipeline::~GraphicsPipeline(){
+	
+}
+
 GraphicsPipeline* GraphicsPipeline::GetInstance() {
 	static GraphicsPipeline Instance;
 	return &Instance;
@@ -31,7 +35,7 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[3] = {};
+	D3D12_ROOT_PARAMETER rootParameter[4] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 1;
@@ -48,9 +52,9 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
 	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
 
-	//rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	//rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	//rootParameter[3].Descriptor.ShaderRegister = 2;
+	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[3].Descriptor.ShaderRegister = 2;
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
@@ -93,10 +97,10 @@ void GraphicsPipeline::makeInputLayout(){
 	inputElementDescs[1].SemanticIndex = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	//inputElementDescs[2].SemanticName = "NORMAL";
-	//inputElementDescs[2].SemanticIndex = 0;
-	//inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	//inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs[2].SemanticName = "NORMAL";
+	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
@@ -155,7 +159,7 @@ void GraphicsPipeline::makeBlendState(){
 void GraphicsPipeline::makeRasterizerState(){
 	
 	//裏面(時計回り)を表示しない
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterrizerDesc.CullMode = /*D3D12_CULL_MODE_BACK*/D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }

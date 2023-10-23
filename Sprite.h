@@ -2,27 +2,19 @@
 #include "math/Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
-#include"GraphicsPipeline.h"
 #include"Transform.h"
+#include"Log.h"
 
 /// <summary>
 /// スプライト
 /// </summary>
 /// 
-struct VertexData {
-	Vector4 position;
-	Vector2 texcoord;
-	//Vector3 normal;
-};
-
-struct TransformationMatrix {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-};
 
 
 class Sprite {
 public:
+	~Sprite();
+
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
 	void Update();
@@ -44,15 +36,11 @@ public:
 private:
 	HRESULT hr;
 
-	//std::unique_ptr<GraphicsPipeline>GraphicsPipeline_;
-
 	ID3D12Device* device_ = nullptr;
 
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 	//頂点バッファービューを作成する
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
@@ -61,22 +49,14 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
-
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
 	//データを書き込む
-	Matrix4x4* wvpData = nullptr;
-
 	Matrix4x4* wvpDataSprite = nullptr;
 
 	Vector2 position_ = { 0.0f,0.0f };
-
-	Transform transform{};
 
 	Transform transformSprite{};
 

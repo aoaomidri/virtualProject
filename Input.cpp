@@ -9,7 +9,6 @@ Input::Input() {
 }
 
 Input::~Input(){
-	
 }
 
 

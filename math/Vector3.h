@@ -135,6 +135,13 @@ public:
 		return result;
 	}
 
+	float Length(const Vector3& v) {
+		float result{ 0.0f };
+		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
+		result = bulletNorm;
+		return result;
+	}
+
 private:
 };
 

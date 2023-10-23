@@ -28,22 +28,22 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 	};
 }
 
-void Object3D::Update(const Transform& ObjectSRT, const Transform& camera) {
-	transform.scale = scale_;
-	transform.rotate = rotate_;
+void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
 	if (!isDraw_) {
 		return;
 	}
 
 	//rotate_.y += 0.01f;
-
-	Matrix4x4 worldMatrix = Matrix::GetInstance()->MakeAffineMatrix(ObjectSRT.scale, ObjectSRT.rotate, ObjectSRT.translate);
+	worldMatrix_ = worldMatrix;
+	if (parent_){
+		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
+	}
 	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix(camera.scale, camera.rotate, camera.translate);
 	Matrix4x4 viewMatrix = Matrix::GetInstance()->Inverce(cameraMatrix);
 	Matrix4x4 projectionMatrix = Matrix::GetInstance()->MakePerspectiveFovMatrix(0.45f, (1280.0f / 720.0f), 0.1f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix, Matrix::GetInstance()->Multiply(viewMatrix, projectionMatrix));
+	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, Matrix::GetInstance()->Multiply(viewMatrix, projectionMatrix));
 	wvpData->WVP = worldViewProjectionMatrix;
-	wvpData->World = worldMatrix;
+	wvpData->World = worldMatrix_;
 
 
 }

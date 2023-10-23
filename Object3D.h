@@ -16,7 +16,7 @@ public:
 
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::string fileName);
 	
-	void Update(const Transform& ObjectSRT,const Transform& camera);
+	void Update(const Matrix4x4& worldMatrix,const Transform& camera);
 
 	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
@@ -25,7 +25,7 @@ public:
 	void SetScale(const Vector3& scale) { scale_ = scale; }
 
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
-
+	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
 	const Vector3& GetPosition()const { return position_; }
@@ -38,6 +38,10 @@ public:
 	void makeResource();
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 	ModelData LoadObjFile(const std::string& filename);
+
+public:
+	Matrix4x4* parent_{};
+
 private:
 	const std::string ResourcesPath = "resources/";
 
@@ -81,6 +85,8 @@ private:
 	Vector3 scale_ = { 1.0f,1.0f ,1.0f };
 
 	Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
+
+	Matrix4x4 worldMatrix_{};
 
 	Transform transform{};
 

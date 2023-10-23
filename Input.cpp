@@ -2,13 +2,10 @@
 
 #include<cassert>
 
-Input::Input() {
-	keyboard = nullptr;
-	directInput = nullptr;
-	
-}
-
-Input::~Input(){
+Input* Input::GetInstance()
+{
+	static Input instance;
+	return &instance;
 }
 
 
@@ -33,6 +30,11 @@ void Input::Initialize(WinApp* winapp) {
 	(winapp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
+	ZeroMemory(&xinputState, sizeof(XINPUT_STATE));
+
+	DWORD Dr = XInputGetState(0, &xinputState);
+
+	hr == ERROR_SUCCESS ? isConnectPad = true : isConnectPad = false;
 }
 
 void Input::Update() {
@@ -41,6 +43,32 @@ void Input::Update() {
 	//全キーの入力状態を取得する
 	memcpy(prekey, key, sizeof(key));
 	keyboard->GetDeviceState(sizeof(key), key);
+
+	oldXInputState = xinputState;
+	DWORD dresult = XInputGetState(0, &xinputState);
+	//	接続状況の確認
+	dresult == ERROR_SUCCESS ? isConnectPad = true : isConnectPad = false;
+	if (isConnectPad) {
+
+		// デッドzoneの設定
+		if ((xinputState.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		{
+			xinputState.Gamepad.sThumbLX = 0;
+			xinputState.Gamepad.sThumbLY = 0;
+		}
+
+		if ((xinputState.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+			xinputState.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) &&
+			(xinputState.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+				xinputState.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		{
+			xinputState.Gamepad.sThumbRX = 0;
+			xinputState.Gamepad.sThumbRY = 0;
+		}
+	}
 
 }
 
@@ -131,5 +159,73 @@ bool Input::TrigerDown() {
 	return false;
 }
 
+
+bool Input::GetPadButton(UINT button)
+{
+	return xinputState.Gamepad.wButtons == button;
+}
+
+bool Input::GetPadButtonUp(UINT button)
+{
+	return xinputState.Gamepad.wButtons != button && oldXInputState.Gamepad.wButtons == button;
+}
+
+bool Input::GetPadButtonDown(UINT button)
+{
+	return xinputState.Gamepad.wButtons == button && oldXInputState.Gamepad.wButtons != button;
+}
+
+Vector2 Input::GetPadLStick()
+{
+	SHORT x = xinputState.Gamepad.sThumbLX;
+	SHORT y = xinputState.Gamepad.sThumbLY;
+
+	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
+}
+
+Vector2 Input::GetPadRStick()
+{
+	SHORT x = xinputState.Gamepad.sThumbRX;
+	SHORT y = xinputState.Gamepad.sThumbRY;
+
+	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
+}
+
+bool Input::GetLTriggerDown()
+{
+	//	デッドラインの設定必須
+	if (oldXInputState.Gamepad.bLeftTrigger < 128 && xinputState.Gamepad.bLeftTrigger >= 128)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Input::GetRTriggerDown()
+{
+	//	デッドラインの設定必須
+	if (oldXInputState.Gamepad.bRightTrigger < 128 && xinputState.Gamepad.bRightTrigger >= 128)
+	{
+		return true;
+	}
+	return false;
+}
+bool Input::GetLTrigger()
+{
+	//	デッドラインの設定必須
+	if (xinputState.Gamepad.bLeftTrigger >= 128) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::GetRTrigger()
+{
+	//	デッドラインの設定必須
+	if (xinputState.Gamepad.bRightTrigger >= 128) {
+		return true;
+	}
+	return false;
+}
 
 

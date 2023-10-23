@@ -3,15 +3,27 @@
 #include<wrl.h>
 #define DIRECTINPUT_VERSION  0x0800
 #include<dinput.h>
+#include<Xinput.h>
+#include"math/Vector2.h"
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"xinput.lib")
+
 
 class Input
 {
 public:
-	Input();
-	~Input();
+public:
+	Input() = default;
+	~Input() = default;
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// これにより1つしか生成されなくなる
+	/// </summary>
+	/// <returns>KeyInputのシングルトンインスタンス</returns>
+	static Input* GetInstance();
 
 	//初期化
 	void Initialize(WinApp* winapp);
@@ -42,11 +54,36 @@ public:
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	//コントローラー
+	bool GetPadButton(UINT button);
+
+	bool GetPadButtonUp(UINT button);
+
+	bool GetPadButtonDown(UINT button);
+
+	Vector2 GetPadLStick();
+
+	Vector2 GetPadRStick();
+
+	bool GetLTriggerDown();
+
+	bool GetRTriggerDown();
+
+	bool GetLTrigger();
+
+	bool GetRTrigger();
+
 private:
 	BYTE key[256] = {};
 	BYTE prekey[256] = {};
 
+	bool isConnectPad = false;
+
 	WinApp* winapp_ = nullptr;
+
+	XINPUT_STATE xinputState;
+
+	XINPUT_STATE oldXInputState;
 
 	ComPtr<IDirectInputDevice8> keyboard;
 

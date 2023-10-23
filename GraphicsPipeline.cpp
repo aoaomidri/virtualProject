@@ -159,7 +159,7 @@ void GraphicsPipeline::makeBlendState(){
 void GraphicsPipeline::makeRasterizerState(){
 	
 	//裏面(時計回り)を表示しない
-	rasterrizerDesc.CullMode = /*D3D12_CULL_MODE_BACK*/D3D12_CULL_MODE_NONE;
+	rasterrizerDesc.CullMode =/* D3D12_CULL_MODE_BACK*/D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }

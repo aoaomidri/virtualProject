@@ -2,6 +2,8 @@
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
+#define _USE_MATH_DEFINES
+#include<math.h>
 class Vector3 {
 public:
 	float x, y, z;
@@ -97,7 +99,7 @@ public:
 		return result;
 	}
 
-	Vector3 Mutiply(const Vector3& vec, const float speed) {
+	static Vector3 Mutiply(const Vector3& vec, const float speed) {
 		Vector3 result{ 0 };
 		result.x = vec.x * speed;
 		result.y = vec.y * speed;
@@ -105,12 +107,30 @@ public:
 		return result;
 	};
 
-	Vector3 Cross(const Vector3& vA, const Vector3& vB) {
+	static Vector3 Cross(const Vector3& vA, const Vector3& vB) {
 		Vector3 result{};
 
 		result = {
 			(vA.y * vB.z) - (vA.z * vB.y), (vA.z * vB.x) - (vA.x * vB.z),
 			(vA.x * vB.y) - (vA.y * vB.x) };
+
+		return result;
+	}
+
+	float Dot(const Vector3& v1, const Vector3& v2) {
+		float result = 0;
+		result = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
+		return result;
+	}
+
+	Vector3 Normalize(const Vector3& v) {
+		Vector3 result{ 0, 0, 0 };
+		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
+
+		if (bulletNorm != 0.0f) {
+
+			result = { (v.x / bulletNorm), (v.y / bulletNorm), (v.z / bulletNorm) };
+		}
 
 		return result;
 	}

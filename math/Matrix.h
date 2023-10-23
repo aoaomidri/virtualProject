@@ -1,6 +1,4 @@
 #pragma once
-#define _USE_MATH_DEFINES
-#include<math.h>
 #include"Vector2.h"
 #include"Vector3.h"
 #include"Vector4.h"
@@ -60,6 +58,8 @@ public:
 	Matrix4x4 MakeRotateMatrixX(const Vector3& rot);
 	Matrix4x4 MakeRotateMatrixY(const Vector3& rot);
 	Matrix4x4 MakeRotateMatrixZ(const Vector3& rot);
+
+	Matrix4x4 MakeRotateMatrix(const Vector3& rot);
 	
 
 	Matrix4x4 MakeTranslateMatrix(const Vector3& translate_);
@@ -84,6 +84,8 @@ public:
 
 	//ベクトル変換
 	Vector3 Transform(const Vector3& v, const Matrix4x4& m);
+
+	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
 
 };

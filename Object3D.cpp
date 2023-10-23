@@ -1,12 +1,19 @@
 #include "Object3D.h"
 #include <cassert>
+#include<fstream>
+#include<sstream>
 
-void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+
+void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList,const std::string fileName) {
 
 	device_ = device;
 	commandList_ = commandList;
 
+	modelData = LoadObjFile(fileName);
+
 	makeResource();
+
+	
 
 	transform = {
 		{1.0f,1.0f,1.0f},
@@ -17,22 +24,21 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 	cameraTransform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,-10.0f}
+		{0.0f,2.0f,-10.0f}
 	};
 }
 
-void Object3D::Update() {
-	transform.translate = position_;
+void Object3D::Update(const Transform& ObjectSRT, const Transform& camera) {
 	transform.scale = scale_;
 	transform.rotate = rotate_;
 	if (!isDraw_) {
 		return;
 	}
 
-	rotate_.y += 0.01f;
+	//rotate_.y += 0.01f;
 
-	Matrix4x4 worldMatrix = Matrix::GetInstance()->MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+	Matrix4x4 worldMatrix = Matrix::GetInstance()->MakeAffineMatrix(ObjectSRT.scale, ObjectSRT.rotate, ObjectSRT.translate);
+	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix(camera.scale, camera.rotate, camera.translate);
 	Matrix4x4 viewMatrix = Matrix::GetInstance()->Inverce(cameraMatrix);
 	Matrix4x4 projectionMatrix = Matrix::GetInstance()->MakePerspectiveFovMatrix(0.45f, (1280.0f / 720.0f), 0.1f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix, Matrix::GetInstance()->Multiply(viewMatrix, projectionMatrix));
@@ -168,7 +174,7 @@ MaterialData Object3D::LoadMaterialTemplateFile(const std::string& directoryPath
 }
 
 
-ModelData Object3D::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData Object3D::LoadObjFile(const std::string& filename) {
 	//1,中で必要になる変数の宣言
 	ModelData modelData;//構築するModelData
 	std::vector<Vector4> positions;//位置
@@ -178,7 +184,7 @@ ModelData Object3D::LoadObjFile(const std::string& directoryPath, const std::str
 
 	//2,ファイルを開く
 
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
+	std::ifstream file(ResourcesPath + filename + "/" + filename + ".obj");//ファイルを開く
 	assert(file.is_open());//とりあえず開けなかったら止める
 
 	//3,実際にファイルを読み、ModelDataを構築していく
@@ -239,7 +245,7 @@ ModelData Object3D::LoadObjFile(const std::string& directoryPath, const std::str
 			std::string materialFilename;
 			s >> materialFilename;
 			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			modelData.material = LoadMaterialTemplateFile(ResourcesPath + filename, materialFilename);
 		}
 
 	}

@@ -7,36 +7,16 @@
 #include<vector>
 #include<fstream>
 #include<sstream>
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
-};
-
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
-struct DirectionalLight {
-	Vector4 color;		//ライトの色
-	Vector3 direction;	//ライトの向き
-	float intensity;	//輝度
-};
+#include"Model.h"
 
 
 class Object3D{
-public:	
 public:
 
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::string fileName);
 	
-	void Update();
+	void Update(const Transform& ObjectSRT,const Transform& camera);
 
 	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
@@ -57,9 +37,9 @@ public:
 
 	void makeResource();
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadObjFile(const std::string& filename);
 private:
-	
+	const std::string ResourcesPath = "resources/";
 
 
 
@@ -82,7 +62,7 @@ private:
 	Material* materialDate = nullptr;
 
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("resources/skyDome", "skyDome.obj");
+	ModelData modelData;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
 

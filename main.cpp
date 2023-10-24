@@ -143,7 +143,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureManager->Load("resources/EnemyParts/EnemyParts.png", 6);
 
 	auto box_ = std::make_unique<Object3D>();
-	box_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(),"box");	
+	box_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
 
 	auto box2_ = std::make_unique<Object3D>();
 	box2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
@@ -164,7 +164,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	enemyParts_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "EnemyParts");
 
 	auto skyDome_ = std::make_unique<Object3D>();
-	skyDome_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(),"skyDome");
+	skyDome_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
 	//skyDome_->SetIsDraw(false);
 
 	//auto sprite_ = std::make_unique<Sprite>();
@@ -179,10 +179,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/*初期化処理とかはここで終わり*/
 	MSG msg{};
-	
+
 	Transform floorTransform[3] = {};
-	
-	floorTransform[0]={
+
+	floorTransform[0] = {
 		{2.0f,0.5f,2.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
@@ -234,7 +234,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Transform cameraTransform{
 		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},		
+		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
@@ -254,17 +254,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Matrix4x4 moveFloorMatrix[3]{};
 
+	Matrix4x4 movePlayerMatrix{};
+
+	Matrix4x4 moveFloorTransformMatrix{};
+
 	Matrix4x4 skyDomeMatrix{};
 
 	Matrix4x4 goalMatrix{};
 
-	float Magnification = 1.0f;	
+	float Magnification = 1.0f;
 
-	float moveSpeed_ = 0.02f;
+	Vector3 moveSpeed_ = { 0.02f,0.0f,0.0f };
 
 	float EnemyMagnification = 1.0f;
 
-	float EnemyMoveSpeed_ = 0.01f;
+	float EnemyMoveSpeed_ = 0.02f;
 
 	const float playerSpeed_ = 0.1f;
 
@@ -356,14 +360,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		EnemyPartsTransform.rotate.x += 0.3f;
 
-		floorTransform[1].translate.x += moveSpeed_ * Magnification;
-
-		if (floorTransform[1].translate.x <= -4.0f) {
-			Magnification *= -1.0f;
-		}
-		else if (floorTransform[1].translate.x >= 4.0f) {
-			Magnification *= -1.0f;
-		}
+		
 
 		playerMatrix = Matrix::GetInstance()->MakeAffineMatrix(PlayerTransform.scale, PlayerTransform.rotate, PlayerTransform.translate);
 		enemyMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyTransform.scale, EnemyTransform.rotate, EnemyTransform.translate);
@@ -374,9 +371,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		skyDomeMatrix= Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
 		goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
 
+	
+
 		PlayerTransform.translate = { playerMatrix.m[3][0],playerMatrix.m[3][1], playerMatrix.m[3][2] };
 
-
+		movePlayerMatrix = Matrix::GetInstance()->MakeTranslateMatrix(PlayerTransform.translate);
+		moveFloorTransformMatrix = Matrix::GetInstance()->MakeTranslateMatrix(floorTransform[1].translate);
 
 		
 
@@ -416,18 +416,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}			
 		}
 		if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
-			PlayerTransform.translate.x += moveSpeed_ * Magnification;
-			//player_->parent_ = &moveFloorMatrix[1];
-			//playerMatrix = Matrix::GetInstance()->Multiply(playerMatrix, moveFloorMatrix[1]);
-			//PlayerTransform.translate = { playerMatrix.m[3][0],playerMatrix.m[3][1], playerMatrix.m[3][2] };
+			Vector3 PreTransPlayer = Matrix::GetInstance()->Transform(PlayerTransform.translate, Matrix::GetInstance()->Inverce(movePlayerMatrix));
+
+			Matrix4x4 playerMatrix_{
+				1.0f,0.0f,0.0f,0.0f,
+				0.0f,1.0f,0.0f,0.0f,
+				0.0f,0.0f,1.0f,0.0f,
+				PreTransPlayer.x,PreTransPlayer.y,PreTransPlayer.z,1.0f
+			};
+			PlayerTransform.translate.x+= moveSpeed_.x * Magnification;
+			////player_->parent_ = &moveFloorMatrix[1];
+			//playerMatrix_ = Matrix::GetInstance()->Multiply( playerMatrix_, (moveFloorMatrix[1]));
+
+			//playerMatrix.m[3][0] = playerMatrix_.m[3][0];
+			//playerMatrix.m[3][1] = playerMatrix_.m[3][1];
+			//playerMatrix.m[3][2] = playerMatrix_.m[3][2];
+			////movePlayerMatrix = Matrix::GetInstance()->Multiply(movePlayerMatrix, Matrix::GetInstance()->Inverce(Matrix::GetInstance()->MakeScaleMatrix(floorTransform[1].scale)));
+			////movePlayerMatrix = Matrix::GetInstance()->Multiply(movePlayerMatrix, Matrix::GetInstance()->Inverce(Matrix::GetInstance()->MakeTranslateMatrix(Vector3{ 0.0f,0.0f,PlayerTransform.translate.z })));
+
+			///*PlayerTransform.translate = { 
+			//	playerMatrix_.m[3][0],
+			//	playerMatrix_.m[3][1],
+			//	playerMatrix_.m[3][2]
+			//};*/
 		}
 		else {
 			player_->parent_ = nullptr;
 		}
 
-
 		cameraTransform.translate = PlayerTransform.translate + cameraOffset;
 
+		floorTransform[1].translate.x += moveSpeed_.x * Magnification;
+
+		if (floorTransform[1].translate.x <= -4.0f) {
+			Magnification *= -1.0f;
+		}
+		else if (floorTransform[1].translate.x >= 4.0f) {
+			Magnification *= -1.0f;
+		}
 
 		if (IsCollisionOBBOBB(playerOBB,goalOBB)||IsCollisionOBBOBB(playerOBB,enemyOBB)){
 			PlayerTransform = {

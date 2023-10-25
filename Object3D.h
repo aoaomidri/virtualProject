@@ -20,6 +20,8 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
+	void DrawImgui();
+
 	void SetPosition(const Vector3& position) { position_ = position; }
 
 	void SetScale(const Vector3& scale) { scale_ = scale; }
@@ -85,6 +87,8 @@ private:
 	Vector3 scale_ = { 1.0f,1.0f ,1.0f };
 
 	Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
+
+	Vector4 chackMatrix_ = {};
 
 	Matrix4x4 worldMatrix_{};
 

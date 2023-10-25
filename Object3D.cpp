@@ -1,4 +1,5 @@
 #include "Object3D.h"
+#include"DirectXCommon.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>
@@ -38,6 +39,9 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
 	if (parent_){
 		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
 	}
+	position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
+	chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };
+
 	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix(camera.scale, camera.rotate, camera.translate);
 	Matrix4x4 viewMatrix = Matrix::GetInstance()->Inverce(cameraMatrix);
 	Matrix4x4 projectionMatrix = Matrix::GetInstance()->MakePerspectiveFovMatrix(0.45f, (1280.0f / 720.0f), 0.1f, 100.0f);
@@ -45,7 +49,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix_;
 
-
+	
 }
 
 void Object3D::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
@@ -63,6 +67,13 @@ void Object3D::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR
 	//3D三角の描画
 	commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
+
+}
+
+void Object3D::DrawImgui(){
+	ImGui::Begin("行列表示");
+	ImGui::DragFloat4("平行移動成分", &chackMatrix_.x, 0.01f);
+	ImGui::End();
 
 }
 

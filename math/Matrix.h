@@ -16,6 +16,8 @@ public:
 	Matrix();
 
 	static Matrix* GetInstance();
+
+	Matrix4x4 m;
 private:
 	Vector3 rotate;
 
@@ -42,6 +44,8 @@ private:
 
 	Vector3 v2;
 
+	
+
 public:
 	Vector3 cross;
 	Vector3 screenVertices[3];
@@ -51,6 +55,8 @@ public:
 	void Update();
 
 	Vector3 Cross(const Vector3& vA, const Vector3& vB);
+
+	Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
 
 	Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
 	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
@@ -87,5 +93,19 @@ public:
 
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
+
+	Matrix4x4 operator+(const Matrix4x4& mat) const;
+
+	Matrix4x4& operator+=(const Matrix4x4& mat);
+
+	Matrix4x4 operator-(const Matrix4x4& mat) const;
+
+	Matrix4x4& operator-=(const Matrix4x4& mat);
+
+	Matrix4x4 operator*(const Matrix4x4& mat) const;
+
+	Matrix4x4& operator*=(const Matrix4x4& mat);
+
+	Matrix4x4& operator=(const Matrix4x4& mat);
 
 };

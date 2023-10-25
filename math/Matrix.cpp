@@ -1,6 +1,7 @@
 #include "Matrix.h"
 #include<assert.h>
 #include<stdint.h>
+#include <xkeycheck.h>
 
 Matrix::Matrix(){
 	for (int i = 0; i < 4; i++) {
@@ -51,6 +52,18 @@ Vector3 Matrix::Cross(const Vector3& vA, const Vector3& vB) {
 		(vA.x * vB.y) - (vA.y * vB.x)
 	};
 
+	return result;
+}
+
+Matrix4x4 Matrix::Minus(const Matrix4x4& m1, const Matrix4x4& m2){
+	Matrix4x4 result{};
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			result.m[y][x] = m1.m[y][x] - m2.m[y][x];
+		}
+	}
 	return result;
 }
 
@@ -332,4 +345,69 @@ Matrix4x4 Matrix::MakeIdentity4x4() {
 		result.m[i][i] = 1.0f;
 	}
 	return result;
+}
+
+Matrix4x4 Matrix::operator+(const Matrix4x4& mat) const
+{
+	Matrix4x4 result{};
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			result.m[y][x] = this->m.m[y][x] + mat.m[y][x];
+		}
+	}
+
+	return result;
+}
+//Matrix4x4& Matrix::operator+=(const Matrix4x4& mat)
+//{
+//	this->m = this->m + mat;
+//	return this->m;
+//}
+//	減算
+Matrix4x4 Matrix::operator-(const Matrix4x4& mat) const
+{
+	Matrix4x4 result;
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			result.m[y][x] = this->m.m[y][x] - mat.m[y][x];
+		}
+	}
+	return result;
+}
+//Matrix4x4& Matrix::operator-=(const Matrix4x4& mat)
+//{
+//	*this = *this - mat;
+//	return this;
+//}
+//	行列の積
+Matrix4x4 Matrix::operator*(const Matrix4x4& mat) const
+{
+	Matrix4x4 result;
+
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++)
+		{
+			for (int i = 0; i < 4; i++) {
+				result.m[y][x] += m.m[y][i] * mat.m[i][x];
+			}
+		}
+	}
+
+	return result;
+}
+
+//Matrix4x4& Matrix::operator*=(const Matrix4x4& mat)
+//{
+//	*this = *this * mat;
+//	return *this;
+//}
+
+Matrix4x4& Matrix::operator=(const Matrix4x4& mat)
+{
+	this->m = mat;
+	return this->m;
 }

@@ -22,6 +22,24 @@
     <Filter Include="math">
       <UniqueIdentifier>{56d68de0-d420-4ec0-b031-b630d81bc856}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Base">
+      <UniqueIdentifier>{b029ee7f-e1df-445a-9742-26befb196295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Manager">
+      <UniqueIdentifier>{5615661c-e40e-4b65-9252-029e12c013d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Base">
+      <UniqueIdentifier>{f5b480f4-bbf6-430d-8cef-53b145963aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Manager">
+      <UniqueIdentifier>{8bbe4674-cae7-4e71-9a4a-51db08f5e247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object3D">
+      <UniqueIdentifier>{f1db1a25-fd53-42ec-861f-2945a51b37a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object3D">
+      <UniqueIdentifier>{82935296-a85d-4d43-9d99-a094ccebd2fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,16 +66,10 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="WinApp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
@@ -66,22 +78,31 @@
     <ClCompile Include="math\Matrix.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsPipeline.cpp">
+    <ClCompile Include="OBB.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Object3D.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="DirectXCommon.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsPipeline.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="WinApp.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Object3D</Filter>
     </ClCompile>
-    <ClCompile Include="OBB.cpp">
+    <ClCompile Include="Object3D.cpp">
+      <Filter>ソース ファイル\Object3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,16 +131,10 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="WinApp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
@@ -137,31 +152,40 @@
     <ClInclude Include="math\Vector4.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsPipeline.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Object3D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="memo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="OBB.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXCommon.h">
+      <Filter>ヘッダー ファイル\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsPipeline.h">
+      <Filter>ヘッダー ファイル\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>ヘッダー ファイル\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="WinApp.h">
+      <Filter>ヘッダー ファイル\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>ヘッダー ファイル\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>ヘッダー ファイル\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

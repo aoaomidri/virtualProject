@@ -40,9 +40,37 @@ void Sprite::Update(){
 	//ImGui::DragFloat3("三角形のTransform", &transform.translate.x, 0.1f);
 	//ImGui::End();
 	transformSprite.translate = { position_.x,position_.y,0.0f };
+	transformSprite.rotate = { 0.0f,0.0f,rotation_ };
+
+	
+
 	if (!isDraw_){
 		return;
 	}
+	if (anchorPoint_.x < 0) {
+		anchorPoint_.x = 0.0f;
+	}else if (anchorPoint_.x > 1) {
+		anchorPoint_.x = 1.0f;
+	}
+	if (anchorPoint_.y < 0) {
+		anchorPoint_.y = 0.0f;
+	}
+	else if (anchorPoint_.y > 1) {
+		anchorPoint_.y = 1.0f;
+	}
+
+	float left = (0.0f - anchorPoint_.x) * scale_.x;
+	float right = (1.0f - anchorPoint_.x) * scale_.x;
+	float top = (0.0f - anchorPoint_.y) * scale_.y;
+	float bottom = (1.0f - anchorPoint_.y) * scale_.y;
+
+	//頂点データ
+	vertexDataSprite[0].position = { left,bottom,0.0f,1.0f };//左下
+	vertexDataSprite[1].position = { left,top,0.0f,1.0f };//左上
+	vertexDataSprite[2].position = { right,bottom,0.0f,1.0f };//右下
+	vertexDataSprite[3].position = { right,top,0.0f,1.0f };//右上
+
+	*materialDate = color_;
 
 	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 	Matrix4x4 cameraMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -126,16 +154,11 @@ void Sprite::makeSpriteResource(){
 	//1頂点当たりのサイズ
 	vertexBufferViewSprite.StrideInBytes = sizeof(VertexData);
 
-	VertexData* vertexDataSprite = nullptr;
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
-	//1枚目の三角形
-	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };//左下
+	
 	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };//左上
 	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };//右下
 	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-	vertexDataSprite[3].position = { 640.0f,0.0f,0.0f,1.0f };//右上
 	vertexDataSprite[3].texcoord = { 1.0f,0.0f };
 
 	indexResourceSprite = CreateBufferResource(device_, sizeof(uint32_t) * 6);
@@ -190,13 +213,11 @@ void Sprite::makeSpriteResource(){
 
 	//マテリアル用のリソース
 	materialResource = CreateBufferResource(device_, sizeof(Vector4));
-	//マテリアルにデータを書き込む
-	Vector4* materialDate = nullptr;
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
 	//今回は赤を書き込んでみる
-	*materialDate = { 1.0f, 1.0f, 1.0f, 1.0f };
+	
 
 	////リソースを作る
 	//wvpResource = CreateBufferResource(device_, sizeof(Matrix4x4));

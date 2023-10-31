@@ -12,7 +12,7 @@ bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2) {
 	static Vector3 vector;
 	static Matrix matrix;
 
-	Vector3 separatingAxis[15];
+	Vector3 separatingAxis[15]{};
 	separatingAxis[0] = obb1.orientations[0];
 	separatingAxis[1] = obb1.orientations[1];
 	separatingAxis[2] = obb1.orientations[2];
@@ -167,15 +167,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	skyDome_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
 	//skyDome_->SetIsDraw(false);
 
-	//auto sprite_ = std::make_unique<Sprite>();
-	//sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	auto sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	//sprite_->SetIsDraw(false);
-	//Vector2 position_ = { 100.0f,100.0f };
+	
 
-	//auto sprite2_ = std::make_unique<Sprite>();
-	//sprite2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	//sprite2_->SetPosition(position_);
-	//sprite2_->SetIsDraw(false);
+	auto sprite2_ = std::make_unique<Sprite>();
+	sprite2_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	Vector2 position_2 = { 100.0f,100.0f };
+	float spriteRotate_2 = 0.0f;
+	Vector2 scale_2 = { 640.0f,360.0f };
+	Vector2 anchorPoint2_ = { 0.5f,0.5f };
+	Vector4 spriteColor_2 = { 1.0f,1.0f,1.0f,1.0f };
+	bool isSpriteDraw2 = true;
 
 	/*初期化処理とかはここで終わり*/
 	MSG msg{};
@@ -308,13 +312,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Matrix4x4 cameraRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform.rotate);
 
-		cameraOffset = Matrix::GetInstance()->TransformNormal(cameraOffset, cameraRotateMatrix);
-
-		
+		cameraOffset = Matrix::GetInstance()->TransformNormal(cameraOffset, cameraRotateMatrix);		
 		
 
-		/*sprite_->Update();
-		sprite2_->Update();*/
+		sprite_->Update();
+		sprite2_->Update();
+		sprite2_->SetPosition(position_2);
+		sprite2_->SetRotation(spriteRotate_2);
+		sprite2_->SetScale(scale_2);
+		sprite2_->SetAnchorPoint(anchorPoint2_);
+		sprite2_->SetColor(spriteColor_2);
+		sprite2_->SetIsDraw(isSpriteDraw2);
+
 		/*自機の移動*/
 		if (input_->PushUp()){
 			move.z = playerSpeed_;
@@ -549,7 +558,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("カメラ座標", &cameraTransform.translate.x, 0.01f);
 		ImGui::DragFloat3("カメラ回転", &cameraTransform.rotate.x, 0.01f);
 		ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
-
+		ImGui::End();
+		
+		ImGui::Begin("2Dテクスチャ");
+		ImGui::DragFloat2("座標", &position_2.x, 1.0f);
+		ImGui::DragFloat("回転", &spriteRotate_2, 0.01f);
+		ImGui::DragFloat2("大きさ", &scale_2.x, 1.0f);
+		ImGui::DragFloat2("アンカーポイント", &anchorPoint2_.x, 0.1f, 0.0f, 1.0f);
+		ImGui::ColorEdit4("画像の色", &spriteColor_2.x);
+		ImGui::Checkbox("画像を描画する", &isSpriteDraw2);
 		ImGui::End();
 
 		
@@ -578,8 +595,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		textureManager->PreDraw2D();
 
 		///////*ここから2Dテクスチャの描画*///////
-		//sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle(0));
-		//sprite2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(1));
+		sprite_->Draw(dxCommon_->GetCommandList(),textureManager->SendGPUDescriptorHandle(0));
+		sprite2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(3));
 		
 		///////*2Dテクスチャはここまで*///////
 		textureManager->PostDraw2D();

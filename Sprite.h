@@ -9,7 +9,12 @@
 /// スプライト
 /// </summary>
 /// 
-
+enum VertexNumber{
+	LB,//左下
+	LT,//左上
+	RB,//右下
+	RT //右上
+};
 
 class Sprite {
 public:
@@ -23,9 +28,26 @@ public:
 
 	void SetPosition(const Vector2& position) { position_ = position; }
 
+	void SetRotation(float rotation) { rotation_ = rotation; }
+
+	void SetScale(const Vector2& scale) { scale_ = scale; }
+
+	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
+
+	void SetColor(const Vector4& color) { color_ = color; }
+
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+
 	const Vector2& GetPosition()const { return position_; }
+
+	float GetRotation() const { return rotation_; }
+
+	const Vector2& GetScale() const { return scale_; }
+
+	const Vector2& GetAnchorPoint() const { return anchorPoint_; }
+
+	const Vector4& GetColor()const { return color_; }
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
@@ -53,10 +75,25 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
+	//マテリアルにデータを書き込む
+	Vector4* materialDate = nullptr;
+
+	VertexData* vertexDataSprite = nullptr;
+
 	//データを書き込む
 	Matrix4x4* wvpDataSprite = nullptr;
 
 	Vector2 position_ = { 0.0f,0.0f };
+
+	float rotation_;
+
+	Vector2 scale_ = { 640.0f,360.0f };
+
+	Vector2 anchorPoint_ = { 0.0f,0.0f };
+
+	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	
 
 	Transform transformSprite{};
 

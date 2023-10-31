@@ -26,6 +26,7 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
+	///*Setter*///
 	void SetPosition(const Vector2& position) { position_ = position; }
 
 	void SetRotation(float rotation) { rotation_ = rotation; }
@@ -36,9 +37,21 @@ public:
 
 	void SetColor(const Vector4& color) { color_ = color; }
 
-	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
+	void SetLeftTop(const Vector2& leftTop) { textureLeftTop_ = leftTop; }
+
+	void SetSize(const Vector2& size) { textureSize_ = size; }
+
+	void SetUVTransform(const Transform& uvTransform) { uvTransform_ = uvTransform; }
+
+	void SetIsDraw(bool isDraw) { isDraw_ = isDraw; }
+
+	void SetIsFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
+
+	void SetIsFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
 
 
+
+	///*Getter*///
 	const Vector2& GetPosition()const { return position_; }
 
 	float GetRotation() const { return rotation_; }
@@ -49,12 +62,24 @@ public:
 
 	const Vector4& GetColor()const { return color_; }
 
-	const bool& GetIsDraw()const { return isDraw_; }
+	const Vector2& GetLeftTop()const { return textureLeftTop_; }
+
+	const Vector2& GetSize()const { return textureSize_; }
+
+	const Transform& GetUVTransform()const { return uvTransform_; }
+
+	bool GetIsDraw() { return isDraw_; }
+
+	bool GetIsFlipX() {return isFlipX_ ; }
+	
+	bool GetIsFlipY() { return isFlipY_; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
 
 	void makeSpriteResource();
+private:
+
 private:
 	HRESULT hr;
 
@@ -76,7 +101,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
 	//マテリアルにデータを書き込む
-	Vector4* materialDate = nullptr;
+	Material* materialDate = nullptr;
 
 	VertexData* vertexDataSprite = nullptr;
 
@@ -93,14 +118,21 @@ private:
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	
+	//テクスチャ左上座標
+	Vector2 textureLeftTop_ = { 0.0f,0.0f };
+	//テクスチャ切り出しサイズ
+	Vector2 textureSize_ = { 100.0f,100.0f };
 
 	Transform transformSprite{};
 
+	Transform uvTransform_{};
+
 	Transform cameraTransform{};
-
+	//描画設定
 	bool isDraw_ = true;
-
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	//左右フリップ
+	bool isFlipX_ = false;
+	//上下フリップ
+	bool isFlipY_ = false;
 };
 

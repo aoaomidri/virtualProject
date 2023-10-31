@@ -10,12 +10,12 @@ GraphicsPipeline* GraphicsPipeline::GetInstance() {
 	return &Instance;
 }
 
-void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname){
+void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling){
 
 	makeRootSignature(device);
 	makeInputLayout();
 	makeBlendState();
-	makeRasterizerState();
+	makeRasterizerState(isCulling);
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil();
 
@@ -156,10 +156,16 @@ void GraphicsPipeline::makeBlendState(){
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
-void GraphicsPipeline::makeRasterizerState(){
+void GraphicsPipeline::makeRasterizerState(bool isCulling){
 	
 	//裏面(時計回り)を表示しない
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_BACK/*D3D12_CULL_MODE_NONE*/;
+	if (isCulling){
+		rasterrizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	}
+	else{
+		rasterrizerDesc.CullMode =D3D12_CULL_MODE_NONE;
+	}
+	
 	//三角形の中を塗りつぶす
 	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }

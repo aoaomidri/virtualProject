@@ -23,6 +23,8 @@ public:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU[index]; }
 
+	
+
 	void Load(const std::string& filePath, uint32_t index);
 
 	void PreDraw2D();
@@ -35,8 +37,9 @@ public:
 
 	void MakeShaderResourceView();
 
+private:
 	// DirectX12のTextureResourceを作る
-		DirectX::ScratchImage LoadTexture(const std::string & filePath);
+	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
 	//	TextureResourceにデータを転送する
 	[[nodiscard]] ComPtr<ID3D12Resource> UploadTextureData(
@@ -48,12 +51,13 @@ public:
 	ComPtr<ID3D12Resource> CreateTextureResource(ComPtr<ID3D12Device> device, const DirectX::TexMetadata& metadata);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, 
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap,
 		uint32_t descriptorSize, uint32_t index);
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap,
 		uint32_t descriptorSize, uint32_t index);
+
 private:
 	//SRVの最大個数
 	static const size_t kMaxSRVConst = 257;

@@ -13,13 +13,6 @@ struct ModelData {
 	MaterialData material;
 };
 
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};
-
 struct DirectionalLight {
 	Vector4 color;		//ライトの色
 	Vector3 direction;	//ライトの向き

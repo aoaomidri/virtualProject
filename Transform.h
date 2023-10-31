@@ -1,5 +1,6 @@
 #pragma once
 #include"math/Matrix.h"
+#include<cstdint>
 struct Transform {
 	Vector3 scale;
 	Vector3 rotate;
@@ -17,3 +18,9 @@ struct TransformationMatrix {
 	Matrix4x4 World;
 };
 
+struct Material{
+	Vector4 color;
+	std::int32_t enableLighting;
+	float padding[3];
+	Matrix4x4 uvTransform;
+};

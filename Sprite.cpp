@@ -30,6 +30,12 @@ void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,-10.0f}
 	};
+
+	uvTransform_ = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
 }
 
 void Sprite::Update(){
@@ -64,13 +70,24 @@ void Sprite::Update(){
 	float top = (0.0f - anchorPoint_.y) * scale_.y;
 	float bottom = (1.0f - anchorPoint_.y) * scale_.y;
 
+	//左右反転
+	if (isFlipX_){
+		left *= -1.0f;
+		right *= -1.0f;
+	}
+	//上下反転
+	if (isFlipY_){
+		top *= -1.0f;
+		bottom *= -1.0f;
+	}
+
 	//頂点データ
 	vertexDataSprite[0].position = { left,bottom,0.0f,1.0f };//左下
 	vertexDataSprite[1].position = { left,top,0.0f,1.0f };//左上
 	vertexDataSprite[2].position = { right,bottom,0.0f,1.0f };//右下
 	vertexDataSprite[3].position = { right,top,0.0f,1.0f };//右上
 
-	*materialDate = color_;
+	materialDate->color = color_;
 
 	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 	Matrix4x4 cameraMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -79,6 +96,8 @@ void Sprite::Update(){
 	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, Matrix::GetInstance()->Multiply(viewMatrixSprite, projectionMatrixSprite));
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
+	Matrix4x4 uvTransformMatrix = Matrix::GetInstance()->MakeAffineMatrix(uvTransform_.scale, Vector3(0.0f, 0.0f, uvTransform_.rotate.z), uvTransform_.translate);
+	materialDate->uvTransform = uvTransformMatrix;
 }
 
 void Sprite::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
@@ -212,10 +231,14 @@ void Sprite::makeSpriteResource(){
 	//vertexDate_[2].texcoord = { 1.0f,1.0f };
 
 	//マテリアル用のリソース
-	materialResource = CreateBufferResource(device_, sizeof(Vector4));
+	materialResource = CreateBufferResource(device_, sizeof(Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+
+	materialDate->enableLighting = false;
+
+	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 	//今回は赤を書き込んでみる
 	
 

@@ -23,7 +23,7 @@ public:
 
 	static GraphicsPipeline* GetInstance();
 
-	void Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname);
+	void Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
@@ -45,7 +45,7 @@ private:
 
 	void makeBlendState();
 
-	void makeRasterizerState();
+	void makeRasterizerState(bool isCulling);
 
 	void ShaderCompile(const std::wstring& VSname, const std::wstring& PSname);
 

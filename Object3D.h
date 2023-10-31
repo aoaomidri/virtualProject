@@ -2,7 +2,6 @@
 #include "math/Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
-#include"Transform.h"
 #include"Log.h"
 #include<vector>
 #include<fstream>

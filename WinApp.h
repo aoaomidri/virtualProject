@@ -47,21 +47,7 @@ public: // 静的メンバ関数
 	static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 public: // メンバ関数
-	/// <summary>
-	/// ゲームウィンドウの作成
-	/// <param name="title">ウィンドウタイトル</param>
-	/// <param name="windowStyle">ウィンドウの初期スタイル</param>
-	/// <param name="clientWidth">ウィンドウのクライアント領域の初期幅</param>
-	/// <param name="clientHeight">ウィンドウのクライアント領域の初期高さ</param>
-	/// </summary>
-	/*void CreateGameWindow(
-		const wchar_t* title = L"DirectXGame", UINT windowStyle = WS_OVERLAPPEDWINDOW,
-		int32_t clientWidth = kWindowWidth, int32_t clientHeight = kWindowHeight);*/
-
-	/// <summary>
-	/// ゲームウィンドウの破棄
-	/// </summary>
-	//void TerminateGameWindow();
+	
 
 	/// <summary>
 	/// メッセージの処理
@@ -79,29 +65,7 @@ public: // メンバ関数
 
 	HINSTANCE GetHInstance() const { return wndClass_.hInstance; }
 
-	/// <summary>
-	/// フルスクリーン設定
-	/// </summary>
-	/// <param name="fullscreen">フルスクリーンにするかどうか</param>
-	//void SetFullscreen(bool fullscreen);
-
-	/// <summary>
-	/// フルスクリーンかどうか
-	/// </summary>
-	/// <returns></returns>
-	//bool IsFullscreen() const;
-
-	/// <summary>
-	/// サイズ変更モードの設定
-	/// </summary>
-	/// <returns></returns>
-	//void SetSizeChangeMode(SizeChangeMode sizeChangeMode);
-
-	/// <summary>
-	/// サイズ変更モードの取得
-	/// </summary>
-	/// <returns></returns>
-	//SizeChangeMode GetSizeChangeMode() const;
+	
 
 private: // メンバ関数
 	/*WinApp() = default;

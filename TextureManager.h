@@ -23,6 +23,7 @@ public:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU[index]; }
 
+
 	void Load(const std::string& filePath, uint32_t index);
 
 	void PreDraw2D();

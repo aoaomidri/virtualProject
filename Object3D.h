@@ -18,7 +18,7 @@ public:
 	
 	void Update(const Matrix4x4& worldMatrix,const Transform& camera);
 
-	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
 	void DrawImgui();
 

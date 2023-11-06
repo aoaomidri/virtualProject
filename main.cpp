@@ -7,6 +7,7 @@
 #include <cassert>
 #include"math/Vector3.h"
 #include"OBB.h"
+#include"Player.h"
 
 bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2) {
 	static Vector3 vector;
@@ -151,9 +152,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	auto box3_ = std::make_unique<Object3D>();
 	box3_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
 
-	auto player_ = std::make_unique<Object3D>();
-	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
-
 	auto goal_ = std::make_unique<Object3D>();
 	goal_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
 
@@ -181,6 +179,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector4 spriteColor_2 = { 1.0f,1.0f,1.0f,1.0f };
 	bool isSpriteDraw2 = true;
 
+	auto player_ = std::make_unique<Player>();
+	player_->Initislize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+
+
 	/*初期化処理とかはここで終わり*/
 	MSG msg{};
 
@@ -204,11 +206,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.translate = {0.0f,0.0f,8.0f}
 	};
 
-	Transform PlayerTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.8f,0.0f}
-	};
+	
 
 	Transform EnemyTransform{
 		.scale = {0.3f,0.3f,0.3f},
@@ -242,15 +240,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
-	OBB playerOBB = {};
-
 	OBB enemyOBB = {};
 
 	OBB floorOBB[3] = {};
 
 	OBB goalOBB = {};
-
-	Matrix4x4 playerMatrix{};
 
 	Matrix4x4 enemyMatrix{};
 
@@ -278,10 +272,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float EnemyMoveSpeed_ = 0.02f;
 
-	const float playerSpeed_ = 0.1f;
-
-	Vector3 move = {};
-
 	Vector3 cameraMove_{};
 
 	Vector3 vector_ = {};
@@ -289,6 +279,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int chackCollision = 0;
 
 	bool isDown = true;
+
+	
 	
 	//ウィンドウのxボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
@@ -299,6 +291,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		dxCommon_->StartImgui();
 		//ゲームの処理
+
+		player_->SetCameraTransform(cameraTransform);
 
 		input_->Update();
 
@@ -324,46 +318,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprite2_->SetColor(spriteColor_2);
 		sprite2_->SetIsDraw(isSpriteDraw2);
 
-		/*自機の移動*/
-		if (input_->PushUp()){
-			move.z = playerSpeed_;
-			
-		}
-		else if (input_->PushDown()) {
-			move.z = -playerSpeed_;
-		}
-		else{
-			move.z = input_->GetPadLStick().y * playerSpeed_;
-		}
-
-		if (input_->PushRight()) {
-			move.x = playerSpeed_;
-		}
-		else if (input_->PushLeft()) {
-			move.x = -playerSpeed_;
-		}
-		else {
-			move.x = input_->GetPadLStick().x * playerSpeed_;
-		}
-		
-
-		move = Matrix::GetInstance()->TransformNormal(move, cameraRotateMatrix);
-		
-		move.y = 0.0f;
-		if (move.x != 0.0f || move.z != 0.0f) {
-			PlayerTransform.rotate.y = std::atan2(move.x, move.z);
-		}
-
 		if (input_->GetRTriggerDown()) {
-			cameraTransform.rotate = PlayerTransform.rotate;
+			cameraTransform.rotate = player_->GetRotate();
 
 		}
 
-
-		PlayerTransform.translate += move;
-		if (isDown){
-			PlayerTransform.translate.y -= 0.03f;
-		}
+		
+		
 		/*敵の移動*/
 		EnemyTransform.translate.x += EnemyMoveSpeed_ * EnemyMagnification;
 
@@ -383,7 +344,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		
 
-		playerMatrix = Matrix::GetInstance()->MakeAffineMatrix(PlayerTransform.scale, PlayerTransform.rotate, PlayerTransform.translate);
 		enemyMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyTransform.scale, EnemyTransform.rotate, EnemyTransform.translate);
 		enemyPartsMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyPartsTransform.scale, EnemyPartsTransform.rotate, EnemyPartsTransform.translate);
 		moveFloorMatrix[0] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[0].scale, floorTransform[0].rotate, floorTransform[0].translate);
@@ -391,15 +351,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		moveFloorMatrix[2] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[2].scale, floorTransform[2].rotate, floorTransform[2].translate);
 		skyDomeMatrix= Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
 		goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
-
-	
-
-		PlayerTransform.translate = { playerMatrix.m[3][0],playerMatrix.m[3][1], playerMatrix.m[3][2] };
-
-		playerOBB.center = PlayerTransform.translate;
-		playerOBB.size = PlayerTransform.scale;
-		Matrix4x4 playerRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(PlayerTransform.rotate);
-		SetOridentatios(playerOBB, playerRotateMatrix);
 
 		enemyOBB.center = EnemyTransform.translate;
 		enemyOBB.size = EnemyTransform.scale;
@@ -418,22 +369,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 GoalRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(goalTransform.rotate);
 		SetOridentatios(goalOBB, GoalRotateMatrix);
 
-		if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
+		/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
 			FloorPlayerPosition += move;
 		}
 		else {
 			FloorPlayerPosition = PlayerTransform.translate - floorTransform[1].translate;
 		}
 
-		movePlayerMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), PlayerTransform.translate);
-		moveFloorTransformMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), Vector3(floorTransform[1].rotate), Vector3(floorTransform[1].translate));
+		movePlayerMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), PlayerTransform.rotate, PlayerTransform.translate);
+		moveFloorTransformMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), Vector3(floorTransform[1].rotate), Vector3(floorTransform[1].translate));*/
 
 		
 
 		/*OBBの設定および当たり判定処理*/
 		
 
-		for (int i = 0; i < 3; i++) {
+		/*for (int i = 0; i < 3; i++) {
 			if (IsCollisionOBBOBB(playerOBB, floorOBB[i])){
 				chackCollision = 1;
 				isDown = false;
@@ -460,10 +411,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		else {
 			player_->parent_ = nullptr;
-		}
+		}*/
 		
 
-		cameraTransform.translate = PlayerTransform.translate + cameraOffset;
+		cameraTransform.translate = player_->GetTranslate() + cameraOffset;
 
 		floorTransform[1].translate.x += moveSpeed_.x * Magnification;
 		floorTransform[1].translate.y += moveSpeed_.y * MagnificationY;
@@ -482,7 +433,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			MagnificationY *= -1.0f;
 		}
 
-		if (IsCollisionOBBOBB(playerOBB,goalOBB)||IsCollisionOBBOBB(playerOBB,enemyOBB)){
+		/*if (IsCollisionOBBOBB(playerOBB,goalOBB)||IsCollisionOBBOBB(playerOBB,enemyOBB)){
 			PlayerTransform = {
 				.scale = {0.3f,0.3f,0.3f},
 				.rotate = {0.0f,0.0f,0.0f},
@@ -496,7 +447,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				.rotate = {0.0f,0.0f,0.0f},
 				.translate = {0.0f,3.8f,0.0f}
 			};
-		}
+		}*/
 		
 		/*ここまで*/
 		skyDomeTransform.rotate.y += 0.01f;
@@ -505,8 +456,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		box2_->Update(moveFloorMatrix[1], cameraTransform);
 		box3_->Update(moveFloorMatrix[2], cameraTransform);
 
-		player_->Update(playerMatrix, cameraTransform);
-		player_->DrawImgui();
+		player_->Update(input_.get());
 
 		enemy_->Update(enemyMatrix, cameraTransform);
 
@@ -541,11 +491,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("ベクトル", &FloorPlayerPosition.x, 0.01f);
 		ImGui::End();
 
-		ImGui::Begin("プレイやー");
-		ImGui::DragFloat3("プレイヤーの座標", &PlayerTransform.translate.x, 0.01f);
-		ImGui::DragFloat3("プレイヤーの回転", &PlayerTransform.rotate.x, 0.01f);
-		ImGui::DragFloat3("プレイヤーの大きさ", &PlayerTransform.scale.x, 0.01f);
-		ImGui::End();
+		//ImGui::Begin("プレイやー");
+		//ImGui::DragFloat3("プレイヤーの座標", &PlayerTransform.translate.x, 0.01f);
+		//ImGui::DragFloat3("プレイヤーの回転", &PlayerTransform.rotate.x, 0.01f);
+		//ImGui::DragFloat3("プレイヤーの大きさ", &PlayerTransform.scale.x, 0.01f);
+		//ImGui::End();
 
 		ImGui::Begin("ゴール");
 		ImGui::Text("床とプレイヤーが接触しているか %d ", chackCollision);
@@ -576,19 +526,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		textureManager->PreDraw3D();
 
 		///////*ここから3Dモデルの描画*///////
-		box_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(3));
-		box2_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(3));
-		box3_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(3));
+		box_->Draw(textureManager->SendGPUDescriptorHandle(3));
+		box2_->Draw(textureManager->SendGPUDescriptorHandle(3));
+		box3_->Draw(textureManager->SendGPUDescriptorHandle(3));
 
-		player_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(4));
+		player_->Draw(textureManager.get());
 
-		enemy_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(5));
+		enemy_->Draw(textureManager->SendGPUDescriptorHandle(5));
 
-		enemyParts_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(6));
+		enemyParts_->Draw(textureManager->SendGPUDescriptorHandle(6));
 
-		goal_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(2));
+		goal_->Draw(textureManager->SendGPUDescriptorHandle(2));
 
-		skyDome_->Draw(dxCommon_->GetCommandList(), textureManager->SendGPUDescriptorHandle(1));
+		skyDome_->Draw(textureManager->SendGPUDescriptorHandle(1));
 		
 		///////*3D描画はここまで*///////
 		textureManager->PostDraw3D();
@@ -602,7 +552,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		textureManager->PostDraw2D();
 		dxCommon_->PostDraw();
 
-		if (input_->Trigerkey(DIK_ESCAPE)||input_->GetLTrigger()){
+		if (input_->Trigerkey(DIK_ESCAPE)||input_->GetPadButtonDown(XINPUT_GAMEPAD_BACK)){
 			break;
 		}	
 

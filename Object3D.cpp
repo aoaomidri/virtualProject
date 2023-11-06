@@ -52,20 +52,20 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
 	
 }
 
-void Object3D::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
+void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 
 	if (!isDraw_) {
 		return;
 	}
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//形状を設定。
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, GPUHandle);
-	commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable(2, GPUHandle);
+	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 	//3D三角の描画
-	commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	commandList_->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 
 }

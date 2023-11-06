@@ -292,6 +292,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxCommon_->StartImgui();
 		//ゲームの処理
 
+		//プレイヤーのカメラのセット
 		player_->SetCameraTransform(cameraTransform);
 
 		input_->Update();

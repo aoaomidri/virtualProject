@@ -56,7 +56,13 @@ void Player::Update(Input* input){
 	playerOBB_.size = playerTransform_.scale;
 	Matrix4x4 playerRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
 	SetOridentatios(playerOBB_, playerRotateMatrix);
-
+	if (playerTransform_.translate.y <= -5.0f) {
+		playerTransform_ = {
+			.scale = {0.3f,0.3f,0.3f},
+			.rotate = {0.0f,0.0f,0.0f},
+			.translate = {0.0f,3.8f,0.0f}
+		};
+	}
 	
 }
 

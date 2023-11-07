@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <wrl.h>
 #include"Transform.h"
+#include"TextureManager.h"
 #include"Log.h"
 
 /// <summary>
@@ -18,13 +19,16 @@ enum VertexNumber{
 
 class Sprite {
 public:
+	Sprite();
 	~Sprite();
 
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 
 	void Update();
 
-	void Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+
+	/*セッター群*/
 
 	void SetPosition(const Vector2& position) { position_ = position; }
 
@@ -38,6 +42,11 @@ public:
 
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetLeftTop(const Vector2& leftTop) { textureLeftTop_ = leftTop; }
+
+	void SetSize(const Vector2& size) { textureSize_ = size; }
+
+	/*ゲッター群*/
 
 	const Vector2& GetPosition()const { return position_; }
 
@@ -50,6 +59,10 @@ public:
 	const Vector4& GetColor()const { return color_; }
 
 	const bool& GetIsDraw()const { return isDraw_; }
+
+	const Vector2& GetLeftTop()const { return textureLeftTop_; }
+
+	const Vector2& GetSize()const { return textureSize_; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
@@ -93,7 +106,11 @@ private:
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
+	Vector2 textureLeftTop_ = { 0.0f,0.0f };
 	
+	Vector2 textureSize_ = { 100.0f,100.0f };
+
+
 
 	Transform transformSprite{};
 
@@ -101,6 +118,6 @@ private:
 
 	bool isDraw_ = true;
 
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	TextureManager* textureManager_ = nullptr;
 };
 

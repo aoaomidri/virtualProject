@@ -41,6 +41,9 @@ private:
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
 
+	//スケールを無視したマトリックス
+	Matrix4x4 playerMoveMatrix_{};
+
 	//自機の移動
 	Vector3 move_{};
 

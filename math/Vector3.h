@@ -99,6 +99,14 @@ public:
 		return result;
 	}
 
+	Vector3 Add(const Vector3& vA, const Vector3& vB) {
+		Vector3 result{ 0 };
+		result.x = vA.x + vB.x;
+		result.y = vA.y + vB.y;
+		result.z = vA.z + vB.z;
+		return result;
+	}
+
 	static Vector3 Mutiply(const Vector3& vec, const float speed) {
 		Vector3 result{ 0 };
 		result.x = vec.x * speed;

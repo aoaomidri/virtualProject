@@ -7,8 +7,11 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+Sprite::Sprite(){
+	textureManager_ = TextureManager::GetInstance();
+}
+
 Sprite::~Sprite(){
-	
 	
 }
 
@@ -33,12 +36,7 @@ void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 }
 
 void Sprite::Update(){
-	//transform.rotate.y += 0.03f;
-	//ImGui::Begin("三角形");
-	//ImGui::DragFloat3("三角形のScale", &transform.scale.x, 0.1f);
-	//ImGui::DragFloat3("三角形のRotate", &transform.rotate.x, 0.1f);
-	//ImGui::DragFloat3("三角形のTransform", &transform.translate.x, 0.1f);
-	//ImGui::End();
+
 	transformSprite.translate = { position_.x,position_.y,0.0f };
 	transformSprite.rotate = { 0.0f,0.0f,rotation_ };
 
@@ -81,37 +79,23 @@ void Sprite::Update(){
 
 }
 
-void Sprite::Draw(ID3D12GraphicsCommandList* commandList, D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
+void Sprite::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
 
 	if (!isDraw_){
 		return;
 	}
 	
-	////RootSignatureを設定。PSOに設定しているが別途設定が必要
-	//commandList->SetGraphicsRootSignature(GraphicsPipeline_->GetRootSignature());
-	//commandList->SetPipelineState(GraphicsPipeline_->GetPipeLineState());
-	////commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-	
-	///*commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-	//commandList_->IASetIndexBuffer(&indexBufferViewSprite);*/
-	//commandList->DrawInstanced(3, 1, 0, 0);
-
 	//2Dの描画
 	//マテリアルにCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, GPUHandle);
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable(2, GPUHandle);
 	//Spriteの描画。変更が必要なものだけ変更する
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-	commandList->IASetIndexBuffer(&indexBufferViewSprite);
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+	commandList_->IASetIndexBuffer(&indexBufferViewSprite);
 	//TransformationMatrixCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResourceSprite->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResourceSprite->GetGPUVirtualAddress());
 	//描画
-	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 
 }
@@ -176,19 +160,6 @@ void Sprite::makeSpriteResource(){
 	indexDataSprite[0] = 0;	indexDataSprite[1] = 1;	indexDataSprite[2] = 2;
 	indexDataSprite[3] = 1;	indexDataSprite[4] = 3;	indexDataSprite[5] = 2;
 
-
-	////頂点リソースの作成
-	//vertexResource = CreateBufferResource(device_, sizeof(VertexData) * 3);
-
-	////頂点バッファビューを作成する
-	//
-	////リソースの先頭のアドレスから使う
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点三つ分のサイズ
-	//vertexBufferView.SizeInBytes = sizeof(VertexData) * 3;
-	////1頂点当たりのサイズ
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);
-
 	//リソースを作る
 	wvpResourceSprite = CreateBufferResource(device_, sizeof(Matrix4x4));
 
@@ -197,20 +168,6 @@ void Sprite::makeSpriteResource(){
 	//単位行列を書き込む
 	*wvpDataSprite = Matrix::GetInstance()->MakeIdentity4x4();
 
-	////頂点リソースにデータを書き込む
-	//VertexData* vertexDate_ = nullptr;
-	////書き込むためのアドレスを取得
-	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
-	////左下
-	//vertexDate_[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	//vertexDate_[0].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexDate_[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	//vertexDate_[1].texcoord = { 0.5f,0.0f };
-	////右下
-	//vertexDate_[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	//vertexDate_[2].texcoord = { 1.0f,1.0f };
-
 	//マテリアル用のリソース
 	materialResource = CreateBufferResource(device_, sizeof(Vector4));
 
@@ -218,15 +175,6 @@ void Sprite::makeSpriteResource(){
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
 	//今回は赤を書き込んでみる
 	
-
-	////リソースを作る
-	//wvpResource = CreateBufferResource(device_, sizeof(Matrix4x4));
-	//
-	////アドレス取得
-	//wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	////単位行列を書き込む
-	//*wvpData = Matrix::GetInstance()->MakeIdentity4x4();
-
 }
 
 

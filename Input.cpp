@@ -51,10 +51,10 @@ void Input::Update() {
 	if (isConnectPad) {
 
 		// デッドzoneの設定
-		if ((xinputState.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
-			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
-			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
-				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		if ((xinputState.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE*1.5f &&
+			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f) &&
+			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f &&
+				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f))
 		{
 			xinputState.Gamepad.sThumbLX = 0;
 			xinputState.Gamepad.sThumbLY = 0;

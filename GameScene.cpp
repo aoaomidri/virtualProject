@@ -38,6 +38,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	player_ = std::make_unique<Player>();
 	player_->Initislize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	player_->SetCameraTransform(&cameraTransform);
 
 	floorTransform[0] = {
 		.scale = {2.0f,0.5f,2.0f},
@@ -206,7 +207,7 @@ void GameScene::Update(Input* input_){
 	}
 
 	player_->Update(input_);
-	player_->SetCameraTransform(cameraTransform);
+	
 
 	enemy_->Update(enemyMatrix, cameraTransform);
 
@@ -227,7 +228,7 @@ void GameScene::Draw3D(){
 	for (int i = 0; i < 3; i++){
 		floor_[i]->Draw(textureManager_->SendGPUDescriptorHandle(3));
 	}
-	player_->Draw(textureManager_.get());
+	player_->Draw(textureManager_.get(), cameraTransform);
 
 	enemy_->Draw(textureManager_->SendGPUDescriptorHandle(5));
 

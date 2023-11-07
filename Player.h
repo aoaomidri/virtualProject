@@ -5,6 +5,7 @@
 #include"Object3D.h"
 #include"Input.h"
 #include"OBB.h"
+#include<optional>
 class Player{
 public:
 	//初期化
@@ -12,7 +13,7 @@ public:
 	//更新処理
 	void Update(Input* input);
 	//描画
-	void Draw(TextureManager* textureManager);
+	void Draw(TextureManager* textureManager,const Transform& cameraTransform);
 	//Imgui描画
 	void DrawImgui();
 
@@ -28,9 +29,25 @@ public:
 
 	//Setter
 
-	void SetCameraTransform(const Transform& cameraTransform) { cameraTransform_ = cameraTransform; }
+	void SetCameraTransform(const Transform* cameraTransform) { cameraTransform_ = cameraTransform; }
 
 	void SetIsDown(bool isDown) { isDown_ = isDown; }
+
+private:
+	//クラス内関数
+	
+	//通常行動初期化
+	void BehaviorRootInitialize();
+	//攻撃行動初期化
+	void BehaviorAttackInitialize();
+	//ダッシュ行動初期化
+	void BehaviorDashInitialize();
+	// 通常行動更新
+	void BehaviorRootUpdate(Input* input);
+	//攻撃行動更新
+	void BehaviorAttackUpdate();
+	//ダッシュ行動更新
+	void BehaviorDashUpdate();
 private:
 	//自機のモデル
 	std::unique_ptr<Object3D> playerModel_;
@@ -47,7 +64,7 @@ private:
 	//自機の移動
 	Vector3 move_{};
 
-	Transform cameraTransform_{};
+	const Transform* cameraTransform_ = nullptr;
 
 	//自機のOBB
 	OBB playerOBB_{};
@@ -55,8 +72,33 @@ private:
 	//移動スピード
 	const float moveSpeed_ = 0.1f;
 
+	//ダッシュ時のスピード倍率
+	const float kDashSpeed = 15.0f;
+	//ダッシュのクールタイム
+	const int kDashCoolTime = 20;
+
+	int dashCoolTime;
+
+	struct WorkDash {
+		//ダッシュ用の媒介変数
+		uint32_t dashParameter_ = 0;
+	};
+
+	WorkDash workDash_;
+
 	//落下するかどうか
 	bool isDown_ = false;
+
+	/*振る舞い系*/
+	enum class Behavior {
+		kRoot,		//通常状態
+		kAttack,	//攻撃中
+		kDash,		//ダッシュ中
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 };
 

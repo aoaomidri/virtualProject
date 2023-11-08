@@ -5,9 +5,13 @@
 #include"Object3D.h"
 #include"Input.h"
 #include"OBB.h"
+#include"Adjustment_Item.h"
 #include<optional>
+
 class Player{
 public:
+	//調整項目
+	void ApplyGlobalVariables();
 	//初期化
 	void Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//更新処理
@@ -73,9 +77,9 @@ private:
 	const float moveSpeed_ = 0.1f;
 
 	//ダッシュ時のスピード倍率
-	const float kDashSpeed = 15.0f;
+	float kDashSpeed = 15.0f;
 	//ダッシュのクールタイム
-	const int kDashCoolTime = 20;
+	int kDashCoolTime = 20;
 
 	int dashCoolTime;
 

@@ -1,6 +1,29 @@
 #include "Player.h"
 
+void Player::ApplyGlobalVariables() {
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Player";
+
+	kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
+	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
+
+	//Weapon_offset_Base = adjustment_item->GetVector3Value(groupName, "Weapon_offset");
+	//floatingCycle_ = adjustment_item->GetIntValue(groupName, "floatingCycle");
+	//floatingAmplitude = adjustment_item->GetfloatValue(groupName, "floatingAmplitude");
+	//armAmplitude = adjustment_item->GetfloatValue(groupName, "armAmplitude");
+	//kCharacterSpeedBase = adjustment_item->GetfloatValue(groupName, "CharacterSpeed");
+}
+
 void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Player";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "DashCoolTime", kDashCoolTime);
+	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
+
+
 	playerModel_ = std::make_unique<Object3D>();
 	playerModel_->Initialize(device, commandList, "box");
 
@@ -14,6 +37,10 @@ void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 }
 
 void Player::Update(Input* input){
+	ApplyGlobalVariables();
+
+	DrawImgui();
+
 	if (behaviorRequest_) {
 		// 振る舞いを変更する
 		behavior_ = behaviorRequest_.value();
@@ -71,7 +98,9 @@ void Player::Draw(TextureManager* textureManager, const Transform& cameraTransfo
 }
 
 void Player::DrawImgui(){
-
+	ImGui::Begin("プレイヤー");
+	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
+	ImGui::End();
 }
 
 void Player::BehaviorRootInitialize(){
@@ -113,8 +142,10 @@ void Player::BehaviorRootUpdate(Input* input){
 	if (isDown_) {
 		playerTransform_.translate.y -= 0.03f;
 	}
-
-	dashCoolTime -= 1;
+	if (dashCoolTime!=0){
+		dashCoolTime -= 1;
+	}
+	
 
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
@@ -124,7 +155,6 @@ void Player::BehaviorRootUpdate(Input* input){
 void Player::BehaviorAttackInitialize(){
 
 }
-
 
 void Player::BehaviorAttackUpdate(){
 

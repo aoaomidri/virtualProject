@@ -6,12 +6,6 @@ void Player::ApplyGlobalVariables() {
 
 	kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
-
-	//Weapon_offset_Base = adjustment_item->GetVector3Value(groupName, "Weapon_offset");
-	//floatingCycle_ = adjustment_item->GetIntValue(groupName, "floatingCycle");
-	//floatingAmplitude = adjustment_item->GetfloatValue(groupName, "floatingAmplitude");
-	//armAmplitude = adjustment_item->GetfloatValue(groupName, "armAmplitude");
-	//kCharacterSpeedBase = adjustment_item->GetfloatValue(groupName, "CharacterSpeed");
 }
 
 void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
@@ -132,8 +126,8 @@ void Player::BehaviorRootUpdate(Input* input){
 
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform_->rotate);
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix);
-
 	move_.y = 0.0f;
+
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		playerTransform_.rotate.y = std::atan2(move_.x, move_.z);
 	}
@@ -142,7 +136,7 @@ void Player::BehaviorRootUpdate(Input* input){
 	if (isDown_) {
 		playerTransform_.translate.y -= 0.03f;
 	}
-	if (dashCoolTime!=0){
+	if (dashCoolTime != 0) {
 		dashCoolTime -= 1;
 	}
 	
@@ -172,27 +166,6 @@ void Player::BehaviorDashUpdate(){
 
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 5;
-	//if ((playerTransform_.translate + move).x > MoveMax) {
-	//	move.x = { 0 };
-	//	worldTransform_.translation_.x = MoveMax;
-	//	worldTransformBody_.translation_.x = MoveMax;
-	//}
-	//else if ((worldTransform_.translation_ + move).x <= -MoveMax) {
-	//	move.x = { 0 };
-	//	worldTransform_.translation_.x = -MoveMax;
-	//	worldTransformBody_.translation_.x = -MoveMax;
-	//}
-
-	//if ((worldTransform_.translation_ + move).z > MoveMax) {
-	//	move.z = { 0 };
-	//	worldTransform_.translation_.z = MoveMax;
-	//	worldTransformBody_.translation_.z = MoveMax;
-	//}
-	//else if ((worldTransform_.translation_ + move).z <= -MoveMax) {
-	//	move.z = { 0 };
-	//	worldTransform_.translation_.z = -MoveMax;
-	//	worldTransformBody_.translation_.z = -MoveMax;
-	//}
 
 	playerTransform_.translate += move_;
 

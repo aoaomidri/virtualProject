@@ -23,6 +23,8 @@ public:
 
 public:
 	//Getter
+	const Transform& GetTransform() const { return playerTransform_; }
+
 	const Vector3& GetTranslate() const { return playerTransform_.translate; }
 
 	const Vector3& GetRotate() const { return playerTransform_.rotate; }

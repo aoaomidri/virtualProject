@@ -4,6 +4,7 @@
 /// </summary>
 #define _USE_MATH_DEFINES
 #include<math.h>
+#include<iostream>
 class Vector3 {
 public:
 	float x, y, z;
@@ -143,6 +144,28 @@ public:
 		return result;
 	}
 
+	static float LerpShortAngle(float a, float b, float t) {
+		float diff = b - a;
+
+		diff = static_cast<float>(std::fmod(diff, 2.0 * static_cast<float>(M_PI)));
+
+		if (diff > static_cast<float>(M_PI)) {
+			diff -= 2.0 * static_cast<float>(M_PI);
+		}
+		else if (diff < static_cast<float>(M_PI) * -1) {
+			diff += 2.0 * static_cast<float>(M_PI);
+		}
+
+		return a + diff * t;
+
+	}
+
+	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+		Vector3 result{ 0, 0, 0 };
+		result = v1 + (v2 - v1) * t;
+		return result;
+	}
+
 	float Length(const Vector3& v) {
 		float result{ 0.0f };
 		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
@@ -160,3 +183,4 @@ struct Segment {
 	Vector3 origin; //!< 始点
 	Vector3 diff;   //!< 終点への差分ベクトル
 };
+

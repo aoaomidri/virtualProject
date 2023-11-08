@@ -6,6 +6,7 @@
 #include"Object3D.h"
 #include"math/Matrix.h"
 #include"OBB.h"
+#include"FollowCamera.h"
 #include"Player.h"
 
 class GameScene{
@@ -53,6 +54,9 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<Player> player_;
+
+	//プレイヤーを追うカメラ
+	std::unique_ptr<FollowCamera> followCamera_;
 
 	//数値系
 	/*分離予定なので適当に置いている*/

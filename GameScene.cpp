@@ -38,7 +38,13 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	player_ = std::make_unique<Player>();
 	player_->Initislize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	player_->SetCameraTransform(&cameraTransform);
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	//自キャラのワールドトランスフォームを追従カメラにセット
+	followCamera_->SetTarget(&player_->GetTransform());
+
+	player_->SetCameraTransform(&followCamera_->GetCameraTransform());
 
 	floorTransform[0] = {
 		.scale = {2.0f,0.5f,2.0f},
@@ -62,14 +68,16 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
-	cameraMove_ = { input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+	followCamera_->Update(input_);
 
-	/*カメラ*/
-	cameraTransform.rotate += cameraMove_;
+	//cameraMove_ = { input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
 
-	Matrix4x4 cameraRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform.rotate);
+	///*カメラ*/
+	//cameraTransform.rotate += cameraMove_;
 
-	cameraOffset = Matrix::GetInstance()->TransformNormal(baseCameraOffset, cameraRotateMatrix);
+	//Matrix4x4 cameraRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform.rotate);
+
+	//cameraOffset = Matrix::GetInstance()->TransformNormal(baseCameraOffset, cameraRotateMatrix);
 
 
 	testTexture_->Update();
@@ -80,9 +88,9 @@ void GameScene::Update(Input* input_){
 	testTexture_->SetColor(spriteColor_);
 	testTexture_->SetIsDraw(isSpriteDraw);
 
-	if (input_->GetRTriggerDown()) {
+	/*if (input_->GetRTriggerDown()) {
 		cameraTransform.rotate = player_->GetRotate();
-	}
+	}*/
 
 
 
@@ -172,7 +180,7 @@ void GameScene::Update(Input* input_){
 		player_->parent_ = nullptr;
 	}*/
 
-	cameraTransform.translate = vector_.Add(player_->GetTranslate(), cameraOffset);
+	//cameraTransform.translate = vector_.Add(player_->GetTranslate(), cameraOffset);
 
 	floorTransform[1].translate.x += moveSpeed_.x * Magnification;
 	floorTransform[1].translate.y += moveSpeed_.y * MagnificationY;
@@ -203,19 +211,19 @@ void GameScene::Update(Input* input_){
 	skyDomeTransform.rotate.y += 0.01f;
 
 	for (int i = 0; i < 3; i++){
-		floor_[i]->Update(moveFloorMatrix[i], cameraTransform);
+		floor_[i]->Update(moveFloorMatrix[i], followCamera_->GetCameraTransform());
 	}
 
 	player_->Update(input_);
 	
 
-	enemy_->Update(enemyMatrix, cameraTransform);
+	enemy_->Update(enemyMatrix, followCamera_->GetCameraTransform());
 
-	enemyParts_->Update(enemyPartsMatrix, cameraTransform);
+	enemyParts_->Update(enemyPartsMatrix, followCamera_->GetCameraTransform());
 
-	goal_->Update(goalMatrix, cameraTransform);
+	goal_->Update(goalMatrix, followCamera_->GetCameraTransform());
 
-	skyDome_->Update(skyDomeMatrix, cameraTransform);
+	skyDome_->Update(skyDomeMatrix, followCamera_->GetCameraTransform());
 
 	
 }
@@ -228,7 +236,7 @@ void GameScene::Draw3D(){
 	for (int i = 0; i < 3; i++){
 		floor_[i]->Draw(textureManager_->SendGPUDescriptorHandle(3));
 	}
-	player_->Draw(textureManager_.get(), cameraTransform);
+	player_->Draw(textureManager_.get(), followCamera_->GetCameraTransform());
 
 	enemy_->Draw(textureManager_->SendGPUDescriptorHandle(5));
 
@@ -280,23 +288,11 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat3("ベクトル", &FloorPlayerPosition.x, 0.01f);
 	ImGui::End();
 
-	//ImGui::Begin("プレイやー");
-	//ImGui::DragFloat3("プレイヤーの座標", &PlayerTransform.translate.x, 0.01f);
-	//ImGui::DragFloat3("プレイヤーの回転", &PlayerTransform.rotate.x, 0.01f);
-	//ImGui::DragFloat3("プレイヤーの大きさ", &PlayerTransform.scale.x, 0.01f);
-	//ImGui::End();
-
 	ImGui::Begin("ゴール");
 	ImGui::Text("床とプレイヤーが接触しているか %d ", chackCollision);
 	ImGui::DragFloat3("ゴールの座標", &goalTransform.translate.x, 0.01f);
 	ImGui::DragFloat3("ゴールの回転", &goalTransform.rotate.x, 0.01f);
 	ImGui::DragFloat3("ゴールの大きさ", &goalTransform.scale.x, 0.01f);
-	ImGui::End();
-
-	ImGui::Begin("カメラ関連");
-	ImGui::DragFloat3("カメラ座標", &cameraTransform.translate.x, 0.01f);
-	ImGui::DragFloat3("カメラ回転", &cameraTransform.rotate.x, 0.01f);
-	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::End();
 
 	ImGui::Begin("2Dテクスチャ");

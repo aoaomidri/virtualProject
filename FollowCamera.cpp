@@ -5,6 +5,7 @@ void FollowCamera::ApplyGlobalVariables(){
 
 	angle_t = adjustment_item->GetfloatValue(groupName, "AngleComplement");
 	t = adjustment_item->GetfloatValue(groupName, "PositionComplement");
+	distance = adjustment_item->GetfloatValue(groupName, "distance");
 
 	if (angle_t > 1.0f) {
 		angle_t = 1.0f;
@@ -12,6 +13,7 @@ void FollowCamera::ApplyGlobalVariables(){
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
+	distance *= -1.0f;
 }
 
 
@@ -23,6 +25,7 @@ void FollowCamera::Initialize(){
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
 	adjustment_item->AddItem(groupName, "PositionComplement", t);
+	adjustment_item->AddItem(groupName, "distance", distance);
 
 	destinationAngleX_ = 0.2f;
 
@@ -65,8 +68,8 @@ void FollowCamera::Update(Input* input_){
 		Vector3::LerpShortAngle(cameraTransform.rotate.y, destinationAngleY_, angle_t);
 	cameraTransform.rotate.x =
 		Vector3::LerpShortAngle(cameraTransform.rotate.x, destinationAngleX_, angle_t);
-
-
+	rootOffset = { 0.0f, 0.0f, distance };
+	baseOffset = rootOffset;
 
 	if (target_) {
 		//追従座標の補完

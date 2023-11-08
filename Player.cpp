@@ -77,11 +77,7 @@ void Player::Update(Input* input){
 	Matrix4x4 playerRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
 	SetOridentatios(playerOBB_, playerRotateMatrix);
 	if (playerTransform_.translate.y <= -5.0f) {
-		playerTransform_ = {
-			.scale = {0.3f,0.3f,0.3f},
-			.rotate = {0.0f,0.0f,0.0f},
-			.translate = {0.0f,3.8f,0.0f}
-		};
+		Respawn();
 	}
 	
 }
@@ -95,6 +91,18 @@ void Player::DrawImgui(){
 	ImGui::Begin("プレイヤー");
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::End();
+}
+
+void Player::onFlootCollision(OBB obb){
+	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
+}
+
+void Player::Respawn(){
+	playerTransform_ = {
+			.scale = {0.3f,0.3f,0.3f},
+			.rotate = {0.0f,0.0f,0.0f},
+			.translate = {0.0f,3.8f,0.0f}
+	};
 }
 
 void Player::BehaviorRootInitialize(){
@@ -134,7 +142,7 @@ void Player::BehaviorRootUpdate(Input* input){
 
 	playerTransform_.translate += move_;
 	if (isDown_) {
-		playerTransform_.translate.y -= 0.03f;
+		playerTransform_.translate.y -= 0.07f;
 	}
 	if (dashCoolTime != 0) {
 		dashCoolTime -= 1;

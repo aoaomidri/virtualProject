@@ -21,6 +21,12 @@ public:
 	//Imgui描画
 	void DrawImgui();
 
+	//床と当たった時のonCollision
+	void onFlootCollision(OBB obb);
+
+	//リスポーン
+	void Respawn();
+
 public:
 	//Getter
 	const Transform& GetTransform() const { return playerTransform_; }

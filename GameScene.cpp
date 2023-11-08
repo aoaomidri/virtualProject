@@ -70,16 +70,6 @@ void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
 
-	//cameraMove_ = { input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
-
-	///*カメラ*/
-	//cameraTransform.rotate += cameraMove_;
-
-	//Matrix4x4 cameraRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform.rotate);
-
-	//cameraOffset = Matrix::GetInstance()->TransformNormal(baseCameraOffset, cameraRotateMatrix);
-
-
 	testTexture_->Update();
 	testTexture_->SetPosition(spritePosition_);
 	testTexture_->SetRotation(spriteRotate_);
@@ -88,16 +78,8 @@ void GameScene::Update(Input* input_){
 	testTexture_->SetColor(spriteColor_);
 	testTexture_->SetIsDraw(isSpriteDraw);
 
-	/*if (input_->GetRTriggerDown()) {
-		cameraTransform.rotate = player_->GetRotate();
-	}*/
-
-
-
 	/*敵の移動*/
 	EnemyTransform.translate.x += EnemyMoveSpeed_ * EnemyMagnification;
-
-
 
 	if (EnemyTransform.translate.x <= -2.0f) {
 		EnemyMagnification *= -1.0f;
@@ -151,19 +133,20 @@ void GameScene::Update(Input* input_){
 	/*OBBの設定および当たり判定処理*/
 
 
-	/*for (int i = 0; i < 3; i++) {
-		if (IsCollisionOBBOBB(playerOBB, floorOBB[i])){
+	for (int i = 0; i < 3; i++) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), floorOBB[i])) {
 			chackCollision = 1;
-			isDown = false;
+			player_->onFlootCollision(floorOBB[i]);
+			player_->SetIsDown(false);
 
 			break;
 		}
 		else{
 			chackCollision = 0;
-			isDown = true;
+			player_->SetIsDown(true);
 		}
 	}
-	if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
+	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
 
 		player_->parent_ = &moveFloorTransformMatrix;
 
@@ -199,13 +182,9 @@ void GameScene::Update(Input* input_){
 		MagnificationY *= -1.0f;
 	}
 
-	/*if (IsCollisionOBBOBB(playerOBB,goalOBB)||IsCollisionOBBOBB(playerOBB,enemyOBB)){
-		PlayerTransform = {
-			.scale = {0.3f,0.3f,0.3f},
-			.rotate = {0.0f,0.0f,0.0f},
-			.translate = {0.0f,3.8f,0.0f}
-		};
-	}*/
+	if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB) || IsCollisionOBBOBB(player_->GetOBB(), enemyOBB)) {
+		player_->Respawn();
+	}
 
 	/*ここまで*/
 	skyDomeTransform.rotate.y += 0.01f;

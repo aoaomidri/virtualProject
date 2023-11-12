@@ -145,5 +145,7 @@ private:
 
 	bool isDown = true;
 
+	bool isDead = false;
+
 };
 

@@ -7,12 +7,16 @@ void FollowCamera::ApplyGlobalVariables(){
 	t = adjustment_item->GetfloatValue(groupName, "PositionComplement");
 	distance = adjustment_item->GetfloatValue(groupName, "distance");
 
+
+
 	if (angle_t > 1.0f) {
 		angle_t = 1.0f;
 	}
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
+
+
 	distance *= -1.0f;
 }
 
@@ -29,7 +33,7 @@ void FollowCamera::Initialize(){
 
 	destinationAngleX_ = 0.2f;
 
-	distance = -10.0f;
+	distance = -20.0f;
 
 	shotOffset = { 2.0f, 6.0f, -7.5f };
 

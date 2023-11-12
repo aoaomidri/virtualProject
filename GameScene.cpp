@@ -9,6 +9,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/Sky.png", 4);
 	textureManager_->Load("resources/Enemy/EnemyTex.png", 5);
 	textureManager_->Load("resources/EnemyParts/EnemyParts.png", 6);
+	textureManager_->Load("resources/Weapon/Sword.png", 7);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -89,6 +90,7 @@ void GameScene::Update(Input* input_){
 	}
 	/*エネミーのパーツ*/
 	EnemyPartsTransform.translate.x = EnemyTransform.translate.x;
+	EnemyPartsTransform.translate.y = EnemyTransform.translate.y + 0.9f;
 	EnemyPartsTransform.translate.z = EnemyTransform.translate.z;
 
 	EnemyPartsTransform.rotate.x += 0.3f;
@@ -186,6 +188,11 @@ void GameScene::Update(Input* input_){
 		player_->Respawn();
 	}
 
+	if ( IsCollisionOBBOBB(player_->GetWeaponOBB(), enemyOBB)) {
+		EnemyTransform.translate.y = 200.0f;
+	}
+
+
 	/*ここまで*/
 	skyDomeTransform.rotate.y += 0.01f;
 
@@ -204,7 +211,9 @@ void GameScene::Update(Input* input_){
 
 	skyDome_->Update(skyDomeMatrix, followCamera_->GetCameraTransform());
 
-	
+	if (input_->Trigerkey(DIK_R)){
+		EnemyTransform.translate = { 0.0f,0.8f,7.0f };
+	}
 }
 
 void GameScene::Draw3D(){

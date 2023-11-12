@@ -8,7 +8,7 @@
 #include"Adjustment_Item.h"
 #include<optional>
 
-class Player{
+class Player {
 public:
 	//調整項目
 	void ApplyGlobalVariables();
@@ -17,7 +17,7 @@ public:
 	//更新処理
 	void Update(Input* input);
 	//描画
-	void Draw(TextureManager* textureManager,const Transform& cameraTransform);
+	void Draw(TextureManager* textureManager, const Transform& cameraTransform);
 	//Imgui描画
 	void DrawImgui();
 
@@ -39,6 +39,8 @@ public:
 
 	const OBB& GetOBB()const { return playerOBB_; }
 
+	const OBB& GetWeaponOBB()const { return weaponOBB_; }
+
 	//Setter
 
 	void SetCameraTransform(const Transform* cameraTransform) { cameraTransform_ = cameraTransform; }
@@ -47,7 +49,7 @@ public:
 
 private:
 	//クラス内関数
-	
+
 	//通常行動初期化
 	void BehaviorRootInitialize();
 	//攻撃行動初期化
@@ -63,12 +65,22 @@ private:
 private:
 	//自機のモデル
 	std::unique_ptr<Object3D> playerModel_;
+	//武器のモデル
+	std::unique_ptr<Object3D> weaponModel_;
+	std::unique_ptr<Object3D> weaponCollisionModel_;
+
 
 	//自機のSRT
 	Transform playerTransform_{};
+	//武器のSRT
+	Transform weaponTransform_{};
+	Transform weaponCollisionTransform_{};
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
+	//武器のマトリックス
+	Matrix4x4 weaponMatrix_{};
+	Matrix4x4 weaponCollisionMatrix_{};
 
 	//スケールを無視したマトリックス
 	Matrix4x4 playerMoveMatrix_{};
@@ -80,6 +92,9 @@ private:
 
 	//自機のOBB
 	OBB playerOBB_{};
+
+	//武器のOBB
+	OBB weaponOBB_{};
 
 	//移動スピード
 	const float moveSpeed_ = 0.1f;
@@ -97,6 +112,24 @@ private:
 	};
 
 	WorkDash workDash_;
+
+	/*武器に関連するもの*/
+	//武器の回転
+	float weapon_Rotate = 0.0f;
+	float arm_Rotate = -3.15f;
+	//武器開店に関連する変数
+	Vector3 Weapon_offset;
+	Vector3 Weapon_offset_Base = { 0.0f,4.0f, 0.0f };
+
+	const float moveWeapon = 0.1f;
+	const float moveWeaponShakeDown = 0.2f;
+	const float MaxRotate = 1.55f;
+	const float MinRotate = -0.6f;
+
+	int WaitTimeBase = 20;
+	int WaitTime = 0;
+
+	bool isShakeDown = false;
 
 	//落下するかどうか
 	bool isDown_ = false;

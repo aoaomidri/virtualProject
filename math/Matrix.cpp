@@ -347,6 +347,21 @@ Matrix4x4 Matrix::MakeIdentity4x4() {
 	return result;
 }
 
+Matrix4x4 Matrix::MakeRotateAxisAngle(const Vector3& axis, float angle){
+	Matrix4x4 matrix{};
+	matrix.m[0][0] = (axis.x * axis.x) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[0][1] = (axis.x * axis.y) * (1 - std::cosf(angle)) + (axis.z * std::sinf(angle));
+	matrix.m[0][2] = (axis.x * axis.z) * (1 - std::cosf(angle)) - (axis.y * std::sinf(angle));
+	matrix.m[1][0] = (axis.x * axis.y) * (1 - std::cosf(angle)) - (axis.z * std::sinf(angle));
+	matrix.m[1][1] = (axis.y * axis.y) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[1][2] = (axis.y * axis.z) * (1 - std::cosf(angle)) + (axis.x * std::sinf(angle));
+	matrix.m[2][0] = (axis.x * axis.z) * (1 - std::cosf(angle)) + (axis.y * std::sinf(angle));
+	matrix.m[2][1] = (axis.y * axis.z) * (1 - std::cosf(angle)) - (axis.x * std::sinf(angle));
+	matrix.m[2][2] = (axis.z * axis.z) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[3][3] = 1.0f;
+	return matrix;
+}
+
 Matrix4x4 Matrix::operator+(const Matrix4x4& mat) const
 {
 	Matrix4x4 result{};

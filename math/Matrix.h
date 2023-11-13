@@ -85,6 +85,9 @@ public:
 
 	Matrix4x4 MakeIdentity4x4();
 
+	//任意軸回転行列
+	Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
 	////逆行列
 	Matrix4x4 Inverce(const Matrix4x4& mat);
 

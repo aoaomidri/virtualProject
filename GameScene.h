@@ -147,5 +147,11 @@ private:
 
 	bool isDead = false;
 
+	Vector3 axis{};
+
+	float angle = 0.44f;
+
+	Matrix4x4 rotateMatrix;
+
 };
 

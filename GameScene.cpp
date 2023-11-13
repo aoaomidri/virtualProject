@@ -77,6 +77,18 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	rotateMatrix1 = Matrix::GetInstance()->DirectionToDirection(from0, to0);
 	rotateMatrix2 = Matrix::GetInstance()->DirectionToDirection(from1, to1);
 
+	q1.vector_ = { 2.0f,3.0f,4.0f };
+	q1.w = { 1.0f };
+	q2.vector_ = { 1.0f,3.0f,5.0f };
+	q2.w = { 2.0f };
+
+	identity = Quaternion::GetInstance()->IdentityQuaternion();
+	conj = Quaternion::GetInstance()->Conjugate(q1);
+	inv = Quaternion::GetInstance()->Inverse(q1);
+	normal = Quaternion::GetInstance()->Normalize(q1);
+	mul1 = Quaternion::GetInstance()->Multiply(q1, q2);
+	mul2 = Quaternion::GetInstance()->Multiply(q2, q1);
+	norm = Quaternion::GetInstance()->Norm(q1);
 }
 
 void GameScene::Update(Input* input_){
@@ -263,27 +275,14 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-	ImGui::Begin("ある方向からある方向へ向ける回転行列");
-	if (ImGui::TreeNode("一個目")){
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix0.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("二個目")){
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix1.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("三個目")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix2.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	
-	
+	ImGui::Begin("Quaternion");
+	ImGui::DragFloat4("Identity", &identity.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat4("Conjugate", &conj.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat4("Inverse", &inv.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat4("Normalize", &normal.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat4("Multiply(q1,q2)", &mul1.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat4("Multiply(q2,q1)", &mul2.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
+	ImGui::DragFloat("Norm", &norm, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::End();
 
 	

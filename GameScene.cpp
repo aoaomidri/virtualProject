@@ -68,6 +68,15 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	axis = Matrix::GetInstance()->Normalize({ 1.0f,1.0f,1.0f });
 	rotateMatrix = Matrix::GetInstance()->MakeRotateAxisAngle(axis, angle);
 
+	from0 = Vector3::Normalize({ 1.0f,0.7f,0.5f });
+	to0 = Vector3::Normalize({ -1.0f,-0.7f,-0.5f });
+	from1 = Vector3::Normalize({ -0.6f,0.9f,0.2f });
+	to1 = Vector3::Normalize({ 0.4f,0.7f,-0.5f });
+
+	rotateMatrix0 = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize({ 1.0f,0.0f,0.0f }), Vector3::Normalize({ -1.0f,0.0f,0.0f }));
+	rotateMatrix1 = Matrix::GetInstance()->DirectionToDirection(from0, to0);
+	rotateMatrix2 = Matrix::GetInstance()->DirectionToDirection(from1, to1);
+
 }
 
 void GameScene::Update(Input* input_){
@@ -254,11 +263,30 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-	ImGui::Begin("任意軸回転行列");
-	for (int i = 0; i < 4; i++){
-		ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix.m[i], 0.001f);
-	}	
+	ImGui::Begin("ある方向からある方向へ向ける回転行列");
+	if (ImGui::TreeNode("一個目")){
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix0.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("二個目")){
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix1.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("三個目")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix2.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	
+	
 	ImGui::End();
+
+	
 	/*ImGui::Begin("床のTransform");
 	if (ImGui::TreeNode("一個目")) {
 		ImGui::DragFloat3("床の座標", &floorTransform[0].translate.x, 0.01f);

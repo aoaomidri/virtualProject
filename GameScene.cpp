@@ -140,13 +140,13 @@ void GameScene::Update(Input* input_){
 		if (IsCollisionOBBOBB(player_->GetOBB(), floorOBB[i])) {
 			chackCollision = 1;
 			player_->onFlootCollision(floorOBB[i]);
-			player_->SetIsDown(false);
+			//player_->SetIsDown(false);
 
 			break;
 		}
 		else{
 			chackCollision = 0;
-			player_->SetIsDown(true);
+			//player_->SetIsDown(true);
 		}
 	}
 	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {

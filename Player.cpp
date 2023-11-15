@@ -47,12 +47,17 @@ void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	};
 
 	dashCoolTime = kDashCoolTime;
+
+	playerRotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+
+	postureVec_ = { 0.0f,0.0f,1.0f };
+	frontVec_ = { 0.0f,0.0f,1.0f };
 }
 
 void Player::Update(Input* input){
 	ApplyGlobalVariables();
 
-	DrawImgui();
+	
 
 	if (behaviorRequest_) {
 		// 振る舞いを変更する
@@ -90,12 +95,10 @@ void Player::Update(Input* input){
 	}
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
-	testPlayerRotateMatrix_ = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
 
 	playerOBB_.center = playerTransform_.translate;
 	playerOBB_.size = playerTransform_.scale;
-	Matrix4x4 playerRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
-	SetOridentatios(playerOBB_, playerRotateMatrix);
+	SetOridentatios(playerOBB_, playerRotateMatrix_);
 	
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
@@ -103,15 +106,16 @@ void Player::Update(Input* input){
 	Matrix4x4 weaponRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
 
-	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerTransform_.scale, playerTransform_.rotate, playerTransform_.translate);
-	testPlayerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
+	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
 	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponTransform_.translate);
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
+
+	
 
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
 	}
-	
+	DrawImgui();
 }
 
 void Player::Draw(TextureManager* textureManager, const Transform& cameraTransform){
@@ -136,9 +140,8 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
 	ImGui::End();
 
+
 	ImGui::Begin("行列確認");
-	ImGui::DragFloat3("今のmove", &move_.x, 0.1f);
-	ImGui::DragFloat3("前回のmove", &frontMove_.x, 0.1f);
 	if (ImGui::TreeNode("Scale")) {
 		for (int i = 0; i < 4; i++) {
 			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerScaleMatrix_.m[i], 0.001f);
@@ -147,13 +150,10 @@ void Player::DrawImgui(){
 	}
 	if (ImGui::TreeNode("Rotate")) {
 		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerRotateMatrix_.m[i], 0.001f);
+			ImGui::DragFloat3((std::to_string(i + 1) + "行目").c_str(), &playerOBB_.orientations[i].x, 0.001f);
 		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("正しく動いているRotate")) {
 		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), testPlayerRotateMatrix_.m[i], 0.001f);
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerRotateMatrix_.m[i], 0.001f);
 		}
 		ImGui::TreePop();
 	}
@@ -165,16 +165,11 @@ void Player::DrawImgui(){
 	}
 	if (ImGui::TreeNode("PlayerMatrix(SRT)")) {
 		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), testPlayerMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("正しく動いているPlayerMatrix(SRT)")) {
-		for (int i = 0; i < 4; i++) {
 			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerMatrix_.m[i], 0.001f);
 		}
 		ImGui::TreePop();
 	}
+	
 	ImGui::End();
 }
 
@@ -196,13 +191,11 @@ void Player::BehaviorRootInitialize(){
 	weaponTransform_.rotate.x = 0.0f;
 	weaponCollisionTransform_.translate.y = 1.0f;
 	weaponCollisionTransform_.rotate.x = 0.0f;
-	frontMove_ = { 0.0f,0.0f,1.0f };
+	
 }
 
 void Player::BehaviorRootUpdate(Input* input){
-	if (move_.x != 0.0f || move_.z != 0.0f) {
-		frontMove_ = move_;
-	}
+	frontVec_ = postureVec_;
 	/*自機の移動*/
 	if (input->PushUp()) {
 		move_.z = moveSpeed_;
@@ -224,24 +217,22 @@ void Player::BehaviorRootUpdate(Input* input){
 	else {
 		move_.x = input->GetPadLStick().x * moveSpeed_;
 	}
-
+	
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform_->rotate);
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix);
 	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_);
 	move_.y = 0.0f;
-
-	playerTransform_.translate += move_;
+	
 
 	if (move_.x != 0.0f || move_.z != 0.0f) {
-		playerTransform_.rotate.y = std::atan2(move_.x, move_.z);
+		postureVec_ = move_;
+		
+		Matrix4x4 directionTodirection_= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
+		
 	}
-	else {
-		move_ = frontMove_;
-	}
 
-	playerRotateMatrix_ = Matrix::GetInstance()->DirectionToDirection((frontMove_), (move_));
-
-
+	playerTransform_.translate += move_;
 	
 	if (isDown_) {
 		playerTransform_.translate.y -= 0.07f;

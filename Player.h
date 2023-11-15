@@ -79,8 +79,6 @@ private:
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
-	Matrix4x4 testPlayerMatrix_{};
-	Matrix4x4 testPlayerRotateMatrix_{};
 
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};
@@ -95,7 +93,10 @@ private:
 
 	//自機の移動
 	Vector3 move_{};
-	Vector3 frontMove_{};
+
+	//姿勢ベクトル
+	Vector3 postureVec_{};
+	Vector3 frontVec_{};
 
 	const Transform* cameraTransform_ = nullptr;
 

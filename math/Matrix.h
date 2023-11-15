@@ -60,6 +60,9 @@ public:
 	Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
 
 	Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
+	//マトリックスから作るアフィン行列
+	Matrix4x4 MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate);
+
 	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
 
 	Matrix4x4 MakeRotateMatrixX(const Vector3& rot);

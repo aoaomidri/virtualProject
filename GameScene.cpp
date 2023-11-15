@@ -65,179 +65,156 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 		.translate = {0.0f,0.0f,8.0f}
 	};
 
-	axis = Matrix::GetInstance()->Normalize({ 1.0f,1.0f,1.0f });
-	rotateMatrix = Matrix::GetInstance()->MakeRotateAxisAngle(axis, angle);
 
-	from0 = Vector3::Normalize({ 1.0f,0.7f,0.5f });
-	to0 = Vector3::Normalize({ -1.0f,-0.7f,-0.5f });
-	from1 = Vector3::Normalize({ -0.6f,0.9f,0.2f });
-	to1 = Vector3::Normalize({ 0.4f,0.7f,-0.5f });
-
-	rotateMatrix0 = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize({ 1.0f,0.0f,0.0f }), Vector3::Normalize({ -1.0f,0.0f,0.0f }));
-	rotateMatrix1 = Matrix::GetInstance()->DirectionToDirection(from0, to0);
-	rotateMatrix2 = Matrix::GetInstance()->DirectionToDirection(from1, to1);
-
-	q1.vector_ = { 2.0f,3.0f,4.0f };
-	q1.w = { 1.0f };
-	q2.vector_ = { 1.0f,3.0f,5.0f };
-	q2.w = { 2.0f };
-
-	identity = Quaternion::GetInstance()->IdentityQuaternion();
-	conj = Quaternion::GetInstance()->Conjugate(q1);
-	inv = Quaternion::GetInstance()->Inverse(q1);
-	normal = Quaternion::GetInstance()->Normalize(q1);
-	mul1 = Quaternion::GetInstance()->Multiply(q1, q2);
-	mul2 = Quaternion::GetInstance()->Multiply(q2, q1);
-	norm = Quaternion::GetInstance()->Norm(q1);
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
-	//followCamera_->Update(input_);
+	followCamera_->Update(input_);
 
-	//testTexture_->Update();
-	//testTexture_->SetPosition(spritePosition_);
-	//testTexture_->SetRotation(spriteRotate_);
-	//testTexture_->SetScale(spriteScale_);
-	//testTexture_->SetAnchorPoint(spriteAnchorPoint_);
-	//testTexture_->SetColor(spriteColor_);
-	//testTexture_->SetIsDraw(isSpriteDraw);
+	testTexture_->Update();
+	testTexture_->SetPosition(spritePosition_);
+	testTexture_->SetRotation(spriteRotate_);
+	testTexture_->SetScale(spriteScale_);
+	testTexture_->SetAnchorPoint(spriteAnchorPoint_);
+	testTexture_->SetColor(spriteColor_);
+	testTexture_->SetIsDraw(isSpriteDraw);
 
-	///*敵の移動*/
-	//EnemyTransform.translate.x += EnemyMoveSpeed_ * EnemyMagnification;
+	/*敵の移動*/
+	EnemyTransform.translate.x += EnemyMoveSpeed_ * EnemyMagnification;
 
-	//if (EnemyTransform.translate.x <= -2.0f) {
-	//	EnemyMagnification *= -1.0f;
-	//}
-	//else if (EnemyTransform.translate.x >= 2.0f) {
-	//	EnemyMagnification *= -1.0f;
-	//}
-	///*エネミーのパーツ*/
-	//EnemyPartsTransform.translate.x = EnemyTransform.translate.x;
-	//EnemyPartsTransform.translate.y = EnemyTransform.translate.y + 0.9f;
-	//EnemyPartsTransform.translate.z = EnemyTransform.translate.z;
+	if (EnemyTransform.translate.x <= -2.0f) {
+		EnemyMagnification *= -1.0f;
+	}
+	else if (EnemyTransform.translate.x >= 2.0f) {
+		EnemyMagnification *= -1.0f;
+	}
+	/*エネミーのパーツ*/
+	EnemyPartsTransform.translate.x = EnemyTransform.translate.x;
+	EnemyPartsTransform.translate.y = EnemyTransform.translate.y + 0.9f;
+	EnemyPartsTransform.translate.z = EnemyTransform.translate.z;
 
-	//EnemyPartsTransform.rotate.x += 0.3f;
+	EnemyPartsTransform.rotate.x += 0.3f;
 
-	//enemyMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyTransform.scale, EnemyTransform.rotate, EnemyTransform.translate);
-	//enemyPartsMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyPartsTransform.scale, EnemyPartsTransform.rotate, EnemyPartsTransform.translate);
-	//moveFloorMatrix[0] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[0].scale, floorTransform[0].rotate, floorTransform[0].translate);
-	//moveFloorMatrix[1] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[1].scale, floorTransform[1].rotate, floorTransform[1].translate);
-	//moveFloorMatrix[2] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[2].scale, floorTransform[2].rotate, floorTransform[2].translate);
-	//skyDomeMatrix = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
-	//goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
+	enemyMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyTransform.scale, EnemyTransform.rotate, EnemyTransform.translate);
+	enemyPartsMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyPartsTransform.scale, EnemyPartsTransform.rotate, EnemyPartsTransform.translate);
+	moveFloorMatrix[0] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[0].scale, floorTransform[0].rotate, floorTransform[0].translate);
+	moveFloorMatrix[1] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[1].scale, floorTransform[1].rotate, floorTransform[1].translate);
+	moveFloorMatrix[2] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[2].scale, floorTransform[2].rotate, floorTransform[2].translate);
+	skyDomeMatrix = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
+	goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
 
-	//enemyOBB.center = EnemyTransform.translate;
-	//enemyOBB.size = EnemyTransform.scale;
-	//Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(EnemyTransform.rotate);
-	//SetOridentatios(enemyOBB, enemyRotateMatrix);
+	enemyOBB.center = EnemyTransform.translate;
+	enemyOBB.size = EnemyTransform.scale;
+	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(EnemyTransform.rotate);
+	SetOridentatios(enemyOBB, enemyRotateMatrix);
 
-	//for (int i = 0; i < 3; i++) {
-	//	floorOBB[i].center = floorTransform[i].translate;
-	//	floorOBB[i].size = floorTransform[i].scale;
-	//	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform[i].rotate);
-	//	SetOridentatios(floorOBB[i], floorRotateMatrix);
-	//}
+	for (int i = 0; i < 3; i++) {
+		floorOBB[i].center = floorTransform[i].translate;
+		floorOBB[i].size = floorTransform[i].scale;
+		Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform[i].rotate);
+		SetOridentatios(floorOBB[i], floorRotateMatrix);
+	}
 
-	//goalOBB.center = goalTransform.translate;
-	//goalOBB.size = goalTransform.scale;
-	//Matrix4x4 GoalRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(goalTransform.rotate);
-	//SetOridentatios(goalOBB, GoalRotateMatrix);
+	goalOBB.center = goalTransform.translate;
+	goalOBB.size = goalTransform.scale;
+	Matrix4x4 GoalRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(goalTransform.rotate);
+	SetOridentatios(goalOBB, GoalRotateMatrix);
 
-	///*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
-	//	FloorPlayerPosition += move;
-	//}
-	//else {
-	//	FloorPlayerPosition = PlayerTransform.translate - floorTransform[1].translate;
-	//}
+	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
+		FloorPlayerPosition += move;
+	}
+	else {
+		FloorPlayerPosition = PlayerTransform.translate - floorTransform[1].translate;
+	}
 
-	//movePlayerMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), PlayerTransform.rotate, PlayerTransform.translate);
-	//moveFloorTransformMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), Vector3(floorTransform[1].rotate), Vector3(floorTransform[1].translate));*/
-
-
-
-	///*OBBの設定および当たり判定処理*/
+	movePlayerMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), PlayerTransform.rotate, PlayerTransform.translate);
+	moveFloorTransformMatrix = Matrix::GetInstance()->MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), Vector3(floorTransform[1].rotate), Vector3(floorTransform[1].translate));*/
 
 
-	//for (int i = 0; i < 3; i++) {
-	//	if (IsCollisionOBBOBB(player_->GetOBB(), floorOBB[i])) {
-	//		chackCollision = 1;
-	//		player_->onFlootCollision(floorOBB[i]);
-	//		player_->SetIsDown(false);
 
-	//		break;
-	//	}
-	//	else{
-	//		chackCollision = 0;
-	//		player_->SetIsDown(true);
-	//	}
-	//}
-	///*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
-
-	//	player_->parent_ = &moveFloorTransformMatrix;
-
-	//	playerMatrix = Matrix::GetInstance()->Multiply(playerMatrix, (Matrix::GetInstance()->Inverce(movePlayerMatrix)));
-
-	//	playerMatrix.m[3][0] = (FloorPlayerPosition.x);
-	//	playerMatrix.m[3][1] = FloorPlayerPosition.y;
-	//	playerMatrix.m[3][2] = (FloorPlayerPosition.z);
-
-	//	PlayerTransform.translate = floorTransform[1].translate +FloorPlayerPosition;
-
-	//}
-	//else {
-	//	player_->parent_ = nullptr;
-	//}*/
-
-	////cameraTransform.translate = vector_.Add(player_->GetTranslate(), cameraOffset);
-
-	//floorTransform[1].translate.x += moveSpeed_.x * Magnification;
-	//floorTransform[1].translate.y += moveSpeed_.y * MagnificationY;
-
-	//if (floorTransform[1].translate.x <= -4.0f) {
-	//	Magnification *= -1.0f;
-	//}
-	//else if (floorTransform[1].translate.x >= 4.0f) {
-	//	Magnification *= -1.0f;
-	//}
-
-	//if (floorTransform[1].translate.y <= -2.0f) {
-	//	MagnificationY *= -1.0f;
-	//}
-	//else if (floorTransform[1].translate.y >= 2.0f) {
-	//	MagnificationY *= -1.0f;
-	//}
-
-	//if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB) || IsCollisionOBBOBB(player_->GetOBB(), enemyOBB)) {
-	//	player_->Respawn();
-	//}
-
-	//if ( IsCollisionOBBOBB(player_->GetWeaponOBB(), enemyOBB)) {
-	//	EnemyTransform.translate.y = 200.0f;
-	//}
+	/*OBBの設定および当たり判定処理*/
 
 
-	///*ここまで*/
-	//skyDomeTransform.rotate.y += 0.01f;
+	for (int i = 0; i < 3; i++) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), floorOBB[i])) {
+			chackCollision = 1;
+			player_->onFlootCollision(floorOBB[i]);
+			player_->SetIsDown(false);
 
-	//for (int i = 0; i < 3; i++){
-	//	floor_[i]->Update(moveFloorMatrix[i], followCamera_->GetCameraTransform());
-	//}
+			break;
+		}
+		else{
+			chackCollision = 0;
+			player_->SetIsDown(true);
+		}
+	}
+	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
 
-	//player_->Update(input_);
-	//
+		player_->parent_ = &moveFloorTransformMatrix;
 
-	//enemy_->Update(enemyMatrix, followCamera_->GetCameraTransform());
+		playerMatrix = Matrix::GetInstance()->Multiply(playerMatrix, (Matrix::GetInstance()->Inverce(movePlayerMatrix)));
 
-	//enemyParts_->Update(enemyPartsMatrix, followCamera_->GetCameraTransform());
+		playerMatrix.m[3][0] = (FloorPlayerPosition.x);
+		playerMatrix.m[3][1] = FloorPlayerPosition.y;
+		playerMatrix.m[3][2] = (FloorPlayerPosition.z);
 
-	//goal_->Update(goalMatrix, followCamera_->GetCameraTransform());
+		PlayerTransform.translate = floorTransform[1].translate +FloorPlayerPosition;
 
-	//skyDome_->Update(skyDomeMatrix, followCamera_->GetCameraTransform());
+	}
+	else {
+		player_->parent_ = nullptr;
+	}*/
 
-	//if (input_->Trigerkey(DIK_R)){
-	//	EnemyTransform.translate = { 0.0f,0.8f,7.0f };
-	//}
+	cameraTransform.translate = vector_.Add(player_->GetTranslate(), cameraOffset);
+
+	floorTransform[1].translate.x += moveSpeed_.x * Magnification;
+	floorTransform[1].translate.y += moveSpeed_.y * MagnificationY;
+
+	if (floorTransform[1].translate.x <= -4.0f) {
+		Magnification *= -1.0f;
+	}
+	else if (floorTransform[1].translate.x >= 4.0f) {
+		Magnification *= -1.0f;
+	}
+
+	if (floorTransform[1].translate.y <= -2.0f) {
+		MagnificationY *= -1.0f;
+	}
+	else if (floorTransform[1].translate.y >= 2.0f) {
+		MagnificationY *= -1.0f;
+	}
+
+	if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB) || IsCollisionOBBOBB(player_->GetOBB(), enemyOBB)) {
+		player_->Respawn();
+	}
+
+	if ( IsCollisionOBBOBB(player_->GetWeaponOBB(), enemyOBB)) {
+		EnemyTransform.translate.y = 200.0f;
+	}
+
+
+	/*ここまで*/
+	skyDomeTransform.rotate.y += 0.01f;
+
+	for (int i = 0; i < 3; i++){
+		floor_[i]->Update(moveFloorMatrix[i], followCamera_->GetCameraTransform());
+	}
+
+	player_->Update(input_);
+	
+
+	enemy_->Update(enemyMatrix, followCamera_->GetCameraTransform());
+
+	enemyParts_->Update(enemyPartsMatrix, followCamera_->GetCameraTransform());
+
+	goal_->Update(goalMatrix, followCamera_->GetCameraTransform());
+
+	skyDome_->Update(skyDomeMatrix, followCamera_->GetCameraTransform());
+
+	if (input_->Trigerkey(DIK_R)){
+		EnemyTransform.translate = { 0.0f,0.8f,7.0f };
+	}
 }
 
 void GameScene::Draw3D(){
@@ -245,7 +222,7 @@ void GameScene::Draw3D(){
 	textureManager_->PreDraw3D();
 	/*ここから下に描画処理を書き込む*/
 
-	/*for (int i = 0; i < 3; i++){
+	for (int i = 0; i < 3; i++){
 		floor_[i]->Draw(textureManager_->SendGPUDescriptorHandle(3));
 	}
 	player_->Draw(textureManager_.get(), followCamera_->GetCameraTransform());
@@ -256,7 +233,7 @@ void GameScene::Draw3D(){
 
 	goal_->Draw(textureManager_->SendGPUDescriptorHandle(2));
 
-	skyDome_->Draw(textureManager_->SendGPUDescriptorHandle(1));*/
+	skyDome_->Draw(textureManager_->SendGPUDescriptorHandle(1));
 
 	/*描画処理はここまで*/
 	/*描画後処理*/
@@ -275,7 +252,7 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-	ImGui::Begin("Quaternion");
+	/*ImGui::Begin("Quaternion");
 	ImGui::DragFloat4("Identity", &identity.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::DragFloat4("Conjugate", &conj.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::DragFloat4("Inverse", &inv.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
@@ -283,10 +260,10 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat4("Multiply(q1,q2)", &mul1.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::DragFloat4("Multiply(q2,q1)", &mul2.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::DragFloat("Norm", &norm, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::End();
+	ImGui::End();*/
 
 	
-	/*ImGui::Begin("床のTransform");
+	ImGui::Begin("床のTransform");
 	if (ImGui::TreeNode("一個目")) {
 		ImGui::DragFloat3("床の座標", &floorTransform[0].translate.x, 0.01f);
 		ImGui::DragFloat3("床の回転", &floorTransform[0].rotate.x, 0.01f);
@@ -318,7 +295,7 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat3("ゴールの大きさ", &goalTransform.scale.x, 0.01f);
 	ImGui::End();
 
-	ImGui::Begin("2Dテクスチャ");
+	/*ImGui::Begin("2Dテクスチャ");
 	ImGui::DragFloat2("座標", &spritePosition_.x, 1.0f);
 	ImGui::DragFloat("回転", &spriteRotate_, 0.01f);
 	ImGui::DragFloat2("大きさ", &spriteScale_.x, 1.0f);

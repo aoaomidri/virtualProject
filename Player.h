@@ -6,6 +6,7 @@
 #include"Input.h"
 #include"OBB.h"
 #include"Adjustment_Item.h"
+#include"math/Quaternion.h"
 #include<optional>
 
 class Player {
@@ -78,6 +79,13 @@ private:
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
+	Matrix4x4 testPlayerMatrix_{};
+	Matrix4x4 testPlayerRotateMatrix_{};
+
+	Matrix4x4 playerScaleMatrix_{};
+	Matrix4x4 playerRotateMatrix_{};
+	Matrix4x4 playerTransformMatrix_{};
+
 	//武器のマトリックス
 	Matrix4x4 weaponMatrix_{};
 	Matrix4x4 weaponCollisionMatrix_{};
@@ -87,6 +95,7 @@ private:
 
 	//自機の移動
 	Vector3 move_{};
+	Vector3 frontMove_{};
 
 	const Transform* cameraTransform_ = nullptr;
 

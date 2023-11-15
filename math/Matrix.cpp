@@ -256,6 +256,12 @@ Matrix4x4
 
 }
 
+Matrix4x4 Matrix::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate){
+	Matrix4x4 result{};
+	result = Multiply(scale, Multiply(rot, translate));
+	return result;
+}
+
 
 Vector3 Matrix::Normalize(const Vector3& v) {
 	Vector3 result{0, 0, 0};
@@ -365,8 +371,8 @@ Matrix4x4 Matrix::MakeRotateAxisAngle(const Vector3& axis, float angle){
 Matrix4x4 Matrix::DirectionToDirection(const Vector3& from, const Vector3& to){
 	Matrix4x4 matrix{};
 	Vector3 normalizeVec{};
-	if (Vector3::Dot(from, to)==-1){
-		normalizeVec = { from.y,-from.x,0 };
+	if (Vector3::Dot(from, to) == -1){
+		normalizeVec = { from.z,0,-from.x };
 	}
 	else {
 		normalizeVec = Vector3::Normalize(Vector3::Cross(from, to));

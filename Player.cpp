@@ -88,8 +88,9 @@ void Player::Update(Input* input){
 		break;
 	
 	}
-
-	
+	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
+	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
+	testPlayerRotateMatrix_ = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
 
 	playerOBB_.center = playerTransform_.translate;
 	playerOBB_.size = playerTransform_.scale;
@@ -103,6 +104,7 @@ void Player::Update(Input* input){
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
 
 	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerTransform_.scale, playerTransform_.rotate, playerTransform_.translate);
+	testPlayerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
 	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponTransform_.translate);
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
@@ -116,11 +118,14 @@ void Player::Draw(TextureManager* textureManager, const Transform& cameraTransfo
 	playerModel_->Update(playerMatrix_, cameraTransform);
 	playerModel_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
-	weaponModel_->Update(weaponMatrix_, cameraTransform);
-	weaponModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
+	if (behavior_==Behavior::kAttack){
+		weaponModel_->Update(weaponMatrix_, cameraTransform);
+		weaponModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
-	weaponCollisionModel_->Update(weaponCollisionMatrix_, cameraTransform);
-	weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
+		weaponCollisionModel_->Update(weaponCollisionMatrix_, cameraTransform);
+		weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
+	}
+	
 }
 
 void Player::DrawImgui(){
@@ -129,6 +134,47 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器の座標", &weaponCollisionTransform_.translate.x, 0.1f);
 	ImGui::DragFloat3("武器の回転", &weaponCollisionTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
+	ImGui::End();
+
+	ImGui::Begin("行列確認");
+	ImGui::DragFloat3("今のmove", &move_.x, 0.1f);
+	ImGui::DragFloat3("前回のmove", &frontMove_.x, 0.1f);
+	if (ImGui::TreeNode("Scale")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerScaleMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Rotate")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerRotateMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("正しく動いているRotate")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), testPlayerRotateMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Translate")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerTransformMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("PlayerMatrix(SRT)")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), testPlayerMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("正しく動いているPlayerMatrix(SRT)")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerMatrix_.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
 	ImGui::End();
 }
 
@@ -150,9 +196,13 @@ void Player::BehaviorRootInitialize(){
 	weaponTransform_.rotate.x = 0.0f;
 	weaponCollisionTransform_.translate.y = 1.0f;
 	weaponCollisionTransform_.rotate.x = 0.0f;
+	frontMove_ = { 0.0f,0.0f,1.0f };
 }
 
 void Player::BehaviorRootUpdate(Input* input){
+	if (move_.x != 0.0f || move_.z != 0.0f) {
+		frontMove_ = move_;
+	}
 	/*自機の移動*/
 	if (input->PushUp()) {
 		move_.z = moveSpeed_;
@@ -177,25 +227,30 @@ void Player::BehaviorRootUpdate(Input* input){
 
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform_->rotate);
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix);
+	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_);
 	move_.y = 0.0f;
+
+	playerTransform_.translate += move_;
 
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		playerTransform_.rotate.y = std::atan2(move_.x, move_.z);
 	}
+	else {
+		move_ = frontMove_;
+	}
 
-	playerTransform_.translate += move_;
+	playerRotateMatrix_ = Matrix::GetInstance()->DirectionToDirection((frontMove_), (move_));
+
+
+	
 	if (isDown_) {
 		playerTransform_.translate.y -= 0.07f;
 	}
 	if (dashCoolTime != 0) {
 		dashCoolTime -= 1;
 	}
-	weaponTransform_.rotate.y = playerTransform_.rotate.y;
-	weaponTransform_.translate = playerTransform_.translate;
-	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
-	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
-	weaponCollisionTransform_.rotate.y = playerTransform_.rotate.y;
-	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+	
+	
 
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
@@ -208,6 +263,13 @@ void Player::BehaviorRootUpdate(Input* input){
 void Player::BehaviorAttackInitialize(){
 	
 	//weaponTransform_.translate.y = 1.0f;
+	weaponTransform_.rotate.y = playerTransform_.rotate.y;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.rotate.y = playerTransform_.rotate.y;
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;

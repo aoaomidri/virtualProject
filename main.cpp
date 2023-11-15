@@ -34,10 +34,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
 	dxCommon_->Initialize(window_.get());
 
-	//Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 
-	////グローバル変数の読み込み
-	//adjustment_item->LoadFiles();
+	//グローバル変数の読み込み
+	adjustment_item->LoadFiles();
 
 	auto gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize(dxCommon_.get());
@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		input_->Update();
 
-		//adjustment_item->Update();
+		adjustment_item->Update();
 
 		gameScene_->Update(input_.get());
 		

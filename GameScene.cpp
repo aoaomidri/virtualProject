@@ -285,6 +285,28 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat("Norm", &norm, 0.01f, -100.0f, 100.0f, "%.2f");
 	ImGui::End();
 
+	ImGui::Begin("ある方向からある方向へ向ける回転行列");
+	if (ImGui::TreeNode("一個目")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix0.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("二個目")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix1.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("三個目")) {
+		for (int i = 0; i < 4; i++) {
+			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix2.m[i], 0.001f);
+		}
+		ImGui::TreePop();
+	}
+
+
+	ImGui::End();
 	
 	/*ImGui::Begin("床のTransform");
 	if (ImGui::TreeNode("一個目")) {

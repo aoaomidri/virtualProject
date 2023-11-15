@@ -24,6 +24,8 @@ public:
 public:
 
 	Vector4 quaternion_;
+
+private:
 	//x,y,z
 	Vector3 vector_;
 	//w

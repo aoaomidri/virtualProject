@@ -77,10 +77,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	rotateMatrix1 = Matrix::GetInstance()->DirectionToDirection(from0, to0);
 	rotateMatrix2 = Matrix::GetInstance()->DirectionToDirection(from1, to1);
 
-	q1.vector_ = { 2.0f,3.0f,4.0f };
-	q1.w = { 1.0f };
-	q2.vector_ = { 1.0f,3.0f,5.0f };
-	q2.w = { 2.0f };
+	q1.quaternion_ = { 2.0f,3.0f,4.0f,1.0f };
+	q2.quaternion_ = { 1.0f,3.0f,5.0f,2.0f };
 
 	identity = Quaternion::GetInstance()->IdentityQuaternion();
 	conj = Quaternion::GetInstance()->Conjugate(q1);

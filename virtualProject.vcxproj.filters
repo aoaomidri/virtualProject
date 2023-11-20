@@ -40,6 +40,18 @@
     <Filter Include="ソース ファイル\Object3D">
       <UniqueIdentifier>{82935296-a85d-4d43-9d99-a094ccebd2fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="character">
+      <UniqueIdentifier>{22059a41-cc80-412e-b0a8-3acf51b9b352}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="character\Player">
+      <UniqueIdentifier>{0009f4ef-44f5-48ee-a6ca-a9ba4f146736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="character\Player\Command">
+      <UniqueIdentifier>{bc9520ec-f68b-44c0-9401-ac11e272d88c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="character\Player\InputHandle">
+      <UniqueIdentifier>{f6383a58-2d00-4d3c-9732-82eb920922d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,9 +117,6 @@
     <ClCompile Include="DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -119,6 +128,15 @@
     </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\Player.cpp">
+      <Filter>character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\Command.cpp">
+      <Filter>character\Player\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\InputHandle.cpp">
+      <Filter>character\Player\InputHandle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,9 +221,6 @@
     <ClInclude Include="DebugCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -217,6 +232,15 @@
     </ClInclude>
     <ClInclude Include="math\Quaternion.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\Player.h">
+      <Filter>character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\Command.h">
+      <Filter>character\Player\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\InputHandle.h">
+      <Filter>character\Player\InputHandle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

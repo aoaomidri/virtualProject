@@ -1,6 +1,5 @@
 #include "Player.h"
 
-
 void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
 	playerSprite_ = std::make_unique<Sprite>();
 	playerSprite_->Initialize(device, commandList);	
@@ -50,12 +49,12 @@ void Player::DrawImgui(){
 	ImGui::End();
 }
 
-void Player::MoveRight(){
-	move_.x = moveSpeed_;
+void Player::MoveRight()
+{
 }
 
-void Player::MoveLeft(){
-	move_.x = -moveSpeed_;
+void Player::MoveLeft()
+{
 }
 
 void Player::Respawn(){

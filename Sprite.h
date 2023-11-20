@@ -28,24 +28,6 @@ public:
 
 	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
-	/*セッター群*/
-
-	void SetPosition(const Vector2& position) { position_ = position; }
-
-	void SetRotation(float rotation) { rotation_ = rotation; }
-
-	void SetScale(const Vector2& scale) { scale_ = scale; }
-
-	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
-
-	void SetColor(const Vector4& color) { color_ = color; }
-
-	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
-
-	void SetLeftTop(const Vector2& leftTop) { textureLeftTop_ = leftTop; }
-
-	void SetSize(const Vector2& size) { textureSize_ = size; }
-
 	/*ゲッター群*/
 
 	const Vector2& GetPosition()const { return position_; }
@@ -60,10 +42,7 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
-	const Vector2& GetLeftTop()const { return textureLeftTop_; }
-
-	const Vector2& GetSize()const { return textureSize_; }
-
+private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
 
@@ -89,13 +68,20 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
 	//マテリアルにデータを書き込む
+	Matrix4x4* wvpDataSprite = nullptr;
+
 	Vector4* materialDate = nullptr;
 
 	VertexData* vertexDataSprite = nullptr;
 
-	//データを書き込む
-	Matrix4x4* wvpDataSprite = nullptr;
+	Transform transformSprite{};
 
+	Transform cameraTransform{};
+
+	TextureManager* textureManager_ = nullptr;
+
+public:
+	//データを書き込む
 	Vector2 position_ = { 0.0f,0.0f };
 
 	float rotation_;
@@ -106,18 +92,6 @@ private:
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	Vector2 textureLeftTop_ = { 0.0f,0.0f };
-	
-	Vector2 textureSize_ = { 100.0f,100.0f };
-
-
-
-	Transform transformSprite{};
-
-	Transform cameraTransform{};
-
 	bool isDraw_ = true;
-
-	TextureManager* textureManager_ = nullptr;
 };
 

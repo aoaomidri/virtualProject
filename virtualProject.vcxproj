@@ -95,6 +95,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Adjustment_Item.cpp" />
+    <ClCompile Include="Character\Player\Command.cpp" />
+    <ClCompile Include="Character\Player\InputHandle.cpp" />
+    <ClCompile Include="Character\Player\Player.cpp" />
     <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
@@ -114,7 +117,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OBB.cpp" />
     <ClCompile Include="Object3D.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResourceObject.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -123,6 +125,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Adjustment_Item.h" />
+    <ClInclude Include="Character\Player\Command.h" />
+    <ClInclude Include="Character\Player\InputHandle.h" />
+    <ClInclude Include="Character\Player\Player.h" />
     <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="DirectXCommon.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -147,7 +152,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Model.h" />
     <ClInclude Include="OBB.h" />
     <ClInclude Include="Object3D.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="ResourceObject.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />

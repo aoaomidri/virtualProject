@@ -8,7 +8,8 @@
 #include"OBB.h"
 #include"math/Quaternion.h"
 #include"FollowCamera.h"
-#include"Player.h"
+#include"Character/Player/Player.h"
+#include"Character/Player/InputHandle.h"
 
 class GameScene{
 public:
@@ -35,30 +36,9 @@ private:
 	//基本の宣言はユニークポインタで
 	//テクスチャマネージャー
 	std::unique_ptr<TextureManager> textureManager_;
-	
 
-	//3Dオブジェクトの宣言
-	/*それぞれに持たせる予定だが突貫工事なのでここに書いている*/
-	//ステージの床
-	std::unique_ptr<Object3D> floor_[3];
-	//ゴール
-	std::unique_ptr<Object3D> goal_;
-	//敵
-	std::unique_ptr<Object3D> enemy_;
-	//敵の部品
-	std::unique_ptr<Object3D> enemyParts_;
-	//天球
-	std::unique_ptr<Object3D> skyDome_;
-
-	//テクスチャの宣言
-	std::unique_ptr<Sprite> testTexture_;
-
-	//プレイヤー
 	std::unique_ptr<Player> player_;
-
-	//プレイヤーを追うカメラ
-	std::unique_ptr<FollowCamera> followCamera_;
-
+	
 	//数値系
 	/*分離予定なので適当に置いている*/
 	Vector2 spritePosition_ = { 100.0f,100.0f };
@@ -68,109 +48,5 @@ private:
 	Vector4 spriteColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	bool isSpriteDraw = true;
 
-	Transform floorTransform[3] = {};
-	
-	Transform EnemyTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,3.14f,0.0f},
-		.translate = {0.0f,0.8f,7.0f}
-	};
-
-	Transform EnemyPartsTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,0.0f,1.57f},
-		.translate = {0.0f,1.7f,7.0f}
-	};
-
-	Transform goalTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.65f,9.0f}
-	};
-
-	Transform skyDomeTransform{
-		.scale = {20.0f,20.0f,20.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
-
-
-
-	Transform cameraTransform{
-		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
-
-	OBB enemyOBB = {};
-
-	OBB floorOBB[3] = {};
-
-	OBB goalOBB = {};
-
-	Matrix4x4 enemyMatrix{};
-
-	Matrix4x4 enemyPartsMatrix{};
-
-	Matrix4x4 moveFloorMatrix[3]{};
-
-	Matrix4x4 movePlayerMatrix{};
-
-	Matrix4x4 moveFloorTransformMatrix{};
-
-	Matrix4x4 skyDomeMatrix{};
-
-	Matrix4x4 goalMatrix{};
-
-	Vector3 FloorPlayerPosition{};
-
-	float Magnification = 1.0f;
-
-	float MagnificationY = 1.0f;
-
-	Vector3 moveSpeed_ = { 0.02f,0.05f,0.0f };
-
-	float EnemyMagnification = 1.0f;
-
-	float EnemyMoveSpeed_ = 0.02f;
-
-	Vector3 cameraMove_{};
-
-	const Vector3 baseCameraOffset = { 0.0f,1.0f,-8.0f };
-
-	Vector3 cameraOffset{};
-
-	Vector3 vector_;
-
-	int chackCollision = 0;
-
-	bool isDown = true;
-
-	bool isDead = false;
-
-	Vector3 axis{};
-
-	float angle = 0.44f;
-
-	Vector3 from0{};
-	Vector3 to0{};
-	Vector3 from1{};
-	Vector3 to1{};
-
-	Matrix4x4 rotateMatrix;
-
-	Matrix4x4 rotateMatrix0;
-	Matrix4x4 rotateMatrix1;
-	Matrix4x4 rotateMatrix2;
-
-	Quaternion q1;
-	Quaternion q2;
-	Quaternion identity;
-	Quaternion conj;
-	Quaternion inv;
-	Quaternion normal;
-	Quaternion mul1;
-	Quaternion mul2;
-	float norm;
 };
 

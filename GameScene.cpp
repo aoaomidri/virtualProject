@@ -18,33 +18,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
 	TextureLoad();
 
+	player_ = std::make_unique<Player>();
+	player_->Initislize(dxCommon_->GetDevice(),dxCommon_->GetCommandList());
 
-	axis = Matrix::GetInstance()->Normalize({ 1.0f,1.0f,1.0f });
-	rotateMatrix = Matrix::GetInstance()->MakeRotateAxisAngle(axis, angle);
-
-	from0 = Vector3::Normalize({ 1.0f,0.7f,0.5f });
-	to0 = Vector3::Normalize({ -1.0f,-0.7f,-0.5f });
-	from1 = Vector3::Normalize({ -0.6f,0.9f,0.2f });
-	to1 = Vector3::Normalize({ 0.4f,0.7f,-0.5f });
-
-	rotateMatrix0 = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize({ 1.0f,0.0f,0.0f }), Vector3::Normalize({ -1.0f,0.0f,0.0f }));
-	rotateMatrix1 = Matrix::GetInstance()->DirectionToDirection(from0, to0);
-	rotateMatrix2 = Matrix::GetInstance()->DirectionToDirection(from1, to1);
-
-	q1.quaternion_ = { 2.0f,3.0f,4.0f,1.0f };
-	q2.quaternion_ = { 1.0f,3.0f,5.0f,2.0f };
-
-	identity = Quaternion::GetInstance()->IdentityQuaternion();
-	conj = Quaternion::GetInstance()->Conjugate(q1);
-	inv = Quaternion::GetInstance()->Inverse(q1);
-	normal = Quaternion::GetInstance()->Normalize(q1);
-	mul1 = Quaternion::GetInstance()->Multiply(q1, q2);
-	mul2 = Quaternion::GetInstance()->Multiply(q2, q1);
-	norm = Quaternion::GetInstance()->Norm(q1);
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
+	player_->Update(input_);
 }
 
 void GameScene::Draw3D(){
@@ -64,45 +45,13 @@ void GameScene::Draw2D(){
 	textureManager_->PreDraw2D();
 	///*ここから下に描画処理を書き込む*/
 	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
-
+	player_->Draw(textureManager_.get());
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw2D();
 }
 
 void GameScene::DrawImgui(){
-	ImGui::Begin("Quaternion");
-	ImGui::DragFloat4("Identity", &identity.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Conjugate", &conj.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Inverse", &inv.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Normalize", &normal.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Multiply(q1,q2)", &mul1.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Multiply(q2,q1)", &mul2.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat("Norm", &norm, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::End();
-
-	ImGui::Begin("ある方向からある方向へ向ける回転行列");
-	if (ImGui::TreeNode("一個目")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix0.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("二個目")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix1.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("三個目")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), rotateMatrix2.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-
-
-	ImGui::End();
 	
 }
 

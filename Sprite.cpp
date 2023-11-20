@@ -39,7 +39,6 @@ void Sprite::Update(){
 
 	transformSprite.translate = { position_.x,position_.y,0.0f };
 	transformSprite.rotate = { 0.0f,0.0f,rotation_ };
-
 	
 
 	if (!isDraw_){

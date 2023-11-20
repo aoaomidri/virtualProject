@@ -56,7 +56,7 @@ private:
 
 	//数値系
 	/*分離予定なので適当に置いている*/
-	Vector2 spritePosition_ = { 100.0f,100.0f };
+	Vector2 spritePosition_ = { 640.0f,360.0f };
 	float spriteRotate_ = 0.0f;
 	Vector2 spriteScale_ = { 640.0f,360.0f };
 	Vector2 spriteAnchorPoint_ = { 0.5f,0.5f };

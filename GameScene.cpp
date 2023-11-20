@@ -33,8 +33,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	 skyDome_ = std::make_unique<Object3D>();
 	skyDome_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
 
-	testTexture_ = std::make_unique<Sprite>();
-	testTexture_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	testTexture_ = std::make_unique<Sprite>(textureManager_.get());
+	testTexture_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 0);
 
 	player_ = std::make_unique<Player>();
 	player_->Initislize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
@@ -74,7 +74,6 @@ void GameScene::Update(Input* input_){
 	testTexture_->Update();
 	testTexture_->SetPosition(spritePosition_);
 	testTexture_->SetRotation(spriteRotate_);
-	testTexture_->SetScale(spriteScale_);
 	testTexture_->SetAnchorPoint(spriteAnchorPoint_);
 	testTexture_->SetColor(spriteColor_);
 	testTexture_->SetIsDraw(isSpriteDraw);
@@ -301,10 +300,15 @@ void GameScene::DrawImgui(){
 	ImGui::Begin("2Dテクスチャ");
 	ImGui::DragFloat2("座標", &spritePosition_.x, 1.0f);
 	ImGui::DragFloat("回転", &spriteRotate_, 0.01f);
-	ImGui::DragFloat2("大きさ", &spriteScale_.x, 1.0f);
+	ImGui::DragFloat2("大きさ", &testTexture_->scale_.x, 1.0f);
 	ImGui::DragFloat2("アンカーポイント", &spriteAnchorPoint_.x, 0.1f, 0.0f, 1.0f);
 	ImGui::ColorEdit4("画像の色", &spriteColor_.x);
 	ImGui::Checkbox("画像を描画する", &isSpriteDraw);
+	ImGui::DragFloat2("UVのサイズ", &testTexture_->uvTransformSprite_.scale.x, 0.01f);
+	ImGui::DragFloat("UV回転", &testTexture_->uvTransformSprite_.rotate.z, 0.01f);
+	ImGui::DragFloat2("UV座標", &testTexture_->uvTransformSprite_.translate.x, 0.01f);
+	ImGui::DragFloat2("描画範囲の始点", &testTexture_->textureLeftTop_.x, 1.0f);
+	ImGui::DragFloat2("描画範囲", &testTexture_->textureSize_.x, 1.0f);
 	ImGui::End();
 }
 

@@ -7,15 +7,15 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
-Sprite::Sprite(){
-	textureManager_ = TextureManager::GetInstance();
+Sprite::Sprite(TextureManager* textureManager){
+	textureManager_ = textureManager;
 }
 
 Sprite::~Sprite(){
 	
 }
 
-void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber){
 
 	device_ = device;
 	commandList_ = commandList;
@@ -28,23 +28,57 @@ void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 		{0.0f,0.0f,0.0f}
 	};
 
+	uvTransformSprite_ = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+
 	cameraTransform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,-10.0f}
 	};
+
+	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+
+	if (TextureNumber != UINT32_MAX) {
+		textureNumber_ = TextureNumber;
+		AdjustTextureSize();
+		//テクスチャサイズをスプライトのサイズに適用
+		scale_ = textureSize_;
+	}
+	
 }
 
 void Sprite::Update(){
 
 	transformSprite.translate = { position_.x,position_.y,0.0f };
-	transformSprite.rotate = { 0.0f,0.0f,rotation_ };
-
+	transformSprite.rotate = { 0.0f,0.0f,rotation_ };	
 	
+	scale_ = textureSize_;
 
 	if (!isDraw_){
 		return;
 	}
+
+	ID3D12Resource* textureBuffer = textureManager_->GetTextureBuffer(textureNumber_);
+	if (textureBuffer){
+		//テクスチャ情報取得
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+		float tex_left = textureLeftTop_.x / resDesc.Width;
+		float tex_right = (textureLeftTop_.x + textureSize_.x) / resDesc.Width;
+		float tex_top = textureLeftTop_.y / resDesc.Height;
+		float tex_bottom = (textureLeftTop_.y + textureSize_.y) / resDesc.Height;
+
+		//頂点のUVに反映する
+		vertexDataSprite[0].texcoord = { tex_left,tex_bottom };		//左下
+		vertexDataSprite[1].texcoord = { tex_left,tex_top };		//左上
+		vertexDataSprite[2].texcoord = { tex_right,tex_bottom };	//右下
+		vertexDataSprite[3].texcoord = { tex_right,tex_top };		//右上
+	}
+
 	if (anchorPoint_.x < 0) {
 		anchorPoint_.x = 0.0f;
 	}else if (anchorPoint_.x > 1) {
@@ -68,7 +102,7 @@ void Sprite::Update(){
 	vertexDataSprite[2].position = { right,bottom,0.0f,1.0f };//右下
 	vertexDataSprite[3].position = { right,top,0.0f,1.0f };//右上
 
-	*materialDate = color_;
+	materialDate->color = color_;
 
 	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 	Matrix4x4 cameraMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -77,6 +111,10 @@ void Sprite::Update(){
 	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, Matrix::GetInstance()->Multiply(viewMatrixSprite, projectionMatrixSprite));
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
+	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransformSprite_.scale);
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransformSprite_.rotate));
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransformSprite_.translate));
+	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
 void Sprite::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
@@ -140,10 +178,10 @@ void Sprite::makeSpriteResource(){
 
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 	
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 1.0f,0.0f };
+	vertexDataSprite[0].texcoord = { 0.0f,1.0f };//左下
+	vertexDataSprite[1].texcoord = { 0.0f,0.0f };//左上
+	vertexDataSprite[2].texcoord = { 1.0f,1.0f };//右下
+	vertexDataSprite[3].texcoord = { 1.0f,0.0f };//右上
 
 	indexResourceSprite = CreateBufferResource(device_, sizeof(uint32_t) * 6);
 
@@ -169,12 +207,23 @@ void Sprite::makeSpriteResource(){
 	*wvpDataSprite = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//マテリアル用のリソース
-	materialResource = CreateBufferResource(device_, sizeof(Vector4));
+	materialResource = CreateBufferResource(device_, sizeof(Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
 	//今回は赤を書き込んでみる
 	
+}
+
+void Sprite::AdjustTextureSize(){
+	ID3D12Resource* textureBuffer = textureManager_->GetTextureBuffer(textureNumber_);
+	assert(textureBuffer);
+
+	//テクスチャ情報取得
+	D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+	textureSize_.x = static_cast<float>(resDesc.Width);
+	textureSize_.y = static_cast<float>(resDesc.Height);
 }
 
 

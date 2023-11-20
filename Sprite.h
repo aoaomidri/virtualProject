@@ -2,7 +2,7 @@
 #include "math/Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
-#include"Transform.h"
+#include"Model.h"
 #include"TextureManager.h"
 #include"Log.h"
 
@@ -19,10 +19,10 @@ enum VertexNumber{
 
 class Sprite {
 public:
-	Sprite();
+	Sprite(TextureManager* textureManager);
 	~Sprite();
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber = UINT32_MAX);
 
 	void Update();
 
@@ -64,10 +64,14 @@ public:
 
 	const Vector2& GetSize()const { return textureSize_; }
 
+private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
 
 	void makeSpriteResource();
+
+	//テクスチャサイズをイメージに合わせる
+	void AdjustTextureSize();
 private:
 	HRESULT hr;
 
@@ -89,35 +93,41 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
 	//マテリアルにデータを書き込む
-	Vector4* materialDate = nullptr;
-
+	Material* materialDate = nullptr;
+	
 	VertexData* vertexDataSprite = nullptr;
 
-	//データを書き込む
 	Matrix4x4* wvpDataSprite = nullptr;
 
-	Vector2 position_ = { 0.0f,0.0f };
-
-	float rotation_;
-
-	Vector2 scale_ = { 640.0f,360.0f };
-
-	Vector2 anchorPoint_ = { 0.0f,0.0f };
-
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	Vector2 textureLeftTop_ = { 0.0f,0.0f };
-	
-	Vector2 textureSize_ = { 100.0f,100.0f };
-
-
+	TextureManager* textureManager_ = nullptr;
 
 	Transform transformSprite{};
 
 	Transform cameraTransform{};
 
+	int textureNumber_;
+
+public:
+	//データを書き込む
+
+	Vector2 position_ = { 0.0f,0.0f };
+
+	float rotation_;
+
+	Vector2 scale_ = { 100.0f,100.0f };
+
+	Vector2 anchorPoint_ = { 0.0f,0.0f };
+
+	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };	
+
+	Vector2 textureLeftTop_ = { 50.0f,50.0f };
+	
+	Vector2 textureSize_ = { 100.0f,100.0f };
+
+	Transform uvTransformSprite_{};
+
 	bool isDraw_ = true;
 
-	TextureManager* textureManager_ = nullptr;
+	
 };
 

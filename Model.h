@@ -30,10 +30,13 @@ class Model{
 public:
 	static Model* GetInstance();
 
-	ModelData LoadObjFile(const std::string& filename);
+	Model* LoadObjFile(const std::string& filename);
 
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	static MaterialData* LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 private:
 	const std::string ResourcesPath = "resources/";
+
+	//頂点インデックス配列
+	std::vector<VertexData> indices;
 };
 

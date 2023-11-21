@@ -8,14 +8,16 @@ Model* Model::GetInstance(){
 	return &instance;
 }
 
-ModelData Model::LoadObjFile(const std::string& filename){
+Model* Model::LoadObjFile(const std::string& filename){
+
 
 	//1,中で必要になる変数の宣言
-	ModelData modelData;//構築するModelData
+	Model* modelData = new Model();//構築するModelData
 	std::vector<Vector4> positions;//位置
 	std::vector<Vector3> normals;//法線
 	std::vector<Vector2> texcoords;//テクスチャ座標
 	std::string line;//ファイルから読んだ1行を格納するもの
+	const std::string ResourcesPath = "resources/";
 
 	//2,ファイルを開く
 
@@ -71,9 +73,9 @@ ModelData Model::LoadObjFile(const std::string& filename){
 				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
+			indices.push_back(triangle[2]);
+			indices.push_back(triangle[1]);
+			indices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
@@ -89,7 +91,7 @@ ModelData Model::LoadObjFile(const std::string& filename){
 	return modelData;
 }
 
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename){
+MaterialData* Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename){
 	//1,中で必要となる変数の宣言
 	MaterialData materialData;//構築するMaterialData
 	std::string line;//ファイルから読んだ1行を格納するもの	

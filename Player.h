@@ -3,6 +3,7 @@
 #include"TextureManager.h"
 #include"math/Matrix.h"
 #include"Object3D.h"
+#include"3D/ViewProjection.h"
 #include"Input.h"
 #include"OBB.h"
 #include"Adjustment_Item.h"
@@ -14,11 +15,11 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//更新処理
 	void Update(Input* input);
 	//描画
-	void Draw(TextureManager* textureManager, const Transform& cameraTransform);
+	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();
 
@@ -38,13 +39,15 @@ public:
 
 	const Vector3& GetScale() const { return playerTransform_.scale; }
 
+	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
+
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
 
 	//Setter
 
-	void SetCameraTransform(const Transform* cameraTransform) { cameraTransform_ = cameraTransform; }
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	void SetIsDown(bool isDown) { isDown_ = isDown; }
 
@@ -98,7 +101,7 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
-	const Transform* cameraTransform_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 
 	//自機のOBB
 	OBB playerOBB_{};

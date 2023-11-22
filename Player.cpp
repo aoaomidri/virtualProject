@@ -8,7 +8,7 @@ void Player::ApplyGlobalVariables() {
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 }
 
-void Player::Initislize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 	//グループを追加
@@ -118,15 +118,15 @@ void Player::Update(Input* input){
 	DrawImgui();
 }
 
-void Player::Draw(TextureManager* textureManager, const Transform& cameraTransform){
-	playerModel_->Update(playerMatrix_, cameraTransform);
+void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+	playerModel_->Update(playerMatrix_, viewProjection);
 	playerModel_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
 	if (behavior_==Behavior::kAttack){
-		weaponModel_->Update(weaponMatrix_, cameraTransform);
+		weaponModel_->Update(weaponMatrix_, viewProjection);
 		weaponModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
-		weaponCollisionModel_->Update(weaponCollisionMatrix_, cameraTransform);
+		weaponCollisionModel_->Update(weaponCollisionMatrix_, viewProjection);
 		weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
 	}
 	
@@ -139,42 +139,11 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器の回転", &weaponCollisionTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
 	ImGui::End();
-
-
-	ImGui::Begin("行列確認");
-	if (ImGui::TreeNode("Scale")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerScaleMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Rotate")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat3((std::to_string(i + 1) + "行目").c_str(), &playerOBB_.orientations[i].x, 0.001f);
-		}
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerRotateMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Translate")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerTransformMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("PlayerMatrix(SRT)")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "行目").c_str(), playerMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
 	
-	ImGui::End();
 }
 
 void Player::onFlootCollision(OBB obb){
-	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
+	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y - 0.005f;
 }
 
 void Player::Respawn(){
@@ -218,7 +187,7 @@ void Player::BehaviorRootUpdate(Input* input){
 		move_.x = input->GetPadLStick().x * moveSpeed_;
 	}
 	
-	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform_->rotate);
+	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_->rotation_);
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix);
 	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_);
 	move_.y = 0.0f;
@@ -254,11 +223,11 @@ void Player::BehaviorRootUpdate(Input* input){
 void Player::BehaviorAttackInitialize(){
 	
 	//weaponTransform_.translate.y = 1.0f;
-	weaponTransform_.rotate.y = playerTransform_.rotate.y;
+	weaponTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.translate = playerTransform_.translate;
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
-	weaponCollisionTransform_.rotate.y = playerTransform_.rotate.y;
+	weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	WaitTime = WaitTimeBase;
@@ -303,7 +272,7 @@ void Player::BehaviorDashInitialize(){
 }
 
 void Player::BehaviorDashUpdate(){
-	Matrix4x4 newRotateMatrix_ = Matrix::GetInstance()->MakeRotateMatrixY(playerTransform_.rotate);
+	Matrix4x4 newRotateMatrix_ = playerRotateMatrix_;
 	move_ = { 0, 0, moveSpeed_ * kDashSpeed };
 
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);

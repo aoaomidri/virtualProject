@@ -40,6 +40,12 @@
     <Filter Include="ソース ファイル\Object3D">
       <UniqueIdentifier>{82935296-a85d-4d43-9d99-a094ccebd2fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3D">
+      <UniqueIdentifier>{f8a3b246-b901-43dd-a199-2c677cec3f24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Character">
+      <UniqueIdentifier>{47f6905b-b898-45f4-adce-26a2a0b04da1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,9 +111,6 @@
     <ClCompile Include="DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -119,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\ViewProjection.cpp">
+      <Filter>3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Enemy.cpp">
+      <Filter>Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,9 +215,6 @@
     <ClInclude Include="DebugCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -217,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="math\Quaternion.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\ViewProjection.h">
+      <Filter>3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Enemy.h">
+      <Filter>Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

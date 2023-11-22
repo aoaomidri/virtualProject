@@ -9,6 +9,7 @@
 #include"math/Quaternion.h"
 #include"FollowCamera.h"
 #include"Player.h"
+#include"Game/Character/Enemy.h"
 
 class GameScene{
 public:
@@ -27,6 +28,9 @@ private:
 	void TextureLoad();
 	//imguiの描画
 	void DrawImgui();
+
+	/*分ける予定があるけどひとまずのやつ*/
+	void AllCollision();
 	//OBB同士の当たり判定
 	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
 
@@ -43,10 +47,6 @@ private:
 	std::unique_ptr<Object3D> floor_[3];
 	//ゴール
 	std::unique_ptr<Object3D> goal_;
-	//敵
-	std::unique_ptr<Object3D> enemy_;
-	//敵の部品
-	std::unique_ptr<Object3D> enemyParts_;
 	//天球
 	std::unique_ptr<Object3D> skyDome_;
 
@@ -55,6 +55,9 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<Player> player_;
+
+	//エネミー
+	std::unique_ptr<Enemy> enemy_;
 
 	//プレイヤーを追うカメラ
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -70,18 +73,6 @@ private:
 
 	Transform floorTransform[3] = {};
 	
-	Transform EnemyTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,3.14f,0.0f},
-		.translate = {0.0f,0.8f,7.0f}
-	};
-
-	Transform EnemyPartsTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,0.0f,1.57f},
-		.translate = {0.0f,1.7f,7.0f}
-	};
-
 	Transform goalTransform{
 		.scale = {0.3f,0.3f,0.3f},
 		.rotate = {0.0f,0.0f,0.0f},
@@ -95,22 +86,9 @@ private:
 	};
 
 
-
-	Transform cameraTransform{
-		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
-
-	OBB enemyOBB = {};
-
 	OBB floorOBB[3] = {};
 
 	OBB goalOBB = {};
-
-	Matrix4x4 enemyMatrix{};
-
-	Matrix4x4 enemyPartsMatrix{};
 
 	Matrix4x4 moveFloorMatrix[3]{};
 
@@ -130,23 +108,11 @@ private:
 
 	Vector3 moveSpeed_ = { 0.02f,0.05f,0.0f };
 
-	float EnemyMagnification = 1.0f;
-
-	float EnemyMoveSpeed_ = 0.02f;
-
-	Vector3 cameraMove_{};
-
-	const Vector3 baseCameraOffset = { 0.0f,1.0f,-8.0f };
-
-	Vector3 cameraOffset{};
-
 	Vector3 vector_;
 
 	int chackCollision = 0;
 
 	bool isDown = true;
-
-	bool isDead = false;
 
 	
 };

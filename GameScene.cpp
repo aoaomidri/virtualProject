@@ -25,11 +25,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	 goal_ = std::make_unique<Object3D>();
 	goal_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "box");
 
-	 enemy_ = std::make_unique<Object3D>();
-	enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "Enemy");
-
-	 enemyParts_ = std::make_unique<Object3D>();
-	enemyParts_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "EnemyParts");
+	 enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 
 	 skyDome_ = std::make_unique<Object3D>();
 	skyDome_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
@@ -38,14 +35,15 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	testTexture_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 
 	player_ = std::make_unique<Player>();
-	player_->Initislize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	//自キャラのワールドトランスフォームを追従カメラにセット
 	followCamera_->SetTarget(&player_->GetTransform());
+	followCamera_->SetTargetMatrix(&player_->GetRotateMatrix());
 
-	player_->SetCameraTransform(&followCamera_->GetCameraTransform());
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
 	floorTransform[0] = {
 		.scale = {2.0f,0.5f,2.0f},
@@ -72,42 +70,19 @@ void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
 
-	testTexture_->Update();
+	/*testTexture_->Update();
 	testTexture_->SetPosition(spritePosition_);
 	testTexture_->SetRotation(spriteRotate_);
 	testTexture_->SetScale(spriteScale_);
 	testTexture_->SetAnchorPoint(spriteAnchorPoint_);
 	testTexture_->SetColor(spriteColor_);
-	testTexture_->SetIsDraw(isSpriteDraw);
+	testTexture_->SetIsDraw(isSpriteDraw);*/
 
-	/*敵の移動*/
-	EnemyTransform.translate.x += EnemyMoveSpeed_ * EnemyMagnification;
-
-	if (EnemyTransform.translate.x <= -2.0f) {
-		EnemyMagnification *= -1.0f;
-	}
-	else if (EnemyTransform.translate.x >= 2.0f) {
-		EnemyMagnification *= -1.0f;
-	}
-	/*エネミーのパーツ*/
-	EnemyPartsTransform.translate.x = EnemyTransform.translate.x;
-	EnemyPartsTransform.translate.y = EnemyTransform.translate.y + 0.9f;
-	EnemyPartsTransform.translate.z = EnemyTransform.translate.z;
-
-	EnemyPartsTransform.rotate.x += 0.3f;
-
-	enemyMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyTransform.scale, EnemyTransform.rotate, EnemyTransform.translate);
-	enemyPartsMatrix = Matrix::GetInstance()->MakeAffineMatrix(EnemyPartsTransform.scale, EnemyPartsTransform.rotate, EnemyPartsTransform.translate);
 	moveFloorMatrix[0] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[0].scale, floorTransform[0].rotate, floorTransform[0].translate);
 	moveFloorMatrix[1] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[1].scale, floorTransform[1].rotate, floorTransform[1].translate);
 	moveFloorMatrix[2] = Matrix::GetInstance()->MakeAffineMatrix(floorTransform[2].scale, floorTransform[2].rotate, floorTransform[2].translate);
 	skyDomeMatrix = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
 	goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
-
-	enemyOBB.center = EnemyTransform.translate;
-	enemyOBB.size = EnemyTransform.scale;
-	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(EnemyTransform.rotate);
-	SetOridentatios(enemyOBB, enemyRotateMatrix);
 
 	for (int i = 0; i < 3; i++) {
 		floorOBB[i].center = floorTransform[i].translate;
@@ -140,13 +115,13 @@ void GameScene::Update(Input* input_){
 		if (IsCollisionOBBOBB(player_->GetOBB(), floorOBB[i])) {
 			chackCollision = 1;
 			player_->onFlootCollision(floorOBB[i]);
-			//player_->SetIsDown(false);
+			player_->SetIsDown(false);
 
 			break;
 		}
 		else{
 			chackCollision = 0;
-			//player_->SetIsDown(true);
+			player_->SetIsDown(true);
 		}
 	}
 	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
@@ -166,10 +141,7 @@ void GameScene::Update(Input* input_){
 		player_->parent_ = nullptr;
 	}*/
 
-	cameraTransform.translate = vector_.Add(player_->GetTranslate(), cameraOffset);
-
 	floorTransform[1].translate.x += moveSpeed_.x * Magnification;
-	floorTransform[1].translate.y += moveSpeed_.y * MagnificationY;
 
 	if (floorTransform[1].translate.x <= -4.0f) {
 		Magnification *= -1.0f;
@@ -178,19 +150,13 @@ void GameScene::Update(Input* input_){
 		Magnification *= -1.0f;
 	}
 
-	if (floorTransform[1].translate.y <= -2.0f) {
-		MagnificationY *= -1.0f;
-	}
-	else if (floorTransform[1].translate.y >= 2.0f) {
-		MagnificationY *= -1.0f;
-	}
 
-	if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB) || IsCollisionOBBOBB(player_->GetOBB(), enemyOBB)) {
+	if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB) || IsCollisionOBBOBB(player_->GetOBB(), enemy_->GetOBB())) {
 		player_->Respawn();
 	}
 
-	if ( IsCollisionOBBOBB(player_->GetWeaponOBB(), enemyOBB)) {
-		EnemyTransform.translate.y = 200.0f;
+	if ( IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy_->GetOBB())) {
+		enemy_->SetIsDead(true);
 	}
 
 
@@ -198,22 +164,21 @@ void GameScene::Update(Input* input_){
 	skyDomeTransform.rotate.y += 0.01f;
 
 	for (int i = 0; i < 3; i++){
-		floor_[i]->Update(moveFloorMatrix[i], followCamera_->GetCameraTransform());
+		floor_[i]->Update(moveFloorMatrix[i], followCamera_->GetViewProjection());
 	}
 
 	player_->Update(input_);
 	
+	enemy_->Update();
+	
 
-	enemy_->Update(enemyMatrix, followCamera_->GetCameraTransform());
+	goal_->Update(goalMatrix, followCamera_->GetViewProjection());
 
-	enemyParts_->Update(enemyPartsMatrix, followCamera_->GetCameraTransform());
-
-	goal_->Update(goalMatrix, followCamera_->GetCameraTransform());
-
-	skyDome_->Update(skyDomeMatrix, followCamera_->GetCameraTransform());
+	skyDome_->Update(skyDomeMatrix, followCamera_->GetViewProjection());
 
 	if (input_->Trigerkey(DIK_R)){
-		EnemyTransform.translate = { 0.0f,0.8f,7.0f };
+		player_->Respawn();
+		enemy_->Respawn();
 	}
 }
 
@@ -225,11 +190,9 @@ void GameScene::Draw3D(){
 	for (int i = 0; i < 3; i++){
 		floor_[i]->Draw(textureManager_->SendGPUDescriptorHandle(3));
 	}
-	player_->Draw(textureManager_.get(), followCamera_->GetCameraTransform());
+	player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 
-	enemy_->Draw(textureManager_->SendGPUDescriptorHandle(5));
-
-	enemyParts_->Draw(textureManager_->SendGPUDescriptorHandle(6));
+	enemy_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 
 	goal_->Draw(textureManager_->SendGPUDescriptorHandle(2));
 
@@ -252,16 +215,6 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-	/*ImGui::Begin("Quaternion");
-	ImGui::DragFloat4("Identity", &identity.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Conjugate", &conj.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Inverse", &inv.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Normalize", &normal.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Multiply(q1,q2)", &mul1.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat4("Multiply(q2,q1)", &mul2.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat("Norm", &norm, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::End();*/
-
 	
 	ImGui::Begin("床のTransform");
 	if (ImGui::TreeNode("一個目")) {
@@ -288,21 +241,7 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat3("ベクトル", &FloorPlayerPosition.x, 0.01f);
 	ImGui::End();
 
-	ImGui::Begin("ゴール");
-	ImGui::Text("床とプレイヤーが接触しているか %d ", chackCollision);
-	ImGui::DragFloat3("ゴールの座標", &goalTransform.translate.x, 0.01f);
-	ImGui::DragFloat3("ゴールの回転", &goalTransform.rotate.x, 0.01f);
-	ImGui::DragFloat3("ゴールの大きさ", &goalTransform.scale.x, 0.01f);
-	ImGui::End();
-
-	/*ImGui::Begin("2Dテクスチャ");
-	ImGui::DragFloat2("座標", &spritePosition_.x, 1.0f);
-	ImGui::DragFloat("回転", &spriteRotate_, 0.01f);
-	ImGui::DragFloat2("大きさ", &spriteScale_.x, 1.0f);
-	ImGui::DragFloat2("アンカーポイント", &spriteAnchorPoint_.x, 0.1f, 0.0f, 1.0f);
-	ImGui::ColorEdit4("画像の色", &spriteColor_.x);
-	ImGui::Checkbox("画像を描画する", &isSpriteDraw);
-	ImGui::End();*/
+	
 }
 
 bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){

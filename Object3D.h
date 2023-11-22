@@ -8,6 +8,7 @@
 #include<fstream>
 #include<sstream>
 #include"Model.h"
+#include"3D/ViewProjection.h"
 
 
 class Object3D{
@@ -16,7 +17,7 @@ public:
 
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::string fileName);
 	
-	void Update(const Matrix4x4& worldMatrix,const Transform& camera);
+	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
 	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 

@@ -94,6 +94,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3D\ViewProjection.cpp" />
     <ClCompile Include="Adjustment_Item.cpp" />
     <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
@@ -106,6 +107,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="Game\Character\Enemy.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -122,6 +124,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3D\ViewProjection.h" />
     <ClInclude Include="Adjustment_Item.h" />
     <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="DirectXCommon.h" />
@@ -135,6 +138,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Game\Character\Enemy.h" />
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />

@@ -304,6 +304,15 @@ Vector3 Matrix::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return result;
 }
 
+float Matrix::RotateAngleYFromMatrix(const Matrix4x4& m){
+	float angle = std::acos(m.m[0][0]);
+	if (m.m[2][0] < 0) {
+		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
+	}
+
+	return angle;
+}
+
 
 Matrix4x4 Matrix::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 	Matrix4x4 result{ 0 };

@@ -35,8 +35,6 @@ void FollowCamera::Initialize(){
 
 	distance = -20.0f;
 
-	shotOffset = { 2.0f, 6.0f, -7.5f };
-
 	rootOffset = { 0.0f, 0.0f, distance };
 
 	minRotate = -0.31f;
@@ -53,7 +51,7 @@ void FollowCamera::Update(Input* input_){
 	cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
 
 	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)){
-		destinationAngleY_ = target_->rotate.y;
+		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
 		destinationAngleX_ = 0.2f;
 	}
 
@@ -68,10 +66,10 @@ void FollowCamera::Update(Input* input_){
 		destinationAngleX_ = maxRotate;
 	}
 
-	cameraTransform.rotate.y =
-		Vector3::LerpShortAngle(cameraTransform.rotate.y, destinationAngleY_, angle_t);
-	cameraTransform.rotate.x =
-		Vector3::LerpShortAngle(cameraTransform.rotate.x, destinationAngleX_, angle_t);
+	viewProjection_.rotation_.y =
+		Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
+	viewProjection_.rotation_.x =
+		Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	rootOffset = { 0.0f, 0.0f, distance };
 	baseOffset = rootOffset;
 
@@ -82,24 +80,28 @@ void FollowCamera::Update(Input* input_){
 		Vector3 offset = offsetCalculation(baseOffset);
 
 		//座標をコピーしてオフセット分ずらす
-		cameraTransform.translate = interTarget_ + offset;
+		viewProjection_.translation_ = interTarget_ + offset;
 
 	}
+	viewingFrustum_.translation_ = viewProjection_.translation_;
+	viewingFrustum_.rotate_ = viewProjection_.rotation_;
+	
+	viewProjection_.UpdateMatrix();
 }
 
 void FollowCamera::Reset(){
 	if (target_) {
 		//追従座標・角度の初期化
 		interTarget_ = target_->translate;
-		cameraTransform.rotate.y = target_->rotate.y;
+		viewProjection_.rotation_.y = target_->rotate.y;
 	}
 	Vector3 offset = offsetCalculation(baseOffset);
-	cameraTransform.translate = interTarget_ + offset;
+	viewProjection_.translation_ = interTarget_ + offset;
 }
 
 Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	Vector3 offset_ = offset;
-	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(cameraTransform.rotate);
+	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
 
 	offset_ = Matrix::GetInstance()->TransformNormal(offset_, newRotateMatrix);
 
@@ -109,13 +111,12 @@ Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 void FollowCamera::SetTarget(const Transform* target){
 	target_ = target;
 	Reset();
-
 }
 
 void FollowCamera::DrawImgui(){
 	ImGui::Begin("カメラ関連");
-	ImGui::DragFloat3("カメラ座標", &cameraTransform.translate.x, 0.01f);
-	ImGui::DragFloat3("カメラ回転", &cameraTransform.rotate.x, 0.01f);
+	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.01f);
+	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);

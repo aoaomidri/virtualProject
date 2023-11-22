@@ -102,6 +102,7 @@ public:
 
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
+	float RotateAngleYFromMatrix(const Matrix4x4& m);
 
 	Matrix4x4 operator+(const Matrix4x4& mat) const;
 

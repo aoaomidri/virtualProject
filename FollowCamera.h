@@ -2,6 +2,7 @@
 #include"Transform.h"
 #include"Input.h"
 #include"Adjustment_Item.h"
+#include"3D/ViewProjection.h"
 #include"math/Matrix.h"
 struct ViewingFrustum {
 	Vector3 translation_; // カメラの座標
@@ -25,20 +26,18 @@ public:
 
 	void SetTarget(const Transform* target);
 
+	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix = target; }
+
 	ViewingFrustum& GetViewingFrustum() { return viewingFrustum_; }
 
-	const Transform& GetCameraTransform()const { return cameraTransform; }
+	const ViewProjection& GetViewProjection()const { return viewProjection_; }
 private:
 	void DrawImgui();
 
 	void ApplyGlobalVariables();
 
 private:
-	Transform cameraTransform{
-		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
+	ViewProjection viewProjection_;
 
 	Vector3 cameraMove_{};
 
@@ -46,10 +45,25 @@ private:
 
 	Vector3 cameraOffset{};
 
-	ViewingFrustum viewingFrustum_;
+	//視錐台
+	ViewingFrustum viewingFrustum_ = {
+		.translation_ = viewProjection_.translation_,
+		.rotate_ = viewProjection_.rotation_,
+		.direction = {0.0f,0.0f,1.0f},
+		.verticalFOV = viewProjection_.fovAngleY_,
+		.aspectRatio = viewProjection_.aspectRatio_,
+		.nearZ = viewProjection_.nearZ_,
+		.farZ = viewProjection_.farZ_
+	};
+	//0.45f, (1280.0f / 720.0f), 0.1f, 1000.0f
+
+	Matrix4x4 cameraMatrix_{};
 
 	// 追従対象
 	const Transform* target_ = nullptr;
+
+	// 追従対象
+	const Matrix4x4* targetRotateMatrix = nullptr;
 
 	// 追従対象の残像座標
 	Vector3 interTarget_ = {};
@@ -67,8 +81,6 @@ private:
 	float destinationAngleX_ = 0.0f;
 	//基準のオフセット
 	Vector3 baseOffset;
-
-	Vector3 shotOffset;
 
 	Vector3 rootOffset;
 

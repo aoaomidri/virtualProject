@@ -69,7 +69,7 @@ private:
 		.translation_ = viewProjection_.translation_,
 		.rotate_ = viewProjection_.rotation_,
 		.direction = {0.0f,0.0f,1.0f},
-		.verticalFOV = viewProjection_.fovAngleY_/2.0f,
+		.verticalFOV = viewProjection_.fovAngleY_/1.5f,
 		.aspectRatio = viewProjection_.aspectRatio_,
 		.nearZ = viewProjection_.nearZ_,
 		.farZ = 30.0f

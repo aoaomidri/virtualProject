@@ -29,6 +29,8 @@ public:
 	//リスポーン
 	void Respawn(const Vector3& position);
 
+	void OnCollision();
+
 public:
 	//Getter
 	const Transform& GetTransform() const { return transform_; }
@@ -98,5 +100,10 @@ private:
 
 	bool isDead_ = false;
 
+	const int invincibleTimeBase_ = 40;
+
+	int invincibleTime_ = 0;
+
+	int enemyLife_ = 3;
 };
 

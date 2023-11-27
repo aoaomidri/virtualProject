@@ -293,7 +293,7 @@ void GameScene::AllCollision(){
 	}
 	for (const auto& enemy : enemies_) {
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
-			enemy->SetIsDead(true);
+			enemy->OnCollision();
 		}
 	}
 

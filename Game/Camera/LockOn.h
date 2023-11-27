@@ -38,6 +38,10 @@ private:
 	/// 範囲内判定
 	/// </summary>
 	bool InTarget(const OBB enemyOBB, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
+	/// <summary>
+	/// ターゲットリセット
+	/// </summary>
+	void TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
 
 public:
 	Vector3 GetTargetPosition() const;
@@ -62,7 +66,11 @@ private:
 
 	Vector2 screenPos_;
 
-	
+	std::list<std::pair<float, const Enemy*>> targets;
+
+	std::list<std::pair<float, const Enemy*>>::iterator it;
+
+	bool autoLockOn_ = false;
 
 	float length = 0;
 };

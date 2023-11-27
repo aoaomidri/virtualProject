@@ -3,6 +3,7 @@
 void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
 	lockOnMark_ = std::make_unique<Sprite>();
 	lockOnMark_->Initialize(device, commandList);
+	
 	lockOnMark_->SetLeftTop({ 0,0 });
 	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
 	lockOnMark_->SetSize({ 64.0f,64.0f });
@@ -10,7 +11,22 @@ void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
-	lockOnMark_->Update();
+	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
+		if (autoLockOn_){
+			autoLockOn_ = false;
+			target_ = nullptr;
+		}
+		else {
+			autoLockOn_ = true;
+		}		
+	}
+	if (autoLockOn_) {
+		lockOnMark_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+	}
+	else {
+		lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+
 	if (target_){
 		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			target_ = nullptr;
@@ -18,11 +34,27 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		else if (!InTarget(target_->GetOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
 		}
+		else if (!autoLockOn_ && input->GetPadButtonDown(XINPUT_GAMEPAD_DPAD_RIGHT)) {
+			
+			++it;
+			if (it == targets.end()) {
+				it = targets.begin();
+			}
+			target_ = it->second;
+		}
 	}	
 	else {
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
-			search(enemies, viewprojection,viewingFrustum);
+		if (!autoLockOn_){
+			if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+				search(enemies, viewprojection, viewingFrustum);
+			}
+
+
 		}
+		else if(autoLockOn_){
+			search(enemies, viewprojection, viewingFrustum);
+		}
+		
 	}
 
 	if (target_){
@@ -44,6 +76,8 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 		lockOnMark_->SetPosition(screenPos_);
 	}
+
+	lockOnMark_->Update();
 	/*ImGui::Begin("距離");
 	ImGui::DragFloat("最短距離", &length, 0.1f);
 	ImGui::End();*/
@@ -57,7 +91,7 @@ void LockOn::Draw(TextureManager* textureManager){
 }
 
 void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){
-	std::list<std::pair<float, const Enemy*>> targets;
+	targets.clear();
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		if (enemy->GetIsDead()){
 			continue;
@@ -77,12 +111,31 @@ void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		//ソートの結果一番近い敵をロックオン対象とする
 		length = targets.front().first;
 		target_ = targets.front().second;
+		it = targets.begin();
 	}
 
 }
 
 bool LockOn::InTarget(const OBB enemyOBB, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){
 	return (IsCollisionOBBViewFrustum(enemyOBB, viewingFrustum));
+}
+
+
+void LockOn::TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){
+	targets.clear();
+	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+		if (enemy->GetIsDead()) {
+			continue;
+		}
+		Vector3 positionWorld = enemy->GetCenterPos();
+		//ワールドビュー座標変換
+		Vector3 positionView = Matrix::GetInstance()->Transform(positionWorld, viewprojection.matView_);
+
+		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)) {
+			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
+		}
+	}
+	it = targets.begin();
 }
 
 Vector3 LockOn::GetTargetPosition() const{

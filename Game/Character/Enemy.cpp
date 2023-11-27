@@ -6,12 +6,10 @@ void Enemy::ApplyGlobalVariables(){
 
 void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position){
 	model_ = std::make_unique<Object3D>();
-	model_->Initialize(device, commandList, "Enemy");
-	
+	model_->Initialize(device, commandList, "Enemy");	
 
 	partsModel_ = std::make_unique<Object3D>();
-	partsModel_->Initialize(device, commandList, "EnemyParts");
-	
+	partsModel_->Initialize(device, commandList, "EnemyParts");	
 
 	/*collisionModel_ = std::make_unique<Object3D>();
 	collisionModel_->Initialize(device, commandList, "box");*/
@@ -39,25 +37,44 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 }
 
 void Enemy::Update(){
-	if (isDead_) {
-		
-		return;
-	}
-	/*敵の移動*/
-	transform_.translate.x += moveSpeed_ * magnification;
+	if (enemyLife_ > 0) {
+		/*敵の移動*/
+		transform_.translate.x += moveSpeed_ * magnification;
 
-	if (transform_.translate.x <= -2.0f) {
-		magnification *= -1.0f;
-	}
-	else if (transform_.translate.x >= 2.0f) {
-		magnification *= -1.0f;
-	}
-	/*エネミーのパーツ*/
-	partsTransform_.translate.x = transform_.translate.x;
-	partsTransform_.translate.y = transform_.translate.y + 0.9f;
-	partsTransform_.translate.z = transform_.translate.z;
+		if (transform_.translate.x <= -2.0f) {
+			magnification *= -1.0f;
+		}
+		else if (transform_.translate.x >= 2.0f) {
+			magnification *= -1.0f;
+		}
+		/*エネミーのパーツ*/
+		partsTransform_.translate.x = transform_.translate.x;
+		partsTransform_.translate.y = transform_.translate.y + 0.9f;
+		partsTransform_.translate.z = transform_.translate.z;
 
-	partsTransform_.rotate.x += 0.3f;
+		partsTransform_.rotate.x += 0.3f;
+
+	}
+	else {
+		transform_.translate.y += 0.1f;
+		transform_.translate.z += 0.1f;
+		transform_.rotate.x += 0.3f;
+		partsTransform_.translate.y = transform_.translate.y + 0.9f;
+		partsTransform_.translate.z = transform_.translate.z;
+		partsTransform_.rotate.x += 0.3f;
+		if (transform_.scale.x > 0.0f) {
+			transform_.scale.x -= 0.005f;
+			transform_.scale.y -= 0.005f;
+			transform_.scale.z -= 0.005f;
+		}
+		else {
+			isDead_ = true;
+		}
+	}
+	if (invincibleTime_>0){
+		invincibleTime_--;
+	}
+	
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
@@ -66,9 +83,6 @@ void Enemy::Update(){
 	OBB_.size = transform_.scale;
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
-
-
-
 }
 
 void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
@@ -92,7 +106,20 @@ void Enemy::onFlootCollision(OBB obb){
 
 void Enemy::Respawn(const Vector3& position){
 	isDead_ = false;
-	transform_.translate = position;
+	enemyLife_ = 3;
+	transform_ = {
+		{0.3f,0.3f,0.3f},
+		{0.0f,3.14f,0.0f},
+		position
+	};
+}
+
+void Enemy::OnCollision(){
+	if (invincibleTime_<=0){
+		enemyLife_--;
+		invincibleTime_ = invincibleTimeBase_;
+	}	
+	
 }
 
 const Vector3 Enemy::GetCenterPos()const{

@@ -10,6 +10,9 @@
 #include"math/Quaternion.h"
 #include<optional>
 
+//前方宣言
+class LockOn;
+
 class Player {
 public:
 	//調整項目
@@ -52,6 +55,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	void SetIsDown(bool isDown) { isDown_ = isDown; }
+
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
 private:
 	//クラス内関数
@@ -209,5 +214,8 @@ private:
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+private:
+	//ロックオン
+	const LockOn* lockOn_ = nullptr;
 };
 

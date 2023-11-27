@@ -10,6 +10,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/Enemy/EnemyTex.png", 5);
 	textureManager_->Load("resources/EnemyParts/EnemyParts.png", 6);
 	textureManager_->Load("resources/Weapon/Sword.png", 7);
+	textureManager_->Load("resources/Magic.png", 8);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
@@ -40,7 +41,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	for (int i = 0; i < 5; i++){
 		
 		enemy_ = std::make_unique<Enemy>();
-		enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), { 0.0f,0.7f,(7.0f + i * 2.0f) });
+		enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), { 0.0f,0.7f,(7.0f + i * 4.0f) });
 		enemies_.push_back(std::move(enemy_));
 	}
 
@@ -70,19 +71,26 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+
+	followCamera_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
+	if (input_->Trigerkey(DIK_R)) {
+		int i = 0;
+		player_->Respawn();
+		for (const auto& enemy : enemies_) {
+			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+			i++;
+		}
+	}
+
+
 	followCamera_->Update(input_);
-	lockOn_->Update();
-	/*testTexture_->Update();
-	testTexture_->SetPosition(spritePosition_);
-	testTexture_->SetRotation(spriteRotate_);
-	testTexture_->SetScale(spriteScale_);
-	testTexture_->SetAnchorPoint(spriteAnchorPoint_);
-	testTexture_->SetColor(spriteColor_);
-	testTexture_->SetIsDraw(isSpriteDraw);*/
+	lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
+	
 
 	skyDomeMatrix = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTransform.scale, skyDomeTransform.rotate, skyDomeTransform.translate);
 	goalMatrix = Matrix::GetInstance()->MakeAffineMatrix(goalTransform.scale, goalTransform.rotate, goalTransform.translate);
@@ -123,14 +131,7 @@ void GameScene::Update(Input* input_){
 
 	skyDome_->Update(skyDomeMatrix, followCamera_->GetViewProjection());
 
-	if (input_->Trigerkey(DIK_R)){
-		int i = 0;
-		player_->Respawn();
-		for (const auto& enemy : enemies_) {
-			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 2.0f) });
-			i++;
-		}
-	}
+	
 }
 
 void GameScene::Draw3D(){

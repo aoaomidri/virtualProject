@@ -52,3 +52,5 @@ void Floor::DrawImgui(){
 		isDelete_ = true;
 	}
 }
+
+

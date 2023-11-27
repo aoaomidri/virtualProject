@@ -94,3 +94,13 @@ void Enemy::Respawn(const Vector3& position){
 	isDead_ = false;
 	transform_.translate = position;
 }
+
+const Vector3 Enemy::GetCenterPos()const{
+	const Vector3 offset = { 0.0f,1.0f,0.0f };
+	//ワールドに変換
+	
+	Vector3 world = Matrix::GetInstance()->Transform(offset, matrix_);
+
+	return world;
+
+}

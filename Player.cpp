@@ -1,4 +1,5 @@
 #include "Player.h"
+#include"Game/Camera/LockOn.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {
@@ -160,6 +161,11 @@ void Player::onFlootCollision(OBB obb){
 }
 
 void Player::Respawn(){
+	playerRotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+
+	postureVec_ = { 0.0f,0.0f,1.0f };
+	frontVec_ = { 0.0f,0.0f,1.0f };
+
 	playerTransform_ = {
 			.scale = {0.3f,0.3f,0.3f},
 			.rotate = {0.0f,0.0f,0.0f},
@@ -213,6 +219,16 @@ void Player::BehaviorRootUpdate(Input* input){
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 		
 	}
+	else if(lockOn_&&lockOn_->ExistTarget()){
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - playerTransform_.translate;
+		sub.y = 0;
+		sub = Vector3::Normalize(sub);
+		postureVec_ = sub;
+
+		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
+	}
 
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
 		downVector.y += jumpPower;
@@ -262,7 +278,10 @@ void Player::BehaviorAttackInitialize(){
 	isShakeDown = false;
 }
 
-void Player::BehaviorAttackUpdate(Input* input){	
+void Player::BehaviorAttackUpdate(Input* input){
+	frontVec_ = postureVec_;
+	
+
 
 	if (++workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {
@@ -275,6 +294,17 @@ void Player::BehaviorAttackUpdate(Input* input){
 			
 			behaviorRequest_ = Behavior::kRoot;
 		}
+	}
+
+	if (lockOn_ && lockOn_->ExistTarget()) {
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - playerTransform_.translate;
+		sub.y = 0;
+		sub = Vector3::Normalize(sub);
+		postureVec_ = sub;
+
+		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
 	switch (workAttack_.comboIndex_){

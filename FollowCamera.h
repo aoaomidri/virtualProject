@@ -4,6 +4,10 @@
 #include"Adjustment_Item.h"
 #include"3D/ViewProjection.h"
 #include"math/Matrix.h"
+
+//前方宣言
+class LockOn;
+
 struct ViewingFrustum {
 	Vector3 translation_; // カメラの座標
 	Vector3 rotate_;      // カメラの回転
@@ -23,12 +27,17 @@ public:
 	void Reset();
 
 	Vector3 offsetCalculation(const Vector3& offset) const;
+public:
 
 	void SetTarget(const Transform* target);
 
 	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix = target; }
 
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+public:
 	ViewingFrustum& GetViewingFrustum() { return viewingFrustum_; }
+
+	ViewingFrustum& GetLockViewingFrustum() { return lockViewingFrustum_; }
 
 	const ViewProjection& GetViewProjection()const { return viewProjection_; }
 private:
@@ -54,6 +63,16 @@ private:
 		.aspectRatio = viewProjection_.aspectRatio_,
 		.nearZ = viewProjection_.nearZ_,
 		.farZ = viewProjection_.farZ_
+	};
+
+	ViewingFrustum lockViewingFrustum_ = {
+		.translation_ = viewProjection_.translation_,
+		.rotate_ = viewProjection_.rotation_,
+		.direction = {0.0f,0.0f,1.0f},
+		.verticalFOV = viewProjection_.fovAngleY_/2.0f,
+		.aspectRatio = viewProjection_.aspectRatio_,
+		.nearZ = viewProjection_.nearZ_,
+		.farZ = 30.0f
 	};
 	//0.45f, (1280.0f / 720.0f), 0.1f, 1000.0f
 
@@ -90,7 +109,8 @@ private:
 
 	float rotateSpeed = 0.05f;
 
-	
+	//ロックオン
+	const LockOn* lockOn_ = nullptr;
 
 
 };

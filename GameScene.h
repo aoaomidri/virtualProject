@@ -114,7 +114,7 @@ private:
 	};
 
 	Transform skyDomeTransform{
-		.scale = {20.0f,20.0f,20.0f},
+		.scale = {50.0f,50.0f,50.0f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
 	};

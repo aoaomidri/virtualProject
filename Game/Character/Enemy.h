@@ -33,6 +33,8 @@ public:
 	//Getter
 	const Transform& GetTransform() const { return transform_; }
 
+	const Vector3 GetCenterPos()const;
+
 	const Matrix4x4& GetRotateMatrix()const { return rotateMatrix_; };
 
 	const OBB& GetOBB()const { return OBB_; }
@@ -84,6 +86,8 @@ private:
 
 	//自機のOBB
 	OBB OBB_{};
+
+	Vector3 worldPos = {};
 
 	/// <summary>
 	///倍率

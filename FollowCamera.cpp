@@ -1,4 +1,5 @@
 #include "FollowCamera.h"
+#include"Game/Camera/LockOn.h"
 void FollowCamera::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Camera";
@@ -48,12 +49,22 @@ void FollowCamera::Update(Input* input_){
 	DrawImgui();
 	ApplyGlobalVariables();
 
-	cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+	if (lockOn_ && lockOn_->target_) {
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - target_->translate;
+		sub = Vector3::Normalize(sub);
+		destinationAngleY_ = std::atan2(sub.x, sub.z);
 
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)){
-		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
-		destinationAngleX_ = 0.2f;
 	}
+	else {
+		cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
+			destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+			destinationAngleX_ = 0.2f;
+		}
+	}
+	
 
 	destinationAngleX_ += cameraMove_.x;
 	destinationAngleY_ += cameraMove_.y;
@@ -86,6 +97,9 @@ void FollowCamera::Update(Input* input_){
 	viewingFrustum_.translation_ = viewProjection_.translation_;
 	viewingFrustum_.rotate_ = viewProjection_.rotation_;
 	
+	lockViewingFrustum_.translation_ = viewingFrustum_.translation_;
+	lockViewingFrustum_.rotate_ = viewingFrustum_.rotate_;
+
 	viewProjection_.UpdateMatrix();
 }
 

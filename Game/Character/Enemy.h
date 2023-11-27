@@ -15,7 +15,7 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position);
 	//更新処理
 	void Update();
 	//描画
@@ -27,7 +27,7 @@ public:
 	void onFlootCollision(OBB obb);
 
 	//リスポーン
-	void Respawn();
+	void Respawn(const Vector3& position);
 
 public:
 	//Getter
@@ -36,6 +36,8 @@ public:
 	const Matrix4x4& GetRotateMatrix()const { return rotateMatrix_; };
 
 	const OBB& GetOBB()const { return OBB_; }
+
+	bool GetIsDead() { return isDead_; }
 
 	//Setter
 
@@ -50,7 +52,7 @@ private:
 	//自機のモデル
 	std::unique_ptr<Object3D> model_;
 	std::unique_ptr<Object3D> partsModel_;
-	std::unique_ptr<Object3D> collisionModel_;
+	//std::unique_ptr<Object3D> collisionModel_;
 
 
 	//自機のSRT

@@ -4,20 +4,22 @@ void Enemy::ApplyGlobalVariables(){
 
 }
 
-void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position){
 	model_ = std::make_unique<Object3D>();
 	model_->Initialize(device, commandList, "Enemy");
+	
 
 	partsModel_ = std::make_unique<Object3D>();
 	partsModel_->Initialize(device, commandList, "EnemyParts");
+	
 
-	collisionModel_ = std::make_unique<Object3D>();
-	collisionModel_->Initialize(device, commandList, "box");
+	/*collisionModel_ = std::make_unique<Object3D>();
+	collisionModel_->Initialize(device, commandList, "box");*/
 
 	transform_ = {
 		{0.3f,0.3f,0.3f},
 		{0.0f,3.14f,0.0f},
-		{0.0f,0.8f,7.0f}
+		position
 	};
 
 	partsTransform_ = {
@@ -38,6 +40,7 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 
 void Enemy::Update(){
 	if (isDead_) {
+		
 		return;
 	}
 	/*敵の移動*/
@@ -65,6 +68,7 @@ void Enemy::Update(){
 	SetOridentatios(OBB_, enemyRotateMatrix);
 
 
+
 }
 
 void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
@@ -73,7 +77,7 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	}
 	model_->Update(matrix_, viewProjection);
 	model_->Draw(textureManager->SendGPUDescriptorHandle(5));
-
+	
 	partsModel_->Update(partsMatrix_, viewProjection);
 	partsModel_->Draw(textureManager->SendGPUDescriptorHandle(6));
 }
@@ -86,7 +90,7 @@ void Enemy::onFlootCollision(OBB obb){
 
 }
 
-void Enemy::Respawn(){
+void Enemy::Respawn(const Vector3& position){
 	isDead_ = false;
-	transform_.translate = { 0.0f,0.8f,7.0f };
+	transform_.translate = position;
 }

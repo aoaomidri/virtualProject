@@ -22,29 +22,44 @@
     <Filter Include="math">
       <UniqueIdentifier>{56d68de0-d420-4ec0-b031-b630d81bc856}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Base">
+    <Filter Include="Game">
+      <UniqueIdentifier>{5ee7f803-fa62-4002-b062-97b068221934}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Stage">
+      <UniqueIdentifier>{e96c9c7e-93f6-4eba-8510-3539a49e9279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Character">
+      <UniqueIdentifier>{47f6905b-b898-45f4-adce-26a2a0b04da1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Camera">
+      <UniqueIdentifier>{3df5702d-1c83-45a1-bd80-0f7162938d62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{caad5420-216e-4d39-87b7-3b3848726d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Base">
       <UniqueIdentifier>{b029ee7f-e1df-445a-9742-26befb196295}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Manager">
-      <UniqueIdentifier>{5615661c-e40e-4b65-9252-029e12c013d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Base">
-      <UniqueIdentifier>{f5b480f4-bbf6-430d-8cef-53b145963aac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Manager">
-      <UniqueIdentifier>{8bbe4674-cae7-4e71-9a4a-51db08f5e247}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Object3D">
-      <UniqueIdentifier>{f1db1a25-fd53-42ec-861f-2945a51b37a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Object3D">
-      <UniqueIdentifier>{82935296-a85d-4d43-9d99-a094ccebd2fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="3D">
+    <Filter Include="Engine\3D">
       <UniqueIdentifier>{f8a3b246-b901-43dd-a199-2c677cec3f24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Character">
-      <UniqueIdentifier>{47f6905b-b898-45f4-adce-26a2a0b04da1}</UniqueIdentifier>
+    <Filter Include="Engine\3D\Shape">
+      <UniqueIdentifier>{fe8ff73b-5af8-4f0c-8ed9-6fa581f83aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\2D">
+      <UniqueIdentifier>{d505ce71-760a-45ed-94db-fc553558f5fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3D\Object3D">
+      <UniqueIdentifier>{82935296-a85d-4d43-9d99-a094ccebd2fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Input">
+      <UniqueIdentifier>{c2f1472c-0789-4bf6-9899-bdbc83c56de4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Stage\Floor">
+      <UniqueIdentifier>{16dfa007-7f68-42df-b0f2-830c984957c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene">
+      <UniqueIdentifier>{2a798d80-64ff-4384-97e1-f3afc8c80868}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -72,65 +87,77 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="math\Matrix.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="OBB.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXCommon.cpp">
-      <Filter>ソース ファイル\Base</Filter>
+      <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsPipeline.cpp">
-      <Filter>ソース ファイル\Base</Filter>
+      <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="WinApp.cpp">
-      <Filter>ソース ファイル\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>ソース ファイル\Manager</Filter>
+      <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>ソース ファイル\Object3D</Filter>
+      <Filter>Engine\3D\Object3D</Filter>
     </ClCompile>
     <ClCompile Include="Object3D.cpp">
-      <Filter>ソース ファイル\Object3D</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Adjustment_Item.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="FollowCamera.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\3D\Object3D</Filter>
     </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="3D\ViewProjection.cpp">
-      <Filter>3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Character</Filter>
+      <Filter>Game\Character</Filter>
     </ClCompile>
     <ClCompile Include="Game\Character\Enemy.cpp">
-      <Filter>Character</Filter>
+      <Filter>Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="FollowCamera.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCamera.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="OBB.cpp">
+      <Filter>Engine\3D\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Engine\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Engine\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Engine\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Adjustment_Item.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceObject.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Game\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Goal.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Floor\FloorManager.cpp">
+      <Filter>Game\Stage\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Floor\Floor.cpp">
+      <Filter>Game\Stage\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Camera\LockOn.cpp">
+      <Filter>Game\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,15 +185,6 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="math\Matrix.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -179,62 +197,83 @@
     <ClInclude Include="math\Vector4.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="memo.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="OBB.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXCommon.h">
-      <Filter>ヘッダー ファイル\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsPipeline.h">
-      <Filter>ヘッダー ファイル\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>ヘッダー ファイル\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="WinApp.h">
-      <Filter>ヘッダー ファイル\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>ヘッダー ファイル\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Object3D.h">
-      <Filter>ヘッダー ファイル\Object3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>ヘッダー ファイル\Object3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Adjustment_Item.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FollowCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="math\Quaternion.h">
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="3D\ViewProjection.h">
-      <Filter>3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Character</Filter>
+      <Filter>Game\Character</Filter>
     </ClInclude>
     <ClInclude Include="Game\Character\Enemy.h">
-      <Filter>Character</Filter>
+      <Filter>Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="FollowCamera.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCamera.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="OBB.h">
+      <Filter>Engine\3D\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXCommon.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsPipeline.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="WinApp.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Engine\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Adjustment_Item.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceObject.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Game\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Goal.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Floor\FloorManager.h">
+      <Filter>Game\Stage\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Floor\Floor.h">
+      <Filter>Game\Stage\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Camera\LockOn.h">
+      <Filter>Game\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

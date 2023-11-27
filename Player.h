@@ -41,6 +41,8 @@ public:
 
 	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
 
+	bool GetIsDown() { return isDown_; }
+
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
@@ -63,9 +65,50 @@ private:
 	// 通常行動更新
 	void BehaviorRootUpdate(Input* input);
 	//攻撃行動更新
-	void BehaviorAttackUpdate();
+	void BehaviorAttackUpdate(Input* input);
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
+public:
+	/*攻撃に関連する項目*/
+	//攻撃用定数
+	struct ConstAttack {
+		//振りかぶりの時間<frame>
+		uint32_t anticipatationTime;
+		//ための時間
+		uint32_t chargeTime;
+		//攻撃ふりの時間
+		uint32_t swingTime;
+		//硬直時間
+		uint32_t recoveryTime;
+		//振りかぶりの移動の速さ
+		float anticipatationSpeed;
+		//ための移動速度
+		float chargeSpeed;
+		//攻撃振りの移動速度
+		float swingSpeed;
+	};
+	struct  WorkAttack{
+		uint32_t attackParameter_ = 0;
+		int32_t comboIndex_ = 0;
+		int32_t inComboPhase_ = 0;
+		bool comboNext_ = false;
+		uint32_t AttackTimer_ = 0;
+	};
+
+	WorkAttack workAttack_;
+
+	Vector3 baseRotate_ = { 0 };
+
+	//コンボの数
+	static const int ConboNum = 3;
+
+	static const std::array<ConstAttack, ConboNum>kConstAttacks_;
+private:
+	//攻撃のモーション
+	void AttackMotion();
+
+	void thirdAttackMotion();
+
 private:
 	//自機のモデル
 	std::unique_ptr<Object3D> playerModel_;
@@ -96,6 +139,13 @@ private:
 
 	//自機の移動
 	Vector3 move_{};
+
+	//ジャンプ
+	float jumpPower = 0.2f;
+
+	//落下関連
+	const float downSpeed = -0.01f;
+	Vector3 downVector = { 0 };
 
 	//姿勢ベクトル
 	Vector3 postureVec_{};
@@ -137,6 +187,7 @@ private:
 	const float moveWeapon = 0.1f;
 	const float moveWeaponShakeDown = 0.2f;
 	const float MaxRotate = 1.55f;
+	const float MaxRotateY = -1.55f;
 	const float MinRotate = -0.6f;
 
 	int WaitTimeBase = 20;

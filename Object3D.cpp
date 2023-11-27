@@ -14,7 +14,7 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 
 	makeResource();
 
-	
+	isDraw_ = true;
 
 	transform = {
 		{1.0f,1.0f,1.0f},

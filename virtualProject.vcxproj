@@ -107,7 +107,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="Game\Camera\LockOn.cpp" />
     <ClCompile Include="Game\Character\Enemy.cpp" />
+    <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
+    <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
+    <ClCompile Include="Game\Stage\Goal.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -138,7 +142,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Game\Camera\LockOn.h" />
     <ClInclude Include="Game\Character\Enemy.h" />
+    <ClInclude Include="Game\Stage\Floor\Floor.h" />
+    <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
+    <ClInclude Include="Game\Stage\Goal.h" />
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />

@@ -72,6 +72,8 @@ private:
 
 	bool autoLockOn_ = false;
 
+	bool isLockOn_ = false;
+
 	float length = 0;
 };
 

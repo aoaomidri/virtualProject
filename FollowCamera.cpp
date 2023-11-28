@@ -57,10 +57,9 @@ void FollowCamera::Update(Input* input_){
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - target_->translate;
 		sub.y = 0;
-		sub = Vector3::Normalize(sub);
-		frontVec_ = sub;
+		postureVec_ = sub;
 
-		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(postureVec_), Vector3::Normalize(frontVec_));
+		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
 
 	}

@@ -14,14 +14,19 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
+			
 			target_ = nullptr;
 		}
 		else {
 			autoLockOn_ = true;
+			isLockOn_ = true;
 		}		
 	}
 	if (autoLockOn_) {
 		lockOnMark_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+			isLockOn_ = true;
+		}
 	}
 	else {
 		lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
@@ -30,6 +35,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	if (target_){
 		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			target_ = nullptr;
+			isLockOn_ = false;
 		}
 		else if (!InTarget(target_->GetOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
@@ -52,7 +58,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 		}
 		else if(autoLockOn_){
-			search(enemies, viewprojection, viewingFrustum);
+			if (isLockOn_){
+				search(enemies, viewprojection, viewingFrustum);
+			}
+			
 		}
 		
 	}

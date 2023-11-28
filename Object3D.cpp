@@ -46,7 +46,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix_;
 
-	
+	//materialDate->enableLighting = true;
 }
 
 void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {

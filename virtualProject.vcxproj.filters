@@ -159,6 +159,9 @@
     <ClCompile Include="Game\Camera\LockOn.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="Game\Camera\LockOn.h">
       <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Engine\3D\Object3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

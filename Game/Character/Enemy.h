@@ -7,6 +7,7 @@
 #include"../../OBB.h"
 #include"../../Adjustment_Item.h"
 #include"../../math/Quaternion.h"
+#include"../../Particle.h"
 #include<optional>
 
 
@@ -51,18 +52,22 @@ public:
 
 private:
 	//クラス内関数
+	void ParticleMove();
 
 private:
+	static const int particleNum_ = 20;
+
 	//自機のモデル
 	std::unique_ptr<Object3D> model_;
 	std::unique_ptr<Object3D> partsModel_;
+	std::unique_ptr<Particle>particleModel_[particleNum_];
 	//std::unique_ptr<Object3D> collisionModel_;
 
 
 	//自機のSRT
 	Transform transform_{};
 	Transform partsTransform_{};
-	Transform collisionTransform_{};
+	Transform particleTransform_[particleNum_]{};
 
 	//プレイヤーのマトリックス
 	Matrix4x4 matrix_{};
@@ -72,7 +77,7 @@ private:
 	Matrix4x4 transformMatrix_{};
 
 	Matrix4x4 partsMatrix_{};
-	Matrix4x4 collisionMatrix_{};
+	Matrix4x4 particleMatrix_[particleNum_]{};
 
 	//スケールを無視したマトリックス
 	Matrix4x4 moveMatrix_{};
@@ -100,10 +105,16 @@ private:
 
 	bool isDead_ = false;
 
-	const int invincibleTimeBase_ = 40;
+	const int invincibleTimeBase_ = 35;
 
 	int invincibleTime_ = 0;
 
 	int enemyLife_ = 3;
+
+	Vector3 particleVec_[particleNum_];
+
+	bool isParticle_ = false;
+
+	float particleSpeed_;
 };
 

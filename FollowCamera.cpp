@@ -43,22 +43,33 @@ void FollowCamera::Initialize(){
 
 	baseOffset = rootOffset;
 
+	postureVec_ = { 0.0f,0.0f,1.0f };
+	frontVec_ = { 0.0f,0.0f,1.0f };
+
 }
 
 void FollowCamera::Update(Input* input_){
+	frontVec_ = postureVec_;
 	DrawImgui();
 	ApplyGlobalVariables();
 
 	if (lockOn_ && lockOn_->target_) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - target_->translate;
+		sub.y = 0;
 		sub = Vector3::Normalize(sub);
-		destinationAngleY_ = std::atan2(sub.x, sub.z);
+		frontVec_ = sub;
+
+		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(postureVec_), Vector3::Normalize(frontVec_));
+		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
 
 	}
 	else {
 		cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
-
+		Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
+		postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
+		postureVec_.y = 0.0f;
+		postureVec_ = Vector3::Normalize(postureVec_);
 		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
 			destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
 			destinationAngleX_ = 0.2f;
@@ -94,6 +105,10 @@ void FollowCamera::Update(Input* input_){
 		viewProjection_.translation_ = interTarget_ + offset;
 
 	}
+
+	
+
+
 	viewingFrustum_.translation_ = viewProjection_.translation_;
 	viewingFrustum_.rotate_ = viewProjection_.rotation_;
 	
@@ -132,8 +147,10 @@ void FollowCamera::DrawImgui(){
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.01f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
+	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
+
 	ImGui::End();
 }
 

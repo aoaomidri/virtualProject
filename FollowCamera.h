@@ -112,6 +112,10 @@ private:
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
 
+	//姿勢ベクトル
+	const Vector3 Vec = { 0.0f,0.0f,1.0f };
+	Vector3 postureVec_{};
+	Vector3 frontVec_{};
 
 };
 

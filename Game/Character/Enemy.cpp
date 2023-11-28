@@ -11,6 +11,11 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 	partsModel_ = std::make_unique<Object3D>();
 	partsModel_->Initialize(device, commandList, "EnemyParts");	
 
+	for (int i = 0; i < 20; i++){
+		particleModel_[i] = std::make_unique<Particle>();
+		particleModel_[i]->Initialize(device, commandList);
+	}
+
 	/*collisionModel_ = std::make_unique<Object3D>();
 	collisionModel_->Initialize(device, commandList, "box");*/
 
@@ -26,8 +31,22 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 		{0.0f,1.7f,7.0f}
 	};
 
-	isDead_ = false;
+	for (int i = 0; i < 20; i++) {
+		particleModel_[i]->transform_ = {
+			{0.1f,0.1f,0.1f},
+			{0.0f,0.0f,0.0f},
+			{0.0f,0.0f,0.0f}
+		};
+	}
 
+
+	for (int i = 0; i < 20; i++) {
+		particleVec_[i] = {0.0f,0.0f,0.0f};
+	}
+	
+
+	isDead_ = false;
+	isParticle_ = true;
 
 	OBB_.center = transform_.translate;
 	OBB_.size = transform_.scale;
@@ -74,10 +93,16 @@ void Enemy::Update(){
 	if (invincibleTime_>0){
 		invincibleTime_--;
 	}
-	
+	for (int i = 0; i < particleNum_; i++) {
+		particleModel_[i]->transform_.translate += particleVec_[i];
+	}
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
+	for (int i = 0; i < particleNum_; i++) {
+		particleModel_[i]->Update();
+	}
+
 
 	OBB_.center = transform_.translate;
 	OBB_.size = transform_.scale;
@@ -94,6 +119,15 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	
 	partsModel_->Update(partsMatrix_, viewProjection);
 	partsModel_->Draw(textureManager->SendGPUDescriptorHandle(6));
+
+	if (isParticle_){
+		for (int i = 0; i < 10; i++) {
+			particleModel_[i]->Draw(textureManager,viewProjection);
+		}
+		for (int i = 10; i < 20; i++) {
+			particleModel_[i]->Draw(textureManager, viewProjection);
+		}
+	}
 }
 
 void Enemy::DrawImgui(){
@@ -118,6 +152,7 @@ void Enemy::OnCollision(){
 	if (invincibleTime_<=0){
 		enemyLife_--;
 		invincibleTime_ = invincibleTimeBase_;
+		ParticleMove();
 	}	
 	
 }
@@ -130,4 +165,51 @@ const Vector3 Enemy::GetCenterPos()const{
 
 	return world;
 
+}
+
+void Enemy::ParticleMove(){
+
+	if (enemyLife_ == 2) {
+		for (int i = 0; i < 5; i++){
+			particleModel_[i]->transform_.translate = transform_.translate;
+
+			Vector3 velocity = { 0, 0, 0 };
+			float numberX = (rand() % 11 - 5) / 2.0f;
+			float numberY = ((rand() % 11) / 2.0f);
+			float numberZ = (rand() % 11 - 5) / 2.0f;
+
+			velocity = { numberX / 10.0f, numberY / 10.0f, numberZ / 10.0f };
+
+			particleVec_[i] = velocity;
+		}
+
+	}else if (enemyLife_ == 1) {
+		for (int i = 5; i < 10; i++) {
+			particleModel_[i]->transform_.translate = transform_.translate;
+			Vector3 velocity = { 0, 0, 0 };
+			float numberX = (rand() % 11 - 5) / 2.0f;
+			float numberY = static_cast<float>((rand() % 11) / 2.0f);
+			float numberZ = (rand() % 11 - 5) / 2.0f;
+
+			velocity = { numberX, numberY / 10.0f, numberZ };
+
+			particleVec_[i] = velocity;
+		}
+
+	}else if (enemyLife_ == 0) {
+		for (int i = 10; i < particleNum_; i++) {
+			particleModel_[i]->transform_.translate = transform_.translate;
+			Vector3 velocity = { 0, 0, 0 };
+			float numberX = (rand() % 11 - 5) / 2.0f;
+			float numberY = static_cast<float>((rand() % 11) / 2.0f);
+			float numberZ = (rand() % 11 - 5) / 2.0f;
+
+			velocity = { numberX, numberY / 10.0f, numberZ };
+
+			particleVec_[i] = velocity;
+		}
+
+	}
+	
+	
 }

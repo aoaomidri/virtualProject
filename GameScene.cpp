@@ -11,6 +11,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/EnemyParts/EnemyParts.png", 6);
 	textureManager_->Load("resources/Weapon/Sword.png", 7);
 	textureManager_->Load("resources/Magic.png", 8);
+	textureManager_->Load("resources/Black.png", 9);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){

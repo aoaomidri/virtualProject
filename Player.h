@@ -65,6 +65,8 @@ private:
 	void BehaviorRootInitialize();
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorThirdAttackInitialize();
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
 	// 通常行動更新

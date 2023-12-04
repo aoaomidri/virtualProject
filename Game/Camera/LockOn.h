@@ -1,6 +1,7 @@
 #pragma once
-#include"../../FollowCamera.h"
-#include"../../Sprite.h"
+#include"../Camera/FollowCamera.h"
+#include"../../Engine/2D/Sprite.h"
+#include"../../Engine/3D/Shape/OBB.h"
 #include"../Character/Enemy.h"
 /// <summary>
 /// ロックオン
@@ -10,7 +11,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, TextureManager* textureManager);
 
 	/// <summary>
 	/// 更新

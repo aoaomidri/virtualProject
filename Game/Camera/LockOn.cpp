@@ -1,7 +1,7 @@
 #include "LockOn.h"
 
-void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
-	lockOnMark_ = std::make_unique<Sprite>();
+void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, TextureManager* textureManager){
+	lockOnMark_ = std::make_unique<Sprite>(textureManager);
 	lockOnMark_->Initialize(device, commandList);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });

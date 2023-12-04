@@ -1,8 +1,8 @@
-#include"Input.h"
-#include"WinApp.h"
-#include"DirectXCommon.h"
-#include"GameScene.h"
-#include "Adjustment_Item.h"
+#include"Game/Input/Input.h"
+#include"Engine/Base/WinApp.h"
+#include"Engine/Base/DirectXCommon.h"
+#include"Game/Scene/GameScene.h"
+#include "Game/Item/Adjustment_Item.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {

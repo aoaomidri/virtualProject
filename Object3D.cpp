@@ -14,7 +14,7 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 
 	makeResource();
 
-	
+	isDraw_ = true;
 
 	transform = {
 		{1.0f,1.0f,1.0f},
@@ -29,7 +29,7 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 	};
 }
 
-void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
+void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
@@ -42,14 +42,11 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const Transform& camera) {
 	position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
 	chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };
 
-	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix(camera.scale, camera.rotate, camera.translate);
-	Matrix4x4 viewMatrix = Matrix::GetInstance()->Inverce(cameraMatrix);
-	Matrix4x4 projectionMatrix = Matrix::GetInstance()->MakePerspectiveFovMatrix(0.45f, (1280.0f / 720.0f), 0.1f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, Matrix::GetInstance()->Multiply(viewMatrix, projectionMatrix));
+	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix_;
 
-	
+	//materialDate->enableLighting = true;
 }
 
 void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {

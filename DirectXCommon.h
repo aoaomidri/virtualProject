@@ -30,9 +30,9 @@ public:
 	//描画後処理
 	void PostDraw();
 
-	void SpritePreDraw();
+	/*void SpritePreDraw();
 
-	void SpritePostDraw();
+	void SpritePostDraw();*/
 	//ログの表示
 	void Log(const std::string& messaga);
 

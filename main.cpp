@@ -2,6 +2,7 @@
 #include"WinApp.h"
 #include"DirectXCommon.h"
 #include"GameScene.h"
+#include "Adjustment_Item.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {
@@ -33,8 +34,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
 	dxCommon_->Initialize(window_.get());
 
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+
+	//グローバル変数の読み込み
+	adjustment_item->LoadFiles();
+
 	auto gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize(dxCommon_.get());
+
+	
 
 	/*初期化処理とかはここで終わり*/
 	MSG msg{};	
@@ -50,6 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ゲームの処理
 
 		input_->Update();
+
+		adjustment_item->Update();
 
 		gameScene_->Update(input_.get());
 		

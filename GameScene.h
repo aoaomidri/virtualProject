@@ -6,7 +6,12 @@
 #include"Object3D.h"
 #include"math/Matrix.h"
 #include"OBB.h"
+#include"math/Quaternion.h"
+#include"FollowCamera.h"
 #include"Player.h"
+#include"Game/Character/Enemy.h"
+#include"Game/Stage/Floor/FloorManager.h"
+#include"Game/Camera/LockOn.h"
 
 class GameScene{
 public:
@@ -23,10 +28,33 @@ private:
 	//クラス内関数
 	//テクスチャ読み込み
 	void TextureLoad();
+
+	//オブジェクトの初期化
+	void ObjectInitialize(DirectXCommon* dxCommon_);
+
 	//imguiの描画
 	void DrawImgui();
+
+
+	/*分ける予定があるけどひとまずのやつ*/
+	void AllCollision();
 	//OBB同士の当たり判定
 	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
+
+private:
+	/*ファイル関連*/
+	int stageSelect_;
+
+	std::string stageName_;
+
+	std::vector<std::string> stages_;
+
+	void FilesSave(const std::vector<std::string>& stages);
+
+	void FilesOverWrite(const std::string& stage);
+
+	void FilesLoad(const std::string& stage);
+
 
 private:
 	//クラス内変数
@@ -37,14 +65,8 @@ private:
 
 	//3Dオブジェクトの宣言
 	/*それぞれに持たせる予定だが突貫工事なのでここに書いている*/
-	//ステージの床
-	std::unique_ptr<Object3D> floor_[3];
 	//ゴール
 	std::unique_ptr<Object3D> goal_;
-	//敵
-	std::unique_ptr<Object3D> enemy_;
-	//敵の部品
-	std::unique_ptr<Object3D> enemyParts_;
 	//天球
 	std::unique_ptr<Object3D> skyDome_;
 
@@ -54,6 +76,28 @@ private:
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 
+	//エネミー
+	std::unique_ptr<Enemy> enemy_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	//床
+	std::unique_ptr<FloorManager> floorManager_;;
+	std::unique_ptr<Object3D> floorModel_;
+
+	Transform firstFloor_ = {
+		.scale = {2.0f,0.5f,2.0f},
+		.rotate = {0},
+		.translate = {0}
+	};
+
+	bool isFloorMove_ = false;
+
+	//プレイヤーを追うカメラ
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	/*ロックオン*/
+	std::unique_ptr<LockOn> lockOn_;
+
 	//数値系
 	/*分離予定なので適当に置いている*/
 	Vector2 spritePosition_ = { 640.0f,360.0f };
@@ -62,21 +106,7 @@ private:
 	Vector2 spriteAnchorPoint_ = { 0.5f,0.5f };
 	Vector4 spriteColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	bool isSpriteDraw = true;
-
-	Transform floorTransform[3] = {};
 	
-	Transform EnemyTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,3.14f,0.0f},
-		.translate = {0.0f,0.8f,7.0f}
-	};
-
-	Transform EnemyPartsTransform{
-		.scale = {0.3f,0.3f,0.3f},
-		.rotate = {0.0f,0.0f,1.57f},
-		.translate = {0.0f,1.7f,7.0f}
-	};
-
 	Transform goalTransform{
 		.scale = {0.3f,0.3f,0.3f},
 		.rotate = {0.0f,0.0f,0.0f},
@@ -84,34 +114,13 @@ private:
 	};
 
 	Transform skyDomeTransform{
-		.scale = {20.0f,20.0f,20.0f},
+		.scale = {50.0f,50.0f,50.0f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
-
-
-	Transform cameraTransform{
-		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
-
-	OBB enemyOBB = {};
-
-	OBB floorOBB[3] = {};
 
 	OBB goalOBB = {};
-
-	Matrix4x4 enemyMatrix{};
-
-	Matrix4x4 enemyPartsMatrix{};
-
-	Matrix4x4 moveFloorMatrix[3]{};
-
-	Matrix4x4 movePlayerMatrix{};
-
-	Matrix4x4 moveFloorTransformMatrix{};
 
 	Matrix4x4 skyDomeMatrix{};
 
@@ -119,27 +128,9 @@ private:
 
 	Vector3 FloorPlayerPosition{};
 
-	float Magnification = 1.0f;
-
-	float MagnificationY = 1.0f;
-
-	Vector3 moveSpeed_ = { 0.02f,0.05f,0.0f };
-
-	float EnemyMagnification = 1.0f;
-
-	float EnemyMoveSpeed_ = 0.02f;
-
-	Vector3 cameraMove_{};
-
-	const Vector3 baseCameraOffset = { 0.0f,1.0f,-8.0f };
-
-	Vector3 cameraOffset{};
-
 	Vector3 vector_;
 
 	int chackCollision = 0;
-
-	bool isDown = true;
-
+	
 };
 

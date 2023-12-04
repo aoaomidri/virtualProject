@@ -385,7 +385,10 @@ Matrix4x4 Matrix::DirectionToDirection(const Vector3& from, const Vector3& to){
 	if (Vector3::Dot(from, to) == -1){
 		if ( from.x != 0.0f|| from.z != 0.0f){
 			normalizeVec = { from.z,0,-from.x };
-		}		
+		}
+		else if (from.x != 0.0f || from.y != 0.0f) {
+			normalizeVec = { from.y,-from.x,0.0f };
+		}
 	}
 	else {
 		normalizeVec = Vector3::Normalize(cross);

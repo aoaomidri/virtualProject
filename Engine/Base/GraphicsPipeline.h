@@ -24,6 +24,8 @@ public:
 	static GraphicsPipeline* GetInstance();
 
 	void Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname);
+	//パーティクル専用の初期化処理
+	void ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname);
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
@@ -40,6 +42,8 @@ private:
 	void makeGraphicsPipeline(ID3D12Device* device);
 
 	void makeRootSignature(ID3D12Device* device);
+
+	void makeParticleRootSignature(ID3D12Device* device);
 
 	void makeInputLayout();
 

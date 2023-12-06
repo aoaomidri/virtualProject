@@ -1,5 +1,9 @@
 #pragma once
-#include"../../math/Matrix.h"
+#include"../../math/Vector2.h"
+#include"../../math/Vector3.h"
+#include"../../math/Vector4.h"
+#include"../../math/Matrix4x4.h"
+
 struct Transform {
 	Vector3 scale;
 	Vector3 rotate;

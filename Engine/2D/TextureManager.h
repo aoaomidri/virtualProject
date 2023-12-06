@@ -35,6 +35,10 @@ public:
 
 	void PostDraw3D();
 
+	void PreDrawParticle();
+
+	void PostDrawParticle();
+
 	void MakeShaderResourceView();
 
 	// DirectX12のTextureResourceを作る
@@ -71,6 +75,7 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticle_;
 
 
 	ComPtr<ID3D12Resource> textureResource;

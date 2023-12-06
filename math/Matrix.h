@@ -1,12 +1,7 @@
 #pragma once
-#include"Vector2.h"
-#include"Vector3.h"
-#include"Vector4.h"
+#include"../Engine/3D/Transform.h"
 #include<math.h>
 
-struct Matrix4x4 {
-	float m[4][4];
-};
 
 struct Matrix3x3{
 	float m[3][3];
@@ -63,6 +58,9 @@ public:
 	//マトリックスから作るアフィン行列
 	Matrix4x4 MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate);
 
+	//トランスフォームから作るアフィン行列
+	Matrix4x4 MakeAffineMatrix(const Transform& transform);
+
 	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
 
 	Matrix4x4 MakeRotateMatrixX(const Vector3& rot);
@@ -98,7 +96,7 @@ public:
 	Matrix4x4 Inverce(const Matrix4x4& mat);
 
 	//ベクトル変換
-	Vector3 Transform(const Vector3& v, const Matrix4x4& m);
+	Vector3 TransformVec(const Vector3& v, const Matrix4x4& m);
 
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 

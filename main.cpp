@@ -68,6 +68,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxCommon_->PreDraw();
 		//3D描画
 		gameScene_->Draw3D();
+		gameScene_->DrawParticle();
 		//2D描画
 		gameScene_->Draw2D();
 		dxCommon_->PostDraw();

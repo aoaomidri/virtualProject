@@ -168,6 +168,9 @@
     <ClCompile Include="Game\Item\Adjustment_Item.cpp">
       <Filter>Game\Item</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -287,6 +290,12 @@
     <ClInclude Include="Game\Item\Adjustment_Item.h">
       <Filter>Game\Item</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\ParticleBase.h">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Matrix4x4.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -298,6 +307,9 @@
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="resources\shaders\Object2d.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Particle.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>
@@ -312,6 +324,12 @@
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Object2d.VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
   </ItemGroup>

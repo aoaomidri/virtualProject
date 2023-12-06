@@ -77,7 +77,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			Matrix::GetInstance()->Multiply(viewprojection.matViewProjection_, matViewport);
 
 		// ワールド->スクリーン座標変換(ここで3Dから2Dになる)
-		Vector3 screenPos3 = Matrix::GetInstance()->Transform(target_->GetCenterPos(), matViewProjectionViewport);
+		Vector3 screenPos3 = Matrix::GetInstance()->TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
 
 		screenPos_ = { screenPos3.x,screenPos3.y };
 
@@ -107,7 +107,7 @@ void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}
 		Vector3 positionWorld = enemy->GetCenterPos();
 		//ワールドビュー座標変換
-		Vector3 positionView = Matrix::GetInstance()->Transform(positionWorld, viewprojection.matView_);
+		Vector3 positionView = Matrix::GetInstance()->TransformVec(positionWorld, viewprojection.matView_);
 
 		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)){
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -138,7 +138,7 @@ void LockOn::TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		}
 		Vector3 positionWorld = enemy->GetCenterPos();
 		//ワールドビュー座標変換
-		Vector3 positionView = Matrix::GetInstance()->Transform(positionWorld, viewprojection.matView_);
+		Vector3 positionView = Matrix::GetInstance()->TransformVec(positionWorld, viewprojection.matView_);
 
 		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)) {
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -251,7 +251,7 @@ bool LockOn::IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewin
 	// 視錐台の逆行列
 	Matrix4x4 FrustumInverceMat = Matrix::GetInstance()->Inverce(FrustumMatWorld);
 	for (int i = 0; i < OBBVertex; i++) {
-		obbPoints[i] = Matrix::GetInstance()->Transform(obbPoints[i], FrustumInverceMat);
+		obbPoints[i] = Matrix::GetInstance()->TransformVec(obbPoints[i], FrustumInverceMat);
 	}
 
 	/*ステップ4 当たり判定*/
@@ -415,7 +415,7 @@ bool LockOn::IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum
 	// OBBの逆行列
 	Matrix4x4 OBBInverceMat = Matrix::GetInstance()->Inverce(worldMatrix);
 	for (int i = 0; i < OBBVertex; i++) {
-		FrustumPoints[i] = Matrix::GetInstance()->Transform(FrustumPoints[i], OBBInverceMat);
+		FrustumPoints[i] = Matrix::GetInstance()->TransformVec(FrustumPoints[i], OBBInverceMat);
 	}
 
 	/*ステップ4 当たり判定*/

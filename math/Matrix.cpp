@@ -168,7 +168,8 @@ Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 }
 
 
-Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale_){ 
+
+Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale_){
 	Matrix4x4 result{};
 	result.m[0][0] = scale_.x;
 	result.m[1][1] = scale_.y;
@@ -262,6 +263,24 @@ Matrix4x4 Matrix::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot,
 	return result;
 }
 
+Matrix4x4 Matrix::MakeAffineMatrix(const Transform& transform){
+	Matrix4x4 result{};
+
+	//スケーリング行列の作成
+	ScaleMatrix = MakeScaleMatrix(transform.scale);
+	//X,Y,Z軸の回転行列の作成
+	RotateMatrixX = MakeRotateMatrixX(transform.rotate);
+	RotateMatrixY = MakeRotateMatrixY(transform.rotate);
+	RotateMatrixZ = MakeRotateMatrixZ(transform.rotate);
+	//回転行列の結合
+	RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
+	//平行移動行列の作成
+	TranslateMatrix = MakeTranslateMatrix(transform.translate);
+
+	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
+
+	return result;
+}
 
 Vector3 Matrix::Normalize(const Vector3& v) {
 	Vector3 result{0, 0, 0};
@@ -280,7 +299,7 @@ Vector3 Matrix::Normalize(const Vector3& v) {
 
 }
 
-Vector3 Matrix::Transform(const Vector3& v, const Matrix4x4& m) {
+Vector3 Matrix::TransformVec(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + 1.0f * m.m[3][0],
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + 1.0f * m.m[3][1],

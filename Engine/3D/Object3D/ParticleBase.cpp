@@ -1,27 +1,23 @@
-#include "Object3D.h"
+#include "ParticleBase.h"
 #include"../../Base/DirectXCommon.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>
 
 
-void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList,const std::string fileName) {
+void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
 	device_ = device;
 	commandList_ = commandList;
 	Model::SetDevice(device_);
 
-	modelData = LoadObjFile(fileName);
-
+	modelData_ = MakePrimitive();
+	
 	makeResource();
 
 	isDraw_ = true;
 
-	transform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};
+	
 
 	cameraTransform = {
 		{1.0f,1.0f,1.0f},
@@ -30,27 +26,30 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 	};
 }
 
-void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
+void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
 
 	//rotate_.y += 0.01f;
-	worldMatrix_ = worldMatrix;
-	if (parent_){
-		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
+	for (int i = 0; i < particleNum_; i++) {
+
+
+		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform);
+		if (parent_) {
+			worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix_, *parent_);
+		}
+		position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
+		chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };
+
+		Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
+		wvpData[i]->WVP = worldViewProjectionMatrix;
+		wvpData[i]->World = worldMatrix_;
 	}
-	position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
-	chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };
-
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
-	wvpData->WVP = worldViewProjectionMatrix;
-	wvpData->World = worldMatrix_;
-
 	//materialDate->enableLighting = true;
 }
 
-void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
+void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 
 	if (!isDraw_) {
 		return;
@@ -59,23 +58,26 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 	//形状を設定。
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootDescriptorTable(2, GPUHandle);
 	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
-	//3D三角の描画
-	commandList_->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
+	for (int i = 0; i < particleNum_; i++) {
+		commandList_->SetGraphicsRootConstantBufferView(1, wvpInstancingResource->GetGPUVirtualAddress());
 
+		//3D三角の描画
+		commandList_->DrawInstanced(UINT(modelData_.vertices.size()), particleNum_, 0, 0);
+		
+	}
 }
 
-void Object3D::DrawImgui(){
+void ParticleBase::DrawImgui(){
 	ImGui::Begin("行列表示");
 	ImGui::DragFloat4("平行移動成分", &chackMatrix_.x, 0.01f);
 	ImGui::End();
 
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 
 	//頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
@@ -101,21 +103,21 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(ID3D12Devi
 	return bufferResource;
 }
 
-void Object3D::makeResource() {
+void ParticleBase::makeResource() {
 	//頂点リソースの作成
-	vertexResource = CreateBufferResource(device_, sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = CreateBufferResource(device_, sizeof(VertexData) * modelData_.vertices.size());
 
 	
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
 	//1頂点当たりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
-	std::memcpy(vertexDate, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+	std::memcpy(vertexDate, modelData_.vertices.data(), sizeof(VertexData)* modelData_.vertices.size());
 	
 
 	//マテリアル用のリソース
@@ -131,12 +133,16 @@ void Object3D::makeResource() {
 	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpResource = CreateBufferResource(device_, sizeof(TransformationMatrix));
+	wvpInstancingResource = CreateBufferResource(device_, sizeof(TransformationMatrix));
 	//書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	//単位行列を書き込んでおく
-	wvpData->WVP = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData->World = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	for (int i = 0; i < particleNum_; i++) {
+		
+		//単位行列を書き込んでおく
+		wvpData[i]->WVP = Matrix::GetInstance()->MakeIdentity4x4();
+		wvpData[i]->World = Matrix::GetInstance()->MakeIdentity4x4();
+
+	}
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
@@ -151,10 +157,10 @@ void Object3D::makeResource() {
 	directionalLightDate->direction = { 0.0f,1.0f,0.0f };
 
 	directionalLightDate->intensity = 1.0f;
-
+	
 }
 
-MaterialData Object3D::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+MaterialData ParticleBase::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 	//1,中で必要となる変数の宣言
 	MaterialData materialData;//構築するMaterialData
 	std::string line;//ファイルから読んだ1行を格納するもの	
@@ -183,7 +189,7 @@ MaterialData Object3D::LoadMaterialTemplateFile(const std::string& directoryPath
 }
 
 
-ModelData Object3D::LoadObjFile(const std::string& filename) {
+ModelData ParticleBase::LoadObjFile(const std::string& filename) {
 	//1,中で必要になる変数の宣言
 	ModelData modelData;//構築するModelData
 	std::vector<Vector4> positions;//位置
@@ -260,5 +266,24 @@ ModelData Object3D::LoadObjFile(const std::string& filename) {
 	}
 
 	//4,ModelDataを返す
+	return modelData;
+}
+
+ModelData ParticleBase::MakePrimitive() {
+	ModelData modelData;//構築するModelData
+	modelData.vertices.push_back({ 
+		{ -1.0f,1.0f,0.0f,1.0f }, { 0.0f,0.0f }, { 0.0f,0.0f,1.0f }});//左上
+	modelData.vertices.push_back({
+		{ 1.0f,1.0f,0.0f,1.0f }, { 1.0f,0.0f }, { 0.0f,0.0f,1.0f } });//右上
+	modelData.vertices.push_back({
+		{ -1.0f,-1.0f,0.0f,1.0f }, { 0.0f,1.0f }, { 0.0f,0.0f,1.0f } });//左下
+	modelData.vertices.push_back({
+		{ -1.0f,-1.0f,0.0f,1.0f }, { 0.0f,1.0f }, { 0.0f,0.0f,1.0f } });//左下
+	modelData.vertices.push_back({
+		{ 1.0f,1.0f,0.0f,1.0f }, { 1.0f,0.0f }, { 0.0f,0.0f,1.0f } });//右上
+	modelData.vertices.push_back({
+		{ 1.0f,-1.0f,0.0f,1.0f }, { 1.0f,1.0f }, { 0.0f,0.0f,1.0f } });//右下
+	modelData.material.textureFilePath = "./resources/uvChecker.png";
+
 	return modelData;
 }

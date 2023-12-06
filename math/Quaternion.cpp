@@ -78,3 +78,46 @@ Quaternion Quaternion::Inverse(const Quaternion& quaternion){
 	result.quaternion_ = { result.vector_.x,result.vector_.y, result.vector_.z, result.w };
 	return result;
 }
+
+Quaternion Quaternion::MakeRotateAxisAngleQuaternion(const Vector3& vector, const float angle){
+	Quaternion result;
+	result.vector_ = vector * std::sinf(angle / 2.0f);
+	result.w = std::cosf(angle / 2.0f);
+	result.quaternion_ = { result.vector_.x,result.vector_.y, result.vector_.z, result.w };
+	return result;
+}
+
+
+
+
+Vector3 Quaternion::RotateVector(const Vector3& vector, const Quaternion& quaternion){
+	Vector3 result{};
+	Quaternion quaternionNum{};
+	Quaternion quaternionVector{};
+	quaternionVector.quaternion_ = { vector.x,vector.y, vector.z, 0 };
+
+	quaternionNum = Multiply(Multiply(quaternion, quaternionVector), Conjugate(quaternion));
+
+	result = { quaternionNum.quaternion_.x,quaternionNum.quaternion_.y, quaternionNum.quaternion_.z };
+	return result;
+}
+
+Matrix4x4 Quaternion::MakeRotateMatrix(const Quaternion& quaternion) {
+	Matrix4x4 result{};
+	result.m[0][0] = std::powf(quaternion.quaternion_.w, 2.0f) + std::powf(quaternion.quaternion_.x, 2.0f)
+		- std::powf(quaternion.quaternion_.y, 2.0f) - std::powf(quaternion.quaternion_.z, 2.0f);
+	result.m[0][1] = 2.0f * (quaternion.quaternion_.x * quaternion.quaternion_.y + quaternion.quaternion_.w * quaternion.quaternion_.z);
+	result.m[0][2] = 2.0f * (quaternion.quaternion_.x * quaternion.quaternion_.z - quaternion.quaternion_.w * quaternion.quaternion_.y);
+
+	result.m[1][0] = 2.0f * (quaternion.quaternion_.x * quaternion.quaternion_.y - quaternion.quaternion_.w * quaternion.quaternion_.z);
+	result.m[1][1] = std::powf(quaternion.quaternion_.w, 2.0f) - std::powf(quaternion.quaternion_.x, 2.0f)
+		+ std::powf(quaternion.quaternion_.y, 2.0f) - std::powf(quaternion.quaternion_.z, 2.0f);
+	result.m[1][2] = 2.0f * (quaternion.quaternion_.y * quaternion.quaternion_.z + quaternion.quaternion_.w * quaternion.quaternion_.x);
+
+	result.m[2][0] = 2.0f * (quaternion.quaternion_.x * quaternion.quaternion_.z + quaternion.quaternion_.w * quaternion.quaternion_.y);
+	result.m[2][1] = 2.0f * (quaternion.quaternion_.y * quaternion.quaternion_.z - quaternion.quaternion_.w * quaternion.quaternion_.x);
+	result.m[2][2] = std::powf(quaternion.quaternion_.w, 2.0f) - std::powf(quaternion.quaternion_.x, 2.0f)
+		- std::powf(quaternion.quaternion_.y, 2.0f) + std::powf(quaternion.quaternion_.z, 2.0f);
+	result.m[3][3] = 1;
+	return result;
+}

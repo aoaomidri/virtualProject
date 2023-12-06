@@ -1,6 +1,5 @@
 #pragma once
-#include"Vector3.h"
-#include"Vector4.h"
+#include"Matrix.h"
 class Quaternion{
 public:
 	Quaternion();
@@ -20,6 +19,12 @@ public:
 	Quaternion Normalize(const Quaternion& quaternion);
 	//逆Quaternionを返す
 	Quaternion Inverse(const Quaternion& quaternion);
+	//逆Quaternionを返す
+	Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vector, const float angle);
+	//逆Quaternionを返す
+	Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+	//逆Quaternionを返す
+	Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 public:
 

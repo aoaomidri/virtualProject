@@ -19,11 +19,11 @@ public:
 	Quaternion Normalize(const Quaternion& quaternion);
 	//逆Quaternionを返す
 	Quaternion Inverse(const Quaternion& quaternion);
-	//逆Quaternionを返す
+	//任意軸を表すQuaternionの生成
 	Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vector, const float angle);
-	//逆Quaternionを返す
+	//ベクトルをQuaternionで回転させた結果のベクトルを求める
 	Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
-	//逆Quaternionを返す
+	//Quaternionから回転行列を求める
 	Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 public:

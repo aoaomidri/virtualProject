@@ -366,7 +366,7 @@ Matrix4x4 Matrix::DirectionToDirection(const Vector3& from, const Vector3& to){
 	Matrix4x4 matrix{};
 	Vector3 normalizeVec{};
 	if (Vector3::Dot(from, to)==-1){
-		normalizeVec = { from.y,-from.x,0 };
+		normalizeVec = Normalize({ from.y,-from.x,0 });
 	}
 	else {
 		normalizeVec = Vector3::Normalize(Vector3::Cross(from, to));

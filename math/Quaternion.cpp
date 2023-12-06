@@ -121,3 +121,8 @@ Matrix4x4 Quaternion::MakeRotateMatrix(const Quaternion& quaternion) {
 	result.m[3][3] = 1;
 	return result;
 }
+
+Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, float t){
+	Quaternion result{};
+	return result;
+}

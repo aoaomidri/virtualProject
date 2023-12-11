@@ -30,7 +30,7 @@ void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const s
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil();
 
-	makeGraphicsPipeline(device);
+	makeGraphicsPipelineParticle(device);
 }
 
 
@@ -100,7 +100,7 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 
 void GraphicsPipeline::makeParticleRootSignature(ID3D12Device* device){
 	//RootSignature作成
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	descriptionRootSignatureParticle.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//DescriptorRangeの設定
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -115,13 +115,13 @@ void GraphicsPipeline::makeParticleRootSignature(ID3D12Device* device){
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 1;
 
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	descriptionRootSignatureParticle.pParameters = rootParameter;
+	descriptionRootSignatureParticle.NumParameters = _countof(rootParameter);
+
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 	rootParameter[1].DescriptorTable.pDescriptorRanges = descriptorRange;
 	rootParameter[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-
-	descriptionRootSignature.pParameters = rootParameter;
-	descriptionRootSignature.NumParameters = _countof(rootParameter);
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -143,12 +143,12 @@ void GraphicsPipeline::makeParticleRootSignature(ID3D12Device* device){
 	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
 	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 
-	descriptionRootSignature.pStaticSamplers = staticSampler;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSampler);
+	descriptionRootSignatureParticle.pStaticSamplers = staticSampler;
+	descriptionRootSignatureParticle.NumStaticSamplers = _countof(staticSampler);
 
 	//シリアライズしてバイナリする
 
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	hr = D3D12SerializeRootSignature(&descriptionRootSignatureParticle, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
@@ -156,7 +156,7 @@ void GraphicsPipeline::makeParticleRootSignature(ID3D12Device* device){
 	//バイナリを元に生成
 
 	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignatureParticle));
 	assert(SUCCEEDED(hr));
 }
 
@@ -296,6 +296,36 @@ void GraphicsPipeline::makeGraphicsPipeline(ID3D12Device* device) {
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	
+	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
+	assert(SUCCEEDED(hr));
+}
+
+void GraphicsPipeline::makeGraphicsPipelineParticle(ID3D12Device* device){
+	//PSOを生成する
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+	graphicsPipelineStateDesc.pRootSignature = rootSignatureParticle.Get();
+	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
+	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
+		vertexShaderBlob->GetBufferSize() };
+
+	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
+		pixelShaderBlob->GetBufferSize() };
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
+
+	graphicsPipelineStateDesc.NumRenderTargets = 1;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+	graphicsPipelineStateDesc.PrimitiveTopologyType =
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	graphicsPipelineStateDesc.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	//DepthStencilの設定
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+
 	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }

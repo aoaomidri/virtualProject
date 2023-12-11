@@ -23,9 +23,13 @@ public:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU[index]; }
 
+	D3D12_GPU_DESCRIPTOR_HANDLE SendInstancingGPUDescriptorHandle()const { return instancingSrvHandleGPU; }
+
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
 	void Load(const std::string& filePath, uint32_t index);
+
+	void MakeInstancingShaderResourceView(ID3D12Resource* resource);
 
 	void PreDraw2D();
 	
@@ -84,11 +88,16 @@ private:
 	////SRVを作成するDescripterHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kMaxSRVConst]{};
+	//インスタンシング用のSRV作成用
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU{};
 
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
 
 	//SRV
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;

@@ -37,9 +37,15 @@ public:
 		return rootSignature.Get();
 	}
 
+	ID3D12RootSignature* GetParticleRootSignature() {
+		return rootSignatureParticle.Get();
+	}
+
 private:
 	//メンバ関数
 	void makeGraphicsPipeline(ID3D12Device* device);
+
+	void makeGraphicsPipelineParticle(ID3D12Device* device);
 
 	void makeRootSignature(ID3D12Device* device);
 
@@ -61,7 +67,10 @@ private:
 
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignatureParticle{};
+
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignatureParticle = nullptr;
 
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;

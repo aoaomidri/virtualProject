@@ -26,7 +26,7 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(device_, L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl");
 	GraphicsPipelineParticle_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticle_->Initialize(device_, L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl");
+	GraphicsPipelineParticle_->ParticleExclusiveInitialize(device_, L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl");
 
 }
 
@@ -48,11 +48,29 @@ void TextureManager::Load(const std::string& filePath, uint32_t index){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1 + index);
-	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1 + index);
+	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
+	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
 
 	//SRVの生成
 	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
+}
+
+void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = 10;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1);
+	instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 1);
+
+	//SRVの生成
+	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
 }
 
 void TextureManager::PreDraw2D(){
@@ -83,8 +101,10 @@ void TextureManager::PostDraw3D()
 
 void TextureManager::PreDrawParticle(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	commandList_->SetGraphicsRootSignature(GraphicsPipelineParticle_->GetRootSignature());
+	commandList_->SetGraphicsRootSignature(GraphicsPipelineParticle_->GetParticleRootSignature());
 	commandList_->SetPipelineState(GraphicsPipelineParticle_->GetPipeLineState());
+
+
 
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

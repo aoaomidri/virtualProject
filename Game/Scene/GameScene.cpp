@@ -26,6 +26,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	TextureLoad();
 
 	ObjectInitialize(dxCommon_);
+
+	textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
+
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	//自キャラのワールドトランスフォームを追従カメラにセット
@@ -44,7 +47,7 @@ void GameScene::Update(Input* input_){
 
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
-	particle_->Draw(textureManager_->SendGPUDescriptorHandle(0));
+	particle_->Draw(textureManager_->SendGPUDescriptorHandle(0), textureManager_->SendInstancingGPUDescriptorHandle());
 
 
 	textureManager_->PostDrawParticle();

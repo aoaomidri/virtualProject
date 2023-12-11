@@ -19,9 +19,15 @@ public:
 	
 	void Update(const Transform& transform,const ViewProjection& viewProjection);
 
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DESCRIPTOR_HANDLE InstancingHandle);
 
 	void DrawImgui();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
+		ID3D12Device* device, size_t sizeInBytes);
+
+	void makeResource();
+public:
 
 	void SetPosition(const Vector3& position) { position_ = position; }
 
@@ -35,13 +41,8 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
-		ID3D12Device* device, size_t sizeInBytes);
-
-	void makeResource();
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	ModelData LoadObjFile(const std::string& filename);
-
+	ID3D12Resource* GetInstancingResource()const { return wvpInstancingResource.Get(); }
+	
 public:
 	Matrix4x4* parent_{};
 
@@ -79,7 +80,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
 	//データを書き込む
-	TransformationMatrix* wvpData[particleNum_] = { nullptr };
+	TransformationMatrix* wvpData = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
@@ -100,7 +101,7 @@ private:
 
 	Matrix4x4 worldMatrix_{};
 
-	Transform transform{};
+	Transform transforms[particleNum_]{};
 
 	Transform cameraTransform{};
 

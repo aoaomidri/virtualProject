@@ -68,7 +68,9 @@ private:
 
 	std::list<std::pair<float, const Enemy*>> targets;
 
-	std::list<std::pair<float, const Enemy*>>::iterator it;
+	decltype(targets)::iterator it;
+
+	//std::list<std::pair<float, const Enemy*>>::iterator it;
 
 	bool autoLockOn_ = false;
 

@@ -50,11 +50,15 @@ public:
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
 
+	bool GetIsRespawn() { return isRespawn_; }
+
 	//Setter
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	void SetIsDown(bool isDown) { isDown_ = isDown; }
+
+	void SetIsRespawn(bool isRespawn) { isRespawn_ = isRespawn; }
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
@@ -204,6 +208,8 @@ private:
 
 	//落下するかどうか
 	bool isDown_ = false;
+
+	bool isRespawn_ = false;
 
 	/*振る舞い系*/
 	enum class Behavior {

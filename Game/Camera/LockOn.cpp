@@ -48,6 +48,18 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			}
 			target_ = it->second;
 		}
+		else if (!autoLockOn_ && input->GetPadButtonDown(XINPUT_GAMEPAD_DPAD_LEFT)) {
+
+			
+			if (it == targets.begin()) {
+				it = targets.end();
+				--it;
+			}
+			else {
+				--it;
+			}
+			target_ = it->second;
+		}
 	}	
 	else {
 		if (!autoLockOn_){

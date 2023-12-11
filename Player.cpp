@@ -123,6 +123,7 @@ void Player::Update(Input* input){
 	
 
 	if (playerTransform_.translate.y <= -5.0f) {
+		isRespawn_ = true;
 		Respawn();
 	}
 	DrawImgui();
@@ -136,8 +137,8 @@ void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProj
 		weaponModel_->Update(weaponMatrix_, viewProjection);
 		weaponModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
-		/*weaponCollisionModel_->Update(weaponCollisionMatrix_, viewProjection);
-		weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
+		weaponCollisionModel_->Update(weaponCollisionMatrix_, viewProjection);
+		weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
 	}
 	
 }
@@ -270,6 +271,7 @@ void Player::BehaviorAttackInitialize(){
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponCollisionTransform_.rotate.z = 0;
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
@@ -282,14 +284,14 @@ void Player::BehaviorAttackInitialize(){
 void Player::BehaviorThirdAttackInitialize(){
 	workAttack_.comboNext_ = false;
 	workAttack_.attackParameter_ = 0;
-	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.y = 0;
 	weaponTransform_.rotate.z = 1.57f ;
 	weaponTransform_.translate = playerTransform_.translate;
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
-	weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
-	//weaponCollisionTransform_.rotate.x = 1.57f / 2.0f;
+	weaponCollisionTransform_.rotate.y = 0;
+	weaponCollisionTransform_.rotate.z = 1.57f;
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;

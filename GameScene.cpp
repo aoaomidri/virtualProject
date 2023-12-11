@@ -264,7 +264,14 @@ void GameScene::AllCollision(){
 			player_->SetIsDown(true);
 		}
 	}
-
+	if (player_->GetIsRespawn()){
+		int i = 0;
+		for (const auto& enemy : enemies_) {
+			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+			i++;
+		}
+		player_->SetIsRespawn(false);
+	}
 	
 	
 	/*if (IsCollisionOBBOBB(playerOBB, floorOBB[1])) {
@@ -284,12 +291,22 @@ void GameScene::AllCollision(){
 		player_->parent_ = nullptr;
 	}*/
 	if (IsCollisionOBBOBB(player_->GetOBB(), goalOBB)) {
+		int i = 0;
 		player_->Respawn();
+		for (const auto& enemy : enemies_) {
+			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+			i++;
+		}
 	}
 	for (const auto& enemy : enemies_) {
 		
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB()) && !enemy->GetIsDead()) {
+			int i = 0;
 			player_->Respawn();
+			for (const auto& enemy : enemies_) {
+				enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+				i++;
+			}
 		}
 	}
 	for (const auto& enemy : enemies_) {

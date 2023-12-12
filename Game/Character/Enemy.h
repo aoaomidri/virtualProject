@@ -7,7 +7,7 @@
 #include"../../Engine/3D/Shape/OBB.h"
 #include"../Item/Adjustment_Item.h"
 #include"../../math/Quaternion.h"
-#include"../../Engine/3D/Object3D/Particle.h"
+//#include"../../Engine/3D/Object3D/Particle.h"
 #include<optional>
 
 
@@ -60,7 +60,7 @@ private:
 	//自機のモデル
 	std::unique_ptr<Object3D> model_;
 	std::unique_ptr<Object3D> partsModel_;
-	std::unique_ptr<Particle>particleModel_[particleNum_];
+	//std::unique_ptr<Particle>particleModel_[particleNum_];
 	//std::unique_ptr<Object3D> collisionModel_;
 
 

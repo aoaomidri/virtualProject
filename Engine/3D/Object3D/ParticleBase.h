@@ -9,11 +9,11 @@
 #include<sstream>
 #include"Model.h"
 #include"../ViewProjection.h"
+#include"../../../Game/random/RandomMaker.h"
 
 
 class ParticleBase{
 public:
-
 
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	
@@ -47,8 +47,31 @@ public:
 	Matrix4x4* parent_{};
 
 private:
+	struct Particle {
+		Transform transform;	//座標
+		Vector3 velocity;		//移動ベクトル
+		Vector4 color;			//色
+		float lifeTime;			//生存可能な時間
+		float currentTime;		//発生してからの経過時間
+	};
+
+	struct ParticleRange {
+		float min;
+		float max;
+	};
+
 	ModelData MakePrimitive();
 
+	//座標のリセット
+	void PositionReset();
+
+	//乱数による動きの変化
+	void MoveChange();
+
+	//パーティクル生成関数
+	Particle MakeNewParticle();
+
+	
 
 private:
 	const std::string ResourcesPath = "resources/";
@@ -80,14 +103,14 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
 	//データを書き込む
-	TransformationMatrix* wvpData = nullptr;
+	ParticleForGPU* wvpData = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
 	DirectionalLight* directionalLightDate = nullptr;
 
-	
+	const float kDeltaTime_ = 1.0f / 60.0f;
 
 	//データを書き込む
 
@@ -97,14 +120,33 @@ private:
 
 	Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
 
+	Vector3 color_ = { 1.0f,1.0f,1.0f };
+
+	Vector3 baseVelocity_ = { 0.0f,1.0f,0.0f };
+
 	Vector4 chackMatrix_ = {};
 
 	Matrix4x4 worldMatrix_{};
 
-	Transform transforms[particleNum_]{};
+	Particle particles_[particleNum_]{};
 
 	Transform cameraTransform{};
 
 	bool isDraw_ = true;
+
+	bool isMove_ = false;
+
+	ParticleRange positionRange_ = {
+		.min = -3.0f,
+		.max = 3.0f
+	};
+
+	ParticleRange velocityRange_ = {
+		.min = -3.0f,
+		.max = 3.0f
+	};
+
+	//ランダム生成
+	RandomMaker* random_ = nullptr;
 };
 

@@ -99,7 +99,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\2D\TextureManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Model.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Object3D.cpp" />
-    <ClCompile Include="Engine\3D\Object3D\Particle.cpp" />
     <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp" />
     <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
     <ClCompile Include="Engine\3D\ViewProjection.cpp" />
@@ -121,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Character\Player.cpp" />
     <ClCompile Include="Game\Input\Input.cpp" />
     <ClCompile Include="Game\Item\Adjustment_Item.cpp" />
+    <ClCompile Include="Game\random\RandomMaker.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
     <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
@@ -135,7 +135,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\2D\TextureManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Model.h" />
     <ClInclude Include="Engine\3D\Object3D\Object3D.h" />
-    <ClInclude Include="Engine\3D\Object3D\Particle.h" />
     <ClInclude Include="Engine\3D\Object3D\ParticleBase.h" />
     <ClInclude Include="Engine\3D\Shape\OBB.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
@@ -160,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Character\Player.h" />
     <ClInclude Include="Game\Input\Input.h" />
     <ClInclude Include="Game\Item\Adjustment_Item.h" />
+    <ClInclude Include="Game\random\RandomMaker.h" />
     <ClInclude Include="Game\Scene\GameScene.h" />
     <ClInclude Include="Game\Stage\Floor\Floor.h" />
     <ClInclude Include="Game\Stage\Floor\FloorManager.h" />

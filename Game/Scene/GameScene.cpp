@@ -76,7 +76,7 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-
+	particle_->DrawImgui();
 	
 }
 

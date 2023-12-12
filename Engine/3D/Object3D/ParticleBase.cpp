@@ -9,19 +9,22 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 
 	device_ = device;
 	commandList_ = commandList;
-	Model::SetDevice(device_);
 
 	modelData_ = MakePrimitive();
+
+	random_ = RandomMaker::GetInstance();
+
+	//パーティクルの初期設定
+	for (int i = 0; i < particleNum_; i++) {
+		particles_[i] = MakeNewParticle();
+	}
 	
 	makeResource();
 
 	isDraw_ = true;
+	isMove_ = false;
 
-	for (int i = 0; i < particleNum_; i++) {
-		transforms[i].scale = { 3.0f,3.0f,3.0f };
-		transforms[i].rotate = { 0.0f,0.0f,0.0f };
-		transforms[i].translate = { i * 0.5f,i * 0.5f, i * 0.5f };
-	}
+	
 
 	cameraTransform = {
 		{1.0f,1.0f,1.0f},
@@ -31,26 +34,34 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 }
 
 void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
-	if (!isDraw_) {
+	/*imguiで値がおかしくならないように調整*/
+	if (positionRange_.min >= positionRange_.max) {
+		positionRange_.min = positionRange_.max - 0.1f;
+	}
+	else if (positionRange_.max < positionRange_.min) {
+		positionRange_.max = positionRange_.min + 0.1f;
+	}
+	if (velocityRange_.min >= velocityRange_.max) {
+		velocityRange_.min = velocityRange_.max - 0.1f;
+	}
+	else if (velocityRange_.max < velocityRange_.min) {
+		velocityRange_.max = velocityRange_.min + 0.1f;
+	}
+
+	if (!isDraw_ || !isMove_) {
 		return;
 	}
 
-	//rotate_.y += 0.01f;
 	for (int i = 0; i < particleNum_; i++) {
+		
+		particles_[i].transform.translate += particles_[i].velocity * kDeltaTime_;
 
-
-		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(transforms[i]);
-		/*if (parent_) {
-			worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix_, *parent_);
-		}
-		position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
-		chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };*/
+		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(particles_[i].transform);
 
 		Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
 		wvpData[i].WVP = worldViewProjectionMatrix;
 		wvpData[i].World = worldMatrix_;
 	}
-	//materialDate->enableLighting = true;
 }
 
 void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DESCRIPTOR_HANDLE InstancingHandle) {
@@ -73,8 +84,17 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 }
 
 void ParticleBase::DrawImgui(){
-	ImGui::Begin("行列表示");
-	ImGui::DragFloat4("平行移動成分", &chackMatrix_.x, 0.01f);
+	ImGui::Begin("パーティクルのあれこれ");
+	ImGui::DragFloat2("移動ベクトル", &velocityRange_.min, 0.1f, -5.0f, 5.0f);
+	ImGui::DragFloat2("初期位置", &positionRange_.min, 0.1f, -5.0f, 5.0f);
+	ImGui::Checkbox("描画するか", &isDraw_);
+	ImGui::Checkbox("動かすか", &isMove_);
+	if (ImGui::Button("座標リセット")){
+		PositionReset();
+	}
+	if (ImGui::Button("動きや初期座標をランダムに変更")) {
+		MoveChange();
+	}
 	ImGui::End();
 
 }
@@ -135,7 +155,7 @@ void ParticleBase::makeResource() {
 	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpInstancingResource = CreateBufferResource(device_, sizeof(TransformationMatrix) * particleNum_);
+	wvpInstancingResource = CreateBufferResource(device_, sizeof(ParticleForGPU) * particleNum_);
 	//書き込むためのアドレスを取得
 	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	for (uint32_t i = 0; i < particleNum_; ++i) {
@@ -143,7 +163,7 @@ void ParticleBase::makeResource() {
 		//単位行列を書き込んでおく
 		wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
 		wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
-
+		wvpData[i].color = particles_[i].color;
 	}
 
 	/*平行光源用リソース関連*/
@@ -180,4 +200,33 @@ ModelData ParticleBase::MakePrimitive() {
 	modelData.material.textureFilePath = "./resources/uvChecker.png";
 
 	return modelData;
+}
+
+void ParticleBase::PositionReset(){
+	for (int i = 0; i < particleNum_; i++) {
+		particles_[i].transform.translate = { i * 0.5f,i * 0.5f, i * 0.5f };
+	}
+
+}
+
+void ParticleBase::MoveChange(){
+	for (int i = 0; i < particleNum_; i++) {
+		color_ = random_->DistributionV3(0.0f, 1.0f);
+		particles_[i].transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
+		particles_[i].velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+		particles_[i].color = { color_.x,color_.y,color_.z,1.0f };
+	}
+}
+
+ParticleBase::Particle ParticleBase::MakeNewParticle(){
+	Particle particle{};
+	color_ = random_->DistributionV3(0.0f, 1.0f);
+	particle.transform.scale = { 2.0f,2.0f,2.0f };
+	particle.transform.rotate = { 0.0f,0.0f,0.0f };
+	particle.transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
+	
+	particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+
+	particle.color = { color_.x,color_.y,color_.z,1.0f };
+	return particle;
 }

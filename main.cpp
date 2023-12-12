@@ -3,6 +3,7 @@
 #include"Engine/Base/DirectXCommon.h"
 #include"Game/Scene/GameScene.h"
 #include "Game/Item/Adjustment_Item.h"
+#include"Game/random/RandomMaker.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {
@@ -38,6 +39,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//グローバル変数の読み込み
 	adjustment_item->LoadFiles();
+
+	RandomMaker* randomMaker = RandomMaker::GetInstance();
+	//此処だけに初期化
+	randomMaker->Initialize();
 
 	auto gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize(dxCommon_.get());

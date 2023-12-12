@@ -11,10 +11,10 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 	partsModel_ = std::make_unique<Object3D>();
 	partsModel_->Initialize(device, commandList, "EnemyParts");	
 
-	for (int i = 0; i < 20; i++){
+	/*for (int i = 0; i < 20; i++){
 		particleModel_[i] = std::make_unique<Particle>();
 		particleModel_[i]->Initialize(device, commandList);
-	}
+	}*/
 
 	/*collisionModel_ = std::make_unique<Object3D>();
 	collisionModel_->Initialize(device, commandList, "box");*/
@@ -31,13 +31,13 @@ void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 		{0.0f,1.7f,7.0f}
 	};
 
-	for (int i = 0; i < 20; i++) {
+	/*for (int i = 0; i < 20; i++) {
 		particleModel_[i]->transform_ = {
 			{0.1f,0.1f,0.1f},
 			{0.0f,0.0f,0.0f},
 			{0.0f,0.0f,0.0f}
 		};
-	}
+	}*/
 
 
 	for (int i = 0; i < 20; i++) {
@@ -93,15 +93,15 @@ void Enemy::Update(){
 	if (invincibleTime_>0){
 		invincibleTime_--;
 	}
-	for (int i = 0; i < particleNum_; i++) {
+	/*for (int i = 0; i < particleNum_; i++) {
 		particleModel_[i]->transform_.translate += particleVec_[i];
-	}
+	}*/
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
-	for (int i = 0; i < particleNum_; i++) {
+	/*for (int i = 0; i < particleNum_; i++) {
 		particleModel_[i]->Update();
-	}
+	}*/
 
 
 	OBB_.center = transform_.translate;
@@ -120,14 +120,14 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	partsModel_->Update(partsMatrix_, viewProjection);
 	partsModel_->Draw(textureManager->SendGPUDescriptorHandle(6));
 
-	if (isParticle_){
+	/*if (isParticle_){
 		for (int i = 0; i < 10; i++) {
 			particleModel_[i]->Draw(textureManager,viewProjection);
 		}
 		for (int i = 10; i < 20; i++) {
 			particleModel_[i]->Draw(textureManager, viewProjection);
 		}
-	}
+	}*/
 }
 
 void Enemy::DrawImgui(){
@@ -169,7 +169,7 @@ const Vector3 Enemy::GetCenterPos()const{
 
 void Enemy::ParticleMove(){
 
-	if (enemyLife_ == 2) {
+	/*if (enemyLife_ == 2) {
 		for (int i = 0; i < 5; i++){
 			particleModel_[i]->transform_.translate = transform_.translate;
 
@@ -209,7 +209,7 @@ void Enemy::ParticleMove(){
 			particleVec_[i] = velocity;
 		}
 
-	}
+	}*/
 	
 	
 }

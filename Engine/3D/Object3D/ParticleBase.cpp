@@ -48,13 +48,15 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 		velocityRange_.max = velocityRange_.min + 0.1f;
 	}
 
-	if (!isDraw_ || !isMove_) {
+	if (!isDraw_) {
 		return;
 	}
 
 	for (int i = 0; i < particleNum_; i++) {
-		
-		particles_[i].transform.translate += particles_[i].velocity * kDeltaTime_;
+		if (isMove_){
+			particles_[i].transform.translate += particles_[i].velocity * kDeltaTime_;
+		}
+
 
 		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(particles_[i].transform);
 

@@ -15,7 +15,7 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 	random_ = RandomMaker::GetInstance();
 
 	//パーティクルの初期設定
-	for (int i = 0; i < particleNum_; i++) {
+	for (int i = 0; i < particleMaxNum_; i++) {
 		particles_[i] = MakeNewParticle();
 	}
 	
@@ -51,18 +51,39 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 	if (!isDraw_) {
 		return;
 	}
-
-	for (int i = 0; i < particleNum_; i++) {
-		if (isMove_){
-			particles_[i].transform.translate += particles_[i].velocity * kDeltaTime_;
+	numInstance = 0;
+	for (int i = 0; i < particleMaxNum_; i++) {
+		if (particles_[i].lifeTime <= particles_[i].currentTime) {
+			particles_[i] = MakeNewParticle();
+			continue;
 		}
-
-
+		
+		
+		particles_[i].transform.translate += particles_[i].velocity * kDeltaTime_;
+		particles_[i].currentTime += kDeltaTime_;
+		
+		float alpha_ = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
 		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(particles_[i].transform);
+		if (isBillborad_){
+			backToFrontMatrix_ = Matrix::GetInstance()->MakeRotateMatrix({ 0.0f,0.0f,0.0f });
+			billboardMatrix_ = Matrix::GetInstance()->Multiply(backToFrontMatrix_, viewProjection.cameraMatrix_);
+			billboardMatrix_.m[3][0] = 0.0f;
+			billboardMatrix_.m[3][1] = 0.0f;
+			billboardMatrix_.m[3][2] = 0.0f;
+			worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(
+				Matrix::GetInstance()->MakeScaleMatrix(particles_[i].transform.scale),
+				billboardMatrix_,
+				Matrix::GetInstance()->MakeTranslateMatrix(particles_[i].transform.translate));
+		}
+		
+
 
 		Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
-		wvpData[i].WVP = worldViewProjectionMatrix;
-		wvpData[i].World = worldMatrix_;
+		wvpData[numInstance].WVP = worldViewProjectionMatrix;
+		wvpData[numInstance].World = worldMatrix_;
+		wvpData[numInstance].color = particles_[i].color;
+		wvpData[numInstance].color.w = alpha_;
+		++numInstance;
 	}
 }
 
@@ -80,17 +101,19 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 	//3D三角の描画
-	commandList_->DrawInstanced(UINT(modelData_.vertices.size()), particleNum_, 0, 0);
+	commandList_->DrawInstanced(UINT(modelData_.vertices.size()), numInstance, 0, 0);
 		
 	
 }
 
 void ParticleBase::DrawImgui(){
 	ImGui::Begin("パーティクルのあれこれ");
+	ImGui::DragFloat3("発生位置", &position_.x, 0.1f);
 	ImGui::DragFloat2("移動ベクトル", &velocityRange_.min, 0.1f, -5.0f, 5.0f);
-	ImGui::DragFloat2("初期位置", &positionRange_.min, 0.1f, -5.0f, 5.0f);
+	ImGui::DragFloat2("加算位置", &positionRange_.min, 0.1f, -5.0f, 5.0f);
 	ImGui::Checkbox("描画するか", &isDraw_);
 	ImGui::Checkbox("動かすか", &isMove_);
+	ImGui::Checkbox("ビルボード有効化", &isBillborad_);
 	if (ImGui::Button("座標リセット")){
 		PositionReset();
 	}
@@ -157,10 +180,10 @@ void ParticleBase::makeResource() {
 	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpInstancingResource = CreateBufferResource(device_, sizeof(ParticleForGPU) * particleNum_);
+	wvpInstancingResource = CreateBufferResource(device_, sizeof(ParticleForGPU) * particleMaxNum_);
 	//書き込むためのアドレスを取得
 	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	for (uint32_t i = 0; i < particleNum_; ++i) {
+	for (uint32_t i = 0; i < particleMaxNum_; ++i) {
 		
 		//単位行列を書き込んでおく
 		wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
@@ -205,18 +228,20 @@ ModelData ParticleBase::MakePrimitive() {
 }
 
 void ParticleBase::PositionReset(){
-	for (int i = 0; i < particleNum_; i++) {
+	for (int i = 0; i < particleMaxNum_; i++) {
 		particles_[i].transform.translate = { i * 0.5f,i * 0.5f, i * 0.5f };
 	}
 
 }
 
 void ParticleBase::MoveChange(){
-	for (int i = 0; i < particleNum_; i++) {
+	for (int i = 0; i < particleMaxNum_; i++) {
 		color_ = random_->DistributionV3(0.0f, 1.0f);
 		particles_[i].transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
 		particles_[i].velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
 		particles_[i].color = { color_.x,color_.y,color_.z,1.0f };
+		particles_[i].currentTime = 0;
+		particles_[i].lifeTime = random_->Distribution(1.0f, 3.0f);
 	}
 }
 
@@ -225,10 +250,12 @@ ParticleBase::Particle ParticleBase::MakeNewParticle(){
 	color_ = random_->DistributionV3(0.0f, 1.0f);
 	particle.transform.scale = { 2.0f,2.0f,2.0f };
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
-	particle.transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
+	particle.transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max) + position_;
 	
 	particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
 
 	particle.color = { color_.x,color_.y,color_.z,1.0f };
+	particle.currentTime = 0.0f;
+	particle.lifeTime = random_->Distribution(1.0f, 3.0f);
 	return particle;
 }

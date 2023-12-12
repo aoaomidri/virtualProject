@@ -10,6 +10,7 @@
 #include"Model.h"
 #include"../ViewProjection.h"
 #include"../../../Game/random/RandomMaker.h"
+#include<numbers>
 
 
 class ParticleBase{
@@ -98,7 +99,9 @@ private:
 	ModelData modelData_;
 
 	//粒の数
-	static const int particleNum_ = 10;
+	int numInstance = 0;
+
+	static const int particleMaxNum_ = 10;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
@@ -122,19 +125,28 @@ private:
 
 	Vector3 color_ = { 1.0f,1.0f,1.0f };
 
+
 	Vector3 baseVelocity_ = { 0.0f,1.0f,0.0f };
 
 	Vector4 chackMatrix_ = {};
 
 	Matrix4x4 worldMatrix_{};
 
-	Particle particles_[particleNum_]{};
+	Matrix4x4 backToFrontMatrix_{};
+
+	Matrix4x4 billboardMatrix_{};
+
+	Particle particles_[particleMaxNum_]{};
+
+
 
 	Transform cameraTransform{};
 
 	bool isDraw_ = true;
 
 	bool isMove_ = false;
+
+	bool isBillborad_ = false;
 
 	ParticleRange positionRange_ = {
 		.min = -3.0f,

@@ -22,7 +22,8 @@ public:
 	// 深度限界（奥側）
 	float farZ_ = 1000.0f;
 #pragma endregion
-
+	//カメラ行列
+	Matrix4x4 cameraMatrix_;
 	// ビュー行列
 	Matrix4x4 matView_;
 	// 射影行列

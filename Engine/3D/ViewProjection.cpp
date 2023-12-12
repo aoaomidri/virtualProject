@@ -1,8 +1,8 @@
 #include "ViewProjection.h"
 
 void ViewProjection::UpdateMatrix(){
-	Matrix4x4 cameraMatrix = Matrix::GetInstance()->MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
-	matView_ = Matrix::GetInstance()->Inverce(cameraMatrix);
+	cameraMatrix_ = Matrix::GetInstance()->MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
+	matView_ = Matrix::GetInstance()->Inverce(cameraMatrix_);
 
 	matProjection_ = Matrix::GetInstance()->MakePerspectiveFovMatrix(fovAngleY_, aspectRatio_, nearZ_, farZ_);
 

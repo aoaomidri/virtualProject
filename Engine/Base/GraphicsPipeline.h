@@ -53,13 +53,13 @@ private:
 
 	void makeInputLayout();
 
-	void makeBlendState();
+	void makeBlendState(const BlendMode& blend);
 
 	void makeRasterizerState();
 
 	void ShaderCompile(const std::wstring& VSname, const std::wstring& PSname);
 
-	void makeDepthStencil();
+	void makeDepthStencil(D3D12_DEPTH_WRITE_MASK depthWriteMask);
 
 
 private:

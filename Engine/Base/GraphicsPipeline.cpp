@@ -14,10 +14,10 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 
 	makeRootSignature(device);
 	makeInputLayout();
-	makeBlendState();
+	makeBlendState(kBlendModeNone);
 	makeRasterizerState();
 	ShaderCompile(VSname, PSname);
-	makeDepthStencil();
+	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
 
 	makeGraphicsPipeline(device);
 }
@@ -25,10 +25,10 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname){
 	makeParticleRootSignature(device);
 	makeInputLayout();
-	makeBlendState();
+	makeBlendState(kBlendModeAdd);
 	makeRasterizerState();
 	ShaderCompile(VSname, PSname);
-	makeDepthStencil();
+	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ZERO);
 
 	makeGraphicsPipelineParticle(device);
 }
@@ -179,13 +179,13 @@ void GraphicsPipeline::makeInputLayout(){
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 }
 
-void GraphicsPipeline::makeBlendState(){
+void GraphicsPipeline::makeBlendState(const BlendMode& blend){
 
-	BlendMode blendMode_ = kBlendModeNone;
+	
 
 	//全ての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	switch (blendMode_)
+	switch (blend)
 	{
 	case kBlendModeNone:
 		blendDesc.RenderTarget[0].BlendEnable = false;
@@ -259,12 +259,12 @@ void GraphicsPipeline::ShaderCompile(const std::wstring& VSname, const std::wstr
 	assert(pixelShaderBlob != nullptr);
 }
 
-void GraphicsPipeline::makeDepthStencil(){
+void GraphicsPipeline::makeDepthStencil(D3D12_DEPTH_WRITE_MASK depthWriteMask){
 	
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
 	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = depthWriteMask/*D3D12_DEPTH_WRITE_MASK_ZERO*/;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 

@@ -11,6 +11,8 @@
 #include"../ViewProjection.h"
 #include"../../../Game/random/RandomMaker.h"
 #include<numbers>
+#include<list>
+#include"../Shape/OBB.h"
 
 
 class ParticleBase{
@@ -61,6 +63,18 @@ private:
 		float max;
 	};
 
+	struct Emitter {
+		Transform transform;//エミッターのTransform
+		int count;		//発生数
+		float frequency;	//発生頻度
+		float frequencyTime;//頻度用時刻
+	};
+
+	struct AccelerationField {
+		Vector3 acceleration;	//加速度
+		AABB area;				//範囲
+	};
+
 	ModelData MakePrimitive();
 
 	//座標のリセット
@@ -70,9 +84,11 @@ private:
 	void MoveChange();
 
 	//パーティクル生成関数
-	Particle MakeNewParticle();
+	Particle MakeNewParticle(const Vector3& transform);
 
-	
+	std::list<Particle> Emission(const Emitter& emitter);
+
+	bool IsCollision(const AABB& aabb, const Vector3& point);
 
 private:
 	const std::string ResourcesPath = "resources/";
@@ -101,7 +117,7 @@ private:
 	//粒の数
 	int numInstance = 0;
 
-	static const int particleMaxNum_ = 10;
+	static const int particleMaxNum_ = 100;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
@@ -136,9 +152,12 @@ private:
 
 	Matrix4x4 billboardMatrix_{};
 
-	Particle particles_[particleMaxNum_]{};
+	/*Particle particles_[particleMaxNum_]{};*/
+	std::list<Particle> particles_;
 
+	Emitter emitter_{};
 
+	AccelerationField accelerationField_{};
 
 	Transform cameraTransform{};
 
@@ -147,6 +166,8 @@ private:
 	bool isMove_ = false;
 
 	bool isBillborad_ = false;
+
+	bool isWind_ = false;
 
 	ParticleRange positionRange_ = {
 		.min = -3.0f,

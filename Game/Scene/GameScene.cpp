@@ -12,6 +12,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/Weapon/Sword.png", 7);
 	textureManager_->Load("resources/Magic.png", 8);
 	textureManager_->Load("resources/Black.png", 9);
+	textureManager_->Load("resources/circle.png", 10);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
@@ -47,7 +48,7 @@ void GameScene::Update(Input* input_){
 
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
-	particle_->Draw(textureManager_->SendGPUDescriptorHandle(0), textureManager_->SendInstancingGPUDescriptorHandle());
+	particle_->Draw(textureManager_->SendGPUDescriptorHandle(10), textureManager_->SendInstancingGPUDescriptorHandle());
 
 
 	textureManager_->PostDrawParticle();

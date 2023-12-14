@@ -22,7 +22,7 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 	makeGraphicsPipeline(device);
 }
 
-void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname){
+void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling){
 	makeParticleRootSignature(device);
 	makeInputLayout();
 	makeBlendState(kBlendModeAdd);

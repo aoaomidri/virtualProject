@@ -24,9 +24,9 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline2D_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl", false);
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline3D_->Initialize(device_, L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl");
+	GraphicsPipeline3D_->Initialize(device_, L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	GraphicsPipelineParticle_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticle_->ParticleExclusiveInitialize(device_, L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl");
+	GraphicsPipelineParticle_->ParticleExclusiveInitialize(device_, L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl", true);
 
 }
 

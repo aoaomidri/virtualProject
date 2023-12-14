@@ -27,10 +27,3 @@ struct ParticleForGPU {
 	Matrix4x4 World;
 	Vector4 color;
 };
-
-struct Material{
-	Vector4 color;
-	std::int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-};

@@ -28,7 +28,7 @@ void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 		{0.0f,0.0f,0.0f}
 	};
 
-	uvTransformSprite_ = {
+	uvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
@@ -122,9 +122,9 @@ void Sprite::Update(){
 	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, Matrix::GetInstance()->Multiply(viewMatrixSprite, projectionMatrixSprite));
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
-	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransformSprite_.scale);
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransformSprite_.rotate));
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransformSprite_.translate));
+	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransform_.scale);
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransform_.rotate));
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransform_.translate));
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 

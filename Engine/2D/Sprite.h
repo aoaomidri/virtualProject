@@ -39,8 +39,6 @@ public:
 
 	void SetColor(const Vector4& color) { color_ = color; }
 
-	void SetLeftTop(const Vector2& leftTop) { textureLeftTop_ = leftTop; }
-
 	void SetSize(const Vector2& size) { textureSize_ = size; }
 
 	void SetUVTransform(const Transform& uvTransform) { uvTransform_ = uvTransform; }
@@ -139,11 +137,7 @@ public:
 	//テクスチャ切り出しサイズ
 	Vector2 textureSize_ = { 100.0f,100.0f };
 
-	Transform transformSprite{};
-
 	Transform uvTransform_{};
-
-	Transform cameraTransform{};
 	//描画設定
 	bool isDraw_ = true;
 	//左右フリップ

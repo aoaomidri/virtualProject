@@ -17,17 +17,15 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 
 	isDraw_ = true;
 
+	materialDate->enableLighting = true;
+
 	transform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
 	};
 
-	cameraTransform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,2.0f,-10.0f}
-	};
+	
 }
 
 void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
@@ -47,7 +45,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix_;
 
-	//materialDate->enableLighting = true;
+	
 }
 
 void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
@@ -69,8 +67,12 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 }
 
 void Object3D::DrawImgui(){
-	ImGui::Begin("行列表示");
-	ImGui::DragFloat4("平行移動成分", &chackMatrix_.x, 0.01f);
+	ImGui::Begin("オブジェの内部設定");
+	ImGui::Checkbox("描画するかどうか", &isDraw_);
+	ImGui::Text("ライト関連");
+	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
+	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 
 }

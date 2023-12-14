@@ -13,7 +13,9 @@
 
 class Object3D{
 public:
-
+	struct CameraForGPU{
+		Vector3 worldPosition;
+	};
 
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::string fileName);
 	
@@ -30,6 +32,7 @@ public:
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
+
 
 	const Vector3& GetPosition()const { return position_; }
 
@@ -95,7 +98,7 @@ private:
 
 	Transform transform{};
 
-	Transform cameraTransform{};
+	const CameraForGPU* cameraForGPU_ = nullptr;
 
 	bool isDraw_ = true;
 };

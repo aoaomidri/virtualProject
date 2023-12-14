@@ -56,10 +56,14 @@ private:
 	
 	std::unique_ptr<ParticleBase> particle_;
 
-	Transform particleTrnadform_ = {
-		.scale = {5.0f,5.0f,0.5f},
+	std::unique_ptr<Object3D> obj_;
+
+	Transform objectTrnadform_ = {
+		.scale = {5.0f,5.0f,5.0f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
 	};
+
+	Matrix4x4 objMatrix_{};
 };
 

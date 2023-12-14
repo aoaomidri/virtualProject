@@ -13,11 +13,15 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/Magic.png", 8);
 	textureManager_->Load("resources/Black.png", 9);
 	textureManager_->Load("resources/circle.png", 10);
+	textureManager_->Load("resources/monsterBall.png", 11);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+
+	obj_ = std::make_unique<Object3D>();
+	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -33,22 +37,23 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	//自キャラのワールドトランスフォームを追従カメラにセット
-	followCamera_->SetTarget(&particleTrnadform_);
+	followCamera_->SetTarget(&objectTrnadform_);
 	
+	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
 
-	particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
+	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
+	obj_->Update(objMatrix_, followCamera_->GetViewProjection());
 
 	
 }
 
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
-	particle_->Draw(textureManager_->SendGPUDescriptorHandle(10), textureManager_->SendInstancingGPUDescriptorHandle());
 
 
 	textureManager_->PostDrawParticle();
@@ -59,6 +64,7 @@ void GameScene::Draw3D(){
 	textureManager_->PreDraw3D();
 	/*ここから下に描画処理を書き込む*/
 
+	obj_->Draw(textureManager_->SendGPUDescriptorHandle(11));
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/
@@ -77,8 +83,13 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::DrawImgui(){
-	particle_->DrawImgui();
-	
+	ImGui::Begin("スフィアのSRT");
+	ImGui::DragFloat3("スケール", &objectTrnadform_.scale.x, 0.1f, 1.0f, 100.0f);
+	ImGui::DragFloat3("回転", &objectTrnadform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("座標", &objectTrnadform_.translate.x, 0.1f, -100.0f, 100.0f);
+	ImGui::End();
+
+	obj_->DrawImgui();
 }
 
 

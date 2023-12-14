@@ -168,7 +168,8 @@ Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 }
 
 
-Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale_){ 
+
+Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale_){
 	Matrix4x4 result{};
 	result.m[0][0] = scale_.x;
 	result.m[1][1] = scale_.y;
@@ -256,6 +257,30 @@ Matrix4x4
 
 }
 
+Matrix4x4 Matrix::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate){
+	Matrix4x4 result{};
+	result = Multiply(scale, Multiply(rot, translate));
+	return result;
+}
+
+Matrix4x4 Matrix::MakeAffineMatrix(const Transform& transform){
+	Matrix4x4 result{};
+
+	//スケーリング行列の作成
+	ScaleMatrix = MakeScaleMatrix(transform.scale);
+	//X,Y,Z軸の回転行列の作成
+	RotateMatrixX = MakeRotateMatrixX(transform.rotate);
+	RotateMatrixY = MakeRotateMatrixY(transform.rotate);
+	RotateMatrixZ = MakeRotateMatrixZ(transform.rotate);
+	//回転行列の結合
+	RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
+	//平行移動行列の作成
+	TranslateMatrix = MakeTranslateMatrix(transform.translate);
+
+	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
+
+	return result;
+}
 
 Vector3 Matrix::Normalize(const Vector3& v) {
 	Vector3 result{0, 0, 0};
@@ -274,7 +299,7 @@ Vector3 Matrix::Normalize(const Vector3& v) {
 
 }
 
-Vector3 Matrix::Transform(const Vector3& v, const Matrix4x4& m) {
+Vector3 Matrix::TransformVec(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + 1.0f * m.m[3][0],
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + 1.0f * m.m[3][1],
@@ -296,6 +321,15 @@ Vector3 Matrix::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	};
 
 	return result;
+}
+
+float Matrix::RotateAngleYFromMatrix(const Matrix4x4& m){
+	float angle = std::acos(m.m[0][0]);
+	if (m.m[2][0] < 0) {
+		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
+	}
+
+	return angle;
 }
 
 
@@ -345,6 +379,53 @@ Matrix4x4 Matrix::MakeIdentity4x4() {
 		result.m[i][i] = 1.0f;
 	}
 	return result;
+}
+
+Matrix4x4 Matrix::MakeRotateAxisAngle(const Vector3& axis, float angle){
+	Matrix4x4 matrix{};
+	matrix.m[0][0] = (axis.x * axis.x) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[0][1] = (axis.x * axis.y) * (1 - std::cosf(angle)) + (axis.z * std::sinf(angle));
+	matrix.m[0][2] = (axis.x * axis.z) * (1 - std::cosf(angle)) - (axis.y * std::sinf(angle));
+	matrix.m[1][0] = (axis.x * axis.y) * (1 - std::cosf(angle)) - (axis.z * std::sinf(angle));
+	matrix.m[1][1] = (axis.y * axis.y) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[1][2] = (axis.y * axis.z) * (1 - std::cosf(angle)) + (axis.x * std::sinf(angle));
+	matrix.m[2][0] = (axis.x * axis.z) * (1 - std::cosf(angle)) + (axis.y * std::sinf(angle));
+	matrix.m[2][1] = (axis.y * axis.z) * (1 - std::cosf(angle)) - (axis.x * std::sinf(angle));
+	matrix.m[2][2] = (axis.z * axis.z) * (1 - std::cosf(angle)) + std::cosf(angle);
+	matrix.m[3][3] = 1.0f;
+	return matrix;
+}
+
+Matrix4x4 Matrix::DirectionToDirection(const Vector3& from, const Vector3& to){
+	Matrix4x4 matrix{};
+	Vector3 normalizeVec{};
+	Vector3 cross = Vector3::Cross(from, to);
+
+	if (Vector3::Dot(from, to) == -1){
+		if ( from.x != 0.0f|| from.z != 0.0f){
+			normalizeVec = { from.z,0,-from.x };
+		}
+		else if (from.x != 0.0f || from.y != 0.0f) {
+			normalizeVec = { from.y,-from.x,0.0f };
+		}
+	}
+	else {
+		normalizeVec = Vector3::Normalize(cross);
+	}	
+	float sinTheta = Vector3::Length(cross);
+	float cosTheta = Vector3::Dot(from, to);
+	matrix.m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
+	matrix.m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
+	matrix.m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
+	matrix.m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
+	matrix.m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
+	matrix.m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
+	matrix.m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
+	matrix.m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
+	matrix.m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
+
+	matrix.m[3][3] = 1.0f;
+	return matrix;
 }
 
 Matrix4x4 Matrix::operator+(const Matrix4x4& mat) const

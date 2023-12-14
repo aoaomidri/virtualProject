@@ -4,6 +4,7 @@
 /// </summary>
 #define _USE_MATH_DEFINES
 #include<math.h>
+#include<iostream>
 class Vector3 {
 public:
 	float x, y, z;
@@ -99,11 +100,27 @@ public:
 		return result;
 	}
 
+	Vector3 Add(const Vector3& vA, const Vector3& vB) {
+		Vector3 result{ 0 };
+		result.x = vA.x + vB.x;
+		result.y = vA.y + vB.y;
+		result.z = vA.z + vB.z;
+		return result;
+	}
+
 	static Vector3 Mutiply(const Vector3& vec, const float speed) {
 		Vector3 result{ 0 };
 		result.x = vec.x * speed;
 		result.y = vec.y * speed;
 		result.z = vec.z * speed;
+		return result;
+	};
+
+	static Vector3 Mutiply(const Vector3& vec1, const Vector3& vec2) {
+		Vector3 result{ 0 };
+		result.x = vec1.x * vec2.x;
+		result.y = vec1.y * vec2.y;
+		result.z = vec1.z * vec2.z;
 		return result;
 	};
 
@@ -117,13 +134,13 @@ public:
 		return result;
 	}
 
-	float Dot(const Vector3& v1, const Vector3& v2) {
+	static float Dot(const Vector3& v1, const Vector3& v2) {
 		float result = 0;
 		result = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
 		return result;
 	}
 
-	Vector3 Normalize(const Vector3& v) {
+	static Vector3 Normalize(const Vector3& v) {
 		Vector3 result{ 0, 0, 0 };
 		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
 
@@ -135,7 +152,29 @@ public:
 		return result;
 	}
 
-	float Length(const Vector3& v) {
+	static float LerpShortAngle(float a, float b, float t) {
+		float diff = b - a;
+
+		diff = static_cast<float>(std::fmod(diff, 2.0 * static_cast<float>(M_PI)));
+
+		if (diff > static_cast<float>(M_PI)) {
+			diff -= 2.0 * static_cast<float>(M_PI);
+		}
+		else if (diff < static_cast<float>(M_PI) * -1) {
+			diff += 2.0 * static_cast<float>(M_PI);
+		}
+
+		return a + diff * t;
+
+	}
+
+	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
+		Vector3 result{ 0, 0, 0 };
+		result = v1 + (v2 - v1) * t;
+		return result;
+	}
+
+	static float Length(const Vector3& v) {
 		float result{ 0.0f };
 		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
 		result = bulletNorm;
@@ -152,3 +191,4 @@ struct Segment {
 	Vector3 origin; //!< 始点
 	Vector3 diff;   //!< 終点への差分ベクトル
 };
+

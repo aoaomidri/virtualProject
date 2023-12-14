@@ -52,6 +52,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -76,6 +77,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,8 +94,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DebugCamera.cpp" />
-    <ClCompile Include="DirectXCommon.cpp" />
+    <ClCompile Include="Engine\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\2D\Texture.cpp" />
+    <ClCompile Include="Engine\2D\TextureManager.cpp" />
+    <ClCompile Include="Engine\3D\Object3D\Model.cpp" />
+    <ClCompile Include="Engine\3D\Object3D\Object3D.cpp" />
+    <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp" />
+    <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
+    <ClCompile Include="Engine\3D\ViewProjection.cpp" />
+    <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\GraphicsPipeline.cpp" />
+    <ClCompile Include="Engine\Base\ResourceObject.cpp" />
+    <ClCompile Include="Engine\Base\WinApp.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -101,22 +113,37 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="GraphicsPipeline.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Game\Camera\DebugCamera.cpp" />
+    <ClCompile Include="Game\Camera\FollowCamera.cpp" />
+    <ClCompile Include="Game\Camera\LockOn.cpp" />
+    <ClCompile Include="Game\Character\Enemy.cpp" />
+    <ClCompile Include="Game\Character\Player.cpp" />
+    <ClCompile Include="Game\Input\Input.cpp" />
+    <ClCompile Include="Game\Item\Adjustment_Item.cpp" />
+    <ClCompile Include="Game\random\RandomMaker.cpp" />
+    <ClCompile Include="Game\Scene\GameScene.cpp" />
+    <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
+    <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
+    <ClCompile Include="Game\Stage\Goal\Goal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Matrix.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="OBB.cpp" />
-    <ClCompile Include="Object3D.cpp" />
-    <ClCompile Include="ResourceObject.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="WinApp.cpp" />
+    <ClCompile Include="math\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugCamera.h" />
-    <ClInclude Include="DirectXCommon.h" />
+    <ClInclude Include="Engine\2D\Sprite.h" />
+    <ClInclude Include="Engine\2D\Texture.h" />
+    <ClInclude Include="Engine\2D\TextureManager.h" />
+    <ClInclude Include="Engine\3D\Object3D\Model.h" />
+    <ClInclude Include="Engine\3D\Object3D\Object3D.h" />
+    <ClInclude Include="Engine\3D\Object3D\ParticleBase.h" />
+    <ClInclude Include="Engine\3D\Shape\OBB.h" />
+    <ClInclude Include="Engine\3D\Transform.h" />
+    <ClInclude Include="Engine\3D\ViewProjection.h" />
+    <ClInclude Include="Engine\Base\DirectXCommon.h" />
+    <ClInclude Include="Engine\Base\GraphicsPipeline.h" />
+    <ClInclude Include="Engine\Base\Log.h" />
+    <ClInclude Include="Engine\Base\ResourceObject.h" />
+    <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -125,23 +152,25 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="GraphicsPipeline.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Log.h" />
+    <ClInclude Include="Game\Camera\DebugCamera.h" />
+    <ClInclude Include="Game\Camera\FollowCamera.h" />
+    <ClInclude Include="Game\Camera\LockOn.h" />
+    <ClInclude Include="Game\Character\Enemy.h" />
+    <ClInclude Include="Game\Character\Player.h" />
+    <ClInclude Include="Game\Input\Input.h" />
+    <ClInclude Include="Game\Item\Adjustment_Item.h" />
+    <ClInclude Include="Game\random\RandomMaker.h" />
+    <ClInclude Include="Game\Scene\GameScene.h" />
+    <ClInclude Include="Game\Stage\Floor\Floor.h" />
+    <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
+    <ClInclude Include="Game\Stage\Goal\Goal.h" />
     <ClInclude Include="math\Matrix.h" />
+    <ClInclude Include="math\Matrix4x4.h" />
+    <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="memo.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="OBB.h" />
-    <ClInclude Include="Object3D.h" />
-    <ClInclude Include="ResourceObject.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -154,6 +183,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli" />
     <None Include="resources\shaders\Object3d.hlsli" />
+    <None Include="resources\shaders\Particle.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Object2d.PS.hlsl">
@@ -186,6 +219,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
   </ItemGroup>

@@ -6,10 +6,10 @@ void Enemy::ApplyGlobalVariables(){
 
 void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position){
 	model_ = std::make_unique<Object3D>();
-	model_->Initialize(device, commandList, "Enemy");	
+	model_->Initialize(device, commandList);	
 
 	partsModel_ = std::make_unique<Object3D>();
-	partsModel_->Initialize(device, commandList, "EnemyParts");	
+	partsModel_->Initialize(device, commandList);	
 
 	/*for (int i = 0; i < 20; i++){
 		particleModel_[i] = std::make_unique<Particle>();

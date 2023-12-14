@@ -28,6 +28,8 @@ public:
 	void Draw3D();
 	//テクスチャ関連の描画
 	void Draw2D();
+	//削除をまとめた関数
+	void Finalize();
 
 private:
 	//クラス内関数
@@ -57,6 +59,10 @@ private:
 	std::unique_ptr<ParticleBase> particle_;
 
 	std::unique_ptr<Object3D> obj_;
+
+	Model* model_ = nullptr;
+
+	Model* boxModel_ = nullptr;
 
 	Transform objectTrnadform_ = {
 		.scale = {5.0f,5.0f,5.0f},

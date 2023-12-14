@@ -30,13 +30,13 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 
 
 	playerModel_ = std::make_unique<Object3D>();
-	playerModel_->Initialize(device, commandList, "box");
+	playerModel_->Initialize(device, commandList);
 
 	weaponModel_ = std::make_unique<Object3D>();
-	weaponModel_->Initialize(device, commandList, "weapon");
+	weaponModel_->Initialize(device, commandList);
 
 	weaponCollisionModel_ = std::make_unique<Object3D>();
-	weaponCollisionModel_->Initialize(device, commandList, "box");
+	weaponCollisionModel_->Initialize(device, commandList);
 	//Weapon
 
 	playerTransform_ = {

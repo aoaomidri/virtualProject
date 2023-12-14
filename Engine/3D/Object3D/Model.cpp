@@ -6,6 +6,10 @@
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
+void Model::Draw(ID3D12GraphicsCommandList* CommandList){
+	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+}
+
 Model* Model::GetInstance(){
 	static Model instance;
 	return &instance;
@@ -16,6 +20,8 @@ Model* Model::LoadObjFile(const std::string& filename){
 	Model* modelData = new Model();//構築するModelData
 	
 	modelData->LoadFromOBJInternal(filename);
+
+	modelData->MakeVertexResource();
 
 	//4,ModelDataを返す
 	return modelData;
@@ -48,6 +54,31 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	//4,MaterialDataを返す
 	return materialData;
 	
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes){
+	//頂点リソース用のヒープの設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//頂点リソースの設定
+	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	//バッファリソース。テクスチャの場合はまた別の設定をする
+	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	vertexResourceDesc.Width = sizeInBytes;
+
+	vertexResourceDesc.Height = 1;
+	vertexResourceDesc.DepthOrArraySize = 1;
+	vertexResourceDesc.MipLevels = 1;
+	vertexResourceDesc.SampleDesc.Count = 1;
+
+	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
+	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
+	assert(SUCCEEDED(hr));
+
+	return bufferResource;
 }
 
 void Model::LoadFromOBJInternal(const std::string& filename){
@@ -106,8 +137,8 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				/*VertexData vertex = { position,texcoord,normal };
-				modelData.vertices.push_back(vertex);*/
+				VertexData vertex = { position,texcoord,normal };
+				indices.push_back(vertex);
 				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
@@ -124,4 +155,21 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 		}
 
 	}
+}
+
+void Model::MakeVertexResource(){
+	//頂点リソースの作成
+	vertexResource = CreateBufferResource(device_, sizeof(VertexData) * indices.size());
+
+
+	//リソースの先頭のアドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点三つ分のサイズ
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * indices.size());
+	//1頂点当たりのサイズ
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+	//書き込むためのアドレスを取得
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
+	std::memcpy(vertexDate, indices.data(), sizeof(VertexData) * indices.size());
 }

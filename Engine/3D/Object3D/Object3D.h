@@ -1,7 +1,5 @@
 #pragma once
 #include "../../../math/Matrix.h"
-#include <Windows.h>
-#include <wrl.h>
 #include"../Transform.h"
 #include"../../Base/Log.h"
 #include<vector>
@@ -17,7 +15,7 @@ public:
 		Vector3 worldPosition;
 	};
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const std::string fileName);
+	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
@@ -33,6 +31,7 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetModel(Model* model) { this->model_ = model; }
 
 	const Vector3& GetPosition()const { return position_; }
 
@@ -42,16 +41,17 @@ public:
 		ID3D12Device* device, size_t sizeInBytes);
 
 	void makeResource();
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	ModelData LoadObjFile(const std::string& filename);
+	//MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	//ModelData LoadObjFile(const std::string& filename);
 
 public:
 	Matrix4x4* parent_{};
 
 private:
-	const std::string ResourcesPath = "resources/";
+	//const std::string ResourcesPath = "resources/";
 
-
+	//モデル
+	Model* model_ = nullptr;
 
 	HRESULT hr;
 
@@ -59,20 +59,20 @@ private:
 
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
-	//頂点バッファービューを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+	////頂点バッファービューを作成する
+	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-	//頂点リソースにデータを書き込む
-	VertexData* vertexDate = nullptr;
+	////頂点リソースにデータを書き込む
+	//VertexData* vertexDate = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//マテリアルにデータを書き込む
 	Material* materialDate = nullptr;
 
-	//モデル読み込み
-	ModelData modelData;
+	////モデル読み込み
+	//ModelData modelData;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
 

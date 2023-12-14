@@ -89,6 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
+	gameScene_->Finalize();
 	window_->Finalize();
 
 	return 0;

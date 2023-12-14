@@ -3,6 +3,9 @@
 #include"../Transform.h"
 #include<sstream>
 #include<vector>
+#include <Windows.h>
+#include <wrl.h>
+
 
 struct MaterialData {
 	std::string textureFilePath;
@@ -28,6 +31,8 @@ struct DirectionalLight {
 
 class Model{
 public:
+	void Draw(ID3D12GraphicsCommandList* CommandList);
+
 	static Model* GetInstance();
 
 	static Model* LoadObjFile(const std::string& filename);
@@ -35,14 +40,33 @@ public:
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 public:
+	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView; }
+
+	const std::vector<VertexData> GetVertexData()const { return indices; }
+
 	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
+
+
+private:
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
+		ID3D12Device* device, size_t sizeInBytes);
+
+	//OBJファイルから3Dモデルを読み込む(非公開)
+	void LoadFromOBJInternal(const std::string& filename);
+
+	void MakeVertexResource();
 
 private:
 	//デバイス
 	static ID3D12Device* device_;
 
-	//OBJファイルから3Dモデルを読み込む(非公開)
-	void LoadFromOBJInternal(const std::string& filename);
+	//頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
+	//頂点リソースにデータを書き込む
+	VertexData* vertexDate = nullptr;
 
 	const std::string ResourcesPath = "resources/";
 

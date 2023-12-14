@@ -19,9 +19,13 @@ void GameScene::TextureLoad() {
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-
 	obj_ = std::make_unique<Object3D>();
-	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), "skyDome");
+	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	model_ = Model::LoadObjFile("skyDome");
+	boxModel_ = Model::LoadObjFile("box");
+	
+	
+	
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -49,6 +53,13 @@ void GameScene::Update(Input* input_){
 	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
 	obj_->Update(objMatrix_, followCamera_->GetViewProjection());
 
+	
+	if (input_->Pushkey(DIK_SPACE)){
+		obj_->SetModel(boxModel_);
+	}
+	else {
+		obj_->SetModel(model_);
+	}
 	
 }
 
@@ -80,6 +91,11 @@ void GameScene::Draw2D(){
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw2D();
+}
+
+void GameScene::Finalize(){
+	delete model_;
+	delete boxModel_;
 }
 
 void GameScene::DrawImgui(){

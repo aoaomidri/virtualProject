@@ -99,6 +99,7 @@ void GameScene::Finalize(){
 }
 
 void GameScene::DrawImgui(){
+#ifdef DEBUG
 	ImGui::Begin("スフィアのSRT");
 	ImGui::DragFloat3("スケール", &objectTrnadform_.scale.x, 0.1f, 1.0f, 100.0f);
 	ImGui::DragFloat3("回転", &objectTrnadform_.rotate.x, 0.1f);
@@ -106,6 +107,7 @@ void GameScene::DrawImgui(){
 	ImGui::End();
 
 	obj_->DrawImgui();
+#endif // DEBUG	
 }
 
 

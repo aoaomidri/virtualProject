@@ -41,15 +41,11 @@ public:
 		ID3D12Device* device, size_t sizeInBytes);
 
 	void makeResource();
-	//MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	//ModelData LoadObjFile(const std::string& filename);
 
 public:
 	Matrix4x4* parent_{};
 
 private:
-	//const std::string ResourcesPath = "resources/";
-
 	//モデル
 	Model* model_ = nullptr;
 
@@ -59,20 +55,10 @@ private:
 
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
-	////頂点バッファービューを作成する
-	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
-
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-
-	////頂点リソースにデータを書き込む
-	//VertexData* vertexDate = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//マテリアルにデータを書き込む
 	Material* materialDate = nullptr;
-
-	////モデル読み込み
-	//ModelData modelData;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
 

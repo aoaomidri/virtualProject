@@ -44,6 +44,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//此処だけに初期化
 	randomMaker->Initialize();
 
+	Audio* audio_ = Audio::GetInstance();
+	audio_->Initialize();
+
 	auto gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize(dxCommon_.get());
 
@@ -88,6 +91,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	audio_->Reset();
+
+	gameScene_->AudioDataUnLoad();
 
 	window_->Finalize();
 

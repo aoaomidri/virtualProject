@@ -13,6 +13,7 @@
 #include"../Stage/Floor/FloorManager.h"
 #include"../Camera/LockOn.h"
 #include"../../Engine/3D/Object3D/ParticleBase.h"
+#include"../Audio/Audio.h"
 
 class GameScene{
 public:
@@ -20,6 +21,8 @@ public:
 	void Initialize(DirectXCommon* dxCommon_);
 	//更新
 	void Update(Input* input_);
+
+	void AudioDataUnLoad();
 
 	//パーティクルの描画
 	void DrawParticle();
@@ -33,6 +36,9 @@ private:
 	//クラス内関数
 	//テクスチャ読み込み
 	void TextureLoad();
+
+	//音読み込み
+	void SoundLoad();
 
 	//オブジェクトの初期化
 	void ObjectInitialize(DirectXCommon* dxCommon_);
@@ -65,5 +71,11 @@ private:
 	};
 
 	Matrix4x4 objMatrix_{};
+
+
+	//音関係
+	Audio* audio_ = nullptr;
+
+	SoundData soundData1{};
 };
 

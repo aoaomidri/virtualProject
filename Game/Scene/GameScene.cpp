@@ -16,6 +16,10 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/monsterBall.png", 11);
 }
 
+void GameScene::SoundLoad(){
+	soundData1 = audio_->SoundLoadWave("Alarm01.wav");
+}
+
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
@@ -25,10 +29,13 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
+	audio_ = Audio::GetInstance();
+
 	textureManager_ = std::make_unique<TextureManager>();
 	textureManager_->Initialize(dxCommon_->GetDevice(),
 		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
 	TextureLoad();
+	SoundLoad();
 
 	ObjectInitialize(dxCommon_);
 
@@ -40,6 +47,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	followCamera_->SetTarget(&objectTrnadform_);
 	
 	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
+
+	audio_->SoundPlayWave(soundData1);
 }
 
 void GameScene::Update(Input* input_){
@@ -50,6 +59,11 @@ void GameScene::Update(Input* input_){
 	obj_->Update(objMatrix_, followCamera_->GetViewProjection());
 
 	
+	
+}
+
+void GameScene::AudioDataUnLoad(){
+	audio_->SoundUnload(&soundData1);
 }
 
 void GameScene::DrawParticle(){

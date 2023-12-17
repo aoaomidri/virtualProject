@@ -70,6 +70,9 @@
     <Filter Include="Game\random">
       <UniqueIdentifier>{fbc14cf7-7be0-4ed2-ba0c-ec526a7cd312}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Audio">
+      <UniqueIdentifier>{9a4e73ac-3b07-4941-9faa-8ff154bdc5b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -173,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="Game\random\RandomMaker.cpp">
       <Filter>Game\random</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Audio\Audio.cpp">
+      <Filter>Game\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="Game\random\RandomMaker.h">
       <Filter>Game\random</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Audio\Audio.h">
+      <Filter>Game\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

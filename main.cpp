@@ -98,6 +98,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	gameScene_->Finalize();
 	window_->Finalize();
+#ifdef _DEBUG
+	OutputDebugStringA("文字列リテラルを出力するよ\n");
+	std::string a("stringに埋め込んだ文字列を出力するよ\n");
+	OutputDebugStringA(a.c_str());
+#endif // _DEBUG
+
+	
 
 	return 0;
 }

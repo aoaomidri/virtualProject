@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "externals\Dir
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{C46EBAEE-9E41-48B8-90B6-4DFDE7C78746}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{7B376CF7-838F-4E0C-841E-263063921728}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -63,12 +65,31 @@ Global
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.Build.0 = Release|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x86.ActiveCfg = Release|Win32
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x86.Build.0 = Release|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|ARM64.ActiveCfg = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|ARM64.Build.0 = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|x64.ActiveCfg = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|x64.Build.0 = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Debug|x86.Build.0 = Debug|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|ARM64.ActiveCfg = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|ARM64.Build.0 = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|x64.ActiveCfg = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|x64.Build.0 = Debug|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|x86.ActiveCfg = Debug|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Profile|x86.Build.0 = Debug|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|ARM64.ActiveCfg = Release|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|ARM64.Build.0 = Release|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|x64.ActiveCfg = Release|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|x64.Build.0 = Release|x64
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|x86.ActiveCfg = Release|Win32
+		{7B376CF7-838F-4E0C-841E-263063921728}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77} = {C46EBAEE-9E41-48B8-90B6-4DFDE7C78746}
+		{7B376CF7-838F-4E0C-841E-263063921728} = {C46EBAEE-9E41-48B8-90B6-4DFDE7C78746}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E1E5BE6-37D0-4460-ABE1-760E025297D8}

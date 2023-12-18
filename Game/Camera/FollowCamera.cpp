@@ -64,34 +64,37 @@ void FollowCamera::Update(Input* input_){
 
 	}
 	else {
-		cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
-		Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
-		postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
-		postureVec_.y = 0.0f;
-		postureVec_ = Vector3::Normalize(postureVec_);
-		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
-			viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
-			destinationAngleX_ = 0.0f;
-			destinationAngleY_ = 0.0f;
+		if (input_->GetConnectPad()){
+			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+			Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
+			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
+			postureVec_.y = 0.0f;
+			postureVec_ = Vector3::Normalize(postureVec_);
+			if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
+				viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
+				destinationAngleX_ = 0.0f;
+				destinationAngleY_ = 0.0f;
+			}
 		}
 	}
 	
+	if (input_->GetConnectPad()) {
+		destinationAngleX_ += cameraMove_.x;
+		destinationAngleY_ += cameraMove_.y;
 
-	destinationAngleX_ += cameraMove_.x;
-	destinationAngleY_ += cameraMove_.y;
 
+		if (destinationAngleX_ <= minRotate) {
+			destinationAngleX_ = minRotate;
+		}
+		else if (destinationAngleX_ >= maxRotate) {
+			destinationAngleX_ = maxRotate;
+		}
 
-	if (destinationAngleX_ <= minRotate) {
-		destinationAngleX_ = minRotate;
+		viewProjection_.rotation_.y =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
+		viewProjection_.rotation_.x =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	}
-	else if (destinationAngleX_ >= maxRotate) {
-		destinationAngleX_ = maxRotate;
-	}
-
-	viewProjection_.rotation_.y =
-		Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
-	viewProjection_.rotation_.x =
-		Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	rootOffset = { 0.0f, 0.0f, distance };
 	baseOffset = rootOffset;
 

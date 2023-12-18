@@ -59,6 +59,8 @@ void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
 
+	particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
+
 	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
 	obj_->Update(objMatrix_, followCamera_->GetViewProjection());
 	if (input_->Pushkey(DIK_SPACE)) {
@@ -81,6 +83,7 @@ void GameScene::AudioDataUnLoad(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
+	particle_->Draw(textureManager_->SendGPUDescriptorHandle(10), textureManager_->SendInstancingGPUDescriptorHandle());
 
 	textureManager_->PostDrawParticle();
 }
@@ -114,14 +117,15 @@ void GameScene::Finalize(){
 }
 
 void GameScene::DrawImgui(){
-#ifdef DEBUG
+#ifdef _DEBUG
 	ImGui::Begin("スフィアのSRT");
-	ImGui::DragFloat3("スケール", &objectTrnadform_.scale.x, 0.1f, 1.0f, 100.0f);
-	ImGui::DragFloat3("回転", &objectTrnadform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("スケール", &objectTrnadform_.scale.x, 0.01f, 1.0f, 100.0f);
+	ImGui::DragFloat3("回転", &objectTrnadform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("座標", &objectTrnadform_.translate.x, 0.1f, -100.0f, 100.0f);
 	ImGui::End();
 
 	obj_->DrawImgui();
+	particle_->DrawImgui();
 #endif // DEBUG	
 }
 

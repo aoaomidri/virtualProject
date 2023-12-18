@@ -73,6 +73,8 @@ public:
 
 	bool GetRTrigger();
 
+	bool GetConnectPad() { return isConnectPad; }
+
 private:
 	BYTE key[256] = {};
 	BYTE prekey[256] = {};

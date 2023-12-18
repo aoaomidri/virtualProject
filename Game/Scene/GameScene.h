@@ -76,6 +76,12 @@ private:
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
+	Transform particleTrnadform_ = {
+		.scale = {1.0f,1.0f,1.0f},
+		.rotate = {0.0f,0.0f,0.0f},
+		.translate = {0.0f,0.0f,0.0f}
+	};
+
 	Matrix4x4 objMatrix_{};
 
 

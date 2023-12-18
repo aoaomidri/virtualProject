@@ -1,5 +1,6 @@
 #include "GraphicsPipeline.h"
 #include <cassert>
+#pragma warning(disable : 6387)
 
 GraphicsPipeline::~GraphicsPipeline(){
 	
@@ -180,8 +181,6 @@ void GraphicsPipeline::makeInputLayout(){
 }
 
 void GraphicsPipeline::makeBlendState(const BlendMode& blend){
-
-	
 
 	//全ての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;

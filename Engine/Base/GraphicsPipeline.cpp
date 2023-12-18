@@ -20,13 +20,15 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
 
+	
+
 	makeGraphicsPipeline(device);
 }
 
-void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling){
+void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend){
 	makeParticleRootSignature(device);
 	makeInputLayout();
-	makeBlendState(kBlendModeAdd);
+	makeBlendState(blend);
 	makeRasterizerState(isCulling);
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ZERO);

@@ -25,8 +25,7 @@ void TextureManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	GraphicsPipeline2D_->Initialize(device_, L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl", false);
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(device_, L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
-	GraphicsPipelineParticle_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticle_->ParticleExclusiveInitialize(device_, L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl", true);
+	
 
 }
 
@@ -61,7 +60,7 @@ void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = 100;
+	instancingSrvDesc.Buffer.NumElements = 300;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -100,13 +99,7 @@ void TextureManager::PostDraw3D()
 }
 
 void TextureManager::PreDrawParticle(){
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	commandList_->SetGraphicsRootSignature(GraphicsPipelineParticle_->GetParticleRootSignature());
-	commandList_->SetPipelineState(GraphicsPipelineParticle_->GetPipeLineState());
-
-
-
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
 }
 
 void TextureManager::PostDrawParticle(){

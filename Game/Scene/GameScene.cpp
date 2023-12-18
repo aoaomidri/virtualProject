@@ -83,7 +83,7 @@ void GameScene::AudioDataUnLoad(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
-	particle_->Draw(textureManager_->SendGPUDescriptorHandle(10), textureManager_->SendInstancingGPUDescriptorHandle());
+	particle_->Draw(textureManager_->SendGPUDescriptorHandle(8), textureManager_->SendInstancingGPUDescriptorHandle());
 
 	textureManager_->PostDrawParticle();
 }

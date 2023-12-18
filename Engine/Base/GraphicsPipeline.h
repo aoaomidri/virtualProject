@@ -25,7 +25,7 @@ public:
 
 	void Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
 	//パーティクル専用の初期化処理
-	void ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
+	void ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend);
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 

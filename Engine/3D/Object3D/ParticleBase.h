@@ -10,6 +10,7 @@
 #include"Model.h"
 #include"../ViewProjection.h"
 #include"../../../Game/random/RandomMaker.h"
+#include"../../Base/GraphicsPipeline.h"
 #include<numbers>
 #include<list>
 #include"../Shape/OBB.h"
@@ -108,6 +109,14 @@ private:
 	VertexData* vertexDate = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleNone_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleNormal_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleAdd_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleSubtract_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleMultily_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleScreen_;
+
 	//マテリアルにデータを書き込む
 	Material* materialDate = nullptr;
 
@@ -117,7 +126,7 @@ private:
 	//粒の数
 	int numInstance = 0;
 
-	static const int particleMaxNum_ = 100;
+	static const int particleMaxNum_ = 300;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
@@ -178,6 +187,8 @@ private:
 		.min = -3.0f,
 		.max = 3.0f
 	};
+
+	int blend_;
 
 	//ランダム生成
 	RandomMaker* random_ = nullptr;

@@ -17,7 +17,7 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 	random_ = RandomMaker::GetInstance();
 
 	emitter_.count = 3;
-	emitter_.frequency = 0.5f;
+	emitter_.frequency = 0.1f;
 	emitter_.frequencyTime = 0.0f;
 	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
 	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
@@ -37,13 +37,39 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 	isDraw_ = true;
 	isMove_ = false;
 
-	
+	blend_ = BlendMode::kBlendModeAdd;
 
 	cameraTransform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,2.0f,-10.0f}
 	};
+
+	GraphicsPipelineParticleNone_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleNone_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeNone);
+	GraphicsPipelineParticleNormal_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleNormal_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeNormal);
+	GraphicsPipelineParticleAdd_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleAdd_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeAdd);
+	GraphicsPipelineParticleSubtract_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleSubtract_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeSubtract);
+	GraphicsPipelineParticleMultily_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleMultily_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeMultily);
+	GraphicsPipelineParticleScreen_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineParticleScreen_->ParticleExclusiveInitialize(device_,
+		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		true, BlendMode::kBlendModeScreen);
+
 }
 
 void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
@@ -70,7 +96,7 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度計算する
 	}
 
-	assert(particles_.size() < 100);
+	assert(particles_.size() < particleMaxNum_);
 	
 	numInstance = 0;
 	for (std::list<Particle>::iterator particleIterator = particles_.begin(); particleIterator != particles_.end();) {
@@ -123,6 +149,35 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 	if (!isDraw_) {
 		return;
 	}
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	if (blend_ == BlendMode::kBlendModeNone) {
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleNone_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleNone_->GetPipeLineState());
+	}
+	else if (blend_ == BlendMode::kBlendModeNormal){
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleNormal_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleNormal_->GetPipeLineState());
+	}
+	else if (blend_ == BlendMode::kBlendModeAdd) {
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleAdd_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleAdd_->GetPipeLineState());
+	}
+	else if (blend_ == BlendMode::kBlendModeSubtract) {
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleSubtract_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleSubtract_->GetPipeLineState());
+	}
+	else if (blend_ == BlendMode::kBlendModeMultily) {
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleMultily_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleMultily_->GetPipeLineState());
+	}
+	else if (blend_ == BlendMode::kBlendModeScreen) {
+		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleScreen_->GetParticleRootSignature());
+		commandList_->SetPipelineState(GraphicsPipelineParticleScreen_->GetPipeLineState());
+	}
+	
+
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//形状を設定。
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -160,6 +215,23 @@ void ParticleBase::DrawImgui(){
 	}
 	if (ImGui::Button("パーティクル追加")) {
 		particles_.splice(particles_.end(), Emission(emitter_));
+	}
+	if (ImGui::TreeNode("ブレンドモード変更")) {
+		ImGui::RadioButton("なし", &blend_, BlendMode::kBlendModeNone);
+		ImGui::SameLine();
+		ImGui::RadioButton("ノーマル", &blend_, BlendMode::kBlendModeNormal);
+		ImGui::SameLine();
+		ImGui::RadioButton("加算", &blend_, BlendMode::kBlendModeAdd);
+		
+		ImGui::RadioButton("減算", &blend_, BlendMode::kBlendModeSubtract);
+		ImGui::SameLine();
+		ImGui::RadioButton("乗算　　", &blend_, BlendMode::kBlendModeMultily);
+		ImGui::SameLine();
+		ImGui::RadioButton("スクリーン", &blend_, BlendMode::kBlendModeScreen);
+
+		ImGui::Text("今のブレンド %d", blend_);
+
+		ImGui::TreePop();
 	}
 	ImGui::End();
 

@@ -28,7 +28,7 @@ void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 		{0.0f,0.0f,0.0f}
 	};
 
-	uvTransformSprite_ = {
+	uvTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
@@ -96,6 +96,17 @@ void Sprite::Update(){
 	float top = (0.0f - anchorPoint_.y) * scale_.y;
 	float bottom = (1.0f - anchorPoint_.y) * scale_.y;
 
+	//左右反転
+	if (isFlipX_){
+		left *= -1.0f;
+		right *= -1.0f;
+	}
+	//上下反転
+	if (isFlipY_){
+		top *= -1.0f;
+		bottom *= -1.0f;
+	}
+
 	//頂点データ
 	vertexDataSprite[0].position = { left,bottom,0.0f,1.0f };//左下
 	vertexDataSprite[1].position = { left,top,0.0f,1.0f };//左上
@@ -111,9 +122,9 @@ void Sprite::Update(){
 	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, Matrix::GetInstance()->Multiply(viewMatrixSprite, projectionMatrixSprite));
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
-	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransformSprite_.scale);
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransformSprite_.rotate));
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransformSprite_.translate));
+	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransform_.scale);
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransform_.rotate));
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransform_.translate));
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
@@ -211,6 +222,10 @@ void Sprite::makeSpriteResource(){
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+
+	materialDate->enableLighting = false;
+
+	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 	//今回は赤を書き込んでみる
 	
 }

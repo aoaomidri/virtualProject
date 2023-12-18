@@ -3,6 +3,7 @@
 #include"../../math/Vector3.h"
 #include"../../math/Vector4.h"
 #include"../../math/Matrix4x4.h"
+#include<cstdint>
 
 struct Transform {
 	Vector3 scale;
@@ -26,4 +27,3 @@ struct ParticleForGPU {
 	Matrix4x4 World;
 	Vector4 color;
 };
-

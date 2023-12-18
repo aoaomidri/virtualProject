@@ -14,7 +14,6 @@ void Audio::Initialize(){
 
 }
 
-
 void Audio::Reset(){
 	xAudio2_.Reset();
 }

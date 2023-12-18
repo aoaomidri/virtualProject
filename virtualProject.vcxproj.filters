@@ -73,17 +73,8 @@
     <Filter Include="External\imgui">
       <UniqueIdentifier>{67e3fa12-b85d-432d-8d01-e43f5d6be697}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Stage\Goal">
-      <UniqueIdentifier>{5a635121-6adb-46ba-bcd9-a0f1a258d9bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Item">
-      <UniqueIdentifier>{93980ca8-c9f3-4222-b9cf-6b32f56d892e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\random">
-      <UniqueIdentifier>{fbc14cf7-7be0-4ed2-ba0c-ec526a7cd312}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Audio">
-      <UniqueIdentifier>{9a4e73ac-3b07-4941-9faa-8ff154bdc5b8}</UniqueIdentifier>
+    <Filter Include="application\Audio">
+      <UniqueIdentifier>{f4567324-8d25-4195-a070-395bbe966cb9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -190,7 +181,7 @@
       <Filter>application\random</Filter>
     </ClCompile>
     <ClCompile Include="Game\Audio\Audio.cpp">
-      <Filter>Game\Audio</Filter>
+      <Filter>application\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -318,7 +309,7 @@
       <Filter>application\random</Filter>
     </ClInclude>
     <ClInclude Include="Game\Audio\Audio.h">
-      <Filter>Game\Audio</Filter>
+      <Filter>application\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

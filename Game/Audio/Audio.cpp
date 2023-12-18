@@ -42,7 +42,7 @@ SoundData Audio::SoundLoadWave(const char* fileName){
 	FormatChunk format = {};
 	//チャンクヘッダーの確認
 	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt", 3) != 0) {
+	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
 		assert(0);
 	}
 
@@ -61,8 +61,14 @@ SoundData Audio::SoundLoadWave(const char* fileName){
 		file.read((char*)&data, sizeof(data));
 	}
 
-	if (strncmp(data.id,"data",4) != 0){
-		assert(0);
+	while (strncmp(data.id,"data",4) != 0){
+		//読み込み位置をJUNKチャンクの終わりまで進める
+		file.seekg(data.size, std::ios_base::cur);
+		if (file.eof()){
+			assert(0);
+		}
+		//再読み込み
+		file.read((char*)&data, sizeof(data));
 	}
 
 	//Dataチャンクのデータ部(波形データ)の読み込み

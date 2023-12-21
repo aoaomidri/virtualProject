@@ -1,5 +1,6 @@
 #include "FloorManager.h"
 FloorManager::~FloorManager(){
+	delete floorModel_;
 	// 解放
 	for (Floor* floor : floors_) {
 		delete floor;
@@ -12,11 +13,16 @@ FloorManager::~FloorManager(){
 	objects_.clear();
 }
 
-void FloorManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+void FloorManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+	
 	// nullポインタチェック
 	device_ = device;
 
 	commandList_ = commandList;
+
+	Model::SetDevice(device);
+
+	floorModel_ = Model::LoadObjFile("box");
 }
 
 void FloorManager::Update(){
@@ -42,7 +48,7 @@ void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& vi
 	for (Floor* floor : floors_) {
 		auto it = std::next(objects_.begin(), num);
 		Object3D* object = *it;
-		floor->Draw(object,textureManager, viewProjection);
+		floor->Draw(object, floorModel_ , textureManager, viewProjection);
 		num++;
 	}
 

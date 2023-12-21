@@ -11,6 +11,11 @@ Player::kConstAttacks_ = {
 	}
 };
 
+Player::~Player(){
+	delete playerModel_;
+	delete weaponModel_;
+}
+
 void Player::ApplyGlobalVariables() {
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
@@ -29,15 +34,23 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
 
 
-	playerModel_ = std::make_unique<Object3D>();
-	playerModel_->Initialize(device, commandList);
+	playerObj_ = std::make_unique<Object3D>();
+	playerObj_->Initialize(device, commandList);
 
-	weaponModel_ = std::make_unique<Object3D>();
-	weaponModel_->Initialize(device, commandList);
+	weaponObj_ = std::make_unique<Object3D>();
+	weaponObj_->Initialize(device, commandList);
 
-	weaponCollisionModel_ = std::make_unique<Object3D>();
-	weaponCollisionModel_->Initialize(device, commandList);
-	//Weapon
+	weaponCollisionObj_ = std::make_unique<Object3D>();
+	weaponCollisionObj_->Initialize(device, commandList);
+
+	playerModel_ = Model::LoadObjFile("box");
+
+	weaponModel_ = Model::LoadObjFile("Weapon");
+
+	playerObj_->SetModel(playerModel_);
+	weaponCollisionObj_->SetModel(playerModel_);
+	weaponObj_->SetModel(weaponModel_);
+
 
 	playerTransform_ = {
 		.scale = {0.3f,0.3f,0.3f},
@@ -126,16 +139,15 @@ void Player::Update(Input* input){
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
 	}
-	DrawImgui();
 }
 
 void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
-	playerModel_->Update(playerMatrix_, viewProjection);
-	playerModel_->Draw(textureManager->SendGPUDescriptorHandle(4));
+	playerObj_->Update(playerMatrix_, viewProjection);
+	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
 	if (behavior_==Behavior::kAttack){
-		weaponModel_->Update(weaponMatrix_, viewProjection);
-		weaponModel_->Draw(textureManager->SendGPUDescriptorHandle(7));
+		weaponObj_->Update(weaponMatrix_, viewProjection);
+		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
 		/*weaponCollisionModel_->Update(weaponCollisionMatrix_, viewProjection);
 		weaponCollisionModel_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
@@ -152,8 +164,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器の回転", &weaponCollisionTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
 	ImGui::DragFloat("武器の回転", &weapon_Rotate, 0.1f);
-	ImGui::End();
-	
+	ImGui::End();	
 }
 
 void Player::onFlootCollision(OBB obb){
@@ -179,8 +190,6 @@ void Player::BehaviorRootInitialize(){
 	move_ = { 0.0f,0.0f,0.0f };
 	weaponTransform_.translate.y = 1.0f;
 	weaponCollisionTransform_.translate.y = 1.0f;
-	
-	
 }
 
 void Player::BehaviorRootUpdate(Input* input){
@@ -247,7 +256,7 @@ void Player::BehaviorRootUpdate(Input* input){
 	if (dashCoolTime != 0) {
 		dashCoolTime -= 1;
 	}
-	playerTransform_.translate.y += downVector.y;
+	//playerTransform_.translate.y += downVector.y;
 	
 
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {

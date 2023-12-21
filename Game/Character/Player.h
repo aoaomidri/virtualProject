@@ -15,6 +15,8 @@ class LockOn;
 
 class Player {
 public:
+	~Player();
+
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
@@ -118,10 +120,15 @@ private:
 
 private:
 	//自機のモデル
-	std::unique_ptr<Object3D> playerModel_;
+	std::unique_ptr<Object3D> playerObj_;
 	//武器のモデル
-	std::unique_ptr<Object3D> weaponModel_;
-	std::unique_ptr<Object3D> weaponCollisionModel_;
+	std::unique_ptr<Object3D> weaponObj_;
+	std::unique_ptr<Object3D> weaponCollisionObj_;
+
+	Model* playerModel_;
+
+	Model* weaponModel_;
+
 
 
 	//自機のSRT

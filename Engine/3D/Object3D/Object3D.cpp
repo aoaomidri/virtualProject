@@ -15,7 +15,7 @@ void Object3D::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 
 	isDraw_ = true;
 
-	materialDate->enableLighting = true;
+	materialDate->enableLighting = false;
 
 	transform = {
 		{1.0f,1.0f,1.0f},

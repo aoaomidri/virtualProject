@@ -33,9 +33,10 @@ void Floor::Update(){
 		Matrix::GetInstance()->MakeAffineMatrix(floorTransform_.scale, floorTransform_.rotate, floorTransform_.translate);
 }
 
-void Floor::Draw(Object3D* object, TextureManager* textureManager, const ViewProjection& viewProjection){
+void Floor::Draw(Object3D* object, Model* model, TextureManager* textureManager, const ViewProjection& viewProjection){
 	if (floorModel_ == nullptr) {
 		floorModel_ = object;
+		floorModel_->SetModel(model);
 	}
 	
 

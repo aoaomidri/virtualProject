@@ -51,8 +51,19 @@ private:
 
 	/*分ける予定があるけどひとまずのやつ*/
 	void AllCollision();
+	void FilesSave(const std::vector<std::string>& stages);
+	void FilesOverWrite(const std::string& stage);
+	void FilesLoad(const std::string& stage);
 	//OBB同士の当たり判定
 	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
+
+private:
+	/*ファイル関連*/
+	int stageSelect_;
+
+	std::string stageName_;
+
+	std::vector<std::string> stages_;
 
 private:
 	//クラス内変数
@@ -64,17 +75,20 @@ private:
 	
 	std::unique_ptr<ParticleBase> particle_;
 
-	std::unique_ptr<Object3D> obj_;
+	std::unique_ptr<FloorManager> floorManager_;
 
-	Model* model_ = nullptr;
-
-	Model* boxModel_ = nullptr;
-
-	Transform objectTrnadform_ = {
-		.scale = {5.0f,5.0f,5.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
+	Transform firstFloor_ = {
+		.scale = {2.0f,0.5f,2.0f},
+		.rotate = {0},
+		.translate = {0}
 	};
+
+	bool isFloorMove_ = false;
+
+	std::unique_ptr<Player> player_;
+
+	int chackCollision = 0;
+
 
 	Transform particleTrnadform_ = {
 		.scale = {1.0f,1.0f,1.0f},
@@ -82,7 +96,6 @@ private:
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
-	Matrix4x4 objMatrix_{};
 
 
 	//音関係

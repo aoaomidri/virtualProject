@@ -16,7 +16,6 @@ void FollowCamera::ApplyGlobalVariables(){
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
-	distance = 40.0f;
 
 	distance *= -1.0f;
 }
@@ -33,8 +32,6 @@ void FollowCamera::Initialize(){
 	adjustment_item->AddItem(groupName, "distance", distance);
 
 	destinationAngleX_ = 0.0f;
-
-	distance = -20.0f;
 
 	rootOffset = { 0.0f, 0.0f, distance };
 
@@ -71,9 +68,8 @@ void FollowCamera::Update(Input* input_){
 			postureVec_.y = 0.0f;
 			postureVec_ = Vector3::Normalize(postureVec_);
 			if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
-				viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
-				destinationAngleX_ = 0.0f;
-				destinationAngleY_ = 0.0f;
+				destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+				destinationAngleX_ = 0.2f;
 			}
 		}
 	}

@@ -21,12 +21,12 @@ void GameScene::SoundLoad(){
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
-	particle_ = std::make_unique<ParticleBase>();
-	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	obj_ = std::make_unique<Object3D>();
-	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	model_ = Model::LoadObjFile("skyDome");
-	boxModel_ = Model::LoadObjFile("box");
+	/*particle_ = std::make_unique<ParticleBase>();
+	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
+	//obj_ = std::make_unique<Object3D>();
+	//obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	//model_ = Model::LoadObjFile("skyDome");
+	//boxModel_ = Model::LoadObjFile("box");
 	
 	
 	
@@ -43,33 +43,44 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	ObjectInitialize(dxCommon_);
 
-	textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
+	floorManager_ = std::make_unique<FloorManager>();
+	floorManager_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+
+	floorManager_->AddFloor(firstFloor_, false);
+
+	player_ = std::make_unique<Player>();
+	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+
+	//textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	//自キャラのワールドトランスフォームを追従カメラにセット
-	followCamera_->SetTarget(&objectTrnadform_);
+	followCamera_->SetTarget(&player_->GetTransform());
+	followCamera_->SetTargetMatrix(&player_->GetRotateMatrix());
 	
-	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
-	audio_->SoundPlayWave(soundData1);
+	stages_ = {
+		"Stage1",
+		"Stage2",
+		"Stage3",
+		"Stage4"
+	};
+
+	stageName_ = stages_[0].c_str();
+	floorManager_->LoadFiles(stageName_);
+
+	//audio_->SoundPlayWave(soundData1);
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
+	player_->Update(input_);
+	//particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
 
-	particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
-
-	objMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(objectTrnadform_.scale, objectTrnadform_.rotate, objectTrnadform_.translate);
-	obj_->Update(objMatrix_, followCamera_->GetViewProjection());
-	if (input_->Pushkey(DIK_SPACE)) {
-		obj_->SetModel(boxModel_);
-	}
-	else {
-		obj_->SetModel(model_);
-	}
-	
+	floorManager_->Update();
 	
 }
 
@@ -83,7 +94,7 @@ void GameScene::AudioDataUnLoad(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
-	particle_->Draw(textureManager_->SendGPUDescriptorHandle(8), textureManager_->SendInstancingGPUDescriptorHandle());
+	//particle_->Draw(textureManager_->SendGPUDescriptorHandle(8), textureManager_->SendInstancingGPUDescriptorHandle());
 
 	textureManager_->PostDrawParticle();
 }
@@ -92,8 +103,9 @@ void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 	/*ここから下に描画処理を書き込む*/
+	floorManager_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 
-	obj_->Draw(textureManager_->SendGPUDescriptorHandle(11));
+	player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/
@@ -112,27 +124,130 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
-	delete model_;
-	delete boxModel_;
 }
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
-	ImGui::Begin("スフィアのSRT");
-	ImGui::DragFloat3("スケール", &objectTrnadform_.scale.x, 0.01f, 1.0f, 100.0f);
-	ImGui::DragFloat3("回転", &objectTrnadform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("座標", &objectTrnadform_.translate.x, 0.1f, -100.0f, 100.0f);
+	player_->DrawImgui();
+	//particle_->DrawImgui();
+	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("オブジェクトの生成")) {
+			if (ImGui::TreeNode("床生成")) {
+				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
+				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
+				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
+
+				ImGui::Checkbox("動く床にする", &isFloorMove_);
+
+				if (ImGui::Button("床の追加")) {
+					floorManager_->AddFloor(firstFloor_, isFloorMove_);
+				}
+				ImGui::TreePop();
+			}
+
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("オブジェクト一覧")) {
+			if (ImGui::BeginMenu("床一覧")) {
+				floorManager_->DrawImgui();
+				ImGui::EndMenu();
+			}
+
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("ファイル関連")) {
+			for (size_t i = 0; i < stages_.size(); i++) {
+				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
+					stageName_ = stages_[stageSelect_].c_str();
+				}
+
+			}
+			if (ImGui::Button("jsonファイルを作る")) {
+				FilesSave(stages_);
+			}
+			if (ImGui::Button("上書きセーブ")) {
+				FilesOverWrite(stageName_);
+			}
+
+			if (ImGui::Button("全ロード(手動)")) {
+				FilesLoad(stageName_);
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
 	ImGui::End();
 
-	obj_->DrawImgui();
-	particle_->DrawImgui();
+
 #endif // DEBUG	
 }
 
 
 
 void GameScene::AllCollision(){
+	for (Floor* floor : floorManager_->GetFloors()) {
+		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
+			chackCollision = 1;
+			player_->onFlootCollision(floor->GetOBB());
+			player_->SetIsDown(false);
+			break;
+		}
+		else {
+			chackCollision = 0;
+			player_->SetIsDown(true);
+		}
+	}
 
+	//if (player_->GetIsRespawn()) {
+	//	int i = 0;
+	//	for (const auto& enemy : enemies_) {
+	//		enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+	//		i++;
+	//	}
+	//	player_->SetIsRespawn(false);
+	//}
+
+
+	//for (const auto& enemy : enemies_) {
+
+	//	if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB()) && !enemy->GetIsDead()) {
+	//		int i = 0;
+	//		player_->Respawn();
+	//		for (const auto& enemy : enemies_) {
+	//			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
+	//			i++;
+	//		}
+	//	}
+	//}
+	//for (const auto& enemy : enemies_) {
+	//	if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
+	//		enemy->OnCollision();
+	//	}
+	//}
+
+}
+
+void GameScene::FilesSave(const std::vector<std::string>& stages) {
+	floorManager_->SaveFile(stages);
+	std::string message = std::format("{}.json created.", "all");
+	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
+}
+
+void GameScene::FilesOverWrite(const std::string& stage) {
+	floorManager_->FileOverWrite(stage);
+	std::string message = std::format("{}.json OverWrite.", "all");
+	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
+}
+
+void GameScene::FilesLoad(const std::string& stage) {
+	floorManager_->LoadFiles(stage);
+	std::string message = std::format("{}.json loaded.", "all");
+	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
 }
 
 bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){

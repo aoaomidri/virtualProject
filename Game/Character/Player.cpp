@@ -76,6 +76,8 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
+
+	isDown_ = true;
 }
 
 void Player::Update(Input* input){
@@ -160,9 +162,9 @@ void Player::DrawImgui(){
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_);
-	ImGui::DragFloat3("武器の座標", &weaponCollisionTransform_.translate.x, 0.1f);
-	ImGui::DragFloat3("武器の回転", &weaponCollisionTransform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("武器の座標", &weaponTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("武器の大きさ", &weaponTransform_.scale.x, 0.1f);
 	ImGui::DragFloat("武器の回転", &weapon_Rotate, 0.1f);
 	ImGui::End();	
 }
@@ -256,7 +258,7 @@ void Player::BehaviorRootUpdate(Input* input){
 	if (dashCoolTime != 0) {
 		dashCoolTime -= 1;
 	}
-	//playerTransform_.translate.y += downVector.y;
+	playerTransform_.translate.y += downVector.y;
 	
 
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
@@ -292,7 +294,8 @@ void Player::BehaviorAttackInitialize(){
 void Player::BehaviorThirdAttackInitialize(){
 	workAttack_.comboNext_ = false;
 	workAttack_.attackParameter_ = 0;
-	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.y = 0;
 	weaponTransform_.rotate.z = 1.57f ;
 	weaponTransform_.translate = playerTransform_.translate;
@@ -419,9 +422,7 @@ void Player::AttackMotion(){
 	if (isShakeDown) {
 		workAttack_.AttackTimer_++;
 	}
-	/*if (workAttack_.attackParameter_ >= 35) {
-		workAttack_.comboIndex_++;
-	}*/
+	
 
 	weaponTransform_.rotate.x = weapon_Rotate;
 	weaponCollisionTransform_.rotate.x = weapon_Rotate;
@@ -448,9 +449,7 @@ void Player::thirdAttackMotion(){
 	else if (isShakeDown ) {
 		weapon_Rotate -= moveWeaponShakeDown * 1.5f;
 	}
-	if (isShakeDown) {
-		//.workAttack_.AttackTimer_++;
-	}
+	
 	
 
 	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;

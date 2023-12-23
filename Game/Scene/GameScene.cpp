@@ -78,6 +78,8 @@ void GameScene::Update(Input* input_){
 	DrawImgui();
 	followCamera_->Update(input_);
 	player_->Update(input_);
+
+	AllCollision();
 	//particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
 
 	floorManager_->Update();

@@ -183,6 +183,9 @@
     <ClCompile Include="Game\Audio\Audio.cpp">
       <Filter>application\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="math\Ease\Ease.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -310,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="Game\Audio\Audio.h">
       <Filter>application\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Ease\Ease.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

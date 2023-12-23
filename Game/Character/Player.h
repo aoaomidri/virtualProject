@@ -65,10 +65,7 @@ private:
 
 	//通常行動初期化
 	void BehaviorRootInitialize();
-	//攻撃行動初期化
-	void BehaviorAttackInitialize();
-	//攻撃行動初期化
-	void BehaviorThirdAttackInitialize();
+	
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
 	// 通常行動更新
@@ -77,6 +74,7 @@ private:
 	void BehaviorAttackUpdate(Input* input);
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
+
 public:
 	/*攻撃に関連する項目*/
 	//攻撃用定数
@@ -109,14 +107,30 @@ public:
 	Vector3 baseRotate_ = { 0 };
 
 	//コンボの数
-	static const int ConboNum = 3;
+	static const int ConboNum = 5;
 
 	static const std::array<ConstAttack, ConboNum>kConstAttacks_;
 private:
+	//攻撃行動初期化
+	void BehaviorAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorSecondAttackInitialize();
+	//攻撃行動
+	void BehaviorThirdAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorFourthAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorFifthAttackInitialize();
 	//攻撃のモーション
 	void AttackMotion();
 
+	void secondAttackMotion();
+
 	void thirdAttackMotion();
+
+	void fourthAttackMotion();
+
+	void fifthAttackMotion();
 
 private:
 	//自機のモデル
@@ -206,6 +220,8 @@ private:
 
 	int WaitTimeBase = 20;
 	int WaitTime = 0;
+
+	float easeT_ = 0.0f;
 
 	bool isShakeDown = false;
 

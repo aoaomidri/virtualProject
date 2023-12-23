@@ -16,7 +16,7 @@ void FollowCamera::ApplyGlobalVariables(){
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
-
+	distance = 25.0f;
 	distance *= -1.0f;
 }
 
@@ -35,7 +35,7 @@ void FollowCamera::Initialize(){
 
 	rootOffset = { 0.0f, 0.0f, distance };
 
-	minRotate = -0.31f;
+	minRotate = 0.1f;
 	maxRotate = 0.9f;
 
 	baseOffset = rootOffset;

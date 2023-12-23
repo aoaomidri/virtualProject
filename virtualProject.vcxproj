@@ -139,6 +139,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
     <ClCompile Include="Game\Stage\Goal\Goal.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\Ease\Ease.cpp" />
     <ClCompile Include="math\Matrix.cpp" />
     <ClCompile Include="math\Quaternion.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Stage\Floor\Floor.h" />
     <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
     <ClInclude Include="Game\Stage\Goal\Goal.h" />
+    <ClInclude Include="math\Ease\Ease.h" />
     <ClInclude Include="math\Matrix.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Quaternion.h" />

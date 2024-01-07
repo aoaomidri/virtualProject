@@ -66,7 +66,7 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	};
 
 	weaponCollisionTransform_ = {
-		.scale = {0.5f,/*1.7f*/0.5f,0.5f},
+		.scale = {0.3f,/*1.7f*/0.3f,0.3f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.8f,0.0f}
 	};
@@ -97,10 +97,12 @@ void Player::Update(Input* input){
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kStrongAttack:
+			BehaviorAllStrongAttackInitialize();
+			break;
 		case Behavior::kDash:
 			BehaviorDashInitialize();
-			break;
-		
+			break;		
 		}
 
 	}
@@ -114,6 +116,9 @@ void Player::Update(Input* input){
 		break;
 	case Behavior::kAttack:
 		BehaviorAttackUpdate(input);
+		break;
+	case Behavior::kStrongAttack:
+		BehaviorStrongAttackUpdate(input);
 		break;
 	case Behavior::kDash:
 		BehaviorDashUpdate();
@@ -134,7 +139,7 @@ void Player::Update(Input* input){
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
 
 	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
-	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponTransform_.translate);
+	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
 	
@@ -149,11 +154,11 @@ void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProj
 	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
 	if (true/*behavior_==Behavior::kAttack*/){
-		/*weaponObj_->Update(weaponMatrix_, viewProjection);
-		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
+		weaponObj_->Update(weaponMatrix_, viewProjection);
+		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
-		weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
-		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
+		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
+		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
 	}
 	
 }
@@ -162,7 +167,7 @@ void Player::DrawImgui(){
 	ImGui::Begin("プレイヤー");
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
-	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_ + 1);
+	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_);
 	ImGui::DragFloat("武器判定の回転", &weapon_Rotate, 0.1f);
 	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("武器判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
@@ -193,8 +198,10 @@ void Player::Respawn(){
 
 void Player::BehaviorRootInitialize(){
 	move_ = { 0.0f,0.0f,0.0f };
-	Weapon_offset_Base = { 0.0f,4.0f,0.0f };
+	Weapon_offset_Base = { 0.0f,3.0f,0.0f };
+	workAttack_.comboIndex_ = 0;
 	weaponTransform_.translate.y = 1.0f;
+	weaponTransform_.scale = { 0.3f,0.3f,0.3f };
 	weaponTransform_.rotate.x = 0;
 	weaponTransform_.rotate.z = 0;
 	weaponCollisionTransform_.translate.y = 1.0f;
@@ -274,9 +281,13 @@ void Player::BehaviorRootUpdate(Input* input){
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_B) && !isDown_) {
-		workAttack_.comboIndex_ = 0;
+	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X) && !isDown_) {
+		workAttack_.comboIndex_ = 1;
 		behaviorRequest_ = Behavior::kAttack;
+	}
+	if (input->GetPadButtonDown(XINPUT_GAMEPAD_Y) && !isDown_) {
+		workAttack_.comboIndex_ = 1;
+		behaviorRequest_ = Behavior::kStrongAttack;
 	}
 	
 }
@@ -284,6 +295,7 @@ void Player::BehaviorRootUpdate(Input* input){
 void Player::BehaviorAttackInitialize(){
 	
 	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
 	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = 0.0f;
@@ -303,6 +315,7 @@ void Player::BehaviorAttackInitialize(){
 
 void Player::BehaviorSecondAttackInitialize(){
 	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
 	baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
@@ -324,6 +337,7 @@ void Player::BehaviorSecondAttackInitialize(){
 
 void Player::BehaviorThirdAttackInitialize(){
 	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
 	//baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = 1.57f;
@@ -346,6 +360,7 @@ void Player::BehaviorThirdAttackInitialize(){
 void Player::BehaviorFourthAttackInitialize()
 {
 	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
 	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = 1.7f;
@@ -367,6 +382,7 @@ void Player::BehaviorFourthAttackInitialize()
 void Player::BehaviorFifthAttackInitialize()
 {
 	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
 	downVector.y += 0.15f;
 	workAttack_.attackParameter_ = 0;
 	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
@@ -392,28 +408,34 @@ void Player::BehaviorAttackUpdate(Input* input){
 		if (workAttack_.comboNext_) {
 			workAttack_.comboIndex_++;
 			
-			if (workAttack_.comboIndex_ == 0) {
+			if (workAttack_.comboIndex_ == 1) {
 				BehaviorAttackInitialize();
 			}
-			else if (workAttack_.comboIndex_ == 1) {
+			else if (workAttack_.comboIndex_ == 2) {
 				BehaviorSecondAttackInitialize();
 			}
-			else if (workAttack_.comboIndex_ == 2) {
+			else if (workAttack_.comboIndex_ == 3) {
 				BehaviorThirdAttackInitialize();
 			}
-			else if (workAttack_.comboIndex_ == 3) {
+			else if (workAttack_.comboIndex_ == 4) {
 				Weapon_offset_Base = { 0.0f,4.0f,0.0f };
 				BehaviorFourthAttackInitialize();
 			}
-			else if (workAttack_.comboIndex_ == 4) {
+			else if (workAttack_.comboIndex_ == 5) {
 				
 				BehaviorFifthAttackInitialize();
 			}
 		}
 		else {
 			workAttack_.attackParameter_ = 0;
+			if (workAttack_.strongComboNext_) {
+				workAttack_.comboIndex_++;
+				behaviorRequest_ = Behavior::kStrongAttack;
+			}
+			else {
+				behaviorRequest_ = Behavior::kRoot;
+			}
 			
-			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
 
@@ -428,30 +450,37 @@ void Player::BehaviorAttackUpdate(Input* input){
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
+	if (behaviorRequest_==Behavior::kStrongAttack){
+		return;
+	}
 	switch (workAttack_.comboIndex_){
-	case 0:
+	case 1:
 		AttackMotion();
 		break;
-	case 1:
+	case 2:		
 		secondAttackMotion();
 		break;
-	case 2:	
+	case 3:	
 		thirdAttackMotion();
 		break;
-	case 3:
+	case 4:
 		fourthAttackMotion();
 		break;
-	case 4:
+	case 5:
 		fifthAttackMotion();
 		break;
 	default:
 		break;
 	}
 	//コンボ上限に達していない
-	if (workAttack_.comboIndex_ + 1 < ConboNum) {
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_B)) {
+	if (workAttack_.comboIndex_< ConboNum) {
+		if (input->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
 			//コンボ有効
 			workAttack_.comboNext_ = true;
+		}
+		else if (input->GetPadButtonDown(XINPUT_GAMEPAD_Y)) {
+			//強コンボ派生有効
+			workAttack_.strongComboNext_ = true;
 		}
 	}
 	downVector.y += downSpeed;
@@ -468,7 +497,9 @@ void Player::BehaviorAttackUpdate(Input* input){
 
 		}
 		else {
+			
 			workAttack_.attackParameter_ = 0;
+			
 			
 			behaviorRequest_ = Behavior::kRoot;
 		}
@@ -478,6 +509,90 @@ void Player::BehaviorAttackUpdate(Input* input){
 		behaviorRequest_ = Behavior::kRoot;
 	}*/
 	//weapon_Rotate==0.0fの時arm_Rotate-3.15f
+}
+
+void Player::BehaviorAllStrongAttackInitialize(){
+	endCombo_ = false;
+	chargeEnd_ = false;
+
+	if (workAttack_.comboIndex_ == 1) {
+		BehaviorStrongAttackInitialize();		
+	}
+	else if (workAttack_.comboIndex_ == 2) {
+		BehaviorSecondStrongAttackInitialize();
+	}
+	else if (workAttack_.comboIndex_ == 3) {
+		BehaviorThirdStrongAttackInitialize();
+	}
+	else if (workAttack_.comboIndex_ == 4) {
+		Weapon_offset_Base = { 0.0f,4.0f,0.0f };
+		BehaviorFourthStrongAttackInitialize();
+	}
+	else if (workAttack_.comboIndex_ == 5) {
+		BehaviorFifthStrongAttackInitialize();
+		
+	}
+}
+
+void Player::BehaviorStrongAttackUpdate(Input* input){
+	frontVec_ = postureVec_;
+
+	if (input->Trigerkey(DIK_0)){
+		workAttack_.attackParameter_ = 0;
+
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
+	if (workAttack_.attackParameter_ >= 35) {
+		if (workAttack_.strongComboNext_) {
+
+			
+		}
+		else {
+			workAttack_.attackParameter_ = 0;
+
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+
+	if (lockOn_ && lockOn_->ExistTarget()) {
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - playerTransform_.translate;
+		sub.y = 0;
+		sub = Vector3::Normalize(sub);
+		postureVec_ = sub;
+
+		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
+	}
+
+	switch (workAttack_.comboIndex_) {
+	case 1:
+		StrongAttackMotion(input);
+		break;
+	case 2:
+		secondStrongAttackMotion();
+		break;
+	case 3:
+		thirdStrongAttackMotion();
+		break;
+	case 4:
+		fourthStrongAttackMotion();
+		break;
+	case 5:
+		fifthStrongAttackMotion();
+		break;
+	default:
+		break;
+	}
+	downVector.y += downSpeed;
+	playerTransform_.translate.y += downVector.y;
+	weaponTransform_.translate = playerTransform_.translate;
+
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
 }
 
 void Player::BehaviorDashInitialize(){
@@ -583,26 +698,7 @@ void Player::secondAttackMotion(){
 }
 
 void Player::thirdAttackMotion(){
-	/*workAttack_.AttackTimer_++;
-	if (workAttack_.AttackTimer_ >= 10) {
-		isShakeDown = true;
-	}
-	if (weapon_Rotate <= -0.1f) {
-		WaitTime -= 1;
-		weapon_Rotate = -0.1f;
-	}
-
-	if (!isShakeDown) {
-		weapon_Rotate += moveWeapon / 2.0f;
-	}
-	else if (isShakeDown ) {
-		weapon_Rotate -= moveWeaponShakeDown * 1.5f;
-	}
 	
-	
-
-	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
-	weaponCollisionTransform_.rotate.x = weapon_Rotate + baseRotate_.x;*/
 	easeT_ += 0.08f;
 	if (easeT_>=1.0f){
 		easeT_ = 1.0f;
@@ -619,7 +715,7 @@ void Player::thirdAttackMotion(){
 	}
 	else {
 		if (Weapon_offset_Base.y > 0.2f) {
-			move_ = { 0.0f,0.0f,moveSpeed_ * 15.0f };
+			move_ = { 0.0f,0.0f,moveSpeed_ * 10.0f };
 			move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 			playerTransform_.translate += move_;
@@ -666,10 +762,6 @@ void Player::fifthAttackMotion(){
 	if (weapon_Rotate <= MinRotate) {
 		isShakeDown = true;
 	}
-	/*else if (weapon_Rotate >= MaxRotate) {
-		WaitTime -= 1;
-		weapon_Rotate = 1.58f;
-	}*/
 
 	if (!isShakeDown && weapon_Rotate > MinRotate) {
 		weapon_Rotate -= moveWeapon;
@@ -693,6 +785,283 @@ void Player::fifthAttackMotion(){
 	weaponCollisionTransform_.rotate.x = weapon_Rotate;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+}
+
+void Player::BehaviorStrongAttackInitialize(){
+	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
+	workAttack_.attackParameter_ = 0;
+	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	workAttack_.AttackTimer_ = 0;
+
+	WaitTime = WaitTimeBase;
+	weapon_Rotate = 0.5f;
+	isShakeDown = false;
+}
+
+void Player::BehaviorSecondStrongAttackInitialize(){
+	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
+	downVector.y += 0.3f;
+	workAttack_.attackParameter_ = 0;
+	baseRotate_.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.x = 1.7f;
+	weaponTransform_.rotate.y = -0.2f + baseRotate_.y;
+	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	workAttack_.AttackTimer_ = 0;
+
+	WaitTime = WaitTimeBase;
+	weapon_Rotate = 1.5f;
+	isShakeDown = false;
+}
+
+void Player::BehaviorThirdStrongAttackInitialize(){
+	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
+	workAttack_.attackParameter_ = 0;
+	baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.y = 0;
+	weaponTransform_.rotate.z = 1.57f;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	workAttack_.AttackTimer_ = 0;
+
+	WaitTime = WaitTimeBase;
+	weapon_Rotate = 1.0f;
+	isShakeDown = false;
+}
+
+void Player::BehaviorFourthStrongAttackInitialize(){
+	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
+	workAttack_.attackParameter_ = 0;
+	//baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.x = 1.57f;
+	weaponTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	//weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	////weaponCollisionTransform_.rotate.x = 1.57f / 2.0f;
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	workAttack_.AttackTimer_ = 0;
+	easeT_ = 0;
+	WaitTime = WaitTimeBase;
+	weapon_Rotate = 3.0f;
+	isShakeDown = false;
+}
+
+void Player::BehaviorFifthStrongAttackInitialize(){
+	workAttack_.comboNext_ = false;
+	workAttack_.strongComboNext_ = false;
+	workAttack_.attackParameter_ = 0;
+	baseRotate_.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.x = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
+	weaponTransform_.rotate.y = 0;
+	weaponTransform_.rotate.z = 1.57f;
+	weaponTransform_.translate = playerTransform_.translate;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	workAttack_.AttackTimer_ = 0;
+
+	WaitTime = WaitTimeBase;
+	weapon_Rotate = 1.0f;
+	isShakeDown = false;
+}
+
+void Player::StrongAttackMotion(Input* input){
+	if (!chargeEnd_){
+		if (input->GetPadButton(XINPUT_GAMEPAD_Y)){
+			
+			weaponTransform_.scale += {0.005f, 0.005f, 0.005f};
+		}
+		if (weaponTransform_.scale.x>0.6|| input->GetPadButtonUp(XINPUT_GAMEPAD_Y)){
+			chargeEnd_ = true;
+		}
+
+	}
+
+	if (weapon_Rotate <= MinRotate) {
+		isShakeDown = true;
+	}
+	if (!isShakeDown && (weapon_Rotate > MinRotate) && chargeEnd_) {
+		weapon_Rotate -= moveWeapon;
+	}
+	else if (isShakeDown && weapon_Rotate < MaxRotate - 0.1f) {
+		weapon_Rotate += moveWeaponShakeDown;
+	}
+	if (isShakeDown){
+		workAttack_.attackParameter_++;
+	}
+	if (chargeEnd_){
+		weaponTransform_.rotate.x = weapon_Rotate;
+		weaponCollisionTransform_.rotate.x = weapon_Rotate;
+	}
+
+	
+
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponCollisionTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+}
+
+void Player::secondStrongAttackMotion(){
+	if (weapon_Rotate >= 2.5f) {
+		isShakeDown = true;
+	}
+	if (!isShakeDown) {
+		weapon_Rotate += 0.1f;
+	}
+	else {
+		weapon_Rotate -= 0.2f;
+	}
+
+	if (weapon_Rotate <= -1.2f) {
+		weapon_Rotate = -1.2f;
+	}
+
+	if (isShakeDown) {
+		workAttack_.AttackTimer_++;
+		workAttack_.attackParameter_++;
+	}
+
+
+	weaponTransform_.rotate.x = weapon_Rotate;
+	weaponCollisionTransform_.rotate.x = weapon_Rotate;
+
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+}
+
+void Player::thirdStrongAttackMotion(){
+	workAttack_.AttackTimer_++;
+	if (workAttack_.AttackTimer_ >= 10) {
+		workAttack_.attackParameter_++;
+		isShakeDown = true;
+	}
+	if (weapon_Rotate >= 2.5f) {
+		WaitTime -= 1;
+		weapon_Rotate = 2.5f;
+	}
+	else {
+		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
+
+		playerTransform_.translate += move_;
+		weaponTransform_.translate = playerTransform_.translate;
+	}
+
+	if (!isShakeDown) {
+		weapon_Rotate -= moveWeapon / 2.0f;
+	}
+	else if (isShakeDown) {
+
+		weapon_Rotate += moveWeaponShakeDown * 1.5f;
+	}
+
+
+
+	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
+	weaponCollisionTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
+
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+}
+
+void Player::fourthStrongAttackMotion(){
+	easeT_ += 0.08f;
+	if (easeT_ >= 1.0f) {
+		easeT_ = 1.0f;
+	}
+	else {
+
+	}
+
+	Weapon_offset_Base.x = Ease::Easing(Ease::EaseName::EaseInBack, -3.0f, 0.0f, easeT_);
+	Weapon_offset_Base.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 6.0f, easeT_);
+
+	if (easeT_ >= 1.0f) {
+		easeT_ = 1.0f;
+	}
+	else {
+		if (Weapon_offset_Base.y > 0.2f) {
+			move_ = { 0.0f,0.0f,moveSpeed_ * 10.0f };
+			move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
+
+			
+			playerTransform_.translate += move_;
+			weaponTransform_.translate = playerTransform_.translate;
+		}
+	}
+	workAttack_.attackParameter_++;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+
+	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+}
+
+void Player::fifthStrongAttackMotion(){
+	workAttack_.AttackTimer_++;
+	if (workAttack_.AttackTimer_ >= 10) {
+		workAttack_.attackParameter_++;
+		isShakeDown = true;
+	}
+	if (weapon_Rotate >= 2.5f) {
+		WaitTime -= 1;
+		weapon_Rotate = 2.5f;
+	}
+	else {
+		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
+
+		playerTransform_.translate += move_;
+		weaponTransform_.translate = playerTransform_.translate;
+	}
+
+	if (!isShakeDown) {
+		weapon_Rotate -= moveWeapon / 2.0f;
+	}
+	else if (isShakeDown) {
+
+		weapon_Rotate += moveWeaponShakeDown * 1.5f;
+	}
+
+
+
+	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
+	weaponCollisionTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
+
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;

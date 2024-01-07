@@ -72,6 +72,10 @@ private:
 	void BehaviorRootUpdate(Input* input);
 	//攻撃行動更新
 	void BehaviorAttackUpdate(Input* input);
+
+	void BehaviorAllStrongAttackInitialize();
+
+	void BehaviorStrongAttackUpdate(Input* input);
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
 
@@ -99,10 +103,15 @@ public:
 		int32_t comboIndex_ = 0;
 		int32_t inComboPhase_ = 0;
 		bool comboNext_ = false;
+		bool strongComboNext_ = false;
 		uint32_t AttackTimer_ = 0;
 	};
 
 	WorkAttack workAttack_;
+
+	bool endCombo_ = false;
+
+	bool chargeEnd_ = false;
 
 	Vector3 baseRotate_ = { 0 };
 
@@ -131,6 +140,30 @@ private:
 	void fourthAttackMotion();
 
 	void fifthAttackMotion();
+
+private:
+	//強攻撃関連
+
+	//攻撃行動初期化
+	void BehaviorStrongAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorSecondStrongAttackInitialize();
+	//攻撃行動
+	void BehaviorThirdStrongAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorFourthStrongAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorFifthStrongAttackInitialize();
+	//攻撃のモーション
+	void StrongAttackMotion(Input* input);
+
+	void secondStrongAttackMotion();
+
+	void thirdStrongAttackMotion();
+
+	void fourthStrongAttackMotion();
+
+	void fifthStrongAttackMotion();
 
 private:
 	//自機のモデル
@@ -230,9 +263,11 @@ private:
 
 	/*振る舞い系*/
 	enum class Behavior {
-		kRoot,		//通常状態
-		kAttack,	//攻撃中
-		kDash,		//ダッシュ中
+		kRoot,			//通常状態
+		kAttack,		//攻撃中
+		kStrongAttack,  //強攻撃中
+		kDash,			//ダッシュ中
+
 	};
 
 	Behavior behavior_ = Behavior::kRoot;

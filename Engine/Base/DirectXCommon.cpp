@@ -992,9 +992,6 @@ void DirectXCommon::StartImgui(){
 
 	//ImGui::ShowDemoWindow();
 
-	ImGui::Begin("お試し");
-	ImGui::Text("日本語書けるなりよー");
-	ImGui::End();
 }
 
 void DirectXCommon::EndImgui(){

@@ -81,9 +81,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		gameScene_->Draw2D();
 		dxCommon_->PostDraw();
 
-		if (input_->Trigerkey(DIK_ESCAPE)||input_->GetPadButtonDown(XINPUT_GAMEPAD_BACK)){
+		if (input_->Trigerkey(DIK_ESCAPE)){
 			break;
-		}	
+		}
+#ifdef _DEBUG
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
+			break;
+		}
+#endif // DEBUG_
+
 
 	}
 	CoUninitialize();

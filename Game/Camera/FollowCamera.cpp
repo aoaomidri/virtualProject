@@ -47,7 +47,7 @@ void FollowCamera::Initialize(){
 
 void FollowCamera::Update(Input* input_){
 	frontVec_ = postureVec_;
-	DrawImgui();
+	
 	ApplyGlobalVariables();
 
 	if (lockOn_ && lockOn_->target_) {

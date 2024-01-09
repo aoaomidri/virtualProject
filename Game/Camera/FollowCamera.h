@@ -27,6 +27,8 @@ public:
 	void Reset();
 
 	Vector3 offsetCalculation(const Vector3& offset) const;
+
+	void DrawImgui();
 public:
 
 	void SetTarget(const Transform* target);
@@ -41,7 +43,7 @@ public:
 
 	const ViewProjection& GetViewProjection()const { return viewProjection_; }
 private:
-	void DrawImgui();
+	
 
 	void ApplyGlobalVariables();
 

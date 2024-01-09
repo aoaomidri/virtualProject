@@ -153,12 +153,10 @@ void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProj
 	playerObj_->Update(playerMatrix_, viewProjection);
 	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
-	if (true/*behavior_==Behavior::kAttack*/){
+	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->Update(weaponMatrix_, viewProjection);
 		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
-		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
-		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
 	}
 	
 }

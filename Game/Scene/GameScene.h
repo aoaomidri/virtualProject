@@ -42,6 +42,9 @@ private:
 	//音読み込み
 	void SoundLoad();
 
+	//スプライト初期化
+	void SpriteInitialize(DirectXCommon* dxCommon_);
+
 	//オブジェクトの初期化
 	void ObjectInitialize(DirectXCommon* dxCommon_);
 
@@ -71,7 +74,7 @@ private:
 	//テクスチャマネージャー
 	std::unique_ptr<TextureManager> textureManager_;
 
-	std::unique_ptr<FollowCamera> followCamera_;
+	std::unique_ptr<FollowCamera> followCamera_;	
 	
 	std::unique_ptr<ParticleBase> particle_;
 
@@ -102,5 +105,21 @@ private:
 	Audio* audio_ = nullptr;
 
 	SoundData soundData1{};
+
+	//スプライト関連
+	//タイトル
+	std::unique_ptr<Sprite> titleSprite_;
+
+	std::unique_ptr<Sprite> pressSprite_;
+
+
+	//シーン関連
+	enum SceneName{
+		TITLE,
+		GAME,
+		CLEAR
+	};
+
+	int sceneNum_;
 };
 

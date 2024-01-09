@@ -33,7 +33,7 @@ void WinApp::Initialize() {
 
 	 hwnd_ = CreateWindow(
 		wndClass_.lpszClassName,
-		L"ゴリラゴリラゴリラ",
+		L"LE2A_23_ムラカミ_アオイ_スラッシュアタック",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,

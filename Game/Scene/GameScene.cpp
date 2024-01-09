@@ -14,10 +14,20 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/Black.png", 9);
 	textureManager_->Load("resources/circle.png", 10);
 	textureManager_->Load("resources/monsterBall.png", 11);
+	textureManager_->Load("resources/title.png", 12);
+	textureManager_->Load("resources/Press.png", 13);
 }
 
 void GameScene::SoundLoad(){
 	soundData1 = audio_->SoundLoadWave("Alarm01.wav");
+}
+
+void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
+	titleSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	titleSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 12);
+
+	pressSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	pressSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 13);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
@@ -41,6 +51,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	TextureLoad();
 	SoundLoad();
 
+	SpriteInitialize(dxCommon_);
 	ObjectInitialize(dxCommon_);
 
 	floorManager_ = std::make_unique<FloorManager>();
@@ -71,18 +82,49 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	stageName_ = stages_[0].c_str();
 	floorManager_->LoadFiles(stageName_);
 
+	titleSprite_->position_ = { 640.0f,175.0f };
+	titleSprite_->scale_.x = 850.0f;
+	titleSprite_->scale_.y = 150.0f;
+	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
+
+	pressSprite_->position_ = { 640.0f,500.0f };
+	pressSprite_->scale_.x = 600.0f;
+	pressSprite_->scale_.y = 136.0f;
+	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
+
+	sceneNum_ = SceneName::TITLE;
 	//audio_->SoundPlayWave(soundData1);
 }
 
 void GameScene::Update(Input* input_){
 	DrawImgui();
-	followCamera_->Update(input_);
-	player_->Update(input_);
+	switch (sceneNum_){
+	case SceneName::TITLE:
+		titleSprite_->Update();
+		pressSprite_->Update();
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)){
+			sceneNum_ = SceneName::GAME;
+		}
+		break;
+	case SceneName::GAME:
+		
+		followCamera_->Update(input_);
+		player_->Update(input_);
 
-	AllCollision();
-	//particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
+		AllCollision();
+		//particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
 
-	floorManager_->Update();
+		floorManager_->Update();
+		break;
+	case SceneName::CLEAR:
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)) {
+			sceneNum_ = SceneName::TITLE;
+		}
+		break;
+	default:
+		assert(0);
+	}
+	
 	
 }
 
@@ -105,9 +147,22 @@ void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 	/*ここから下に描画処理を書き込む*/
-	floorManager_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+		
+		break;
+	case SceneName::GAME:
+		floorManager_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 
-	player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+		player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+		break;
+	case SceneName::CLEAR:
+		
+		break;
+	default:
+		assert(0);
+	}
+	
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/
@@ -118,6 +173,20 @@ void GameScene::Draw2D(){
 	/*描画前処理*/
 	textureManager_->PreDraw2D();
 	///*ここから下に描画処理を書き込む*/
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+		titleSprite_->Draw(textureManager_->SendGPUDescriptorHandle(12));
+		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
+		break;
+	case SceneName::GAME:
+		
+		break;
+	case SceneName::CLEAR:
+		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
+		break;
+	default:
+		assert(0);
+	}
 	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
 	
 	/*描画処理はここまで*/
@@ -130,7 +199,16 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
+	ImGui::Begin("タイトルシーンのスプライト");
+	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
 	player_->DrawImgui();
+	followCamera_->DrawImgui();
 	//particle_->DrawImgui();
 	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
@@ -186,7 +264,7 @@ void GameScene::DrawImgui(){
 	ImGui::End();
 
 
-#endif // DEBUG	
+#endif // _DEBUG	
 }
 
 

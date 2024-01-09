@@ -16,7 +16,7 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 	makeRootSignature(device);
 	makeInputLayout();
 	makeRasterizerState(isCulling);
-	makeBlendState(kBlendModeNone);
+	makeBlendState(kBlendModeNormal);
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
 

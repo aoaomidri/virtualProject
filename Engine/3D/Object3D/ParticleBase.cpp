@@ -17,15 +17,15 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 	random_ = RandomMaker::GetInstance();
 
 	emitter_.count = 3;
-	emitter_.frequency = 0.1f;
+	emitter_.frequency = 0.05f;
 	emitter_.frequencyTime = 0.0f;
 	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
 	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
 
-	accelerationField_.acceleration = { 15.0f,0.0f,0.0f };
-	accelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField_.area.max = { 1.0f,1.0f,1.0f };
+	accelerationField_.acceleration = { 0.0f,15.0f,0.0f };
+	accelerationField_.area.min = { -100.0f,-100.0f,-100.0f };
+	accelerationField_.area.max = { 100.0f,100.0f,100.0f };
 
 	//パーティクルの初期設定
 	for (int i = 0; i < 3; i++) {
@@ -70,6 +70,8 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeScreen);
 
+	isWind_ = true;
+	isBillborad_ = true;
 }
 
 void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
@@ -86,6 +88,8 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 	else if (velocityRange_.max < velocityRange_.min) {
 		velocityRange_.max = velocityRange_.min + 0.1f;
 	}
+
+	emitter_.transform = transform;
 
 	if (!isDraw_) {
 		return;
@@ -192,8 +196,8 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 	
 }
 
-void ParticleBase::DrawImgui(){
-	ImGui::Begin("パーティクルのあれこれ");
+void ParticleBase::DrawImgui(const std::string& imguiTag){
+	ImGui::Begin(imguiTag.c_str());
 	ImGui::Text("現在のパーティクルの数 = %d", particles_.size());
 	ImGui::DragFloat3("発生中心位置", &emitter_.transform.translate.x, 0.01f, -100.0f, 100.0f);
 	ImGui::DragFloat2("移動ベクトル範囲", &velocityRange_.min, 0.1f, -5.0f, 5.0f);
@@ -361,9 +365,9 @@ void ParticleBase::MoveChange(){
 ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	Particle particle{};
 	color_ = random_->DistributionV3(0.0f, 1.0f);
-	particle.transform.scale = { 2.0f,2.0f,2.0f };
+	particle.transform.scale = { 0.2f,0.2f,0.2f };
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
-	particle.transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max) + transform;
+	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
 	
 	particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
 

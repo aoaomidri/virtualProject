@@ -25,15 +25,7 @@ void Player::ApplyGlobalVariables() {
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 }
 
-void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
-	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "Player";
-	//グループを追加
-	adjustment_item->CreateGroup(groupName);
-	//アイテムの追加
-	adjustment_item->AddItem(groupName, "DashCoolTime", kDashCoolTime);
-	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
-
+void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){	
 
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize(device, commandList);
@@ -43,6 +35,9 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize(device, commandList);
+
+	particle_ = std::make_unique<ParticleBase>();
+	particle_->Initialize(device, commandList);
 
 	playerModel_ = Model::LoadObjFile("box");
 
@@ -66,7 +61,7 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	};
 
 	weaponCollisionTransform_ = {
-		.scale = {0.3f,/*1.7f*/0.3f,0.3f},
+		.scale = {0.9f,1.5f,0.9f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.8f,0.0f}
 	};
@@ -74,6 +69,7 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	dashCoolTime = kDashCoolTime;
 
 	playerRotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+
 
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
@@ -125,6 +121,8 @@ void Player::Update(Input* input){
 		break;
 	
 	}
+	
+
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
 
@@ -142,14 +140,14 @@ void Player::Update(Input* input){
 	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
-	
-
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
 	}
 }
 
 void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+	
+
 	playerObj_->Update(playerMatrix_, viewProjection);
 	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));
 
@@ -157,6 +155,19 @@ void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProj
 		weaponObj_->Update(weaponMatrix_, viewProjection);
 		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
 
+		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
+		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/
+
+	}
+	
+}
+
+void Player::ParticleDraw(TextureManager* textureManager, const ViewProjection& viewProjection){
+	particle_->Update(weaponTransform_, viewProjection);
+
+	if (behavior_ == Behavior::kStrongAttack && chargeEnd_ == false && workAttack_.comboIndex_ == 1) {
+		
+		particle_->Draw(textureManager->SendGPUDescriptorHandle(8), textureManager->SendInstancingGPUDescriptorHandle());
 	}
 	
 }
@@ -171,8 +182,9 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
-	ImGui::End();	
 	
+	ImGui::End();	
+	particle_->DrawImgui("プレイヤーパーティクル");
 }
 
 void Player::onFlootCollision(OBB obb){
@@ -202,7 +214,8 @@ void Player::BehaviorRootInitialize(){
 	weaponTransform_.scale = { 0.3f,0.3f,0.3f };
 	weaponTransform_.rotate.x = 0;
 	weaponTransform_.rotate.z = 0;
-	weaponCollisionTransform_.translate.y = 1.0f;
+	weaponCollisionTransform_.scale = { 0.9f,1.5f,0.9f };
+	weaponCollisionTransform_.translate.y = 10000.0f;
 }
 
 void Player::BehaviorRootUpdate(Input* input){
@@ -274,9 +287,9 @@ void Player::BehaviorRootUpdate(Input* input){
 	
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
-	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
+	if (input->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
 	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X) && !isDown_) {
@@ -884,7 +897,8 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
-
+	weaponCollisionTransform_.rotate = weaponTransform_.rotate;
+	weaponCollisionTransform_.rotate.x = 0;
 	workAttack_.AttackTimer_ = 0;
 
 	WaitTime = WaitTimeBase;
@@ -897,6 +911,7 @@ void Player::StrongAttackMotion(Input* input){
 		if (input->GetPadButton(XINPUT_GAMEPAD_Y)){
 			
 			weaponTransform_.scale += {0.005f, 0.005f, 0.005f};
+			weaponCollisionTransform_.scale += {0.0f, 0.02f, 0.0f};
 		}
 		if (weaponTransform_.scale.x>0.6|| input->GetPadButtonUp(XINPUT_GAMEPAD_Y)){
 			chargeEnd_ = true;

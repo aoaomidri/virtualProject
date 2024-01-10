@@ -22,14 +22,14 @@ void FollowCamera::ApplyGlobalVariables(){
 
 
 void FollowCamera::Initialize(){
-	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "Camera";
-	//グループを追加
-	adjustment_item->CreateGroup(groupName);
-	//アイテムの追加
-	adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
-	adjustment_item->AddItem(groupName, "PositionComplement", t);
-	adjustment_item->AddItem(groupName, "distance", distance);
+	//Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	//const char* groupName = "Camera";
+	////グループを追加
+	//adjustment_item->CreateGroup(groupName);
+	////アイテムの追加
+	//adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
+	//adjustment_item->AddItem(groupName, "PositionComplement", t);
+	//adjustment_item->AddItem(groupName, "distance", distance);
 
 	destinationAngleX_ = 0.0f;
 

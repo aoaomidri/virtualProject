@@ -16,6 +16,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/monsterBall.png", 11);
 	textureManager_->Load("resources/title.png", 12);
 	textureManager_->Load("resources/Press.png", 13);
+	textureManager_->Load("resources/Clear.png", 14);
 }
 
 void GameScene::SoundLoad(){
@@ -28,17 +29,18 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 
 	pressSprite_ = std::make_unique<Sprite>(textureManager_.get());
 	pressSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 13);
+
+	clearSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	clearSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 14);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
-	/*particle_ = std::make_unique<ParticleBase>();
-	particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
-	//obj_ = std::make_unique<Object3D>();
-	//obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	//particle_ = std::make_unique<ParticleBase>();
+	//particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	/*obj_ = std::make_unique<Object3D>();
+	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
-	
-	
 	
 }
 
@@ -62,7 +64,11 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	player_ = std::make_unique<Player>();
 	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 
-	//textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), { 0,2.0f,20.0f });
+	enemies_.push_back(std::move(enemy_));
+
+	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -92,7 +98,17 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	pressSprite_->scale_.y = 136.0f;
 	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
 
+	clearSprite_->position_ = { 640.0f,175.0f };
+	clearSprite_->scale_.x = 850.0f;
+	clearSprite_->scale_.y = 150.0f;
+	clearSprite_->anchorPoint_ = { 0.5f,0.5f };
+
 	sceneNum_ = SceneName::TITLE;
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), textureManager_.get());
+
+	followCamera_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 	//audio_->SoundPlayWave(soundData1);
 }
 
@@ -100,6 +116,10 @@ void GameScene::Update(Input* input_){
 	DrawImgui();
 	switch (sceneNum_){
 	case SceneName::TITLE:
+
+		followCamera_->Initialize();
+		
+
 		titleSprite_->Update();
 		pressSprite_->Update();
 		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)){
@@ -107,19 +127,35 @@ void GameScene::Update(Input* input_){
 		}
 		break;
 	case SceneName::GAME:
-		
+		/*if (input_->Trigerkey(DIK_1)){
+			sceneNum_ = SceneName::CLEAR;
+		}*/
+
 		followCamera_->Update(input_);
+		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
+
 		player_->Update(input_);
+		for (const auto& enemy : enemies_) {
+			enemy->Update();
+		}
+
+		
 
 		AllCollision();
-		//particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
+		//particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
 
 		floorManager_->Update();
 		break;
 	case SceneName::CLEAR:
+		clearSprite_->Update();
 		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)) {
 			sceneNum_ = SceneName::TITLE;
 		}
+		for (const auto& enemy : enemies_) {
+			enemy->Respawn({ 0, 2.0f, 20.0f });
+		}
+		
+		player_->Respawn();
 		break;
 	default:
 		assert(0);
@@ -131,14 +167,23 @@ void GameScene::Update(Input* input_){
 void GameScene::AudioDataUnLoad(){
 	audio_->SoundUnload(&soundData1);
 	
-	
-	
 }
 
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
-	//particle_->Draw(textureManager_->SendGPUDescriptorHandle(8), textureManager_->SendInstancingGPUDescriptorHandle());
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+		break;
+	case SceneName::GAME:
+		player_->ParticleDraw(textureManager_.get(), followCamera_->GetViewProjection());
+		break;
+	case SceneName::CLEAR:
+
+		break;
+	default:
+		assert(0);
+	}
 
 	textureManager_->PostDrawParticle();
 }
@@ -155,6 +200,10 @@ void GameScene::Draw3D(){
 		floorManager_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
 
 		player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+
+		for (const auto& enemy : enemies_) {
+			enemy->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+		}
 		break;
 	case SceneName::CLEAR:
 		
@@ -179,9 +228,10 @@ void GameScene::Draw2D(){
 		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
 		break;
 	case SceneName::GAME:
-		
+		lockOn_->Draw(textureManager_.get());
 		break;
 	case SceneName::CLEAR:
+		clearSprite_->Draw(textureManager_->SendGPUDescriptorHandle(14));
 		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
 		break;
 	default:
@@ -199,69 +249,69 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
-	ImGui::Begin("タイトルシーンのスプライト");
-	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::End();
-	player_->DrawImgui();
-	followCamera_->DrawImgui();
-	//particle_->DrawImgui();
-	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+	//ImGui::Begin("タイトルシーンのスプライト");
+	//ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
+	//ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
+	//ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	//ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
+	//ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
+	//ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	//ImGui::End();
+	//player_->DrawImgui();
+	//followCamera_->DrawImgui();
+	////particle_->DrawImgui("ステージパーティクル");
+	//ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
-	if (ImGui::BeginMenuBar()) {
-		if (ImGui::BeginMenu("オブジェクトの生成")) {
-			if (ImGui::TreeNode("床生成")) {
-				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
-				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
-				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
+	//if (ImGui::BeginMenuBar()) {
+	//	if (ImGui::BeginMenu("オブジェクトの生成")) {
+	//		if (ImGui::TreeNode("床生成")) {
+	//			ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
+	//			ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
+	//			ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
 
-				ImGui::Checkbox("動く床にする", &isFloorMove_);
+	//			ImGui::Checkbox("動く床にする", &isFloorMove_);
 
-				if (ImGui::Button("床の追加")) {
-					floorManager_->AddFloor(firstFloor_, isFloorMove_);
-				}
-				ImGui::TreePop();
-			}
-
-
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("オブジェクト一覧")) {
-			if (ImGui::BeginMenu("床一覧")) {
-				floorManager_->DrawImgui();
-				ImGui::EndMenu();
-			}
+	//			if (ImGui::Button("床の追加")) {
+	//				floorManager_->AddFloor(firstFloor_, isFloorMove_);
+	//			}
+	//			ImGui::TreePop();
+	//		}
 
 
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("ファイル関連")) {
-			for (size_t i = 0; i < stages_.size(); i++) {
-				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
-					stageName_ = stages_[stageSelect_].c_str();
-				}
+	//		ImGui::EndMenu();
+	//	}
+	//	if (ImGui::BeginMenu("オブジェクト一覧")) {
+	//		if (ImGui::BeginMenu("床一覧")) {
+	//			floorManager_->DrawImgui();
+	//			ImGui::EndMenu();
+	//		}
 
-			}
-			if (ImGui::Button("jsonファイルを作る")) {
-				FilesSave(stages_);
-			}
-			if (ImGui::Button("上書きセーブ")) {
-				FilesOverWrite(stageName_);
-			}
 
-			if (ImGui::Button("全ロード(手動)")) {
-				FilesLoad(stageName_);
-			}
-			ImGui::EndMenu();
-		}
+	//		ImGui::EndMenu();
+	//	}
+	//	if (ImGui::BeginMenu("ファイル関連")) {
+	//		for (size_t i = 0; i < stages_.size(); i++) {
+	//			if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
+	//				stageName_ = stages_[stageSelect_].c_str();
+	//			}
 
-		ImGui::EndMenuBar();
-	}
-	ImGui::End();
+	//		}
+	//		if (ImGui::Button("jsonファイルを作る")) {
+	//			FilesSave(stages_);
+	//		}
+	//		if (ImGui::Button("上書きセーブ")) {
+	//			FilesOverWrite(stageName_);
+	//		}
+
+	//		if (ImGui::Button("全ロード(手動)")) {
+	//			FilesLoad(stageName_);
+	//		}
+	//		ImGui::EndMenu();
+	//	}
+
+	//	ImGui::EndMenuBar();
+	//}
+	//ImGui::End();
 
 
 #endif // _DEBUG	
@@ -304,10 +354,15 @@ void GameScene::AllCollision(){
 	//		}
 	//	}
 	//}
-	//for (const auto& enemy : enemies_) {
-	//	if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
-	//		enemy->OnCollision();
-	//	}
+	for (const auto& enemy : enemies_) {
+		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
+			enemy->OnCollision();
+		}
+
+		if (enemy->GetIsDead()) {
+			sceneNum_ = SceneName::CLEAR;
+		}
+	}
 	//}
 
 }

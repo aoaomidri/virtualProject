@@ -67,7 +67,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		input_->Update();
 
-		adjustment_item->Update();
+		//adjustment_item->Update();
 
 		gameScene_->Update(input_.get());
 		
@@ -85,9 +85,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 #ifdef _DEBUG
-		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_BACK)) {
-			break;
-		}
+		
 #endif // DEBUG_
 
 

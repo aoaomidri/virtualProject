@@ -8,6 +8,7 @@
 #include"../../Engine/3D/Shape/OBB.h"
 #include"../Item/Adjustment_Item.h"
 #include"../../math/Quaternion.h"
+#include"../../Engine/3D/Object3D/ParticleBase.h"
 #include<optional>
 
 //前方宣言
@@ -25,6 +26,8 @@ public:
 	void Update(Input* input);
 	//描画
 	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
+
+	void ParticleDraw(TextureManager* textureManager, const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();
 
@@ -51,6 +54,8 @@ public:
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
+
+	const ParticleBase* GetParticle()const { return particle_.get(); }
 
 	//Setter
 
@@ -277,5 +282,7 @@ private:
 private:
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
+
+	std::unique_ptr<ParticleBase> particle_;
 };
 

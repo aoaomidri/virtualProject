@@ -13,6 +13,7 @@
 
 class Enemy {
 public:
+	~Enemy();
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
@@ -58,9 +59,16 @@ private:
 	static const int particleNum_ = 20;
 
 	//自機のモデル
-	std::unique_ptr<Object3D> model_;
-	std::unique_ptr<Object3D> partsModel_;
-	//std::unique_ptr<Particle>particleModel_[particleNum_];
+	std::unique_ptr<Object3D> bodyObj_;
+	std::unique_ptr<Object3D> partsObj_;
+	std::unique_ptr<Object3D>particleObj_[particleNum_];
+
+	Model* enemyModel_;
+
+	Model* partsModel_;
+
+	Model* particleModel_;
+	
 	//std::unique_ptr<Object3D> collisionModel_;
 
 
@@ -109,7 +117,7 @@ private:
 
 	int invincibleTime_ = 0;
 
-	int enemyLife_ = 3;
+	int enemyLife_ = 10;
 
 	Vector3 particleVec_[particleNum_];
 

@@ -25,7 +25,7 @@ public:
 
 	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DESCRIPTOR_HANDLE InstancingHandle);
 
-	void DrawImgui();
+	void DrawImgui(const std::string& imguiTag);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);

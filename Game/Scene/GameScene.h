@@ -76,7 +76,7 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;	
 	
-	std::unique_ptr<ParticleBase> particle_;
+	//std::unique_ptr<ParticleBase> particle_;
 
 	std::unique_ptr<FloorManager> floorManager_;
 
@@ -89,6 +89,9 @@ private:
 	bool isFloorMove_ = false;
 
 	std::unique_ptr<Player> player_;
+
+	std::unique_ptr<Enemy> enemy_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	int chackCollision = 0;
 
@@ -112,6 +115,10 @@ private:
 
 	std::unique_ptr<Sprite> pressSprite_;
 
+	std::unique_ptr<Sprite> clearSprite_;
+
+	/*ロックオン*/
+	std::unique_ptr<LockOn> lockOn_;
 
 	//シーン関連
 	enum SceneName{

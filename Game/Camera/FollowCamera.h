@@ -74,7 +74,7 @@ private:
 		.verticalFOV = viewProjection_.fovAngleY_/1.5f,
 		.aspectRatio = viewProjection_.aspectRatio_,
 		.nearZ = viewProjection_.nearZ_,
-		.farZ = 30.0f
+		.farZ = 100.0f
 	};
 	//0.45f, (1280.0f / 720.0f), 0.1f, 1000.0f
 

@@ -5,13 +5,13 @@ void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	lockOnMark_->Initialize(device, commandList);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });
-	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
+	lockOnMark_->SetAnchorPoint({ 1.0f,1.0f });
 	lockOnMark_->SetSize({ 64.0f,64.0f });
 	lockOnMark_->SetScale({ 64.0f,64.0f });
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
+	if (input->GetPadButtonDown(XINPUT_GAMEPAD_START)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
 			
@@ -29,7 +29,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}
 	}
 	else {
-		lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		lockOnMark_->SetColor({ 0.0f,0.0f,0.0f,1.0f });
 	}
 
 	if (target_){

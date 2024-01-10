@@ -1,49 +1,63 @@
 #include "Enemy.h"
 
+Enemy::~Enemy(){
+	delete enemyModel_;
+	delete partsModel_;
+	delete particleModel_;
+}
+
 void Enemy::ApplyGlobalVariables(){
 
 }
 
 void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position){
-	model_ = std::make_unique<Object3D>();
-	model_->Initialize(device, commandList);	
+	bodyObj_ = std::make_unique<Object3D>();
+	bodyObj_->Initialize(device, commandList);	
 
-	partsModel_ = std::make_unique<Object3D>();
-	partsModel_->Initialize(device, commandList);	
+	partsObj_ = std::make_unique<Object3D>();
+	partsObj_->Initialize(device, commandList);
 
-	/*for (int i = 0; i < 20; i++){
-		particleModel_[i] = std::make_unique<Particle>();
-		particleModel_[i]->Initialize(device, commandList);
-	}*/
+	enemyModel_ = Model::LoadObjFile("Enemy");
+
+	partsModel_ = Model::LoadObjFile("EnemyParts");
+
+	particleModel_ = Model::LoadObjFile("box");
+	for (int i = 0; i < 20; i++){
+		particleObj_[i] = std::make_unique<Object3D>();
+		particleObj_[i]->Initialize(device, commandList);
+		particleObj_[i]->SetModel(particleModel_);
+	}
 
 	/*collisionModel_ = std::make_unique<Object3D>();
 	collisionModel_->Initialize(device, commandList, "box");*/
 
 	transform_ = {
-		{0.3f,0.3f,0.3f},
+		{0.9f,0.9f,0.9f},
 		{0.0f,3.14f,0.0f},
 		position
 	};
 
 	partsTransform_ = {
-		{0.3f,0.3f,0.3f},
+		{0.9f,0.9f,0.9f},
 		{0.0f,0.0f,1.57f},
 		{0.0f,1.7f,7.0f}
 	};
 
-	/*for (int i = 0; i < 20; i++) {
-		particleModel_[i]->transform_ = {
+	for (int i = 0; i < 20; i++) {
+		particleTransform_[i] = {
 			{0.1f,0.1f,0.1f},
 			{0.0f,0.0f,0.0f},
 			{0.0f,0.0f,0.0f}
 		};
-	}*/
+	}
 
 
 	for (int i = 0; i < 20; i++) {
 		particleVec_[i] = {0.0f,0.0f,0.0f};
 	}
 	
+	bodyObj_->SetModel(enemyModel_);
+	partsObj_->SetModel(partsModel_);
 
 	isDead_ = false;
 	isParticle_ = true;
@@ -68,7 +82,7 @@ void Enemy::Update(){
 		}
 		/*エネミーのパーツ*/
 		partsTransform_.translate.x = transform_.translate.x;
-		partsTransform_.translate.y = transform_.translate.y + 0.9f;
+		partsTransform_.translate.y = transform_.translate.y + 2.7f;
 		partsTransform_.translate.z = transform_.translate.z;
 
 		partsTransform_.rotate.x += 0.3f;
@@ -78,7 +92,7 @@ void Enemy::Update(){
 		transform_.translate.y += 0.1f;
 		transform_.translate.z += 0.1f;
 		transform_.rotate.x += 0.3f;
-		partsTransform_.translate.y = transform_.translate.y + 0.9f;
+		partsTransform_.translate.y = transform_.translate.y + 2.7f;
 		partsTransform_.translate.z = transform_.translate.z;
 		partsTransform_.rotate.x += 0.3f;
 		if (transform_.scale.x > 0.0f) {
@@ -93,15 +107,17 @@ void Enemy::Update(){
 	if (invincibleTime_>0){
 		invincibleTime_--;
 	}
-	/*for (int i = 0; i < particleNum_; i++) {
-		particleModel_[i]->transform_.translate += particleVec_[i];
-	}*/
+	for (int i = 0; i < particleNum_; i++) {
+		particleTransform_[i].translate += particleVec_[i];
+	}
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
-	/*for (int i = 0; i < particleNum_; i++) {
-		particleModel_[i]->Update();
-	}*/
+	
+	for (int i = 0; i < particleNum_; i++) {
+		particleMatrix_[i] = Matrix::GetInstance()->MakeAffineMatrix(particleTransform_[i].scale, particleTransform_[i].rotate, particleTransform_[i].translate);
+		
+	}
 
 
 	OBB_.center = transform_.translate;
@@ -114,20 +130,22 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	if (isDead_) {
 		return;
 	}
-	model_->Update(matrix_, viewProjection);
-	model_->Draw(textureManager->SendGPUDescriptorHandle(5));
+	bodyObj_->Update(matrix_, viewProjection);
+	bodyObj_->Draw(textureManager->SendGPUDescriptorHandle(5));
 	
-	partsModel_->Update(partsMatrix_, viewProjection);
-	partsModel_->Draw(textureManager->SendGPUDescriptorHandle(6));
+	partsObj_->Update(partsMatrix_, viewProjection);
+	partsObj_->Draw(textureManager->SendGPUDescriptorHandle(6));
 
-	/*if (isParticle_){
+	if (isParticle_){
 		for (int i = 0; i < 10; i++) {
-			particleModel_[i]->Draw(textureManager,viewProjection);
+			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
+			particleObj_[i]->Draw(textureManager->SendGPUDescriptorHandle(9));
 		}
 		for (int i = 10; i < 20; i++) {
-			particleModel_[i]->Draw(textureManager, viewProjection);
+			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
+			particleObj_[i]->Draw(textureManager->SendGPUDescriptorHandle(9));
 		}
-	}*/
+	}
 }
 
 void Enemy::DrawImgui(){
@@ -140,9 +158,9 @@ void Enemy::onFlootCollision(OBB obb){
 
 void Enemy::Respawn(const Vector3& position){
 	isDead_ = false;
-	enemyLife_ = 3;
+	enemyLife_ = 10;
 	transform_ = {
-		{0.3f,0.3f,0.3f},
+		{0.9f,0.9f,0.9f},
 		{0.0f,3.14f,0.0f},
 		position
 	};
@@ -169,9 +187,9 @@ const Vector3 Enemy::GetCenterPos()const{
 
 void Enemy::ParticleMove(){
 
-	/*if (enemyLife_ == 2) {
+	if (enemyLife_ == 2) {
 		for (int i = 0; i < 5; i++){
-			particleModel_[i]->transform_.translate = transform_.translate;
+			particleTransform_[i].translate = transform_.translate;
 
 			Vector3 velocity = { 0, 0, 0 };
 			float numberX = (rand() % 11 - 5) / 2.0f;
@@ -185,7 +203,7 @@ void Enemy::ParticleMove(){
 
 	}else if (enemyLife_ == 1) {
 		for (int i = 5; i < 10; i++) {
-			particleModel_[i]->transform_.translate = transform_.translate;
+			particleTransform_[i].translate = transform_.translate;
 			Vector3 velocity = { 0, 0, 0 };
 			float numberX = (rand() % 11 - 5) / 2.0f;
 			float numberY = static_cast<float>((rand() % 11) / 2.0f);
@@ -198,7 +216,7 @@ void Enemy::ParticleMove(){
 
 	}else if (enemyLife_ == 0) {
 		for (int i = 10; i < particleNum_; i++) {
-			particleModel_[i]->transform_.translate = transform_.translate;
+			particleTransform_[i].translate = transform_.translate;
 			Vector3 velocity = { 0, 0, 0 };
 			float numberX = (rand() % 11 - 5) / 2.0f;
 			float numberY = static_cast<float>((rand() % 11) / 2.0f);
@@ -209,7 +227,20 @@ void Enemy::ParticleMove(){
 			particleVec_[i] = velocity;
 		}
 
-	}*/
+	}
+	else {
+		for (int i = 10; i < particleNum_; i++) {
+			particleTransform_[i].translate = transform_.translate;
+			Vector3 velocity = { 0, 0, 0 };
+			float numberX = (rand() % 11 - 5) / 2.0f;
+			float numberY = static_cast<float>((rand() % 11) / 2.0f);
+			float numberZ = (rand() % 11 - 5) / 2.0f;
+
+			velocity = { numberX, numberY / 10.0f, numberZ };
+
+			particleVec_[i] = velocity;
+		}
+	}
 	
 	
 }

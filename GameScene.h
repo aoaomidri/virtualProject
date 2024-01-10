@@ -158,7 +158,10 @@ private:
 
 	Matrix4x4 rotateMatrix_;
 
-	Quaternion rotation_;
+	Quaternion rotation0_;
+	Quaternion rotation1_;
+
+	Quaternion interpolate_[5];
 	
 };
 

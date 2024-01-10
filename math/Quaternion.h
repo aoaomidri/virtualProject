@@ -7,14 +7,22 @@ public:
 
 	static Quaternion* GetInstance();
 public:
+	//Quaternionの和
+	Quaternion Add(const Quaternion& q0, const Quaternion& q1);
 	//Quaternionの積
 	Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
+	//Quaternionの積
+	Quaternion Multiply(const Quaternion& quaternion, const float n);
 	//単位Quaternionを返す
 	Quaternion IdentityQuaternion();
 	//共役Quaternionを返す
 	Quaternion Conjugate(const Quaternion& quaternion);
 	//Quaternionのnormを返す
 	float Norm(const Quaternion& quaternion);
+	//Quaternionの内積を返す
+	float Dot(const Quaternion& q0, const Quaternion& q1);
+	//反転Quaternionを返す
+	Quaternion Reverse(const Quaternion& quaternion);
 	//正規化したQuaternionを返す
 	Quaternion Normalize(const Quaternion& quaternion);
 	//逆Quaternionを返す

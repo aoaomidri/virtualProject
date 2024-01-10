@@ -18,15 +18,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
 	TextureLoad();
 
+	rotation0_ = Quaternion::GetInstance()->MakeRotateAxisAngleQuaternion(Vector3::Normalize({ 0.71f,0.71f,0.0f }), 0.3f);
+	rotation1_ = Quaternion::GetInstance()->MakeRotateAxisAngleQuaternion(Vector3::Normalize({ 0.71f,0.0f,0.71f }), 3.141592f);
 
-	axis = Matrix::GetInstance()->Normalize({ 1.0f,0.4f,-0.2f });
-
-	rotation_ = Quaternion::GetInstance()->MakeRotateAxisAngleQuaternion(axis, angle);
-	pointY_ = { 2.1f,-0.9f,1.3f };
-	rotateMatrix_ = Quaternion::GetInstance()->MakeRotateMatrix(rotation_);
-	rotateByQuaternion_ = Quaternion::GetInstance()->RotateVector(pointY_, rotation_);
-	rotateByMatrix_ = Matrix::GetInstance()->Transform(pointY_, rotateMatrix_);
-
+	interpolate_[0] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.0f);
+	interpolate_[1] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.3f);
+	interpolate_[2] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.5f);
+	interpolate_[3] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.7f);
+	interpolate_[4] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 1.0f);
 }
 
 void GameScene::Update(Input* input_){
@@ -58,15 +57,11 @@ void GameScene::Draw2D(){
 
 void GameScene::DrawImgui(){
 	ImGui::Begin("Quaternion");
-	ImGui::DragFloat4("rotation", &rotation_.quaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat3("rotateByQuaternion", &rotateByQuaternion_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	ImGui::DragFloat3("rotateByMatrix", &rotateByMatrix_.x, 0.01f, -100.0f, 100.0f, "%.2f");
-	if (ImGui::TreeNode("rotateMatrix")) {
-		for (int i = 0; i < 4; i++) {
-			ImGui::DragFloat4((std::to_string(i + 1) + "列目").c_str(), rotateMatrix_.m[i], 0.001f);
-		}
-		ImGui::TreePop();
-	}
+	ImGui::DragFloat4("interpolate0", &interpolate_[0].quaternion_.x, 0.01f, -100.0f, 100.0f, "%.5f");
+	ImGui::DragFloat4("interpolate1", &interpolate_[1].quaternion_.x, 0.01f, -100.0f, 100.0f, "%.5f");
+	ImGui::DragFloat4("interpolate2", &interpolate_[2].quaternion_.x, 0.01f, -100.0f, 100.0f, "%.5f");
+	ImGui::DragFloat4("interpolate3", &interpolate_[3].quaternion_.x, 0.01f, -100.0f, 100.0f, "%.5f");
+	ImGui::DragFloat4("interpolate4", &interpolate_[4].quaternion_.x, 0.01f, -100.0f, 100.0f, "%.5f");
 	ImGui::End();
 
 	

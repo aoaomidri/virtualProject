@@ -20,7 +20,7 @@ public:
 	//初期化
 	void Initialize(DirectXCommon* dxCommon_);
 	//更新
-	void Update(Input* input_);
+	void Update();
 
 	void AudioDataUnLoad();
 
@@ -102,5 +102,8 @@ private:
 	Audio* audio_ = nullptr;
 
 	SoundData soundData1{};
+
+	//入力
+	Input* input_ = nullptr;
 };
 

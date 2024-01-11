@@ -29,7 +29,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	window_->Initialize();
 
 	/*キー入力の初期化処理*/
-	auto input_ = std::make_unique<Input>();
+	Input* input_ = Input::GetInstance();
 	input_->Initialize(window_.get());
 
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
@@ -69,7 +69,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		adjustment_item->Update();
 
-		gameScene_->Update(input_.get());
+		gameScene_->Update();
 		
 		dxCommon_->EndImgui();
 

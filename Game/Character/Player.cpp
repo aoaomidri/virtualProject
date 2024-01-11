@@ -32,7 +32,8 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "DashCoolTime", kDashCoolTime);
 	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
-
+	
+	input_ = Input::GetInstance();
 
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize(device, commandList);
@@ -78,7 +79,7 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	frontVec_ = { 0.0f,0.0f,1.0f };
 }
 
-void Player::Update(Input* input){
+void Player::Update(){
 	ApplyGlobalVariables();
 
 	
@@ -107,10 +108,10 @@ void Player::Update(Input* input){
 	switch (behavior_) {
 	case Behavior::kRoot:
 	default:
-		BehaviorRootUpdate(input);
+		BehaviorRootUpdate();
 		break;
 	case Behavior::kAttack:
-		BehaviorAttackUpdate(input);
+		BehaviorAttackUpdate();
 		break;
 	case Behavior::kDash:
 		BehaviorDashUpdate();
@@ -192,28 +193,28 @@ void Player::BehaviorRootInitialize(){
 	weaponCollisionTransform_.translate.y = 1.0f;
 }
 
-void Player::BehaviorRootUpdate(Input* input){
+void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/
-	if (input->PushUp()) {
+	if (input_->PushUp()) {
 		move_.z = moveSpeed_;
 
 	}
-	else if (input->PushDown()) {
+	else if (input_->PushDown()) {
 		move_.z = -moveSpeed_;
 	}
 	else {
-		move_.z = input->GetPadLStick().y * moveSpeed_;
+		move_.z = input_->GetPadLStick().y * moveSpeed_;
 	}
 
-	if (input->PushRight()) {
+	if (input_->PushRight()) {
 		move_.x = moveSpeed_;
 	}
-	else if (input->PushLeft()) {
+	else if (input_->PushLeft()) {
 		move_.x = -moveSpeed_;
 	}
 	else {
-		move_.x = input->GetPadLStick().x * moveSpeed_;
+		move_.x = input_->GetPadLStick().x * moveSpeed_;
 	}
 	
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_->rotation_);
@@ -240,7 +241,7 @@ void Player::BehaviorRootUpdate(Input* input){
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
 		downVector.y += jumpPower;
 		playerTransform_.translate.y += downVector.y;
 	}
@@ -259,10 +260,10 @@ void Player::BehaviorRootUpdate(Input* input){
 	//playerTransform_.translate.y += downVector.y;
 	
 
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_B) && !isDown_) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_B) && !isDown_) {
 		workAttack_.comboIndex_ = 0;
 		behaviorRequest_ = Behavior::kAttack;
 	}
@@ -309,10 +310,8 @@ void Player::BehaviorThirdAttackInitialize(){
 	isShakeDown = false;
 }
 
-void Player::BehaviorAttackUpdate(Input* input){
+void Player::BehaviorAttackUpdate(){
 	frontVec_ = postureVec_;
-	
-
 
 	if (++workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {
@@ -354,7 +353,7 @@ void Player::BehaviorAttackUpdate(Input* input){
 	}
 	//コンボ上限に達していない
 	if (workAttack_.comboIndex_ + 1 < ConboNum) {
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_B)) {
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_B)) {
 			//コンボ有効
 			workAttack_.comboNext_ = true;
 		}

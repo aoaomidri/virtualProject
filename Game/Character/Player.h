@@ -22,7 +22,7 @@ public:
 	//初期化
 	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//更新処理
-	void Update(Input* input);
+	void Update();
 	//描画
 	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
 	//Imgui描画
@@ -72,9 +72,9 @@ private:
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
 	// 通常行動更新
-	void BehaviorRootUpdate(Input* input);
+	void BehaviorRootUpdate();
 	//攻撃行動更新
-	void BehaviorAttackUpdate(Input* input);
+	void BehaviorAttackUpdate();
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
 public:
@@ -226,5 +226,9 @@ private:
 private:
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
+
+	//入力
+	Input* input_ = nullptr;
+
 };
 

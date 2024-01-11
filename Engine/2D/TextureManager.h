@@ -27,7 +27,9 @@ public:
 
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
-	void Load(const std::string& filePath, uint32_t index);
+	//void Load(const std::string& filePath, uint32_t index);
+
+	void Load(const std::string& filePath);
 
 	void MakeInstancingShaderResourceView(ID3D12Resource* resource);
 
@@ -75,6 +77,7 @@ private:
 
 	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> intermediateBuffers_;
 
+	
 
 	ID3D12Device* device_ = nullptr;
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
@@ -107,8 +110,11 @@ private:
 
 private:
 	/// <summary>
-	/// Textureのコンテナ(キー値: ファイルネーム  コンテナデータ型: Texture*)
+	/// Textureのコンテナ(キー値: ファイルネーム,番号);
 	/// </summary>
-
+	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst> textureArray_;
 	
+	size_t slashPos_;
+	size_t dotPos_;
+
 };

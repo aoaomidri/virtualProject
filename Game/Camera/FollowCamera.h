@@ -22,7 +22,7 @@ class FollowCamera{
 public:
 	void Initialize();
 
-	void Update(Input* input_);
+	void Update();
 
 	void Reset();
 
@@ -117,5 +117,7 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	//入力
+	Input* input_ = nullptr;
 };
 

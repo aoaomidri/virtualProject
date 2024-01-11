@@ -31,6 +31,8 @@ void FollowCamera::Initialize(){
 	adjustment_item->AddItem(groupName, "PositionComplement", t);
 	adjustment_item->AddItem(groupName, "distance", distance);
 
+	input_ = Input::GetInstance();
+
 	destinationAngleX_ = 0.0f;
 
 	rootOffset = { 0.0f, 0.0f, distance };
@@ -45,7 +47,7 @@ void FollowCamera::Initialize(){
 
 }
 
-void FollowCamera::Update(Input* input_){
+void FollowCamera::Update(){
 	frontVec_ = postureVec_;
 	DrawImgui();
 	ApplyGlobalVariables();

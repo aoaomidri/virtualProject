@@ -34,11 +34,55 @@ void TextureManager::Finalize() {
 }
 
 
-void TextureManager::Load(const std::string& filePath, uint32_t index){
+//void TextureManager::Load(const std::string& filePath, uint32_t index){
+//	mipImages = LoadTexture(filePath);
+//	metadata = mipImages.GetMetadata();
+//	textureBuffers_[index] = CreateTextureResource(device_, metadata);
+//	intermediateBuffers_[index] = UploadTextureData(textureBuffers_[index], mipImages, device_, commandList_);
+//
+//	srvDesc.Format = metadata.format;
+//	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+//	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+//	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+//
+//	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+//
+//	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
+//	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
+//
+//	//SRVの生成
+//	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
+//}
+
+void TextureManager::Load(const std::string& filePath){
+	int i = 0;
+	bool isLoad = false;
+	std::string result;
+
+	slashPos_ = filePath.find_last_of('/');
+	dotPos_ = filePath.find_last_of('.');
+	if (slashPos_ != std::string::npos && dotPos_ != std::string::npos && dotPos_ > slashPos_) {
+		result = filePath.substr(slashPos_ + 1, dotPos_ - slashPos_ - 1);
+	}
+
+	while (!textureArray_[i].first.empty()){
+		if (textureArray_[i].first == result) {
+			isLoad = true;
+		}
+		i++;
+	}
+
+	if (isLoad) {
+		return;
+	}
+
+	textureArray_[i].first = result;
+	textureArray_[i].second = i;
+
 	mipImages = LoadTexture(filePath);
 	metadata = mipImages.GetMetadata();
-	textureBuffers_[index] = CreateTextureResource(device_, metadata);
-	intermediateBuffers_[index] = UploadTextureData(textureBuffers_[index], mipImages, device_, commandList_);
+	textureBuffers_[i] = CreateTextureResource(device_, metadata);
+	intermediateBuffers_[i] = UploadTextureData(textureBuffers_[i], mipImages, device_, commandList_);
 
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -47,11 +91,11 @@ void TextureManager::Load(const std::string& filePath, uint32_t index){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
-	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
+	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + i);
+	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + i);
 
 	//SRVの生成
-	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
+	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
 }
 
 void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){

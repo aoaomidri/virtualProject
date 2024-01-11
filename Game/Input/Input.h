@@ -17,6 +17,8 @@ public:
 public:
 	Input() = default;
 	~Input() = default;
+	Input(const Input& input) = delete;
+	Input& operator=(const Input&) = delete;
 
 	/// <summary>
 	/// シングルトンインスタンスの取得

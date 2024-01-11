@@ -37,6 +37,10 @@ Quaternion Quaternion::Conjugate(const Quaternion& quaternion){
 	result.w = quaternion.w;
 	result.quaternion_ = { result.vector_.x,result.vector_.y, result.vector_.z, result.w };
 	return result;
+#ifdef _DEBUG
+	int ssef = 32;
+#endif // _DEBUG
+
 }
 
 float Quaternion::Norm(const Quaternion& quaternion){

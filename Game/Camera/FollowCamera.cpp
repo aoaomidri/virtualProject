@@ -144,7 +144,7 @@ void FollowCamera::SetTarget(const Transform* target){
 }
 
 void FollowCamera::DrawImgui(){
-	ImGui::Begin("カメラ関連");
+	/*ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
@@ -152,6 +152,6 @@ void FollowCamera::DrawImgui(){
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
 
-	ImGui::End();
+	ImGui::End();*/
 }
 

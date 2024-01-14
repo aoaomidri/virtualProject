@@ -1,6 +1,6 @@
 #include "Player.h"
 #include"../Camera/LockOn.h"
-#include "../../externals/imgui/imgui.h"
+#include"../../externals/ImGuiManager.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {
@@ -165,7 +165,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器の回転", &weaponCollisionTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("武器の大きさ", &weaponCollisionTransform_.scale.x, 0.1f);
 	ImGui::DragFloat("武器の回転", &weapon_Rotate, 0.1f);
-	ImGui::End();	
+	ImGui::End();
 }
 
 void Player::onFlootCollision(OBB obb){

@@ -65,13 +65,13 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 }
 
 void Object3D::DrawImgui(){
-	ImGui::Begin("オブジェの内部設定");
+	/*ImGui::Begin("オブジェの内部設定");
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Text("ライト関連");
 	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
-	ImGui::End();
+	ImGui::End();*/
 
 }
 

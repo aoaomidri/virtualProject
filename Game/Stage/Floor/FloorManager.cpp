@@ -71,11 +71,11 @@ void FloorManager::DrawImgui() {
 	int i = 0;
 
 	for (Floor* floor : floors_) {
-		if (ImGui::TreeNode((std::to_string(i + 1) + "個目の床").c_str())) {
+		/*if (ImGui::TreeNode((std::to_string(i + 1) + "個目の床").c_str())) {
 			floor->DrawImgui();
 
 			ImGui::TreePop();
-		}
+		}*/
 		i++;
 	}
 }

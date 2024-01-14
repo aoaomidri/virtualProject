@@ -70,9 +70,6 @@
     <Filter Include="External">
       <UniqueIdentifier>{84f20f5f-0013-41c9-800d-d2f1c7d827cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="External\imgui">
-      <UniqueIdentifier>{67e3fa12-b85d-432d-8d01-e43f5d6be697}</UniqueIdentifier>
-    </Filter>
     <Filter Include="application\Audio">
       <UniqueIdentifier>{f4567324-8d25-4195-a070-395bbe966cb9}</UniqueIdentifier>
     </Filter>
@@ -80,27 +77,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_demo.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_draw.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_tables.cpp">
-      <Filter>External\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
-      <Filter>External\imgui</Filter>
     </ClCompile>
     <ClCompile Include="math\Matrix.cpp">
       <Filter>math</Filter>
@@ -183,32 +159,11 @@
     <ClCompile Include="Game\Audio\Audio.cpp">
       <Filter>application\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="externals\ImGuiManager.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="externals\imgui\imconfig.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imgui_internal.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_rectpack.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_textedit.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_truetype.h">
-      <Filter>External\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="math\Matrix.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -311,11 +266,9 @@
     <ClInclude Include="Game\Audio\Audio.h">
       <Filter>application\Audio</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt">
-      <Filter>External\imgui</Filter>
-    </Text>
+    <ClInclude Include="externals\ImGuiManager.h">
+      <Filter>External</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object3d.hlsli">

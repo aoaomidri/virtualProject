@@ -45,13 +45,13 @@ void Floor::Draw(Object3D* object, Model* model, TextureManager* textureManager,
 }
 
 void Floor::DrawImgui(){
-	ImGui::DragFloat3("床の座標", &floorTransform_.translate.x, 0.01f);
+	/*ImGui::DragFloat3("床の座標", &floorTransform_.translate.x, 0.01f);
 	ImGui::DragFloat3("床の回転", &floorTransform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("床の大きさ", &floorTransform_.scale.x, 0.01f);
 	ImGui::Checkbox("動くかどうか", &isMove_);
 	if (ImGui::Button("このオブジェを削除")) {
 		isDelete_ = true;
-	}
+	}*/
 }
 
 

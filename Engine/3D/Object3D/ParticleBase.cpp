@@ -193,7 +193,7 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 }
 
 void ParticleBase::DrawImgui(){
-	ImGui::Begin("パーティクルのあれこれ");
+	/*ImGui::Begin("パーティクルのあれこれ");
 	ImGui::Text("現在のパーティクルの数 = %d", particles_.size());
 	ImGui::DragFloat3("発生中心位置", &emitter_.transform.translate.x, 0.01f, -100.0f, 100.0f);
 	ImGui::DragFloat2("移動ベクトル範囲", &velocityRange_.min, 0.1f, -5.0f, 5.0f);
@@ -233,7 +233,7 @@ void ParticleBase::DrawImgui(){
 
 		ImGui::TreePop();
 	}
-	ImGui::End();
+	ImGui::End();*/
 
 }
 

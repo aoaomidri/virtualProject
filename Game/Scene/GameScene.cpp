@@ -132,7 +132,7 @@ void GameScene::DrawImgui(){
 #ifdef _DEBUG
 	player_->DrawImgui();
 	//particle_->DrawImgui();
-	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+	/*ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
 	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu("オブジェクトの生成")) {
@@ -183,7 +183,7 @@ void GameScene::DrawImgui(){
 
 		ImGui::EndMenuBar();
 	}
-	ImGui::End();
+	ImGui::End();*/
 
 
 #endif // DEBUG	

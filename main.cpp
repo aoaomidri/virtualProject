@@ -4,6 +4,7 @@
 #include"Game/Scene/GameScene.h"
 #include "Game/Item/Adjustment_Item.h"
 #include"Game/random/RandomMaker.h"
+#include"externals/ImGuiManager.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {
@@ -35,6 +36,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
 	dxCommon_->Initialize(window_.get());
 
+	auto imguiManager_ = std::make_unique<ImGuiManager>();
+	imguiManager_->Initialize(window_.get(), dxCommon_.get());
+
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 
 	//グローバル変数の読み込み
@@ -62,7 +66,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 		
-		dxCommon_->StartImgui();
+		imguiManager_->Begin();
 		//ゲームの処理
 
 		input_->Update();
@@ -71,7 +75,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		gameScene_->Update();
 		
-		dxCommon_->EndImgui();
+		imguiManager_->End();
 
 		dxCommon_->PreDraw();
 		//3D描画
@@ -79,6 +83,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		gameScene_->DrawParticle();
 		//2D描画
 		gameScene_->Draw2D();
+		imguiManager_->Draw();
 		dxCommon_->PostDraw();
 
 		if (input_->Trigerkey(DIK_ESCAPE)||input_->GetPadButtonDown(XINPUT_GAMEPAD_BACK)){
@@ -88,9 +93,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 	CoUninitialize();
 
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	imguiManager_->Finalize();
 
 	audio_->Reset();
 

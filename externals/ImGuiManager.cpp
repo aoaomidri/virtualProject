@@ -25,8 +25,12 @@ void ImGuiManager::End(){
 }
 
 void ImGuiManager::Draw(){
+#ifdef _DEBUG
 	//実際ののCommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), DXcom_->GetCommandList());
+#endif // _DEBUG
+
+	
 }
 
 void ImGuiManager::ImguiInitialize(){

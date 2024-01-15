@@ -3,7 +3,7 @@
 void ImGuiManager::Initialize(WinApp* window, DirectXCommon* DXcom){
 	window_ = window;
 
-	DXcom_ = DXcom;	
+	DXcom_ = DXcom;
 
 	ImguiInitialize();
 }

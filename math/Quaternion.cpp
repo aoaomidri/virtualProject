@@ -163,6 +163,15 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, float t
 	Quaternion reverseQ0{};
 
 	float dot = Dot(q0, q1);
+	float theta = std::acos(dot);
+	float sinTheta = 1.0f / std::sin(theta);
+
+	const float EPSILON = 0.0005f;
+
+	if (sinTheta == 0.0f || dot >= 1.0f - EPSILON || dot <= -1.0f + EPSILON) {
+		result = Add(Multiply(reverseQ0, (1.0f - t)), Multiply(q1, t));
+		return result;
+	}
 
 	if (dot < 0) {
 		reverseQ0 = Reverse(q0);
@@ -173,10 +182,10 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, float t
 	}
 
 	//なす角を求める
-	float theta = std::acos(dot);
+	theta = std::acos(dot);
 
-	float scale0 = std::sinf((1 - t) * theta) / std::sinf(theta);
-	float scale1 = std::sinf(t * theta) / std::sinf(theta);
+	float scale0 = std::sinf((1 - t) * theta) * sinTheta;
+	float scale1 = std::sinf(t * theta) * sinTheta;
 
 	result = Add(Multiply(reverseQ0, scale0), Multiply(q1, scale1));
 

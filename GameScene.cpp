@@ -21,6 +21,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	rotation0_ = Quaternion::GetInstance()->MakeRotateAxisAngleQuaternion(Vector3::Normalize({ 0.71f,0.71f,0.0f }), 0.3f);
 	rotation1_.quaternion_ = { -rotation0_.quaternion_.x,-rotation0_.quaternion_.y ,-rotation0_.quaternion_.z ,-rotation0_.quaternion_.w };
 
+	rotation0_ = Quaternion::GetInstance()->Normalize(rotation0_);
+	rotation1_ = Quaternion::GetInstance()->Normalize(rotation1_);
+
 	interpolate_[0] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.0f);
 	interpolate_[1] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.3f);
 	interpolate_[2] = Quaternion::GetInstance()->Slerp(rotation0_, rotation1_, 0.5f);

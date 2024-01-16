@@ -72,10 +72,10 @@ float Quaternion::Norm(const Quaternion& quaternion){
 
 float Quaternion::Dot(const Quaternion& q0, const Quaternion& q1){
 	float result = 0;
-	result = q0.vector_.x * q1.vector_.x +
-		q0.vector_.y * q1.vector_.y + 
-		q0.vector_.z * q1.vector_.z + 
-		q0.w * q1.w;
+	result = q0.quaternion_.x * q1.quaternion_.x +
+		q0.quaternion_.y * q1.quaternion_.y +
+		q0.quaternion_.z * q1.quaternion_.z +
+		q0.quaternion_.w * q1.quaternion_.w;
 	return result;
 }
 
@@ -162,16 +162,11 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, float t
 	Quaternion result{};
 	Quaternion reverseQ0{};
 
-	float dot = Dot(q0, q1);
+	float dot = Dot((q0), (q1));
 	float theta = std::acos(dot);
 	float sinTheta = 1.0f / std::sin(theta);
 
 	const float EPSILON = 0.0005f;
-
-	if (sinTheta == 0.0f || dot >= 1.0f - EPSILON || dot <= -1.0f + EPSILON) {
-		result = Add(Multiply(reverseQ0, (1.0f - t)), Multiply(q1, t));
-		return result;
-	}
 
 	if (dot < 0) {
 		reverseQ0 = Reverse(q0);
@@ -180,6 +175,12 @@ Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, float t
 	else {
 		reverseQ0 = q0;
 	}
+
+	if (sinTheta == 0.0f || dot >= 1.0f - EPSILON || dot <= -1.0f + EPSILON) {
+		result = Add(Multiply(reverseQ0, (1.0f - t)), Multiply(q1, t));
+		return result;
+	}
+
 
 	//なす角を求める
 	theta = std::acos(dot);

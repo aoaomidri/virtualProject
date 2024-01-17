@@ -1,5 +1,5 @@
 #include "GameScene.h"
-#include"../../math/Matrix.h"
+#include"Matrix.h"
 #include <cassert>
 void GameScene::TextureLoad() {
 	textureManager_->Load("resources/uvChecker.png");

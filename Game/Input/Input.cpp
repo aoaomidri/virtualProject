@@ -9,14 +9,14 @@ Input* Input::GetInstance()
 }
 
 
-void Input::Initialize(WinApp* winapp) {
-	this->winapp_ = winapp;
+void Input::Initialize() {
+	this->winapp_ = WinApp::GetInstance();
 
 	HRESULT hr;
 
 	/*キー入力の初期化処理*/	
 	hr = DirectInput8Create
-	(winapp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	(this->winapp_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(hr));
 
 	//キーボードデバイスの作成
@@ -27,7 +27,7 @@ void Input::Initialize(WinApp* winapp) {
 	assert(SUCCEEDED(hr));
 	//排他制御レベルのセット
 	hr = keyboard->SetCooperativeLevel
-	(winapp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	(this->winapp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 	ZeroMemory(&xinputState, sizeof(XINPUT_STATE));

@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include<array>
-#include"../Base/GraphicsPipeline.h"
+#include"GraphicsPipeline.h"
 #include"Texture.h"
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;

@@ -9,14 +9,18 @@ DirectXCommon::DirectXCommon() {
 DirectXCommon::~DirectXCommon(){
 	
 }
+
 DirectXCommon* DirectXCommon::GetInstance(){
 	static DirectXCommon instance;
 	return &instance;
 }
-void DirectXCommon::Initialize(WinApp* winapp){
-	assert(winapp);
 
-	winapp_ = winapp;
+void DirectXCommon::Initialize(){
+	winapp_ = WinApp::GetInstance();
+
+	assert(winapp_);
+
+	
 
 	InitializeFixFPS();
 

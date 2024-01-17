@@ -22,7 +22,7 @@ public:
 	static DirectXCommon* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* winapp);
+	void Initialize();
 
 	//描画前処理
 	void PreDraw();

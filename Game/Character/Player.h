@@ -1,13 +1,13 @@
 #pragma once
-#include"../../Engine/3D/Transform.h"
-#include"../../Engine/2D/TextureManager.h"
-#include"../../math/Matrix.h"
-#include"../../Engine/3D/Object3D/Object3D.h"
-#include"../../Engine/3D/ViewProjection.h"
-#include"../Input/Input.h"
-#include"../../Engine/3D/Shape/OBB.h"
-#include"../Item/Adjustment_Item.h"
-#include"../../math/Quaternion.h"
+#include"Transform.h"
+#include"TextureManager.h"
+#include"Matrix.h"
+#include"Object3D.h"
+#include"ViewProjection.h"
+#include"Input.h"
+#include"OBB.h"
+#include"Adjustment_Item.h"
+#include"Quaternion.h"
 #include<optional>
 
 //前方宣言

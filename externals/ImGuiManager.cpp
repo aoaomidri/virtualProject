@@ -1,7 +1,7 @@
 #include "ImGuiManager.h"
 
-void ImGuiManager::Initialize(WinApp* window, DirectXCommon* DXcom){
-	window_ = window;
+void ImGuiManager::Initialize(DirectXCommon* DXcom){
+	window_ = WinApp::GetInstance();
 
 	DXcom_ = DXcom;
 

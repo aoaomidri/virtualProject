@@ -1,5 +1,5 @@
 #include "TextureManager.h"
-#include"../Base/DirectXCommon.h"
+#include"DirectXCommon.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>

@@ -1,19 +1,19 @@
 #pragma once
-#include "../../../math/Matrix.h"
+#include "Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
-#include"../Transform.h"
-#include"../../Base/Log.h"
+#include"Transform.h"
+#include"Log.h"
 #include<vector>
 #include<fstream>
 #include<sstream>
 #include"Model.h"
-#include"../ViewProjection.h"
-#include"../../../Game/random/RandomMaker.h"
-#include"../../Base/GraphicsPipeline.h"
+#include"ViewProjection.h"
+#include"RandomMaker.h"
+#include"GraphicsPipeline.h"
 #include<numbers>
 #include<list>
-#include"../Shape/OBB.h"
+#include"OBB.h"
 
 
 class ParticleBase{

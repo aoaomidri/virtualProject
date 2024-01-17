@@ -1,5 +1,5 @@
-#include "Object3D.h"
-#include"../../Base/DirectXCommon.h"
+#include"Object3D.h"
+#include"DirectXCommon.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>

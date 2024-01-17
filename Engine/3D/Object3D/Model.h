@@ -1,6 +1,6 @@
 #pragma once
-#include"../../Base/Log.h"
-#include"../Transform.h"
+#include"Log.h"
+#include"Transform.h"
 #include<sstream>
 #include<vector>
 #include <Windows.h>

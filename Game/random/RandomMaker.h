@@ -1,6 +1,6 @@
 #pragma once
 #include<random>
-#include"../../math/Matrix.h"
+#include"Matrix.h"
 
 class RandomMaker
 {

@@ -1,12 +1,12 @@
 #pragma once
-#include "../../../math/Matrix.h"
-#include"../Transform.h"
-#include"../../Base/Log.h"
+#include"Matrix.h"
+#include"Transform.h"
+#include"Log.h"
 #include<vector>
 #include<fstream>
 #include<sstream>
 #include"Model.h"
-#include"../ViewProjection.h"
+#include"ViewProjection.h"
 
 
 class Object3D{

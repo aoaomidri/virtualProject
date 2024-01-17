@@ -1,6 +1,6 @@
 #include "Player.h"
-#include"../Camera/LockOn.h"
-#include"../../externals/ImGuiManager.h"
+#include"LockOn.h"
+#include"ImGuiManager.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {

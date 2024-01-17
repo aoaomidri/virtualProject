@@ -14,7 +14,19 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 class WinApp
 {
-public: // 静的メンバ変数
+public: // 
+	WinApp() = default;
+	~WinApp() = default;
+	WinApp(const WinApp&) = delete;
+	WinApp& operator=(const WinApp&) = delete;
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// これにより1つしか生成されなくなる
+	/// </summary>
+	/// <returns>KeyInputのシングルトンインスタンス</returns>
+	static WinApp* GetInstance();
+
 	// ウィンドウサイズ
 	const int32_t kWindowWidth = 1280; // 横幅
 	const int32_t kWindowHeight = 720; // 縦幅
@@ -27,17 +39,12 @@ public: // 静的メンバ変数
 		kFixedAspect, //!< アスペクト比一定
 	};
 
-public: // 静的メンバ関数
+public: // 
 	//初期化
 	void Initialize();
 	//終了処理
 	void Finalize();
 
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns>シングルトンインスタンス</returns>
-	//static WinApp* GetInstance();
 
 	/// <summary>
 	/// ウィンドウプロシージャ
@@ -71,10 +78,7 @@ public: // メンバ関数
 	
 
 private: // メンバ関数
-	/*WinApp() = default;
-	~WinApp() = default;
-	WinApp(const WinApp&) = delete;
-	const WinApp& operator=(const WinApp&) = delete;*/
+	
 
 private: // メンバ変数
 	// Window関連

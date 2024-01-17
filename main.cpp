@@ -1,10 +1,10 @@
-#include"Game/Input/Input.h"
-#include"Engine/Base/WinApp.h"
-#include"Engine/Base/DirectXCommon.h"
-#include"Game/Scene/GameScene.h"
-#include "Game/Item/Adjustment_Item.h"
-#include"Game/random/RandomMaker.h"
-#include"externals/ImGuiManager.h"
+#include"Input.h"
+#include"WinApp.h"
+#include"DirectXCommon.h"
+#include"GameScene.h"
+#include"Adjustment_Item.h"
+#include"RandomMaker.h"
+#include"ImGuiManager.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {
@@ -26,18 +26,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	D3DResourceLeakChecker leakCheck;
 
-	auto window_ = std::make_unique<WinApp>();
+	WinApp* window_ = WinApp::GetInstance();
 	window_->Initialize();
 
 	/*キー入力の初期化処理*/
 	Input* input_ = Input::GetInstance();
-	input_->Initialize(window_.get());
+	input_->Initialize();
 
 	auto dxCommon_ = std::make_unique<DirectXCommon>();
-	dxCommon_->Initialize(window_.get());
+	dxCommon_->Initialize();
 
 	auto imguiManager_ = std::make_unique<ImGuiManager>();
-	imguiManager_->Initialize(window_.get(), dxCommon_.get());
+	imguiManager_->Initialize(dxCommon_.get());
 
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 

@@ -15,7 +15,7 @@ public:
 		Vector3 worldPosition;
 	};
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
@@ -37,8 +37,7 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
-		ID3D12Device* device, size_t sizeInBytes);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	void makeResource();
 
@@ -50,10 +49,6 @@ private:
 	Model* model_ = nullptr;
 
 	HRESULT hr;
-
-	ID3D12Device* device_ = nullptr;
-
-	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;

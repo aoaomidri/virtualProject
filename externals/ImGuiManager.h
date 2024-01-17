@@ -7,7 +7,7 @@ public:
 	///<summary>
 	/// 初期化
 	///</summary>
-	void Initialize(DirectXCommon* directXcom);
+	void Initialize();
 
 	void Finalize();
 	//imgui受付開始
@@ -19,10 +19,5 @@ public:
 
 private:
 	void ImguiInitialize();
-
-
-	WinApp* window_ = nullptr;
-
-	DirectXCommon* DXcom_ = nullptr;
 };
 

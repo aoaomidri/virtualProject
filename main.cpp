@@ -33,11 +33,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Input* input_ = Input::GetInstance();
 	input_->Initialize();
 
-	auto dxCommon_ = std::make_unique<DirectXCommon>();
+	auto dxCommon_ = DirectXCommon::GetInstance();
 	dxCommon_->Initialize();
 
 	auto imguiManager_ = std::make_unique<ImGuiManager>();
-	imguiManager_->Initialize(dxCommon_.get());
+	imguiManager_->Initialize();
 
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 
@@ -52,7 +52,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	audio_->Initialize();
 
 	auto gameScene_ = std::make_unique<GameScene>();
-	gameScene_->Initialize(dxCommon_.get());
+	gameScene_->Initialize(dxCommon_);
 
 	
 
@@ -101,6 +101,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	gameScene_->Finalize();
 	window_->Finalize();
+	
 #ifdef _DEBUG
 	OutputDebugStringA("文字列リテラルを出力するよ\n");
 	std::string a("stringに埋め込んだ文字列を出力するよ\n");

@@ -8,6 +8,8 @@ DirectXCommon* DirectXCommon::GetInstance(){
 	return &instance;
 }
 
+
+
 void DirectXCommon::Initialize(){
 	winapp_ = WinApp::GetInstance();
 
@@ -108,7 +110,7 @@ void DirectXCommon::DeviceInitialize(){
 		}
 
 	}
-
+	device->SetName(L"ID3D12Device");
 	//デバイスの生成が上手くいかなかったので起動できない
 	assert(device != nullptr);
 	Log("Conplete create D3D12Device!!!\n");//初期化完了のログ
@@ -365,7 +367,7 @@ void DirectXCommon::PostDraw(){
 }
 
 void DirectXCommon::Finalize(){
-	device->Release();
+	
 }
 
 void DirectXCommon::Log(const std::string& messaga) {

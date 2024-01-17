@@ -24,7 +24,7 @@ void Player::ApplyGlobalVariables() {
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 }
 
-void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){
+void Player::Initialize(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 	//グループを追加
@@ -36,13 +36,13 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	input_ = Input::GetInstance();
 
 	playerObj_ = std::make_unique<Object3D>();
-	playerObj_->Initialize(device, commandList);
+	playerObj_->Initialize();
 
 	weaponObj_ = std::make_unique<Object3D>();
-	weaponObj_->Initialize(device, commandList);
+	weaponObj_->Initialize();
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
-	weaponCollisionObj_->Initialize(device, commandList);
+	weaponCollisionObj_->Initialize();
 
 	playerModel_ = Model::LoadObjFile("box");
 

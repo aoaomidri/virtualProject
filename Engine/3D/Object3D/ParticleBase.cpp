@@ -7,10 +7,7 @@
 //#include<algorithm>
 
 
-void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
-
-	device_ = device;
-	commandList_ = commandList;
+void ParticleBase::Initialize() {
 
 	modelData_ = MakePrimitive();
 
@@ -46,27 +43,27 @@ void ParticleBase::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* c
 	};
 
 	GraphicsPipelineParticleNone_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleNone_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleNone_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeNone);
 	GraphicsPipelineParticleNormal_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleNormal_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleNormal_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeNormal);
 	GraphicsPipelineParticleAdd_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleAdd_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleAdd_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeAdd);
 	GraphicsPipelineParticleSubtract_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleSubtract_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleSubtract_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeSubtract);
 	GraphicsPipelineParticleMultily_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleMultily_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleMultily_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeMultily);
 	GraphicsPipelineParticleScreen_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineParticleScreen_->ParticleExclusiveInitialize(device_,
+	GraphicsPipelineParticleScreen_->ParticleExclusiveInitialize(
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeScreen);
 
@@ -151,43 +148,43 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 	}
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	if (blend_ == BlendMode::kBlendModeNone) {
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleNone_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleNone_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleNone_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleNone_->GetPipeLineState());
 	}
 	else if (blend_ == BlendMode::kBlendModeNormal){
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleNormal_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleNormal_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleNormal_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleNormal_->GetPipeLineState());
 	}
 	else if (blend_ == BlendMode::kBlendModeAdd) {
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleAdd_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleAdd_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleAdd_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleAdd_->GetPipeLineState());
 	}
 	else if (blend_ == BlendMode::kBlendModeSubtract) {
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleSubtract_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleSubtract_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleSubtract_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleSubtract_->GetPipeLineState());
 	}
 	else if (blend_ == BlendMode::kBlendModeMultily) {
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleMultily_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleMultily_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleMultily_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleMultily_->GetPipeLineState());
 	}
 	else if (blend_ == BlendMode::kBlendModeScreen) {
-		commandList_->SetGraphicsRootSignature(GraphicsPipelineParticleScreen_->GetParticleRootSignature());
-		commandList_->SetPipelineState(GraphicsPipelineParticleScreen_->GetPipeLineState());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineParticleScreen_->GetParticleRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineParticleScreen_->GetPipeLineState());
 	}
 	
 
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
+	DirectXCommon::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//形状を設定。
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootDescriptorTable(1, InstancingHandle);
-	commandList_->SetGraphicsRootDescriptorTable(2, TextureHandle);
-	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, InstancingHandle);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureHandle);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 	//3D三角の描画
-	commandList_->DrawInstanced(UINT(modelData_.vertices.size()), numInstance, 0, 0);
+	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), numInstance, 0, 0);
 		
 	
 }
@@ -237,7 +234,7 @@ void ParticleBase::DrawImgui(){
 
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(size_t sizeInBytes) {
 
 	//頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
@@ -256,7 +253,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(ID3D12
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
 	assert(SUCCEEDED(hr));
 
@@ -265,7 +262,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(ID3D12
 
 void ParticleBase::makeResource() {
 	//頂点リソースの作成
-	vertexResource = CreateBufferResource(device_, sizeof(VertexData) * modelData_.vertices.size());
+	vertexResource = CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
 
 	
 	//リソースの先頭のアドレスから使う
@@ -281,7 +278,7 @@ void ParticleBase::makeResource() {
 	
 
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(device_, sizeof(Material));
+	 materialResource = CreateBufferResource(sizeof(Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
@@ -293,7 +290,7 @@ void ParticleBase::makeResource() {
 	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpInstancingResource = CreateBufferResource(device_, sizeof(ParticleForGPU) * particleMaxNum_);
+	wvpInstancingResource = CreateBufferResource(sizeof(ParticleForGPU) * particleMaxNum_);
 	//書き込むためのアドレスを取得
 	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	for (uint32_t i = 0; i < particleMaxNum_; ++i) {
@@ -306,7 +303,7 @@ void ParticleBase::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(device_, sizeof(DirectionalLight));
+	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight));
 	
 
 	//書き込むためのアドレスを取得

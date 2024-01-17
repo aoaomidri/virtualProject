@@ -38,20 +38,19 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	input_ = Input::GetInstance();
 
 	textureManager_ = std::make_unique<TextureManager>();
-	textureManager_->Initialize(dxCommon_->GetDevice(),
-		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
+	textureManager_->Initialize();
 	TextureLoad();
 	SoundLoad();
 
 	ObjectInitialize(dxCommon_);
 
 	floorManager_ = std::make_unique<FloorManager>();
-	floorManager_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	floorManager_->Initialize();
 
 	floorManager_->AddFloor(firstFloor_, false);
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	player_->Initialize();
 
 	//textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
 

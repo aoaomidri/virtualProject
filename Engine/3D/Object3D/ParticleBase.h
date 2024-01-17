@@ -19,7 +19,7 @@
 class ParticleBase{
 public:
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 	
 	void Update(const Transform& transform,const ViewProjection& viewProjection);
 
@@ -27,8 +27,7 @@ public:
 
 	void DrawImgui();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
-		ID3D12Device* device, size_t sizeInBytes);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	void makeResource();
 public:
@@ -95,10 +94,6 @@ private:
 	const std::string ResourcesPath = "resources/";
 
 	HRESULT hr;
-
-	ID3D12Device* device_ = nullptr;
-
-	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 	//頂点バッファービューを作成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;

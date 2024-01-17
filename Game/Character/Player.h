@@ -20,7 +20,7 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 	//更新処理
 	void Update();
 	//描画

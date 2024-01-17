@@ -12,8 +12,10 @@
 
 class DirectXCommon{
 public:
-	DirectXCommon();
-	~DirectXCommon();
+	DirectXCommon() = default;
+	~DirectXCommon() = default;
+	DirectXCommon(const DirectXCommon& DirectXCommon) = delete;
+	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
 
 	//namespace省略
@@ -29,6 +31,8 @@ public:
 
 	//描画後処理
 	void PostDraw();
+
+	void Finalize();
 
 	/*void SpritePreDraw();
 

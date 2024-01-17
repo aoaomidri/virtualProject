@@ -2,13 +2,6 @@
 #include <cassert>
 //#include"Log.h"
 
-DirectXCommon::DirectXCommon() {
-
-}
-
-DirectXCommon::~DirectXCommon(){
-	
-}
 
 DirectXCommon* DirectXCommon::GetInstance(){
 	static DirectXCommon instance;
@@ -371,6 +364,10 @@ void DirectXCommon::PostDraw(){
 
 }
 
+void DirectXCommon::Finalize(){
+	device->Release();
+}
+
 void DirectXCommon::Log(const std::string& messaga) {
 	OutputDebugStringA(messaga.c_str());
 }
@@ -456,19 +453,11 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureR
 }
 
 void DirectXCommon::StartImgui(){
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	//ImGui::ShowDemoWindow();
-
-	/*ImGui::Begin("お試し");
-	ImGui::Text("日本語書けるなりよー");
-	ImGui::End();*/
+	
 }
 
 void DirectXCommon::EndImgui(){
-	ImGui::Render();
+	
 }
 
 

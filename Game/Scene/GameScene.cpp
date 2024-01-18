@@ -3,7 +3,6 @@
 #include <cassert>
 void GameScene::TextureLoad() {
 	textureManager_->Load("resources/uvChecker.png");
-	textureManager_->Load("resources/uvChecker.png");
 	textureManager_->Load("resources/rock.png");
 	textureManager_->Load("resources/Floor.png");
 	textureManager_->Load("resources/Road.png");
@@ -125,6 +124,7 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
+	textureManager_->Finalize();
 }
 
 void GameScene::DrawImgui(){

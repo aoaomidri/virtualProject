@@ -6,9 +6,6 @@
 
 
 void Object3D::Initialize() {
-
-	Model::SetDevice(DirectXCommon::GetInstance()->GetDevice());
-
 	makeResource();
 
 	isDraw_ = true;

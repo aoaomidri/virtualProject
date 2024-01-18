@@ -98,7 +98,7 @@ private:
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
 
 	//SRV
-
+	ID3D12Device* device_ = nullptr;
 
 private:
 	/// <summary>

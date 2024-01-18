@@ -51,6 +51,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Audio* audio_ = Audio::GetInstance();
 	audio_->Initialize();
 
+	
+
 	auto gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize(dxCommon_);
 
@@ -94,6 +96,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	CoUninitialize();
 
 	imguiManager_->Finalize();
+
+	Model::GetInstance()->Finalize();
 
 	audio_->Reset();
 

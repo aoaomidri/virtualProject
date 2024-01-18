@@ -39,13 +39,14 @@ public:
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
+	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
+
+	void Finalize();
+
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView; }
 
 	const std::vector<VertexData> GetVertexData()const { return indices; }
-
-	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
-
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
@@ -57,9 +58,6 @@ private:
 	void MakeVertexResource();
 
 private:
-	//デバイス
-	static ID3D12Device* device_;
-
 	//頂点バッファービューを作成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 
@@ -72,6 +70,8 @@ private:
 
 	//頂点インデックス配列
 	std::vector<VertexData> indices;
+
+	static ID3D12Device* device_;
 
 	MaterialData material;
 };

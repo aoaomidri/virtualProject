@@ -19,5 +19,7 @@ public:
 
 private:
 	void ImguiInitialize();
+
+	ID3D12Device* device_ = nullptr;
 };
 

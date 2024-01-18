@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include"DirectXCommon.h"
+#include"Model.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>
@@ -23,11 +24,13 @@ void TextureManager::Initialize() {
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	
+	device_ = DirectXCommon::GetInstance()->GetDevice();
+	Model::SetDevice(device_);
 
 }
 
 void TextureManager::Finalize() {
-
+	device_->Release();
 }
 
 
@@ -86,13 +89,13 @@ void TextureManager::Load(const std::string& filePath){
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	const uint32_t descriptorSizeSRV = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 2 + i);
 	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 2 + i);
 
 	//SRVの生成
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
+	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
 }
 
 void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
@@ -104,13 +107,13 @@ void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
 	instancingSrvDesc.Buffer.NumElements = 300;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
-	const uint32_t descriptorSizeSRV = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	instancingSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 1);
 	instancingSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 1);
 
 	//SRVの生成
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
+	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
 }
 
 void TextureManager::PreDraw2D(){
@@ -171,7 +174,7 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
 
 [[nodiscard]]Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages){
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
-	DirectX::PrepareUpload(DirectXCommon::GetInstance()->GetDevice(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+	DirectX::PrepareUpload(device_, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
 	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.Get(), 0, UINT(subresources.size()));
 	ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(intermediateSize);
 	UpdateSubresources(DirectXCommon::GetInstance()->GetCommandList(), texture.Get(), intermediateResource.Get(), 0, 0, UINT(subresources.size()), subresources.data());
@@ -205,7 +208,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateBufferResource(size
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	ComPtr<ID3D12Resource> bufferResource = nullptr;
-	HRESULT hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
 	assert(SUCCEEDED(hr));
 
@@ -229,7 +232,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 
 	//3, Respurceを生成する
 	ComPtr<ID3D12Resource> resource = nullptr;
-	HRESULT hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties,//Heapの設定
 		D3D12_HEAP_FLAG_NONE,//Heapの特殊な設定。
 		&resourceDesc,//Resourceの設定

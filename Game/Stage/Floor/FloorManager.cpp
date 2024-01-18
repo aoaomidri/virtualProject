@@ -17,10 +17,6 @@ FloorManager::~FloorManager(){
 
 void FloorManager::Initialize() {
 	
-	// nullポインタチェック
-
-	Model::SetDevice(DirectXCommon::GetInstance()->GetDevice());
-
 	floorModel_ = Model::LoadObjFile("box");
 }
 

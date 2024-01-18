@@ -1,14 +1,18 @@
 #include "ImGuiManager.h"
 
 void ImGuiManager::Initialize(){
+	device_ = DirectXCommon::GetInstance()->GetDevice();
 
 	ImguiInitialize();
+
+	
 }
 
 void ImGuiManager::Finalize(){
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+	device_->Release();
 }
 
 void ImGuiManager::Begin(){
@@ -36,7 +40,7 @@ void ImGuiManager::ImguiInitialize(){
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(WinApp::GetInstance()->GetHwnd());
 	ImGui_ImplDX12_Init(
-		DirectXCommon::GetInstance()->GetDevice(),
+		device_,
 		DirectXCommon::GetInstance()->GetSwapChainDesc().BufferCount/*swapChainDesc.BufferCount*/,
 		DirectXCommon::GetInstance()->GetRTVDesc().Format,
 		DirectXCommon::GetInstance()->GetSRVHeap(),

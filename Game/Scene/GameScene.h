@@ -113,6 +113,10 @@ private:
 	//タイトル
 	std::unique_ptr<Sprite> titleSprite_;
 
+	std::unique_ptr<Sprite> fadeSprite_;
+	float fadeAlpha_ = 0.0f;
+	bool isFade_ = false;
+
 	std::unique_ptr<Sprite> pressSprite_;
 
 	std::unique_ptr<Sprite> clearSprite_;

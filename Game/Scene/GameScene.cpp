@@ -33,6 +33,9 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 
 	clearSprite_ = std::make_unique<Sprite>(textureManager_.get());
 	clearSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 14);
+
+	fadeSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	fadeSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 15);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
@@ -105,6 +108,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	clearSprite_->scale_.y = 150.0f;
 	clearSprite_->anchorPoint_ = { 0.5f,0.5f };
 
+	fadeSprite_->position_ = { 640.0f,360.0f };
+	fadeSprite_->scale_.x = 1280.0f;
+	fadeSprite_->scale_.y = 720.0f;
+	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
+	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
+
 	sceneNum_ = SceneName::TITLE;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), textureManager_.get());
@@ -125,7 +134,16 @@ void GameScene::Update(){
 
 		titleSprite_->Update();
 		pressSprite_->Update();
+		fadeSprite_->Update();
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)){
+			isFade_ = true;
+			
+			
+		}
+		if (isFade_){
+			fadeAlpha_ += 0.01f;
+		}
+		if (fadeAlpha_>=1.0f){
 			audio_->StopWave(titleBGM);
 			sceneNum_ = SceneName::GAME;
 		}
@@ -134,14 +152,18 @@ void GameScene::Update(){
 		/*if (input_->Trigerkey(DIK_1)){
 			sceneNum_ = SceneName::CLEAR;
 		}*/
-
+		fadeSprite_->Update();
 		followCamera_->Update();
-		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
+		fadeAlpha_ -= 0.01f;
+		if (fadeAlpha_<=0.0f){
+			lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
 
-		player_->Update();
-		for (const auto& enemy : enemies_) {
-			enemy->Update();
+			player_->Update();
+			for (const auto& enemy : enemies_) {
+				enemy->Update();
+			}
 		}
+		
 
 		
 
@@ -159,13 +181,22 @@ void GameScene::Update(){
 			enemy->Respawn({ 0, 2.0f, 20.0f });
 		}
 		
+		fadeAlpha_ = 0.0f;
+		isFade_ = false;
+
 		player_->Respawn();
 		break;
 	default:
 		assert(0);
 	}
+	fadeSprite_->color_.w = fadeAlpha_;
 	
-	
+	if (fadeAlpha_>=1.0f){
+		fadeAlpha_ = 1.0f;
+	}
+	else if (fadeAlpha_ <= 0.0f) {
+		fadeAlpha_ = 0.0f;
+	}
 }
 
 void GameScene::AudioDataUnLoad(){
@@ -230,8 +261,10 @@ void GameScene::Draw2D(){
 	case SceneName::TITLE:
 		titleSprite_->Draw(textureManager_->SendGPUDescriptorHandle(12));
 		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
+		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
 		break;
 	case SceneName::GAME:
+		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
 		lockOn_->Draw(textureManager_.get());
 		break;
 	case SceneName::CLEAR:
@@ -254,6 +287,8 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
+	switch (sceneNum_) {
+	case SceneName::TITLE:
 	ImGui::Begin("BGM関連");
 	if (ImGui::Button("音源の復活")){
 		titleBGM = audio_->SoundPlayWave(titleBGM, 0.5f);
@@ -271,71 +306,84 @@ void GameScene::DrawImgui(){
 		audio_->ResumeWave(titleBGM);
 	}
 	ImGui::End();
+		break;
+	case SceneName::GAME:
+		player_->DrawImgui();
+		followCamera_->DrawImgui();
+		lockOn_->DrawImgui();
 
-	ImGui::Begin("タイトルシーンのスプライト");
+		ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu("オブジェクトの生成")) {
+				if (ImGui::TreeNode("床生成")) {
+					ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
+					ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
+					ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
+
+					ImGui::Checkbox("動く床にする", &isFloorMove_);
+
+					if (ImGui::Button("床の追加")) {
+						floorManager_->AddFloor(firstFloor_, isFloorMove_);
+					}
+					ImGui::TreePop();
+				}
+
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("オブジェクト一覧")) {
+				if (ImGui::BeginMenu("床一覧")) {
+					floorManager_->DrawImgui();
+					ImGui::EndMenu();
+				}
+
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("ファイル関連")) {
+				for (size_t i = 0; i < stages_.size(); i++) {
+					if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
+						stageName_ = stages_[stageSelect_].c_str();
+					}
+
+				}
+				if (ImGui::Button("jsonファイルを作る")) {
+					FilesSave(stages_);
+				}
+				if (ImGui::Button("上書きセーブ")) {
+					FilesOverWrite(stageName_);
+				}
+
+				if (ImGui::Button("全ロード(手動)")) {
+					FilesLoad(stageName_);
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+		ImGui::End();
+		break;
+	case SceneName::CLEAR:
+		break;
+	default:
+		assert(0);
+	}
+
+	ImGui::Begin("スプライト");
 	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
 	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
 	ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
-	player_->DrawImgui();
-	followCamera_->DrawImgui();
-	lockOn_->DrawImgui();
 	//particle_->DrawImgui("ステージパーティクル");
-	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
-
-	if (ImGui::BeginMenuBar()) {
-		if (ImGui::BeginMenu("オブジェクトの生成")) {
-			if (ImGui::TreeNode("床生成")) {
-				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
-				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
-				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
-
-				ImGui::Checkbox("動く床にする", &isFloorMove_);
-
-				if (ImGui::Button("床の追加")) {
-					floorManager_->AddFloor(firstFloor_, isFloorMove_);
-				}
-				ImGui::TreePop();
-			}
-
-
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("オブジェクト一覧")) {
-			if (ImGui::BeginMenu("床一覧")) {
-				floorManager_->DrawImgui();
-				ImGui::EndMenu();
-			}
-
-
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("ファイル関連")) {
-			for (size_t i = 0; i < stages_.size(); i++) {
-				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
-					stageName_ = stages_[stageSelect_].c_str();
-				}
-
-			}
-			if (ImGui::Button("jsonファイルを作る")) {
-				FilesSave(stages_);
-			}
-			if (ImGui::Button("上書きセーブ")) {
-				FilesOverWrite(stageName_);
-			}
-
-			if (ImGui::Button("全ロード(手動)")) {
-				FilesLoad(stageName_);
-			}
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMenuBar();
-	}
-	ImGui::End();
+	
 
 
 #endif // _DEBUG	

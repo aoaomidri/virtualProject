@@ -11,21 +11,20 @@ void Enemy::ApplyGlobalVariables(){
 }
 
 void Enemy::Initialize(const Vector3& position){
-	model_ = std::make_unique<Object3D>();
-	model_->Initialize();	
-
-	partsModel_ = std::make_unique<Object3D>();
-	partsModel_->Initialize();	
-
 	enemyModel_ = Model::LoadObjFile("Enemy");
 
 	partsModel_ = Model::LoadObjFile("EnemyParts");
 
 	particleModel_ = Model::LoadObjFile("box");
+
+	bodyObj_ = std::make_unique<Object3D>();
+	bodyObj_->Initialize();
+	partsObj_ = std::make_unique<Object3D>();
+	partsObj_->Initialize();
+
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
-		particleObj_[i]->Initialize(device, commandList);
-		particleObj_[i]->SetModel(particleModel_);
+		particleObj_[i]->Initialize();
 	}
 
 	/*collisionModel_ = std::make_unique<Object3D>();
@@ -58,6 +57,10 @@ void Enemy::Initialize(const Vector3& position){
 	
 	bodyObj_->SetModel(enemyModel_);
 	partsObj_->SetModel(partsModel_);
+	for (int i = 0; i < 20; i++) {
+		particleObj_[i]->SetModel(particleModel_);
+	}
+	
 
 	isDead_ = false;
 	isParticle_ = true;

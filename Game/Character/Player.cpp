@@ -1,7 +1,7 @@
 #include "Player.h"
 #include"LockOn.h"
 #include"ImGuiManager.h"
-#include"Ease.h"
+#include"Ease/Ease.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {
@@ -46,7 +46,7 @@ void Player::Initialize(){
 	weaponCollisionObj_->Initialize();
 
 	particle_ = std::make_unique<ParticleBase>();
-	particle_->Initialize(device, commandList);
+	particle_->Initialize();
 
 	playerModel_ = Model::LoadObjFile("box");
 
@@ -123,7 +123,7 @@ void Player::Update(){
 		BehaviorAttackUpdate();
 		break;
 	case Behavior::kStrongAttack:
-		BehaviorStrongAttackUpdate(input);
+		BehaviorStrongAttackUpdate(input_);
 		break;
 	case Behavior::kDash:
 		BehaviorDashUpdate();
@@ -301,8 +301,8 @@ void Player::BehaviorRootUpdate(){
 	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_B) && !isDown_) {
-		workAttack_.comboIndex_ = 0;
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_X) && !isDown_) {
+		workAttack_.comboIndex_ = 1;
 		behaviorRequest_ = Behavior::kAttack;
 	}
 	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_Y) && !isDown_) {
@@ -494,11 +494,11 @@ void Player::BehaviorAttackUpdate(){
 	}
 	//コンボ上限に達していない
 	if (workAttack_.comboIndex_< ConboNum) {
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
+		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
 			//コンボ有効
 			workAttack_.comboNext_ = true;
 		}
-		else if (input->GetPadButtonDown(XINPUT_GAMEPAD_Y)) {
+		else if (input_->GetPadButtonDown(XINPUT_GAMEPAD_Y)) {
 			//強コンボ派生有効
 			workAttack_.strongComboNext_ = true;
 		}

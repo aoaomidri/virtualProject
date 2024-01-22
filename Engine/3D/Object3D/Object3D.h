@@ -31,7 +31,7 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
-	void SetModel(Model* model) { this->model_ = model; }
+	void SetModel(Model* model) { model_ = model; }
 
 	const Vector3& GetPosition()const { return position_; }
 

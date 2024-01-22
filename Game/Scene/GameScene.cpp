@@ -65,7 +65,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	player_->Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), { 0,2.0f,20.0f });
+	enemy_->Initialize({ 0,2.0f,20.0f });
 	enemies_.push_back(std::move(enemy_));
 
 	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
@@ -131,10 +131,10 @@ void GameScene::Update(){
 			sceneNum_ = SceneName::CLEAR;
 		}*/
 
-		followCamera_->Update(input_);
+		followCamera_->Update();
 		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
 
-		player_->Update(input_);
+		player_->Update();
 		for (const auto& enemy : enemies_) {
 			enemy->Update();
 		}

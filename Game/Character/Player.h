@@ -76,7 +76,7 @@ private:
 	// 通常行動更新
 	void BehaviorRootUpdate();
 	//攻撃行動更新
-	void BehaviorAttackUpdate(Input* input);
+	void BehaviorAttackUpdate();
 
 	void BehaviorAllStrongAttackInitialize();
 

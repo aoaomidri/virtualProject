@@ -102,7 +102,7 @@ private:
 		.translate = {0.0f,0.0f,0.0f}
 	};
 
-
+	Input* input_ = nullptr;
 
 	//音関係
 	Audio* audio_ = nullptr;

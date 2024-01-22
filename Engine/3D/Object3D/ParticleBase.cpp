@@ -234,7 +234,7 @@ void ParticleBase::DrawImgui(const std::string& imguiTag){
 
 		ImGui::TreePop();
 	}
-	ImGui::End();*/
+	ImGui::End();
 
 }
 

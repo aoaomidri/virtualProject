@@ -58,7 +58,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 }
 
 void Model::Finalize(){
-	device_->Release();
+	//device_->Release();
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes){

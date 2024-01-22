@@ -30,7 +30,7 @@ void TextureManager::Initialize() {
 }
 
 void TextureManager::Finalize() {
-	device_->Release();
+	//device_->Release();
 }
 
 

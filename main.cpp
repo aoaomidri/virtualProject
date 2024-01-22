@@ -20,11 +20,12 @@ struct D3DResourceLeakChecker {
 	}
 };
 
+static D3DResourceLeakChecker leakCheck;
+
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//CoInitializeEx(0, COINIT_MULTITHREADED);
 
-	D3DResourceLeakChecker leakCheck;
 
 	WinApp* window_ = WinApp::GetInstance();
 	window_->Initialize();

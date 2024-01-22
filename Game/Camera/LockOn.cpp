@@ -5,9 +5,9 @@ void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	lockOnMark_->Initialize(device, commandList);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });
-	lockOnMark_->SetAnchorPoint({ 1.0f,1.0f });
-	lockOnMark_->SetSize({ 64.0f,64.0f });
-	lockOnMark_->SetScale({ 64.0f,64.0f });
+	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
+	lockOnMark_->SetSize({ 512.0f,512.0f });
+	lockOnMark_->SetScale({ 96.0f,96.0f });
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
@@ -97,6 +97,15 @@ void LockOn::Draw(TextureManager* textureManager){
 		lockOnMark_->Draw(textureManager->SendGPUDescriptorHandle(8));
 	}
 	
+}
+
+void LockOn::DrawImgui(){
+	ImGui::Begin("ロックオンテクスチャ");
+	ImGui::DragFloat2("スケール", &lockOnMark_->scale_.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("サイズ", &lockOnMark_->textureSize_.x, 1.0f, 0.0f, 1280.0f);
+
+	ImGui::End();
+
 }
 
 void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){

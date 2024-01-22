@@ -250,69 +250,70 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
-	//ImGui::Begin("タイトルシーンのスプライト");
-	//ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
-	//ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
-	//ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	//ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
-	//ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
-	//ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	//ImGui::End();
-	//player_->DrawImgui();
-	//followCamera_->DrawImgui();
-	////particle_->DrawImgui("ステージパーティクル");
-	//ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("タイトルシーンのスプライト");
+	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+	player_->DrawImgui();
+	followCamera_->DrawImgui();
+	lockOn_->DrawImgui();
+	//particle_->DrawImgui("ステージパーティクル");
+	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
-	//if (ImGui::BeginMenuBar()) {
-	//	if (ImGui::BeginMenu("オブジェクトの生成")) {
-	//		if (ImGui::TreeNode("床生成")) {
-	//			ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
-	//			ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
-	//			ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("オブジェクトの生成")) {
+			if (ImGui::TreeNode("床生成")) {
+				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
+				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
+				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
 
-	//			ImGui::Checkbox("動く床にする", &isFloorMove_);
+				ImGui::Checkbox("動く床にする", &isFloorMove_);
 
-	//			if (ImGui::Button("床の追加")) {
-	//				floorManager_->AddFloor(firstFloor_, isFloorMove_);
-	//			}
-	//			ImGui::TreePop();
-	//		}
-
-
-	//		ImGui::EndMenu();
-	//	}
-	//	if (ImGui::BeginMenu("オブジェクト一覧")) {
-	//		if (ImGui::BeginMenu("床一覧")) {
-	//			floorManager_->DrawImgui();
-	//			ImGui::EndMenu();
-	//		}
+				if (ImGui::Button("床の追加")) {
+					floorManager_->AddFloor(firstFloor_, isFloorMove_);
+				}
+				ImGui::TreePop();
+			}
 
 
-	//		ImGui::EndMenu();
-	//	}
-	//	if (ImGui::BeginMenu("ファイル関連")) {
-	//		for (size_t i = 0; i < stages_.size(); i++) {
-	//			if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
-	//				stageName_ = stages_[stageSelect_].c_str();
-	//			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("オブジェクト一覧")) {
+			if (ImGui::BeginMenu("床一覧")) {
+				floorManager_->DrawImgui();
+				ImGui::EndMenu();
+			}
 
-	//		}
-	//		if (ImGui::Button("jsonファイルを作る")) {
-	//			FilesSave(stages_);
-	//		}
-	//		if (ImGui::Button("上書きセーブ")) {
-	//			FilesOverWrite(stageName_);
-	//		}
 
-	//		if (ImGui::Button("全ロード(手動)")) {
-	//			FilesLoad(stageName_);
-	//		}
-	//		ImGui::EndMenu();
-	//	}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("ファイル関連")) {
+			for (size_t i = 0; i < stages_.size(); i++) {
+				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
+					stageName_ = stages_[stageSelect_].c_str();
+				}
 
-	//	ImGui::EndMenuBar();
-	//}
-	//ImGui::End();
+			}
+			if (ImGui::Button("jsonファイルを作る")) {
+				FilesSave(stages_);
+			}
+			if (ImGui::Button("上書きセーブ")) {
+				FilesOverWrite(stageName_);
+			}
+
+			if (ImGui::Button("全ロード(手動)")) {
+				FilesLoad(stageName_);
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
+	ImGui::End();
 
 
 #endif // _DEBUG	
@@ -387,8 +388,8 @@ void GameScene::FilesLoad(const std::string& stage) {
 }
 
 bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
-	static Vector3 vector;
-	static Matrix matrix;
+	Vector3 vector{};
+	Matrix matrix;
 
 	Vector3 separatingAxis[15]{};
 	separatingAxis[0] = obb1.orientations[0];
@@ -405,55 +406,55 @@ bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
 		}
 	}
 
-	Vector3 obb1Vetyex[8]{};
+	Vector3 obb1Vertex[8]{};
 	// bottom
-	obb1Vetyex[0] = Vector3{ -obb1.size.x, -obb1.size.y, -obb1.size.z };
-	obb1Vetyex[1] = Vector3{ +obb1.size.x, -obb1.size.y, -obb1.size.z };
-	obb1Vetyex[2] = Vector3{ -obb1.size.x, -obb1.size.y, +obb1.size.z };
-	obb1Vetyex[3] = Vector3{ +obb1.size.x, -obb1.size.y, +obb1.size.z };
+	obb1Vertex[0] = Vector3{ -obb1.size.x, -obb1.size.y, -obb1.size.z };
+	obb1Vertex[1] = Vector3{ +obb1.size.x, -obb1.size.y, -obb1.size.z };
+	obb1Vertex[2] = Vector3{ -obb1.size.x, -obb1.size.y, +obb1.size.z };
+	obb1Vertex[3] = Vector3{ +obb1.size.x, -obb1.size.y, +obb1.size.z };
 	// top
-	obb1Vetyex[4] = Vector3{ -obb1.size.x, +obb1.size.y, -obb1.size.z };
-	obb1Vetyex[5] = Vector3{ +obb1.size.x, +obb1.size.y, -obb1.size.z };
-	obb1Vetyex[6] = Vector3{ -obb1.size.x, +obb1.size.y, +obb1.size.z };
-	obb1Vetyex[7] = Vector3{ +obb1.size.x, +obb1.size.y, +obb1.size.z };
+	obb1Vertex[4] = Vector3{ -obb1.size.x, +obb1.size.y, -obb1.size.z };
+	obb1Vertex[5] = Vector3{ +obb1.size.x, +obb1.size.y, -obb1.size.z };
+	obb1Vertex[6] = Vector3{ -obb1.size.x, +obb1.size.y, +obb1.size.z };
+	obb1Vertex[7] = Vector3{ +obb1.size.x, +obb1.size.y, +obb1.size.z };
 
 	Matrix4x4 rotateMatrix1 = GetRotate(obb1);
 
-	Vector3 obb2Vetyex[8]{};
+	Vector3 obb2Vertex[8]{};
 	// bottom
-	obb2Vetyex[0] = Vector3{ -obb2.size.x, -obb2.size.y, -obb2.size.z };
-	obb2Vetyex[1] = Vector3{ +obb2.size.x, -obb2.size.y, -obb2.size.z };
-	obb2Vetyex[2] = Vector3{ -obb2.size.x, -obb2.size.y, +obb2.size.z };
-	obb2Vetyex[3] = Vector3{ +obb2.size.x, -obb2.size.y, +obb2.size.z };
+	obb2Vertex[0] = Vector3{ -obb2.size.x, -obb2.size.y, -obb2.size.z };
+	obb2Vertex[1] = Vector3{ +obb2.size.x, -obb2.size.y, -obb2.size.z };
+	obb2Vertex[2] = Vector3{ -obb2.size.x, -obb2.size.y, +obb2.size.z };
+	obb2Vertex[3] = Vector3{ +obb2.size.x, -obb2.size.y, +obb2.size.z };
 	// top
-	obb2Vetyex[4] = Vector3{ -obb2.size.x, +obb2.size.y, -obb2.size.z };
-	obb2Vetyex[5] = Vector3{ +obb2.size.x, +obb2.size.y, -obb2.size.z };
-	obb2Vetyex[6] = Vector3{ -obb2.size.x, +obb2.size.y, +obb2.size.z };
-	obb2Vetyex[7] = Vector3{ +obb2.size.x, +obb2.size.y, +obb2.size.z };
+	obb2Vertex[4] = Vector3{ -obb2.size.x, +obb2.size.y, -obb2.size.z };
+	obb2Vertex[5] = Vector3{ +obb2.size.x, +obb2.size.y, -obb2.size.z };
+	obb2Vertex[6] = Vector3{ -obb2.size.x, +obb2.size.y, +obb2.size.z };
+	obb2Vertex[7] = Vector3{ +obb2.size.x, +obb2.size.y, +obb2.size.z };
 
 	Matrix4x4 rotateMatrix2 = GetRotate(obb2);
 
 	for (int index = 0; index < 8; index++) {
-		obb1Vetyex[index] = matrix.TransformVec(obb1Vetyex[index], rotateMatrix1);
-		obb1Vetyex[index] = (obb1Vetyex[index] + obb1.center);
-		obb2Vetyex[index] = matrix.TransformVec(obb2Vetyex[index], rotateMatrix2);
-		obb2Vetyex[index] = (obb2Vetyex[index] + obb2.center);
+		obb1Vertex[index] = matrix.TransformVec(obb1Vertex[index], rotateMatrix1);
+		obb1Vertex[index] = (obb1Vertex[index] + obb1.center);
+		obb2Vertex[index] = matrix.TransformVec(obb2Vertex[index], rotateMatrix2);
+		obb2Vertex[index] = (obb2Vertex[index] + obb2.center);
 	}
 
 	for (axisNum = 0; axisNum < 15; axisNum++) {
-		float projectionPoint1[8];
-		float projectionPoint2[8];
+		float projectionPoint1[8]{};
+		float projectionPoint2[8]{};
 		float min1, max1;
 		float min2, max2;
-		min1 = vector.Dot(obb1Vetyex[0], vector.Normalize(separatingAxis[axisNum]));
-		min2 = vector.Dot(obb2Vetyex[0], vector.Normalize(separatingAxis[axisNum]));
+		min1 = vector.Dot(obb1Vertex[0], vector.Normalize(separatingAxis[axisNum]));
+		min2 = vector.Dot(obb2Vertex[0], vector.Normalize(separatingAxis[axisNum]));
 		max1 = min1;
 		max2 = min2;
 		for (int index = 0; index < 8; index++) {
 			projectionPoint1[index] =
-				vector.Dot(obb1Vetyex[index], vector.Normalize(separatingAxis[axisNum]));
+				vector.Dot(obb1Vertex[index], vector.Normalize(separatingAxis[axisNum]));
 			projectionPoint2[index] =
-				vector.Dot(obb2Vetyex[index], vector.Normalize(separatingAxis[axisNum]));
+				vector.Dot(obb2Vertex[index], vector.Normalize(separatingAxis[axisNum]));
 			if (index == 0) {
 				min1 = projectionPoint1[index];
 				min2 = projectionPoint2[index];

@@ -23,6 +23,8 @@ public:
 	/// </summary>
 	void Draw(TextureManager* textureManager);
 
+	void DrawImgui();
+
 	bool IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewingFrustum);
 
 	bool IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum);

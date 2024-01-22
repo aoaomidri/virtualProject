@@ -11,7 +11,7 @@ void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_START)) {
+	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
 			
@@ -24,7 +24,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}
 	if (autoLockOn_) {
 		lockOnMark_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			isLockOn_ = true;
 		}
 	}
@@ -33,14 +33,14 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}
 
 	if (target_){
-		if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			target_ = nullptr;
 			isLockOn_ = false;
 		}
 		else if (!InTarget(target_->GetOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
 		}
-		else if (!autoLockOn_ && input->GetPadButtonDown(XINPUT_GAMEPAD_DPAD_RIGHT)) {
+		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT)) {
 			
 			++it;
 			if (it == targets.end()) {
@@ -51,7 +51,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}	
 	else {
 		if (!autoLockOn_){
-			if (input->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 				search(enemies, viewprojection, viewingFrustum);
 			}
 

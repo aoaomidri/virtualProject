@@ -59,9 +59,9 @@ public:
 	//コントローラー
 	bool GetPadButton(UINT button);
 
-	bool GetPadButtonUp(UINT button);
+	bool GetPadButtonRelease(UINT button);
 
-	bool GetPadButtonDown(UINT button);
+	bool GetPadButtonTriger(UINT button);
 
 	Vector2 GetPadLStick();
 

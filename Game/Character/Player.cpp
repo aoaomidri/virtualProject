@@ -276,7 +276,7 @@ void Player::BehaviorRootUpdate(){
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && !isDown_) {
 		downVector.y += jumpPower;
 		
 	}
@@ -298,14 +298,14 @@ void Player::BehaviorRootUpdate(){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_X) && !isDown_) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
 		workAttack_.comboIndex_ = 1;
 		behaviorRequest_ = Behavior::kAttack;
 	}
-	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_Y) && !isDown_) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !isDown_) {
 		workAttack_.comboIndex_ = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
 	}
@@ -494,11 +494,11 @@ void Player::BehaviorAttackUpdate(){
 	}
 	//コンボ上限に達していない
 	if (workAttack_.comboIndex_< ConboNum) {
-		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_X)) {
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 			//コンボ有効
 			workAttack_.comboNext_ = true;
 		}
-		else if (input_->GetPadButtonDown(XINPUT_GAMEPAD_Y)) {
+		else if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
 			//強コンボ派生有効
 			workAttack_.strongComboNext_ = true;
 		}
@@ -922,7 +922,7 @@ void Player::StrongAttackMotion(Input* input){
 			weaponTransform_.scale += {0.005f, 0.005f, 0.005f};
 			weaponCollisionTransform_.scale += {0.0f, 0.02f, 0.0f};
 		}
-		if (weaponTransform_.scale.x>0.6|| input->GetPadButtonUp(XINPUT_GAMEPAD_Y)){
+		if (weaponTransform_.scale.x>0.6|| input->GetPadButtonRelease(XINPUT_GAMEPAD_Y)){
 			chargeEnd_ = true;
 		}
 

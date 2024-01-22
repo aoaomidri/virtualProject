@@ -69,7 +69,7 @@ void FollowCamera::Update(){
 			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
 			postureVec_.y = 0.0f;
 			postureVec_ = Vector3::Normalize(postureVec_);
-			if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_THUMB)) {
+			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_THUMB)) {
 				destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
 				destinationAngleX_ = 0.2f;
 			}

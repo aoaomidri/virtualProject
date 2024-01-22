@@ -93,7 +93,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 #ifdef _DEBUG
-		
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_BACK)) {
+			break;
+		}
+
 #endif // DEBUG_
 
 

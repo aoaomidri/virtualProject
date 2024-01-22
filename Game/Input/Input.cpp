@@ -165,12 +165,12 @@ bool Input::GetPadButton(UINT button)
 	return xinputState.Gamepad.wButtons == button;
 }
 
-bool Input::GetPadButtonUp(UINT button)
+bool Input::GetPadButtonRelease(UINT button)
 {
 	return xinputState.Gamepad.wButtons != button && oldXInputState.Gamepad.wButtons == button;
 }
 
-bool Input::GetPadButtonDown(UINT button)
+bool Input::GetPadButtonTriger(UINT button)
 {
 	return xinputState.Gamepad.wButtons == button && oldXInputState.Gamepad.wButtons != button;
 }

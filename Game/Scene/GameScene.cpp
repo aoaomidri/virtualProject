@@ -2,21 +2,22 @@
 #include"Matrix.h"
 #include <cassert>
 void GameScene::TextureLoad() {
-	textureManager_->Load("resources/uvChecker.png");
-	textureManager_->Load("resources/rock.png");
-	textureManager_->Load("resources/Floor.png");
-	textureManager_->Load("resources/Road.png");
-	textureManager_->Load("resources/Sky.png");
+	textureManager_->Load("resources/texture/uvChecker.png");
+	textureManager_->Load("resources/texture/rock.png");
+	textureManager_->Load("resources/texture/Floor.png");
+	textureManager_->Load("resources/texture/Road.png");
+	textureManager_->Load("resources/texture/Sky.png");
 	textureManager_->Load("resources/Enemy/EnemyTex.png");
 	textureManager_->Load("resources/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Weapon/Sword.png");
-	textureManager_->Load("resources/Magic.png");
-	textureManager_->Load("resources/Black.png");
-	textureManager_->Load("resources/circle.png");
-	textureManager_->Load("resources/monsterBall.png");
-	textureManager_->Load("resources/title.png");
-	textureManager_->Load("resources/Press.png");
-	textureManager_->Load("resources/Clear.png");
+	textureManager_->Load("resources/texture/Magic.png");
+	textureManager_->Load("resources/texture/Black.png");
+	textureManager_->Load("resources/texture/circle.png");
+	textureManager_->Load("resources/texture/monsterBall.png");
+	textureManager_->Load("resources/texture/title.png");
+	textureManager_->Load("resources/texture/Press.png");
+	textureManager_->Load("resources/texture/Clear.png");
+	textureManager_->Load("resources/texture/Whitex64.png");
 }
 
 void GameScene::SoundLoad(){
@@ -122,7 +123,7 @@ void GameScene::Update(){
 
 		titleSprite_->Update();
 		pressSprite_->Update();
-		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)){
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)){
 			sceneNum_ = SceneName::GAME;
 		}
 		break;
@@ -148,7 +149,7 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		clearSprite_->Update();
-		if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A)) {
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			sceneNum_ = SceneName::TITLE;
 		}
 		for (const auto& enemy : enemies_) {

@@ -1,10 +1,10 @@
 #pragma once
-#include"../../Engine/Base/WinApp.h"
+#include"WinApp.h"
 #include<wrl.h>
 #define DIRECTINPUT_VERSION  0x0800
 #include<dinput.h>
 #include<Xinput.h>
-#include"../../math/Vector2.h"
+#include"Vector2.h"
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -17,6 +17,8 @@ public:
 public:
 	Input() = default;
 	~Input() = default;
+	Input(const Input& input) = delete;
+	Input& operator=(const Input&) = delete;
 
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -26,7 +28,7 @@ public:
 	static Input* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* winapp);
+	void Initialize();
 	//更新
 	void Update();
 

@@ -3,8 +3,7 @@
 #include<variant>
 #include<string>
 #include<map>
-#include"../../externals/imgui/imgui.h"
-#include"../../math/Matrix.h"
+#include"Matrix.h"
 
 class Adjustment_Item final {
 public:

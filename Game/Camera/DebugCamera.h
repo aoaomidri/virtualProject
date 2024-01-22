@@ -1,5 +1,5 @@
 #pragma once
-#include"../../math/Matrix.h"
+#include"Matrix.h"
 class DebugCamera {
 public:
 	/// <summary>

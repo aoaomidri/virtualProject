@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include<array>
-#include"../Base/GraphicsPipeline.h"
+#include"GraphicsPipeline.h"
 #include"Texture.h"
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -12,8 +12,7 @@ public:
 	//TextureManager();
 	~TextureManager();
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, 
-		ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap);
+	void Initialize();
 
 	void Finalize();
 	
@@ -27,7 +26,9 @@ public:
 
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
-	void Load(const std::string& filePath, uint32_t index);
+	//void Load(const std::string& filePath, uint32_t index);
+
+	void Load(const std::string& filePath);
 
 	void MakeInstancingShaderResourceView(ID3D12Resource* resource);
 
@@ -51,19 +52,17 @@ private:
 
 	//	TextureResourceにデータを転送する
 	[[nodiscard]] ComPtr<ID3D12Resource> UploadTextureData(
-		ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages,
-		ComPtr<ID3D12Device> device, ComPtr<ID3D12GraphicsCommandList> commandList);
+		ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages
+		);
 
-	ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
-	ComPtr<ID3D12Resource> CreateTextureResource(ComPtr<ID3D12Device> device, const DirectX::TexMetadata& metadata);
+	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap,
 		uint32_t descriptorSize, uint32_t index);
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap,
 		uint32_t descriptorSize, uint32_t index);
 
 private:
@@ -75,9 +74,6 @@ private:
 
 	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> intermediateBuffers_;
 
-
-	ID3D12Device* device_ = nullptr;
-	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
@@ -102,13 +98,15 @@ private:
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
 
 	//SRV
-	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
-
+	ID3D12Device* device_ = nullptr;
 
 private:
 	/// <summary>
-	/// Textureのコンテナ(キー値: ファイルネーム  コンテナデータ型: Texture*)
+	/// Textureのコンテナ(キー値: ファイルネーム,番号);
 	/// </summary>
-
+	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst> textureArray_;
 	
+	size_t slashPos_;
+	size_t dotPos_;
+
 };

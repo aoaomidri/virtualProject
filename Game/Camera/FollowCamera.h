@@ -1,9 +1,9 @@
 #pragma once
-#include"../../Engine/3D/Transform.h"
-#include"../Input/Input.h"
-#include"../Item/Adjustment_Item.h"
-#include"../../Engine/3D/ViewProjection.h"
-#include"../../math/Matrix.h"
+#include"Transform.h"
+#include"Input.h"
+#include"Adjustment_Item.h"
+#include"ViewProjection.h"
+#include"Matrix.h"
 
 //前方宣言
 class LockOn;
@@ -22,7 +22,7 @@ class FollowCamera{
 public:
 	void Initialize();
 
-	void Update(Input* input_);
+	void Update();
 
 	void Reset();
 
@@ -119,5 +119,7 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	//入力
+	Input* input_ = nullptr;
 };
 

@@ -10,12 +10,12 @@ void Enemy::ApplyGlobalVariables(){
 
 }
 
-void Enemy::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position){
-	bodyObj_ = std::make_unique<Object3D>();
-	bodyObj_->Initialize(device, commandList);	
+void Enemy::Initialize(const Vector3& position){
+	model_ = std::make_unique<Object3D>();
+	model_->Initialize();	
 
-	partsObj_ = std::make_unique<Object3D>();
-	partsObj_->Initialize(device, commandList);
+	partsModel_ = std::make_unique<Object3D>();
+	partsModel_->Initialize();	
 
 	enemyModel_ = Model::LoadObjFile("Enemy");
 

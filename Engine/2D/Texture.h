@@ -1,8 +1,8 @@
 #pragma once
 #include"../../externals/DirectXTex/DirectXTex.h"
 #include"../../externals/DirectXTex/d3dx12.h"
-#include"../../math/Matrix.h"
-#include"../../Engine/Base/Log.h"
+#include"Matrix.h"
+#include"Log.h"
 #include<wrl.h>
 
 

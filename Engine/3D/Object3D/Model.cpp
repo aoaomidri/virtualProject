@@ -1,4 +1,5 @@
 #include "Model.h"
+#include"DirectXCommon.h"
 #include<cassert>
 #include<fstream>
 #include<sstream>
@@ -54,6 +55,10 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	//4,MaterialDataを返す
 	return materialData;
 	
+}
+
+void Model::Finalize(){
+	//device_->Release();
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes){

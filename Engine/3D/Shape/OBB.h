@@ -1,6 +1,6 @@
 #pragma once
 #pragma once
-#include "../../../math/Matrix.h"
+#include "Matrix.h"
 #include <stdint.h>
 struct OBB
 {

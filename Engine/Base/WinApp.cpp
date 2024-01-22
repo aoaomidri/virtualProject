@@ -7,6 +7,11 @@
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"winmm.lib")
 
+WinApp* WinApp::GetInstance(){
+	static WinApp instance;
+	return &instance;
+}
+
 void WinApp::Initialize() {
 	// COM初期化
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);

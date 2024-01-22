@@ -12,8 +12,10 @@
 
 class DirectXCommon{
 public:
-	DirectXCommon();
-	~DirectXCommon();
+	DirectXCommon() = default;
+	~DirectXCommon() = default;
+	DirectXCommon(const DirectXCommon& DirectXCommon) = delete;
+	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
 
 	//namespace省略
@@ -22,13 +24,15 @@ public:
 	static DirectXCommon* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* winapp);
+	void Initialize();
 
 	//描画前処理
 	void PreDraw();
 
 	//描画後処理
 	void PostDraw();
+
+	void Finalize();
 
 	/*void SpritePreDraw();
 

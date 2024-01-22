@@ -1,4 +1,6 @@
 #include "FloorManager.h"
+#include"DirectXCommon.h"
+
 FloorManager::~FloorManager(){
 	delete floorModel_;
 	// 解放
@@ -13,15 +15,8 @@ FloorManager::~FloorManager(){
 	objects_.clear();
 }
 
-void FloorManager::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+void FloorManager::Initialize() {
 	
-	// nullポインタチェック
-	device_ = device;
-
-	commandList_ = commandList;
-
-	Model::SetDevice(device);
-
 	floorModel_ = Model::LoadObjFile("box");
 }
 
@@ -56,7 +51,7 @@ void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& vi
 
 void FloorManager::AddFloor(Transform transform, bool isMoving){
 	Object3D* object_ = new Object3D();
-	object_->Initialize(device_, commandList_);
+	object_->Initialize();
 	objects_.push_back(object_);
 
 	Floor* floor = new Floor();
@@ -71,11 +66,11 @@ void FloorManager::DrawImgui() {
 	int i = 0;
 
 	for (Floor* floor : floors_) {
-		if (ImGui::TreeNode((std::to_string(i + 1) + "個目の床").c_str())) {
+		/*if (ImGui::TreeNode((std::to_string(i + 1) + "個目の床").c_str())) {
 			floor->DrawImgui();
 
 			ImGui::TreePop();
-		}
+		}*/
 		i++;
 	}
 }

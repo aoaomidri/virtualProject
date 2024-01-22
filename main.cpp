@@ -1,9 +1,10 @@
-#include"Game/Input/Input.h"
-#include"Engine/Base/WinApp.h"
-#include"Engine/Base/DirectXCommon.h"
-#include"Game/Scene/GameScene.h"
-#include "Game/Item/Adjustment_Item.h"
-#include"Game/random/RandomMaker.h"
+#include"Input.h"
+#include"WinApp.h"
+#include"DirectXCommon.h"
+#include"GameScene.h"
+#include"Adjustment_Item.h"
+#include"RandomMaker.h"
+#include"ImGuiManager.h"
 #include <cassert>
 
 struct D3DResourceLeakChecker {
@@ -19,21 +20,25 @@ struct D3DResourceLeakChecker {
 	}
 };
 
+static D3DResourceLeakChecker leakCheck;
+
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//CoInitializeEx(0, COINIT_MULTITHREADED);
 
-	D3DResourceLeakChecker leakCheck;
 
-	auto window_ = std::make_unique<WinApp>();
+	WinApp* window_ = WinApp::GetInstance();
 	window_->Initialize();
 
 	/*キー入力の初期化処理*/
-	auto input_ = std::make_unique<Input>();
-	input_->Initialize(window_.get());
+	Input* input_ = Input::GetInstance();
+	input_->Initialize();
 
-	auto dxCommon_ = std::make_unique<DirectXCommon>();
-	dxCommon_->Initialize(window_.get());
+	auto dxCommon_ = DirectXCommon::GetInstance();
+	dxCommon_->Initialize();
+
+	auto imguiManager_ = std::make_unique<ImGuiManager>();
+	imguiManager_->Initialize();
 
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 
@@ -47,8 +52,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Audio* audio_ = Audio::GetInstance();
 	audio_->Initialize();
 
+	
+
 	auto gameScene_ = std::make_unique<GameScene>();
-	gameScene_->Initialize(dxCommon_.get());
+	gameScene_->Initialize(dxCommon_);
 
 	
 
@@ -62,16 +69,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			break;
 		}
 		
-		dxCommon_->StartImgui();
+		imguiManager_->Begin();
 		//ゲームの処理
 
 		input_->Update();
 
 		//adjustment_item->Update();
 
-		gameScene_->Update(input_.get());
+		gameScene_->Update();
 		
-		dxCommon_->EndImgui();
+		imguiManager_->End();
 
 		dxCommon_->PreDraw();
 		//3D描画
@@ -79,6 +86,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		gameScene_->DrawParticle();
 		//2D描画
 		gameScene_->Draw2D();
+		imguiManager_->Draw();
 		dxCommon_->PostDraw();
 
 		if (input_->Trigerkey(DIK_ESCAPE)){
@@ -92,9 +100,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	}
 	CoUninitialize();
 
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	imguiManager_->Finalize();
+
+	Model::GetInstance()->Finalize();
 
 	audio_->Reset();
 
@@ -102,6 +110,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	gameScene_->Finalize();
 	window_->Finalize();
+	
 #ifdef _DEBUG
 	OutputDebugStringA("文字列リテラルを出力するよ\n");
 	std::string a("stringに埋め込んだ文字列を出力するよ\n");

@@ -1,22 +1,22 @@
 #include "GameScene.h"
-#include"../../math/Matrix.h"
+#include"Matrix.h"
 #include <cassert>
 void GameScene::TextureLoad() {
-	textureManager_->Load("resources/uvChecker.png", 0);
-	textureManager_->Load("resources/rock.png", 1);
-	textureManager_->Load("resources/Floor.png", 2);
-	textureManager_->Load("resources/Road.png", 3);
-	textureManager_->Load("resources/Sky.png", 4);
-	textureManager_->Load("resources/Enemy/EnemyTex.png", 5);
-	textureManager_->Load("resources/EnemyParts/EnemyParts.png", 6);
-	textureManager_->Load("resources/Weapon/Sword.png", 7);
-	textureManager_->Load("resources/Magic.png", 8);
-	textureManager_->Load("resources/Black.png", 9);
-	textureManager_->Load("resources/circle.png", 10);
-	textureManager_->Load("resources/monsterBall.png", 11);
-	textureManager_->Load("resources/title.png", 12);
-	textureManager_->Load("resources/Press.png", 13);
-	textureManager_->Load("resources/Clear.png", 14);
+	textureManager_->Load("resources/uvChecker.png");
+	textureManager_->Load("resources/rock.png");
+	textureManager_->Load("resources/Floor.png");
+	textureManager_->Load("resources/Road.png");
+	textureManager_->Load("resources/Sky.png");
+	textureManager_->Load("resources/Enemy/EnemyTex.png");
+	textureManager_->Load("resources/EnemyParts/EnemyParts.png");
+	textureManager_->Load("resources/Weapon/Sword.png");
+	textureManager_->Load("resources/Magic.png");
+	textureManager_->Load("resources/Black.png");
+	textureManager_->Load("resources/circle.png");
+	textureManager_->Load("resources/monsterBall.png");
+	textureManager_->Load("resources/title.png");
+	textureManager_->Load("resources/Press.png");
+	textureManager_->Load("resources/Clear.png");
 }
 
 void GameScene::SoundLoad(){
@@ -46,10 +46,10 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
 	audio_ = Audio::GetInstance();
+	input_ = Input::GetInstance();
 
 	textureManager_ = std::make_unique<TextureManager>();
-	textureManager_->Initialize(dxCommon_->GetDevice(),
-		dxCommon_->GetCommandList(), dxCommon_->GetSRVHeap());
+	textureManager_->Initialize();
 	TextureLoad();
 	SoundLoad();
 
@@ -57,12 +57,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	ObjectInitialize(dxCommon_);
 
 	floorManager_ = std::make_unique<FloorManager>();
-	floorManager_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	floorManager_->Initialize();
 
 	floorManager_->AddFloor(firstFloor_, false);
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
+	player_->Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), { 0,2.0f,20.0f });
@@ -112,7 +112,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	//audio_->SoundPlayWave(soundData1);
 }
 
-void GameScene::Update(Input* input_){
+void GameScene::Update(){
 	DrawImgui();
 	switch (sceneNum_){
 	case SceneName::TITLE:
@@ -245,6 +245,7 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
+	textureManager_->Finalize();
 }
 
 void GameScene::DrawImgui(){

@@ -1,7 +1,7 @@
 #include "Adjustment_Item.h"
 #include"../../externals/nlohmann/json.hpp"
 #include<fstream>
-#include"../../Engine/Base/WinApp.h"
+#include"WinApp.h"
 
 Adjustment_Item* Adjustment_Item::GetInstance() {
 	static Adjustment_Item inst;
@@ -11,58 +11,58 @@ Adjustment_Item* Adjustment_Item::GetInstance() {
 }
 
 void Adjustment_Item::Update() {
-	if (!ImGui::Begin("Adjustment_Item", nullptr, ImGuiWindowFlags_MenuBar)) {
-		ImGui::End();
-		return;
-	}
-	if (!ImGui::BeginMenuBar())
-		return;
-	//各グループについて
-	for (std::map<std::string, Group>::iterator itGroup = datas_.begin();
-		itGroup != datas_.end(); ++itGroup) {
-		//グループ名を取得
-		const std::string& groupName = itGroup->first;
-		//グループの参照を取得
-		Group& group = itGroup->second;
-		if (!ImGui::BeginMenu(groupName.c_str()))
-			continue;
-		//各項目について
-		for (std::map<std::string, Item>::iterator itItem = group.begin();
-			itItem != group.end(); ++itItem) {
-			//項目名を取得
-			const std::string& itemName = itItem->first;
-			//項目の参照を取得
-			Item& item = itItem->second;
+	//if (!ImGui::Begin("Adjustment_Item", nullptr, ImGuiWindowFlags_MenuBar)) {
+	//	ImGui::End();
+	//	return;
+	//}
+	//if (!ImGui::BeginMenuBar())
+	//	return;
+	////各グループについて
+	//for (std::map<std::string, Group>::iterator itGroup = datas_.begin();
+	//	itGroup != datas_.end(); ++itGroup) {
+	//	//グループ名を取得
+	//	const std::string& groupName = itGroup->first;
+	//	//グループの参照を取得
+	//	Group& group = itGroup->second;
+	//	if (!ImGui::BeginMenu(groupName.c_str()))
+	//		continue;
+	//	//各項目について
+	//	for (std::map<std::string, Item>::iterator itItem = group.begin();
+	//		itItem != group.end(); ++itItem) {
+	//		//項目名を取得
+	//		const std::string& itemName = itItem->first;
+	//		//項目の参照を取得
+	//		Item& item = itItem->second;
 
-			//int32_t型の値を保持していれば
-			if (std::holds_alternative<int32_t>(item)) {
-				int32_t* ptr = std::get_if<int32_t>(&item);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 120);
-			}
-			//float型の値を保存していれば
-			else if (std::holds_alternative<float>(item)) {
-				float* ptr = std::get_if<float>(&item);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0.0f, 15.0f, "%0.1f");
-			}
-			//Vector3型の値を保持していれば
-			else if (std::holds_alternative<Vector3>(item)) {
-				Vector3* ptr = std::get_if<Vector3>(&item);
-				ImGui::SliderFloat3(
-					itemName.c_str(), reinterpret_cast<float*>(ptr), -5.0f, 5.0f, "%0.1f");
-			}
-		}
-		//改行
-		ImGui::Text("\n");
-		if (ImGui::Button("Save")) {
-			SaveFile(groupName);
-			std::string message = std::format("{}.json saved.", groupName);
-			MessageBoxA(nullptr, message.c_str(), "Adjustment_Item", 0);
-		}
-		ImGui::EndMenu();
-	}
+	//		//int32_t型の値を保持していれば
+	//		if (std::holds_alternative<int32_t>(item)) {
+	//			int32_t* ptr = std::get_if<int32_t>(&item);
+	//			ImGui::SliderInt(itemName.c_str(), ptr, 0, 120);
+	//		}
+	//		//float型の値を保存していれば
+	//		else if (std::holds_alternative<float>(item)) {
+	//			float* ptr = std::get_if<float>(&item);
+	//			ImGui::SliderFloat(itemName.c_str(), ptr, 0.0f, 15.0f, "%0.1f");
+	//		}
+	//		//Vector3型の値を保持していれば
+	//		else if (std::holds_alternative<Vector3>(item)) {
+	//			Vector3* ptr = std::get_if<Vector3>(&item);
+	//			ImGui::SliderFloat3(
+	//				itemName.c_str(), reinterpret_cast<float*>(ptr), -5.0f, 5.0f, "%0.1f");
+	//		}
+	//	}
+	//	//改行
+	//	ImGui::Text("\n");
+	//	if (ImGui::Button("Save")) {
+	//		SaveFile(groupName);
+	//		std::string message = std::format("{}.json saved.", groupName);
+	//		MessageBoxA(nullptr, message.c_str(), "Adjustment_Item", 0);
+	//	}
+	//	ImGui::EndMenu();
+	//}
 
-	ImGui::EndMenuBar();
-	ImGui::End();
+	//ImGui::EndMenuBar();
+	//ImGui::End();
 }
 
 void Adjustment_Item::CreateGroup(const std::string& groupName) {

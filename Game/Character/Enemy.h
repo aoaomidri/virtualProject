@@ -1,12 +1,12 @@
 #pragma once
-#include"../../Engine/3D/Transform.h"
-#include"../../Engine/2D/TextureManager.h"
-#include"../../math/Matrix.h"
-#include"../../Engine/3D/Object3D/Object3D.h"
-#include"../../Engine/3D/ViewProjection.h"
-#include"../../Engine/3D/Shape/OBB.h"
-#include"../Item/Adjustment_Item.h"
-#include"../../math/Quaternion.h"
+#include"Transform.h"
+#include"TextureManager.h"
+#include"Matrix.h"
+#include"Object3D/Object3D.h"
+#include"ViewProjection.h"
+#include"Shape/OBB.h"
+#include"Adjustment_Item.h"
+#include"Quaternion.h"
 //#include"../../Engine/3D/Object3D/Particle.h"
 #include<optional>
 
@@ -17,7 +17,7 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, const Vector3& position);
+	void Initialize(const Vector3& position);
 	//更新処理
 	void Update();
 	//描画

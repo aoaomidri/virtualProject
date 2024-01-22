@@ -1,8 +1,8 @@
 #pragma once
-#include"../Camera/FollowCamera.h"
-#include"../../Engine/2D/Sprite.h"
-#include"../../Engine/3D/Shape/OBB.h"
-#include"../Character/Enemy.h"
+#include"FollowCamera.h"
+#include"Sprite.h"
+#include"OBB.h"
+#include"Enemy.h"
 /// <summary>
 /// ロックオン
 /// </summary>

@@ -1,9 +1,9 @@
 #pragma once
-#include "../../math/Matrix.h"
+#include "Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
 #include <memory>
-#include"../3D/Object3D/Model.h"
+#include"Model.h"
 #include"TextureManager.h"
 
 /// <summary>

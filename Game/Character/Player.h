@@ -1,14 +1,14 @@
 #pragma once
-#include"../../Engine/3D/Transform.h"
-#include"../../Engine/2D/TextureManager.h"
-#include"../../math/Matrix.h"
-#include"../../Engine/3D/Object3D/Object3D.h"
-#include"../../Engine/3D/ViewProjection.h"
-#include"../Input/Input.h"
-#include"../../Engine/3D/Shape/OBB.h"
-#include"../Item/Adjustment_Item.h"
-#include"../../math/Quaternion.h"
-#include"../../Engine/3D/Object3D/ParticleBase.h"
+#include"Transform.h"
+#include"TextureManager.h"
+#include"Matrix.h"
+#include"Object3D.h"
+#include"ViewProjection.h"
+#include"Input.h"
+#include"OBB.h"
+#include"Adjustment_Item.h"
+#include"Quaternion.h"
+#include"ParticleBase.h"
 #include<optional>
 
 //前方宣言
@@ -21,9 +21,9 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 	//更新処理
-	void Update(Input* input);
+	void Update();
 	//描画
 	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
 
@@ -74,7 +74,7 @@ private:
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
 	// 通常行動更新
-	void BehaviorRootUpdate(Input* input);
+	void BehaviorRootUpdate();
 	//攻撃行動更新
 	void BehaviorAttackUpdate(Input* input);
 
@@ -282,6 +282,10 @@ private:
 private:
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
+
+	//入力
+	Input* input_ = nullptr;
+
 
 	std::unique_ptr<ParticleBase> particle_;
 };

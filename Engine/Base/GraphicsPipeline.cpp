@@ -1,4 +1,5 @@
 #include "GraphicsPipeline.h"
+#include"DirectXCommon.h"
 #include <cassert>
 #pragma warning(disable : 6387)
 
@@ -11,9 +12,9 @@ GraphicsPipeline* GraphicsPipeline::GetInstance() {
 	return &Instance;
 }
 
-void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling){
+void GraphicsPipeline::Initialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling){
 
-	makeRootSignature(device);
+	makeRootSignature(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayout();
 	makeRasterizerState(isCulling);
 	makeBlendState(kBlendModeNormal);
@@ -22,18 +23,18 @@ void GraphicsPipeline::Initialize(ID3D12Device* device, const std::wstring& VSna
 
 	
 
-	makeGraphicsPipeline(device);
+	makeGraphicsPipeline(DirectXCommon::GetInstance()->GetDevice());
 }
 
-void GraphicsPipeline::ParticleExclusiveInitialize(ID3D12Device* device, const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend){
-	makeParticleRootSignature(device);
+void GraphicsPipeline::ParticleExclusiveInitialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend){
+	makeParticleRootSignature(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayout();
 	makeBlendState(blend);
 	makeRasterizerState(isCulling);
 	ShaderCompile(VSname, PSname);
 	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ZERO);
 
-	makeGraphicsPipelineParticle(device);
+	makeGraphicsPipelineParticle(DirectXCommon::GetInstance()->GetDevice());
 }
 
 

@@ -1,7 +1,7 @@
 #include "Player.h"
-#include"../Camera/LockOn.h"
-#include "../../externals/imgui/imgui.h"
-#include"../../math/Ease/Ease.h"
+#include"LockOn.h"
+#include"ImGuiManager.h"
+#include"Ease.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {
@@ -25,16 +25,25 @@ void Player::ApplyGlobalVariables() {
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 }
 
-void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList){	
+void Player::Initialize(){
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Player";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "DashCoolTime", kDashCoolTime);
+	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
+	
+	input_ = Input::GetInstance();
 
 	playerObj_ = std::make_unique<Object3D>();
-	playerObj_->Initialize(device, commandList);
+	playerObj_->Initialize();
 
 	weaponObj_ = std::make_unique<Object3D>();
-	weaponObj_->Initialize(device, commandList);
+	weaponObj_->Initialize();
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
-	weaponCollisionObj_->Initialize(device, commandList);
+	weaponCollisionObj_->Initialize();
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(device, commandList);
@@ -77,7 +86,7 @@ void Player::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	isDown_ = true;
 }
 
-void Player::Update(Input* input){
+void Player::Update(){
 	ApplyGlobalVariables();
 
 	
@@ -108,10 +117,10 @@ void Player::Update(Input* input){
 	switch (behavior_) {
 	case Behavior::kRoot:
 	default:
-		BehaviorRootUpdate(input);
+		BehaviorRootUpdate();
 		break;
 	case Behavior::kAttack:
-		BehaviorAttackUpdate(input);
+		BehaviorAttackUpdate();
 		break;
 	case Behavior::kStrongAttack:
 		BehaviorStrongAttackUpdate(input);
@@ -218,28 +227,28 @@ void Player::BehaviorRootInitialize(){
 	weaponCollisionTransform_.translate.y = 10000.0f;
 }
 
-void Player::BehaviorRootUpdate(Input* input){
+void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/
-	if (input->PushUp()) {
+	if (input_->PushUp()) {
 		move_.z = moveSpeed_;
 
 	}
-	else if (input->PushDown()) {
+	else if (input_->PushDown()) {
 		move_.z = -moveSpeed_;
 	}
 	else {
-		move_.z = input->GetPadLStick().y * moveSpeed_;
+		move_.z = input_->GetPadLStick().y * moveSpeed_;
 	}
 
-	if (input->PushRight()) {
+	if (input_->PushRight()) {
 		move_.x = moveSpeed_;
 	}
-	else if (input->PushLeft()) {
+	else if (input_->PushLeft()) {
 		move_.x = -moveSpeed_;
 	}
 	else {
-		move_.x = input->GetPadLStick().x * moveSpeed_;
+		move_.x = input_->GetPadLStick().x * moveSpeed_;
 	}
 	
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_->rotation_);
@@ -267,7 +276,7 @@ void Player::BehaviorRootUpdate(Input* input){
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_A) && !isDown_) {
 		downVector.y += jumpPower;
 		
 	}
@@ -289,14 +298,14 @@ void Player::BehaviorRootUpdate(Input* input){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	if (input->GetPadButton(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_X) && !isDown_) {
-		workAttack_.comboIndex_ = 1;
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_B) && !isDown_) {
+		workAttack_.comboIndex_ = 0;
 		behaviorRequest_ = Behavior::kAttack;
 	}
-	if (input->GetPadButtonDown(XINPUT_GAMEPAD_Y) && !isDown_) {
+	if (input_->GetPadButtonDown(XINPUT_GAMEPAD_Y) && !isDown_) {
 		workAttack_.comboIndex_ = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
 	}
@@ -412,7 +421,7 @@ void Player::BehaviorFifthAttackInitialize()
 	isShakeDown = false;
 }
 
-void Player::BehaviorAttackUpdate(Input* input){
+void Player::BehaviorAttackUpdate(){
 	frontVec_ = postureVec_;
 
 	if (++workAttack_.attackParameter_ >= 35) {

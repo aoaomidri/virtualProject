@@ -1,25 +1,25 @@
 #pragma once
-#include "../../../math/Matrix.h"
+#include "Matrix.h"
 #include <Windows.h>
 #include <wrl.h>
-#include"../Transform.h"
-#include"../../Base/Log.h"
+#include"Transform.h"
+#include"Log.h"
 #include<vector>
 #include<fstream>
 #include<sstream>
 #include"Model.h"
-#include"../ViewProjection.h"
-#include"../../../Game/random/RandomMaker.h"
-#include"../../Base/GraphicsPipeline.h"
+#include"ViewProjection.h"
+#include"RandomMaker.h"
+#include"GraphicsPipeline.h"
 #include<numbers>
 #include<list>
-#include"../Shape/OBB.h"
+#include"OBB.h"
 
 
 class ParticleBase{
 public:
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 	
 	void Update(const Transform& transform,const ViewProjection& viewProjection);
 
@@ -27,8 +27,7 @@ public:
 
 	void DrawImgui(const std::string& imguiTag);
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
-		ID3D12Device* device, size_t sizeInBytes);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	void makeResource();
 public:
@@ -95,10 +94,6 @@ private:
 	const std::string ResourcesPath = "resources/";
 
 	HRESULT hr;
-
-	ID3D12Device* device_ = nullptr;
-
-	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 	//頂点バッファービューを作成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;

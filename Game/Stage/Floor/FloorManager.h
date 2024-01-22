@@ -16,7 +16,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -91,9 +91,6 @@ private:
 private:
 
 	//オブジェクトの情報
-
-	ID3D12Device* device_;
-	ID3D12GraphicsCommandList* commandList_;
 
 	//オブジェクトリスト
 	std::list<Object3D*> objects_;

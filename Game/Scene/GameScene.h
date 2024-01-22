@@ -107,7 +107,7 @@ private:
 	//音関係
 	Audio* audio_ = nullptr;
 
-	SoundData soundData1{};
+	uint32_t titleBGM{};
 
 	//スプライト関連
 	//タイトル

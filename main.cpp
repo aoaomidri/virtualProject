@@ -107,7 +107,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	Model::GetInstance()->Finalize();
 
-	audio_->Reset();
+	audio_->Finalize();
 
 	gameScene_->AudioDataUnLoad();
 

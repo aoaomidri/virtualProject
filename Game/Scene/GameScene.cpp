@@ -21,7 +21,7 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	soundData1 = audio_->SoundLoadWave("Alarm01.wav");
+	titleBGM = audio_->SoundLoadWave("Game3.wav");
 }
 
 void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
@@ -53,6 +53,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	textureManager_->Initialize();
 	TextureLoad();
 	SoundLoad();
+	audio_->SoundPlayWave(titleBGM, 0.5f);
 
 	SpriteInitialize(dxCommon_);
 	ObjectInitialize(dxCommon_);
@@ -120,10 +121,12 @@ void GameScene::Update(){
 
 		followCamera_->Initialize();
 		
+		
 
 		titleSprite_->Update();
 		pressSprite_->Update();
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)){
+			audio_->StopWave(titleBGM);
 			sceneNum_ = SceneName::GAME;
 		}
 		break;
@@ -166,7 +169,7 @@ void GameScene::Update(){
 }
 
 void GameScene::AudioDataUnLoad(){
-	audio_->SoundUnload(&soundData1);
+	
 	
 }
 
@@ -251,6 +254,24 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
+	ImGui::Begin("BGM関連");
+	if (ImGui::Button("音源の復活")){
+		titleBGM = audio_->SoundPlayWave(titleBGM, 0.5f);
+	}
+	if (ImGui::Button("最初から再生")) {
+		audio_->RePlayWave(titleBGM);
+	}
+	if (ImGui::Button("完全に停止")) {
+		audio_->StopWave(titleBGM);
+	}
+	if (ImGui::Button("一時停止")){
+		audio_->PauseWave(titleBGM);
+	}
+	if (ImGui::Button("停止解除")) {
+		audio_->ResumeWave(titleBGM);
+	}
+	ImGui::End();
+
 	ImGui::Begin("タイトルシーンのスプライト");
 	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
 	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);

@@ -16,7 +16,7 @@ void FollowCamera::ApplyGlobalVariables(){
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
-	distance = 25.0f;
+	distance = 30.0f;
 	distance *= -1.0f;
 }
 

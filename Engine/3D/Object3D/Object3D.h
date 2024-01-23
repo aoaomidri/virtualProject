@@ -65,6 +65,10 @@ private:
 	//マテリアルにデータを書き込む
 	DirectionalLight* directionalLightDate = nullptr;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
+
+	CameraForGPU* cameraForGPU_ = nullptr;
+
 	//データを書き込む
 
 	Vector3 position_ = { 0.0f,0.0f ,0.0f };
@@ -79,7 +83,7 @@ private:
 
 	Transform transform{};
 
-	const CameraForGPU* cameraForGPU_ = nullptr;
+	bool isUseLight_ = false;
 
 	bool isDraw_ = true;
 };

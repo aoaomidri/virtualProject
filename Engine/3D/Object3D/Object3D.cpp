@@ -36,9 +36,12 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 
 	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
 	wvpData->WVP = worldViewProjectionMatrix;
+	materialDate->enableLighting = isUseLight_;
 	wvpData->World = worldMatrix_;
 
-	
+	directionalLightDate->direction = Vector3::Normalize(directionalLightDate->direction);
+
+	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
 void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
@@ -53,6 +56,7 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, GPUHandle);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(model_->GetVertexData().size()), 1, 0, 0);
 
@@ -60,13 +64,14 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 }
 
 void Object3D::DrawImgui(){
-	/*ImGui::Begin("オブジェの内部設定");
+	ImGui::Begin("オブジェの内部設定");
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
+	ImGui::Checkbox("ライトを適応するか", &isUseLight_);
 	ImGui::Text("ライト関連");
 	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
-	ImGui::End();*/
+	ImGui::End();
 
 }
 
@@ -109,6 +114,8 @@ void Object3D::makeResource() {
 
 	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
 
+	materialDate->shininess = 1.0f;
+
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
 	wvpResource = CreateBufferResource(sizeof(TransformationMatrix));
 	//書き込むためのアドレスを取得
@@ -130,6 +137,15 @@ void Object3D::makeResource() {
 	directionalLightDate->direction = { 0.0f,1.0f,0.0f };
 
 	directionalLightDate->intensity = 1.0f;
+
+	/*カメラリソース関連*/
+	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));
+
+	//書き込むためのアドレスを取得
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
+
+	cameraForGPU_->worldPosition = { 0.0f,0.0f,0.0f };
+
 
 }
 

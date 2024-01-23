@@ -51,56 +51,25 @@ private:
 	//imguiの描画
 	void DrawImgui();
 
-
-	/*分ける予定があるけどひとまずのやつ*/
-	void AllCollision();
-	void FilesSave(const std::vector<std::string>& stages);
-	void FilesOverWrite(const std::string& stage);
-	void FilesLoad(const std::string& stage);
-	//OBB同士の当たり判定
-	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
-
 private:
-	/*ファイル関連*/
-	int stageSelect_;
-
-	std::string stageName_;
-
-	std::vector<std::string> stages_;
 
 private:
 	//クラス内変数
 	//基本の宣言はユニークポインタで
+	// 
+	//自機のモデル
+	std::unique_ptr<Object3D> TestObj_;
+
+	Model* TestModel_;
+
+	Transform testTransform_;
+
+	Matrix4x4 testMatrix_;
+
 	//テクスチャマネージャー
 	std::unique_ptr<TextureManager> textureManager_;
 
 	std::unique_ptr<FollowCamera> followCamera_;	
-	
-	//std::unique_ptr<ParticleBase> particle_;
-
-	std::unique_ptr<FloorManager> floorManager_;
-
-	Transform firstFloor_ = {
-		.scale = {2.0f,0.5f,2.0f},
-		.rotate = {0},
-		.translate = {0}
-	};
-
-	bool isFloorMove_ = false;
-
-	std::unique_ptr<Player> player_;
-
-	std::unique_ptr<Enemy> enemy_;
-	std::list<std::unique_ptr<Enemy>> enemies_;
-
-	int chackCollision = 0;
-
-
-	Transform particleTrnadform_ = {
-		.scale = {1.0f,1.0f,1.0f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
 
 	Input* input_ = nullptr;
 
@@ -120,9 +89,6 @@ private:
 	std::unique_ptr<Sprite> pressSprite_;
 
 	std::unique_ptr<Sprite> clearSprite_;
-
-	/*ロックオン*/
-	std::unique_ptr<LockOn> lockOn_;
 
 	//シーン関連
 	enum SceneName{

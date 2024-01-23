@@ -27,3 +27,7 @@ struct ParticleForGPU {
 	Matrix4x4 World;
 	Vector4 color;
 };
+
+struct CameraForGPU{
+	Vector3 worldPosition;
+};

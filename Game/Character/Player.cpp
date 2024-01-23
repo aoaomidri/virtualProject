@@ -155,7 +155,6 @@ void Player::Update(){
 }
 
 void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
-	
 
 	playerObj_->Update(playerMatrix_, viewProjection);
 	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));

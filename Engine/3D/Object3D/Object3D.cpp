@@ -38,6 +38,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	wvpData->WVP = worldViewProjectionMatrix;
 	materialDate->enableLighting = isUseLight_;
 	wvpData->World = worldMatrix_;
+	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Trnaspose(worldMatrix_));
 
 	directionalLightDate->direction = Vector3::Normalize(directionalLightDate->direction);
 
@@ -71,7 +72,7 @@ void Object3D::DrawImgui(){
 	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("反射強度", &materialDate->shininess, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat("反射強度", &materialDate->shininess, 0.01f, 0.0f, 30.0f);
 	ImGui::End();
 
 }
@@ -124,6 +125,7 @@ void Object3D::makeResource() {
 	//単位行列を書き込んでおく
 	wvpData->WVP = Matrix::GetInstance()->MakeIdentity4x4();
 	wvpData->World = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース

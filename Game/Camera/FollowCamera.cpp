@@ -35,7 +35,7 @@ void FollowCamera::Initialize(){
 
 	destinationAngleX_ = 0.0f;
 
-	distance = 1000.0f;
+	distance = 10.0f;
 	distance *= -1.0f;
 
 	rootOffset = { 0.0f, 0.0f, distance };

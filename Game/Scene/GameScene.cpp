@@ -60,7 +60,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	TextureLoad();
 	SoundLoad();
 
-	audio_->SoundPlayWave(titleBGM, 0.2f);
+	//audio_->SoundPlayWave(titleBGM, 0.2f);
 
 	SpriteInitialize(dxCommon_);
 	ObjectInitialize(dxCommon_);

@@ -60,15 +60,18 @@ private:
 	//自機のモデル
 	std::unique_ptr<Object3D> TestObj_;
 	std::unique_ptr<Object3D> TestGroundObj_;
+	std::unique_ptr<Object3D> pointLightObj_;
 
 	Model* TestModel_;
 	Model* TestGroundModel_;
 
 	Transform testTransform_;
 	Transform testGroundTransform_;
+	Transform pointLightTransform_;
 
 	Matrix4x4 testMatrix_;
 	Matrix4x4 testGroundMatrix_;
+	Matrix4x4 pointLightMatrix_;
 
 	//テクスチャマネージャー
 	std::unique_ptr<TextureManager> textureManager_;

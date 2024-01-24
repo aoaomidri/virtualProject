@@ -52,18 +52,24 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	TestObj_->Initialize();
 	TestGroundObj_ = std::make_unique<Object3D>();
 	TestGroundObj_->Initialize();
+	pointLightObj_ = std::make_unique<Object3D>();
+	pointLightObj_->Initialize();
 
 	TestModel_ = Model::LoadObjFile("sphere");
 	TestGroundModel_ = Model::LoadObjFile("terrain");
+	
 
 	TestObj_->SetModel(TestModel_);
 	TestGroundObj_->SetModel(TestGroundModel_);
+	pointLightObj_->SetModel(TestModel_);
 
 	TestObj_->SetDirectionalLight(&directionalLight_);
 	TestGroundObj_->SetDirectionalLight(&directionalLight_);
+	pointLightObj_->SetDirectionalLight(&directionalLight_);
 
 	TestObj_->SetPointLight(&pointLight_);
 	TestGroundObj_->SetPointLight(&pointLight_);
+	pointLightObj_->SetPointLight(&pointLight_);
 
 	TestObj_->shininess_ = 10.0f;
 	TestGroundObj_->shininess_ = 50.0f;
@@ -71,6 +77,8 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	testTransform_.scale = { 1.0f,1.0f,1.0f };
 	testTransform_.translate.y = 2.0f;
 	testGroundTransform_.scale = { 1.0f,1.0f,1.0f };
+
+	pointLightTransform_.scale = { 0.5f,0.5f,0.5f };
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -133,6 +141,8 @@ void GameScene::Update(){
 	DrawImgui();
 	testMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(testTransform_);
 	testGroundMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(testGroundTransform_);
+
+	pointLightMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(pointLightTransform_.scale, pointLightTransform_.rotate, pointLight_.position);;
 
 	switch (sceneNum_){
 	case SceneName::TITLE:
@@ -220,6 +230,10 @@ void GameScene::Draw3D(){
 
 		TestGroundObj_->Update(testGroundMatrix_, followCamera_->GetViewProjection());
 		TestGroundObj_->Draw(textureManager_->SendGPUDescriptorHandle(16));
+
+		pointLightObj_->Update(pointLightMatrix_, followCamera_->GetViewProjection());
+		
+		pointLightObj_->Draw(textureManager_->SendGPUDescriptorHandle(9));
 		break;
 	case SceneName::GAME:
 		

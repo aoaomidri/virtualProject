@@ -77,6 +77,8 @@ private:
 
 	DirectionalLight directionalLight_;
 
+	PointLight pointLight_;
+
 	Input* input_ = nullptr;
 
 	//音関係

@@ -44,6 +44,10 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	directionalLight_.direction = { 0.0f,1.0f,0.0f };
 	directionalLight_.intensity = 1.0f;
 
+	pointLight_.color = { 1.0f,1.0f,1.0f,1.0f };
+	pointLight_.position = { 0.0f,10.0f,0.0f };
+	pointLight_.intensity = 1.0f;
+
 	TestObj_ = std::make_unique<Object3D>();
 	TestObj_->Initialize();
 	TestGroundObj_ = std::make_unique<Object3D>();
@@ -58,7 +62,14 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	TestObj_->SetDirectionalLight(&directionalLight_);
 	TestGroundObj_->SetDirectionalLight(&directionalLight_);
 
+	TestObj_->SetPointLight(&pointLight_);
+	TestGroundObj_->SetPointLight(&pointLight_);
+
+	TestObj_->shininess_ = 10.0f;
+	TestGroundObj_->shininess_ = 50.0f;
+
 	testTransform_.scale = { 1.0f,1.0f,1.0f };
+	testTransform_.translate.y = 2.0f;
 	testGroundTransform_.scale = { 1.0f,1.0f,1.0f };
 }
 
@@ -72,7 +83,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	TextureLoad();
 	SoundLoad();
 
-	//audio_->SoundPlayWave(titleBGM, 0.2f);
+	audio_->SoundPlayWave(titleBGM, 0.2f);
 
 	SpriteInitialize(dxCommon_);
 	ObjectInitialize(dxCommon_);
@@ -287,7 +298,8 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat3("座標", &testTransform_.translate.x, 0.1f);
 
 	ImGui::End();
-	TestObj_->DrawImgui();
+	TestObj_->DrawImgui("sphere");
+	TestGroundObj_->DrawImgui("Ground");
 
 	followCamera_->DrawImgui();
 		break;
@@ -316,6 +328,9 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ライトの向き", &directionalLight_.direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLight_.intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat4("ポイントライトの色", &pointLight_.color.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("ポイントライトの位置", &pointLight_.position.x, 0.01f, -100.0f, 100.0f);
+	ImGui::DragFloat("ポイントライトの輝き", &pointLight_.intensity, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 
 	//particle_->DrawImgui("ステージパーティクル");

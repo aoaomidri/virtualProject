@@ -13,6 +13,12 @@ struct DirectionalLight {
 	float intensity;	//輝度
 };
 
+struct PointLight {
+	float32_t4 color;		//ライトの色
+	float32_t3 position;	//ライトの位置
+	float intensity;	//輝度
+};
+
 struct Camera{
 	float32_t3 worldPosition;
 };
@@ -27,6 +33,8 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
 
 ConstantBuffer<Camera> gCamera : register(b3);
 
+ConstantBuffer<PointLight> gPointLight : register(b4);
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -39,7 +47,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 	float32_t3 toEye = normalize(gCamera.worldPosition-input.worldPosition);
 
-	if(gMaterial.enableLighting != 0){
+	if(gMaterial.enableLighting != 0){		
 		float NdotL = dot(normalize(input.normal),gDirectionalLight.direction);
 		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 		
@@ -50,14 +58,27 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
 
 		//拡散反射
-		float32_t3 diffuse = 
+		float32_t3 diffuseDirectionalLight = 
 		gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
 
 		//鏡面反射
-		float32_t3 specular = 
+		float32_t3 specularDirectionalLight = 
 		gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
 
-		output.color.rgb = diffuse + specular;
+		float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
+		halfVector = normalize(-pointLightDirection + toEye);
+		NDotH = dot(normalize(input.normal),halfVector);
+		specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
+
+		//拡散反射
+		float32_t3 diffusePointLight = 
+		gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity;
+
+		//鏡面反射
+		float32_t3 specularPointLight = 
+		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
+
+		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
 		output.color.a = gMaterial.color.a * textureColor.a;
 	}else{
 		output.color = gMaterial.color * textureColor;

@@ -44,6 +44,12 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	directionalLightDate->direction = directionalLight->direction;
 	directionalLightDate->intensity = directionalLight->intensity;
 
+	pointLightData->color = pointLight->color;
+	pointLightData->position = pointLight->position;
+	pointLightData->intensity = pointLight->intensity;
+
+	materialDate->shininess = shininess_;
+
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
@@ -60,25 +66,30 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, GPUHandle);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(model_->GetVertexData().size()), 1, 0, 0);
 
 
 }
 
-void Object3D::DrawImgui(){
-	ImGui::Begin("オブジェの内部設定");
+void Object3D::DrawImgui(std::string name){
+	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Checkbox("ライトを適応するか", &isUseLight_);
 	ImGui::Text("ライト関連");
 	
-	ImGui::DragFloat("反射強度", &materialDate->shininess, 0.01f, 0.0f, 30.0f);
+	ImGui::DragFloat("反射強度", &shininess_, 0.01f, 0.0f, 30.0f);
 	ImGui::End();
 
 }
 
 void Object3D::SetDirectionalLight(const DirectionalLight* light){
 	directionalLight = light;
+}
+
+void Object3D::SetPointLight(const PointLight* pLight){
+	pointLight = pLight;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(size_t sizeInBytes) {
@@ -133,8 +144,7 @@ void Object3D::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight));
-	
+	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight));	
 
 	//書き込むためのアドレスを取得
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
@@ -144,6 +154,18 @@ void Object3D::makeResource() {
 	directionalLightDate->direction = { 0.0f,-1.0f,0.0f };
 
 	directionalLightDate->intensity = 1.0f;
+
+	//マテリアル用のリソース
+	pointLightResource = CreateBufferResource(sizeof(PointLight));
+
+	//書き込むためのアドレスを取得
+	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+	//今回は白を書き込んでみる
+	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	pointLightData->position = { 0.0f,10.0f,0.0f };
+
+	pointLightData->intensity = 1.0f;
 
 	/*カメラリソース関連*/
 	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));

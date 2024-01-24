@@ -30,6 +30,12 @@ struct DirectionalLight {
 	float intensity;	//輝度
 };
 
+struct PointLight {
+	Vector4 color;		//ライトの色
+	Vector3 position;	//ライトの位置
+	float intensity;	//輝度
+};
+
 class Model{
 public:
 	void Draw(ID3D12GraphicsCommandList* CommandList);

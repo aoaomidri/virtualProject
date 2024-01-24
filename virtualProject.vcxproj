@@ -64,7 +64,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,7 +92,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,6 +130,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Character\Player.cpp" />
     <ClCompile Include="Game\Input\Input.cpp" />
     <ClCompile Include="Game\Item\Adjustment_Item.cpp" />
+    <ClCompile Include="Game\Light\DirectionalLight.cpp" />
     <ClCompile Include="Game\random\RandomMaker.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
@@ -164,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Character\Player.h" />
     <ClInclude Include="Game\Input\Input.h" />
     <ClInclude Include="Game\Item\Adjustment_Item.h" />
+    <ClInclude Include="Game\Light\DirectionalLight.h" />
     <ClInclude Include="Game\random\RandomMaker.h" />
     <ClInclude Include="Game\Scene\GameScene.h" />
     <ClInclude Include="Game\Stage\Floor\Floor.h" />

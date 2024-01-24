@@ -73,6 +73,9 @@
     <Filter Include="application\Audio">
       <UniqueIdentifier>{f4567324-8d25-4195-a070-395bbe966cb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\Light">
+      <UniqueIdentifier>{19a65f6d-180a-4da3-99db-4516a4baf1c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="math\Ease\Ease.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Light\DirectionalLight.cpp">
+      <Filter>application\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="math\Ease\Ease.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Light\DirectionalLight.h">
+      <Filter>application\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,8 +16,8 @@ void FollowCamera::ApplyGlobalVariables(){
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
-	distance = 30.0f;
-	distance *= -1.0f;
+	/*distance = 30.0f;
+	distance *= -1.0f;*/
 }
 
 
@@ -35,6 +35,9 @@ void FollowCamera::Initialize(){
 
 	destinationAngleX_ = 0.0f;
 
+	distance = 1000.0f;
+	distance *= -1.0f;
+
 	rootOffset = { 0.0f, 0.0f, distance };
 
 	minRotate = 0.1f;
@@ -50,7 +53,7 @@ void FollowCamera::Initialize(){
 void FollowCamera::Update(){
 	frontVec_ = postureVec_;
 	
-	ApplyGlobalVariables();
+	//ApplyGlobalVariables();
 
 	if (lockOn_ && lockOn_->target_) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -149,6 +152,7 @@ void FollowCamera::DrawImgui(){
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
+	ImGui::DragFloat("オフセット", &distance, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
 

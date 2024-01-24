@@ -42,7 +42,7 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	TestObj_ = std::make_unique<Object3D>();
 	TestObj_->Initialize();
 
-	TestModel_ = Model::LoadObjFile("Enemy");
+	TestModel_ = Model::LoadObjFile("sphere");
 
 	TestObj_->SetModel(TestModel_);
 
@@ -111,7 +111,6 @@ void GameScene::Update(){
 	switch (sceneNum_){
 	case SceneName::TITLE:
 
-		followCamera_->Initialize();
 		followCamera_->Update();
 		
 		
@@ -271,7 +270,7 @@ void GameScene::DrawImgui(){
 	ImGui::End();
 	TestObj_->DrawImgui();
 
-	
+	followCamera_->DrawImgui();
 		break;
 	case SceneName::GAME:
 		

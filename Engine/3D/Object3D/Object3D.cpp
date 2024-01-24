@@ -71,6 +71,7 @@ void Object3D::DrawImgui(){
 	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("反射強度", &materialDate->shininess, 0.01f, 0.0f, 10.0f);
 	ImGui::End();
 
 }
@@ -134,7 +135,7 @@ void Object3D::makeResource() {
 	//今回は白を書き込んでみる
 	directionalLightDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	directionalLightDate->direction = { 0.0f,1.0f,0.0f };
+	directionalLightDate->direction = { 0.0f,-1.0f,0.0f };
 
 	directionalLightDate->intensity = 1.0f;
 

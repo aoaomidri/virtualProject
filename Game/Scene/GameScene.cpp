@@ -18,6 +18,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Press.png");
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");
+	textureManager_->Load("resources/terrain/grass.png");
 }
 
 void GameScene::SoundLoad(){
@@ -39,15 +40,26 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
+	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLight_.direction = { 0.0f,1.0f,0.0f };
+	directionalLight_.intensity = 1.0f;
+
 	TestObj_ = std::make_unique<Object3D>();
 	TestObj_->Initialize();
+	TestGroundObj_ = std::make_unique<Object3D>();
+	TestGroundObj_->Initialize();
 
 	TestModel_ = Model::LoadObjFile("sphere");
+	TestGroundModel_ = Model::LoadObjFile("terrain");
 
 	TestObj_->SetModel(TestModel_);
+	TestGroundObj_->SetModel(TestGroundModel_);
+
+	TestObj_->SetDirectionalLight(&directionalLight_);
+	TestGroundObj_->SetDirectionalLight(&directionalLight_);
 
 	testTransform_.scale = { 1.0f,1.0f,1.0f };
-	
+	testGroundTransform_.scale = { 1.0f,1.0f,1.0f };
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -96,6 +108,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	sceneNum_ = SceneName::TITLE;
 
 	followCamera_->SetTarget(&testTransform_);
+
+	
 	//lockOn_ = std::make_unique<LockOn>();
 	//lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), textureManager_.get());
 
@@ -107,6 +121,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 void GameScene::Update(){
 	DrawImgui();
 	testMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(testTransform_);
+	testGroundMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(testGroundTransform_);
 
 	switch (sceneNum_){
 	case SceneName::TITLE:
@@ -191,6 +206,9 @@ void GameScene::Draw3D(){
 	case SceneName::TITLE:
 		TestObj_->Update(testMatrix_, followCamera_->GetViewProjection());
 		TestObj_->Draw(textureManager_->SendGPUDescriptorHandle(0));
+
+		TestGroundObj_->Update(testGroundMatrix_, followCamera_->GetViewProjection());
+		TestGroundObj_->Draw(textureManager_->SendGPUDescriptorHandle(16));
 		break;
 	case SceneName::GAME:
 		
@@ -237,6 +255,7 @@ void GameScene::Draw2D(){
 
 void GameScene::Finalize(){
 	delete TestModel_;
+	delete TestGroundModel_;
 	textureManager_->Finalize();
 }
 
@@ -292,6 +311,13 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
+
+	ImGui::Begin("ライト");
+	ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("ライトの向き", &directionalLight_.direction.x, 0.01f, -1.0f, 1.0f);
+	ImGui::DragFloat("ライトの輝き", &directionalLight_.intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+
 	//particle_->DrawImgui("ステージパーティクル");
 	
 

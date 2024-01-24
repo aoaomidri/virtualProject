@@ -33,6 +33,8 @@ public:
 
 	void SetModel(Model* model) { model_ = model; }
 
+	void SetDirectionalLight(const DirectionalLight* light);
+
 	const Vector3& GetPosition()const { return position_; }
 
 	const bool& GetIsDraw()const { return isDraw_; }
@@ -64,6 +66,8 @@ private:
 
 	//マテリアルにデータを書き込む
 	DirectionalLight* directionalLightDate = nullptr;
+
+	const DirectionalLight* directionalLight = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 

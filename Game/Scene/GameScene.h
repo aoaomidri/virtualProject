@@ -59,17 +59,23 @@ private:
 	// 
 	//自機のモデル
 	std::unique_ptr<Object3D> TestObj_;
+	std::unique_ptr<Object3D> TestGroundObj_;
 
 	Model* TestModel_;
+	Model* TestGroundModel_;
 
 	Transform testTransform_;
+	Transform testGroundTransform_;
 
 	Matrix4x4 testMatrix_;
+	Matrix4x4 testGroundMatrix_;
 
 	//テクスチャマネージャー
 	std::unique_ptr<TextureManager> textureManager_;
 
-	std::unique_ptr<FollowCamera> followCamera_;	
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	DirectionalLight directionalLight_;
 
 	Input* input_ = nullptr;
 

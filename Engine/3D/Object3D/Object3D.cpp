@@ -40,7 +40,9 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	wvpData->World = worldMatrix_;
 	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Trnaspose(worldMatrix_));
 
-	directionalLightDate->direction = Vector3::Normalize(directionalLightDate->direction);
+	directionalLightDate->color = directionalLight->color;
+	directionalLightDate->direction = directionalLight->direction;
+	directionalLightDate->intensity = directionalLight->intensity;
 
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
@@ -69,12 +71,14 @@ void Object3D::DrawImgui(){
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Checkbox("ライトを適応するか", &isUseLight_);
 	ImGui::Text("ライト関連");
-	ImGui::DragFloat4("ライトの色", &directionalLightDate->color.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("ライトの向き", &directionalLightDate->direction.x, 0.01f, -1.0f, 1.0f);
-	ImGui::DragFloat("ライトの輝き", &directionalLightDate->intensity, 0.01f, 0.0f, 1.0f);
+	
 	ImGui::DragFloat("反射強度", &materialDate->shininess, 0.01f, 0.0f, 30.0f);
 	ImGui::End();
 
+}
+
+void Object3D::SetDirectionalLight(const DirectionalLight* light){
+	directionalLight = light;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(size_t sizeInBytes) {

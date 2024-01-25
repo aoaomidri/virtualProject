@@ -47,6 +47,8 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	pointLightData->color = pointLight->color;
 	pointLightData->position = pointLight->position;
 	pointLightData->intensity = pointLight->intensity;
+	pointLightData->radius = pointLight->radius;
+	pointLightData->decay = pointLight->decay;
 
 	materialDate->shininess = shininess_;
 

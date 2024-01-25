@@ -7,9 +7,9 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
 	textureManager_->Load("resources/texture/Sky.png");
-	textureManager_->Load("resources/Enemy/EnemyTex.png");
-	textureManager_->Load("resources/EnemyParts/EnemyParts.png");
-	textureManager_->Load("resources/Weapon/Sword.png");
+	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");
+	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
+	textureManager_->Load("resources/Model/Weapon/Sword.png");
 	textureManager_->Load("resources/texture/Magic.png");
 	textureManager_->Load("resources/texture/Black.png");
 	textureManager_->Load("resources/texture/circle.png");//10
@@ -18,7 +18,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Press.png");
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");
-	textureManager_->Load("resources/terrain/grass.png");
+	textureManager_->Load("resources/Model/terrain/grass.png");
 }
 
 void GameScene::SoundLoad(){
@@ -47,6 +47,8 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	pointLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLight_.position = { 0.0f,10.0f,0.0f };
 	pointLight_.intensity = 1.0f;
+	pointLight_.radius = 50.0f;
+	pointLight_.decay = 1.0f;
 
 	TestObj_ = std::make_unique<Object3D>();
 	TestObj_->Initialize();
@@ -345,6 +347,8 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat4("ポイントライトの色", &pointLight_.color.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("ポイントライトの位置", &pointLight_.position.x, 0.01f, -100.0f, 100.0f);
 	ImGui::DragFloat("ポイントライトの輝き", &pointLight_.intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("ポイントライトの届く距離", &pointLight_.radius, 0.1f, 0.0f, 200.0f);
+	ImGui::DragFloat("ポイントライトの減衰率", &pointLight_.decay, 0.01f, 0.0f, 100.0f);
 	ImGui::End();
 
 	//particle_->DrawImgui("ステージパーティクル");

@@ -10,13 +10,15 @@ struct Material {
 struct DirectionalLight {
 	float32_t4 color;		//ライトの色
 	float32_t3 direction;	//ライトの向き
-	float intensity;	//輝度
+	float intensity;		//輝度
 };
 
 struct PointLight {
 	float32_t4 color;		//ライトの色
 	float32_t3 position;	//ライトの位置
-	float intensity;	//輝度
+	float intensity;		//輝度
+	float radius;			//ライトの届く最大距離
+	float decay;			//減衰率
 };
 
 struct Camera{
@@ -47,7 +49,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 	float32_t3 toEye = normalize(gCamera.worldPosition-input.worldPosition);
 
-	if(gMaterial.enableLighting != 0){		
+	if(gMaterial.enableLighting != 0){
+		//ここからディレクショナルライト
 		float NdotL = dot(normalize(input.normal),gDirectionalLight.direction);
 		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 		
@@ -65,18 +68,26 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 specularDirectionalLight = 
 		gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
 
+		//ここからポイントライト
+
 		float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
 		halfVector = normalize(-pointLightDirection + toEye);
 		NDotH = dot(normalize(input.normal),halfVector);
 		specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
 
+		//減衰計算
+		float32_t distance = length(gPointLight.position - input.worldPosition);//ポイントライトへの距離
+		float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
+
 		//拡散反射
 		float32_t3 diffusePointLight = 
-		gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity;
+		gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
 
 		//鏡面反射
 		float32_t3 specularPointLight = 
-		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
+		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
+
+		//各ライトの色を計算
 
 		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
 		output.color.a = gMaterial.color.a * textureColor.a;

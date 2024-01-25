@@ -91,7 +91,6 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 	std::vector<Vector3> normals;//法線
 	std::vector<Vector2> texcoords;//テクスチャ座標
 	std::string line;//ファイルから読んだ1行を格納するもの
-	const std::string ResourcesPath = "resources/";
 
 	//2,ファイルを開く
 

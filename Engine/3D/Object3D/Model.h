@@ -34,6 +34,9 @@ struct PointLight {
 	Vector4 color;		//ライトの色
 	Vector3 position;	//ライトの位置
 	float intensity;	//輝度
+	float radius;		//ライトの届く最大距離
+	float decay;		//減衰率
+	float padding[2];
 };
 
 class Model{
@@ -73,7 +76,7 @@ private:
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate = nullptr;
 
-	const std::string ResourcesPath = "resources/";
+	const std::string ResourcesPath = "resources/Model/";
 
 	//頂点インデックス配列
 	std::vector<VertexData> indices;

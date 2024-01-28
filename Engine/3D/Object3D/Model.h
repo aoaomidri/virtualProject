@@ -39,6 +39,14 @@ struct PointLight {
 	float padding[2];
 };
 
+struct SpotLight{
+	Vector4 color;
+	Vector3 position;
+	float intensity;
+};
+
+
+
 class Model{
 public:
 	void Draw(ID3D12GraphicsCommandList* CommandList);

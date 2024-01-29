@@ -177,9 +177,9 @@ private:
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
 
-	Model* playerModel_;
+	std::unique_ptr<Model> playerModel_;
 
-	Model* weaponModel_;
+	std::unique_ptr<Model> weaponModel_;
 
 
 

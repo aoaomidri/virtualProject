@@ -62,8 +62,8 @@ private:
 	std::unique_ptr<Object3D> TestGroundObj_;
 	std::unique_ptr<Object3D> pointLightObj_;
 
-	Model* TestModel_;
-	Model* TestGroundModel_;
+	std::unique_ptr<Model> TestModel_;
+	std::unique_ptr<Model> TestGroundModel_;
 
 	Transform testTransform_;
 	Transform testGroundTransform_;

@@ -13,8 +13,6 @@ Player::kConstAttacks_ = {
 };
 
 Player::~Player(){
-	delete playerModel_;
-	delete weaponModel_;
 }
 
 void Player::ApplyGlobalVariables() {
@@ -52,9 +50,9 @@ void Player::Initialize(){
 
 	weaponModel_ = Model::LoadObjFile("Weapon");
 
-	playerObj_->SetModel(playerModel_);
-	weaponCollisionObj_->SetModel(playerModel_);
-	weaponObj_->SetModel(weaponModel_);
+	playerObj_->SetModel(playerModel_.get());
+	weaponCollisionObj_->SetModel(playerModel_.get());
+	weaponObj_->SetModel(weaponModel_.get());
 
 
 	playerTransform_ = {

@@ -53,7 +53,7 @@ public:
 
 	static Model* GetInstance();
 
-	static Model* LoadObjFile(const std::string& filename);
+	static std::unique_ptr<Model> LoadObjFile(const std::string& filename);
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 

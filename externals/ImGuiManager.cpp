@@ -1,28 +1,44 @@
 #include "ImGuiManager.h"
 
 void ImGuiManager::Initialize(){
+#ifdef _DEBUG
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 
 	ImguiInitialize();
+
+#endif // _DEBUG
+
 
 	
 }
 
 void ImGuiManager::Finalize(){
+#ifdef _DEBUG
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+#endif // _DEBUG
+
 	//device_->Release();
 }
 
 void ImGuiManager::Begin(){
+#ifdef _DEBUG
+
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+#endif // _DEBUG
+
 }
 
 void ImGuiManager::End(){
+#ifdef _DEBUG
+
 	ImGui::Render();
+#endif // _DEBUG
+
 }
 
 void ImGuiManager::Draw(){
@@ -35,6 +51,8 @@ void ImGuiManager::Draw(){
 }
 
 void ImGuiManager::ImguiInitialize(){
+#ifdef _DEBUG
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -53,4 +71,6 @@ void ImGuiManager::ImguiInitialize(){
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.Fonts->AddFontFromFileTTF("Resources/Fonts/ipaexm.ttf", 13.0f, nullptr, ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
+#endif // _DEBUG
+
 }

@@ -61,9 +61,9 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	TestGroundModel_ = Model::LoadObjFile("terrain");
 	
 
-	TestObj_->SetModel(TestModel_);
-	TestGroundObj_->SetModel(TestGroundModel_);
-	pointLightObj_->SetModel(TestModel_);
+	TestObj_->SetModel(TestModel_.get());
+	TestGroundObj_->SetModel(TestGroundModel_.get());
+	pointLightObj_->SetModel(TestModel_.get());
 
 	TestObj_->SetDirectionalLight(&directionalLight_);
 	TestGroundObj_->SetDirectionalLight(&directionalLight_);
@@ -281,8 +281,6 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
-	delete TestModel_;
-	delete TestGroundModel_;
 	textureManager_->Finalize();
 }
 

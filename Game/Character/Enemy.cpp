@@ -1,9 +1,6 @@
 #include "Enemy.h"
 
 Enemy::~Enemy(){
-	delete enemyModel_;
-	delete partsModel_;
-	delete particleModel_;
 }
 
 void Enemy::ApplyGlobalVariables(){
@@ -55,10 +52,10 @@ void Enemy::Initialize(const Vector3& position){
 		particleVec_[i] = {0.0f,0.0f,0.0f};
 	}
 	
-	bodyObj_->SetModel(enemyModel_);
-	partsObj_->SetModel(partsModel_);
+	bodyObj_->SetModel(enemyModel_.get());
+	partsObj_->SetModel(partsModel_.get());
 	for (int i = 0; i < 20; i++) {
-		particleObj_[i]->SetModel(particleModel_);
+		particleObj_[i]->SetModel(particleModel_.get());
 	}
 	
 

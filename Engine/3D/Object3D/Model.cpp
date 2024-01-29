@@ -16,9 +16,9 @@ Model* Model::GetInstance(){
 	return &instance;
 }
 
-Model* Model::LoadObjFile(const std::string& filename){
+std::unique_ptr<Model> Model::LoadObjFile(const std::string& filename){
 	//1,中で必要になる変数の宣言
-	Model* modelData = new Model();//構築するModelData
+	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
 	
 	modelData->LoadFromOBJInternal(filename);
 

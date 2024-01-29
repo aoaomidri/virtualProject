@@ -2,22 +2,23 @@
 #include"Matrix.h"
 #include <cassert>
 void GameScene::TextureLoad() {
-	textureManager_->Load("resources/texture/uvChecker.png");
+	textureManager_->Load("resources/texture/uvChecker.png");//0
 	textureManager_->Load("resources/texture/rock.png");
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
 	textureManager_->Load("resources/texture/Sky.png");
-	textureManager_->Load("resources/Enemy/EnemyTex.png");
+	textureManager_->Load("resources/Enemy/EnemyTex.png");//5
 	textureManager_->Load("resources/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Weapon/Sword.png");
 	textureManager_->Load("resources/texture/Magic.png");
 	textureManager_->Load("resources/texture/Black.png");
-	textureManager_->Load("resources/texture/circle.png");
+	textureManager_->Load("resources/texture/circle.png");//10
 	textureManager_->Load("resources/texture/monsterBall.png");
 	textureManager_->Load("resources/texture/title.png");
 	textureManager_->Load("resources/texture/Press.png");
 	textureManager_->Load("resources/texture/Clear.png");
-	textureManager_->Load("resources/texture/Whitex64.png");
+	textureManager_->Load("resources/texture/Whitex64.png");//15
+	textureManager_->Load("resources/skyDome/skyDome.png");
 }
 
 void GameScene::SoundLoad(){
@@ -38,14 +39,27 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 	fadeSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 15);
 }
 
-void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
+void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
 	//particle_ = std::make_unique<ParticleBase>();
 	//particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	/*obj_ = std::make_unique<Object3D>();
 	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
-	
+
+	skyDomeObj_ = std::make_unique<Object3D>();
+	skyDomeObj_->Initialize();
+
+	skyDomeModel_ = Model::LoadObjFile("skyDome");
+
+	skyDomeObj_->SetModel(skyDomeModel_);
+
+	skyDomeTrnasform_ = {
+		{100.0f,100.0f,100.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon_){
@@ -129,7 +143,7 @@ void GameScene::Update(){
 	case SceneName::TITLE:
 
 		followCamera_->Initialize();
-		
+		followCamera_->Update();
 		
 
 		titleSprite_->Update();
@@ -190,7 +204,9 @@ void GameScene::Update(){
 		assert(0);
 	}
 	fadeSprite_->color_.w = fadeAlpha_;
-	
+	skyDomeTrnasform_.rotate.y += 0.001f;
+	skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
+
 	if (fadeAlpha_>=1.0f){
 		fadeAlpha_ = 1.0f;
 	}
@@ -226,6 +242,9 @@ void GameScene::DrawParticle(){
 void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
+	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
+	skyDomeObj_->Draw(textureManager_->SendGPUDescriptorHandle(16));
+
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
 	case SceneName::TITLE:
@@ -283,6 +302,7 @@ void GameScene::Draw2D(){
 
 void GameScene::Finalize(){
 	textureManager_->Finalize();
+	delete skyDomeModel_;
 }
 
 void GameScene::DrawImgui(){

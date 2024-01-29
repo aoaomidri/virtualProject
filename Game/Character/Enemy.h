@@ -69,7 +69,7 @@ private:
 
 	Model* particleModel_;
 	
-	//std::unique_ptr<Object3D> collisionModel_;
+	std::unique_ptr<Object3D> collisionObj_;
 
 
 	//自機のSRT

@@ -22,6 +22,9 @@ void Enemy::Initialize(const Vector3& position){
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize();
 
+	collisionObj_ = std::make_unique<Object3D>();
+	collisionObj_->Initialize();
+
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
 		particleObj_[i]->Initialize();
@@ -57,6 +60,7 @@ void Enemy::Initialize(const Vector3& position){
 	
 	bodyObj_->SetModel(enemyModel_);
 	partsObj_->SetModel(partsModel_);
+	collisionObj_->SetModel(particleModel_);
 	for (int i = 0; i < 20; i++) {
 		particleObj_[i]->SetModel(particleModel_);
 	}
@@ -67,6 +71,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	OBB_.center = transform_.translate;
 	OBB_.size = transform_.scale;
+	OBB_.size.y += 1.0f;
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 
@@ -135,7 +140,13 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	}
 	bodyObj_->Update(matrix_, viewProjection);
 	bodyObj_->Draw(textureManager->SendGPUDescriptorHandle(5));
-	
+
+#ifdef _DEBUG
+
+	collisionObj_->Update(matrix_, viewProjection);
+	collisionObj_->Draw(textureManager->SendGPUDescriptorHandle(9));
+#endif // _DEBUG
+
 	partsObj_->Update(partsMatrix_, viewProjection);
 	partsObj_->Draw(textureManager->SendGPUDescriptorHandle(6));
 

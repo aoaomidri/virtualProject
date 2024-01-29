@@ -84,7 +84,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	player_->Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize({ 0,2.0f,20.0f });
+	enemy_->Initialize({ 0,1.0f,20.0f });
 	enemies_.push_back(std::move(enemy_));
 
 	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
@@ -149,16 +149,19 @@ void GameScene::Update(){
 		titleSprite_->Update();
 		pressSprite_->Update();
 		fadeSprite_->Update();
-		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)){
-			isFade_ = true;
-			
-			
+		if (fadeAlpha_ <= 0.0f) {
+			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
+				isFade_ = true;
+			}
 		}
-		if (isFade_){
+		if (isFade_) {
 			fadeAlpha_ += 0.01f;
 		}
-		if (fadeAlpha_>=1.0f){
-			audio_->StopWave(titleBGM);
+		else{
+			fadeAlpha_ -= 0.01f;
+		}
+		if (fadeAlpha_ >= 1.0f&&isFade_) {
+			audio_->PauseWave(titleBGM);
 			sceneNum_ = SceneName::GAME;
 		}
 		break;
@@ -170,6 +173,8 @@ void GameScene::Update(){
 		followCamera_->Update();
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
+			isFade_ = false;
+			fadeAlpha_ = 0.0f;
 			lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
 
 			player_->Update();
@@ -177,9 +182,6 @@ void GameScene::Update(){
 				enemy->Update();
 			}
 		}
-		
-
-		
 
 		AllCollision();
 		//particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
@@ -188,17 +190,25 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		clearSprite_->Update();
-		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
-			sceneNum_ = SceneName::TITLE;
-		}
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
 		}
-		
-		fadeAlpha_ = 0.0f;
-		isFade_ = false;
+
+		fadeSprite_->Update();
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
+			isFade_ = true;
+		}
+		if (isFade_) {
+			fadeAlpha_ += 0.01f;
+		}
+		if (fadeAlpha_ >= 1.0f) {
+			isFade_ = false;
+			audio_->ResumeWave(titleBGM);
+			sceneNum_ = SceneName::TITLE;
+		}
 
 		player_->Respawn();
+		followCamera_->Reset();
 		break;
 	default:
 		assert(0);
@@ -289,6 +299,7 @@ void GameScene::Draw2D(){
 	case SceneName::CLEAR:
 		clearSprite_->Draw(textureManager_->SendGPUDescriptorHandle(14));
 		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
+		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
 		break;
 	default:
 		assert(0);
@@ -453,6 +464,16 @@ void GameScene::AllCollision(){
 
 		if (enemy->GetIsDead()) {
 			sceneNum_ = SceneName::CLEAR;
+		}
+	}
+
+	for (const auto& enemy : enemies_) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB())) {
+			player_->SetCollisionEnemy(true);
+			break;
+		}
+		else {
+			player_->SetCollisionEnemy(false);
 		}
 	}
 	//}

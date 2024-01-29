@@ -57,7 +57,10 @@ public:
 
 	const ParticleBase* GetParticle()const { return particle_.get(); }
 
+	bool OnCollisionEnemy() { return isCollisionEnemy_; }
+
 	//Setter
+	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
@@ -278,6 +281,9 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+private:
+	bool isCollisionEnemy_ = false;
 
 private:
 	//ロックオン

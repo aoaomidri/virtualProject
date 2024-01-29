@@ -139,13 +139,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 void GameScene::Update(){
 	DrawImgui();
+	
 	switch (sceneNum_){
 	case SceneName::TITLE:
-
-		followCamera_->Initialize();
-		followCamera_->Update();
-		
-
 		titleSprite_->Update();
 		pressSprite_->Update();
 		fadeSprite_->Update();
@@ -161,6 +157,7 @@ void GameScene::Update(){
 			fadeAlpha_ -= 0.01f;
 		}
 		if (fadeAlpha_ >= 1.0f&&isFade_) {
+			followCamera_->RotateReset();
 			audio_->PauseWave(titleBGM);
 			sceneNum_ = SceneName::GAME;
 		}
@@ -183,6 +180,10 @@ void GameScene::Update(){
 			}
 		}
 
+		if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
+			sceneNum_ = SceneName::CLEAR;
+		}
+
 		AllCollision();
 		//particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
 
@@ -203,12 +204,13 @@ void GameScene::Update(){
 		}
 		if (fadeAlpha_ >= 1.0f) {
 			isFade_ = false;
+			followCamera_->RotateReset();
 			audio_->ResumeWave(titleBGM);
 			sceneNum_ = SceneName::TITLE;
 		}
 
 		player_->Respawn();
-		followCamera_->Reset();
+		
 		break;
 	default:
 		assert(0);

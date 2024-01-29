@@ -26,6 +26,8 @@ public:
 
 	void Reset();
 
+	void RotateReset();
+
 	Vector3 offsetCalculation(const Vector3& offset) const;
 
 	void DrawImgui();

@@ -203,7 +203,7 @@ void Enemy::OnCollision(){
 }
 
 const Vector3 Enemy::GetCenterPos()const{
-	const Vector3 offset = { 0.0f,1.0f,0.0f };
+	const Vector3 offset = { 0.0f,5.0f,0.0f };
 	//ワールドに変換
 	
 	Vector3 world = Matrix::GetInstance()->TransformVec(offset, matrix_);

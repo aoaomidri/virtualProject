@@ -23,10 +23,12 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");
 	textureManager_->Load("resources/texture/actionText.png");//20
+	textureManager_->Load("resources/texture/LockOn.png");//21
 }
 
 void GameScene::SoundLoad(){
-	titleBGM = audio_->SoundLoadWave("Game3.wav");
+	titleBGM = audio_->SoundLoadWave("honobono.wav");
+	gameBGM = audio_->SoundLoadWave("Game3.wav");
 }
 
 void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
@@ -81,6 +83,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	TextureLoad();
 	SoundLoad();
 	audio_->SoundPlayWave(titleBGM, 0.5f);
+	audio_->SoundPlayWave(gameBGM, 0.5f);
+	
 
 	SpriteInitialize(dxCommon_);
 	ObjectInitialize(dxCommon_);
@@ -163,9 +167,11 @@ void GameScene::Update(){
 	followCamera_->Update();
 	switch (sceneNum_){
 	case SceneName::TITLE:
+		
 		titleSprite_->Update();
 		pressSprite_->Update();
 		fadeSprite_->Update();
+		audio_->PauseWave(gameBGM);
 		followCamera_->SetIsMove(false);
 		for (const auto& enemy : enemies_) {
 			enemy->Update();
@@ -190,6 +196,7 @@ void GameScene::Update(){
 				enemy->Respawn({ 0, 2.0f, 20.0f });
 			}
 			audio_->PauseWave(titleBGM);
+			audio_->RePlayWave(gameBGM);
 			sceneNum_ = SceneName::GAME;
 		}
 		break;
@@ -203,6 +210,8 @@ void GameScene::Update(){
 		attackSprite_->Update();
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
+			
+			
 			isFade_ = false;
 			fadeAlpha_ = 0.0f;
 			lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
@@ -224,6 +233,7 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
+		audio_->PauseWave(gameBGM);
 		clearSprite_->Update();
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
@@ -360,19 +370,19 @@ void GameScene::DrawImgui(){
 	case SceneName::TITLE:
 	ImGui::Begin("BGM関連");
 	if (ImGui::Button("音源の復活")){
-		titleBGM = audio_->SoundPlayWave(titleBGM, 0.5f);
+		gameBGM = audio_->SoundPlayWave(gameBGM, 0.5f);
 	}
 	if (ImGui::Button("最初から再生")) {
-		audio_->RePlayWave(titleBGM);
+		audio_->RePlayWave(gameBGM);
 	}
 	if (ImGui::Button("完全に停止")) {
-		audio_->StopWave(titleBGM);
+		audio_->StopWave(gameBGM);
 	}
 	if (ImGui::Button("一時停止")){
-		audio_->PauseWave(titleBGM);
+		audio_->PauseWave(gameBGM);
 	}
 	if (ImGui::Button("停止解除")) {
-		audio_->ResumeWave(titleBGM);
+		audio_->ResumeWave(gameBGM);
 	}
 	ImGui::End();
 		break;
@@ -508,6 +518,7 @@ void GameScene::AllCollision(){
 		}
 
 		if (enemy->GetIsDead()) {
+			audio_->PauseWave(gameBGM);
 			sceneNum_ = SceneName::CLEAR;
 		}
 	}

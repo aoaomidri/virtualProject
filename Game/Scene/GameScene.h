@@ -109,6 +109,8 @@ private:
 
 	uint32_t titleBGM{};
 
+	uint32_t gameBGM{};
+
 	//天球
 	std::unique_ptr<Object3D> skyDomeObj_;
 

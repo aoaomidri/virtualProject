@@ -96,6 +96,7 @@ public:
 	/// 0が無音、1が原音
 	uint32_t SoundPlayWave(uint32_t soundHandle, float volume);
 
+	//最初から再生
 	void RePlayWave(uint32_t soundHandle);
 	 
 	/// 音声停止

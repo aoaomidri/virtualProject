@@ -15,7 +15,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/circle.png");//10
 	textureManager_->Load("resources/texture/monsterBall.png");
 	textureManager_->Load("resources/texture/title.png");
-	textureManager_->Load("resources/texture/Press.png");
+	textureManager_->Load("resources/texture/pressA.png");
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");//15
 	textureManager_->Load("resources/skyDome/skyDome.png");
@@ -111,11 +111,13 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	titleSprite_->scale_.x = 850.0f;
 	titleSprite_->scale_.y = 150.0f;
 	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
+	titleSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
 
 	pressSprite_->position_ = { 640.0f,500.0f };
 	pressSprite_->scale_.x = 600.0f;
 	pressSprite_->scale_.y = 136.0f;
 	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
+	pressSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	clearSprite_->position_ = { 640.0f,175.0f };
 	clearSprite_->scale_.x = 850.0f;
@@ -140,11 +142,17 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 void GameScene::Update(){
 	DrawImgui();
 	
+	followCamera_->Update();
 	switch (sceneNum_){
 	case SceneName::TITLE:
 		titleSprite_->Update();
 		pressSprite_->Update();
 		fadeSprite_->Update();
+		followCamera_->SetIsMove(false);
+		for (const auto& enemy : enemies_) {
+			enemy->Update();
+		}
+
 		if (fadeAlpha_ <= 0.0f) {
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 				isFade_ = true;
@@ -158,6 +166,11 @@ void GameScene::Update(){
 		}
 		if (fadeAlpha_ >= 1.0f&&isFade_) {
 			followCamera_->RotateReset();
+			player_->Update();
+			player_->Respawn();
+			for (const auto& enemy : enemies_) {
+				enemy->Respawn({ 0, 2.0f, 20.0f });
+			}
 			audio_->PauseWave(titleBGM);
 			sceneNum_ = SceneName::GAME;
 		}
@@ -166,8 +179,8 @@ void GameScene::Update(){
 		/*if (input_->Trigerkey(DIK_1)){
 			sceneNum_ = SceneName::CLEAR;
 		}*/
+		followCamera_->SetIsMove(true);
 		fadeSprite_->Update();
-		followCamera_->Update();
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
 			isFade_ = false;
@@ -190,6 +203,7 @@ void GameScene::Update(){
 		floorManager_->Update();
 		break;
 	case SceneName::CLEAR:
+		followCamera_->SetIsMove(false);
 		clearSprite_->Update();
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
@@ -205,7 +219,7 @@ void GameScene::Update(){
 		if (fadeAlpha_ >= 1.0f) {
 			isFade_ = false;
 			followCamera_->RotateReset();
-			audio_->ResumeWave(titleBGM);
+			audio_->RePlayWave(titleBGM);
 			sceneNum_ = SceneName::TITLE;
 		}
 
@@ -461,6 +475,13 @@ void GameScene::AllCollision(){
 	//}
 	for (const auto& enemy : enemies_) {
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
+			uint32_t serialNumber = enemy->GetSerialNumber();
+			if (player_->RecordCheck(serialNumber)){
+				return;
+			}
+			//接触履歴に登録
+			player_->AddRecord(serialNumber);
+
 			enemy->OnCollision();
 		}
 

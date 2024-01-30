@@ -1,4 +1,10 @@
 #include "Enemy.h"
+uint32_t Enemy::nextSerialNumber_ = 0;
+
+Enemy::Enemy(){
+	serialNumber_ = nextSerialNumber_;
+	++nextSerialNumber_;
+}
 
 Enemy::~Enemy(){
 	delete enemyModel_;
@@ -38,6 +44,7 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,3.14f,0.0f},
 		position
 	};
+	collisionTransform_ = transform_;
 
 	partsTransform_ = {
 		{0.9f,0.9f,0.9f},
@@ -70,8 +77,10 @@ void Enemy::Initialize(const Vector3& position){
 	isParticle_ = true;
 
 	OBB_.center = transform_.translate;
-	OBB_.size = transform_.scale;
-	OBB_.size.y += 1.0f;
+	OBB_.size = { transform_.scale.x + 1.0f,transform_.scale.y + 2.0f,transform_.scale.z + 1.0f };
+	collisionTransform_.translate = OBB_.center;
+	collisionTransform_.scale = OBB_.size;
+
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 
@@ -118,6 +127,8 @@ void Enemy::Update(){
 	for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];
 	}
+	collisionTransform_ = transform_;
+
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
@@ -129,7 +140,9 @@ void Enemy::Update(){
 
 
 	OBB_.center = transform_.translate;
-	OBB_.size = transform_.scale;
+	collisionTransform_.scale = OBB_.size;
+
+	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 }
@@ -143,7 +156,7 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 
 #ifdef _DEBUG
 
-	collisionObj_->Update(matrix_, viewProjection);
+	collisionObj_->Update(collisionMatrix_, viewProjection);
 	collisionObj_->Draw(textureManager->SendGPUDescriptorHandle(9));
 #endif // _DEBUG
 
@@ -181,11 +194,11 @@ void Enemy::Respawn(const Vector3& position){
 }
 
 void Enemy::OnCollision(){
-	if (invincibleTime_<=0){
+	/*if (invincibleTime_<=0){*/
 		enemyLife_--;
 		invincibleTime_ = invincibleTimeBase_;
 		ParticleMove();
-	}	
+	//}	
 	
 }
 

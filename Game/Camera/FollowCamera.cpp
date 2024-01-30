@@ -52,6 +52,8 @@ void FollowCamera::Update(){
 	
 	ApplyGlobalVariables();
 
+
+
 	if (lockOn_ && lockOn_->target_) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - target_->translate;
@@ -63,7 +65,8 @@ void FollowCamera::Update(){
 
 	}
 	else {
-		if (input_->GetConnectPad()){
+
+		if (input_->GetConnectPad() && isMove_) {
 			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
 			Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
 			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);

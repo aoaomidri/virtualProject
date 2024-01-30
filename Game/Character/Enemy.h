@@ -13,6 +13,9 @@
 
 class Enemy {
 public:
+	//コンストラクタ
+	Enemy();
+
 	~Enemy();
 	//調整項目
 	void ApplyGlobalVariables();
@@ -43,7 +46,11 @@ public:
 
 	const OBB& GetOBB()const { return OBB_; }
 
+	
+
 	bool GetIsDead() { return isDead_; }
+
+	uint32_t GetSerialNumber()const { return serialNumber_; }
 
 	//Setter
 
@@ -76,6 +83,7 @@ private:
 	Transform transform_{};
 	Transform partsTransform_{};
 	Transform particleTransform_[particleNum_]{};
+	Transform collisionTransform_{};
 
 	//プレイヤーのマトリックス
 	Matrix4x4 matrix_{};
@@ -83,6 +91,8 @@ private:
 	Matrix4x4 scaleMatrix_{};
 	Matrix4x4 rotateMatrix_{};
 	Matrix4x4 transformMatrix_{};
+
+	Matrix4x4 collisionMatrix_{};
 
 	Matrix4x4 partsMatrix_{};
 	Matrix4x4 particleMatrix_[particleNum_]{};
@@ -124,5 +134,12 @@ private:
 	bool isParticle_ = false;
 
 	float particleSpeed_;
+
+private:
+	
+	//シリアルナンバー
+	uint32_t serialNumber_ = 0;
+	//次のシリアルナンバー
+	static uint32_t nextSerialNumber_;
 };
 

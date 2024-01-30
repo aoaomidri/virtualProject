@@ -212,7 +212,7 @@ void Player::Respawn(){
 	playerTransform_ = {
 			.scale = {0.3f,0.3f,0.3f},
 			.rotate = {0.0f,0.0f,0.0f},
-			.translate = {0.0f,5.8f,0.0f}
+			.translate = {0.0f,0.8f,0.0f}
 	};
 	downVector = { 0.0f,0.0f,0.0f };
 }
@@ -329,7 +329,7 @@ void Player::BehaviorAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;
@@ -351,7 +351,7 @@ void Player::BehaviorSecondAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.0f;
 	isShakeDown = false;
@@ -371,7 +371,7 @@ void Player::BehaviorThirdAttackInitialize(){
 	//weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	////weaponCollisionTransform_.rotate.x = 1.57f / 2.0f;
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
-
+	hitRecord_.Clear();
 	workAttack_.AttackTimer_ = 0;
 	easeT_ = 0;
 	WaitTime = WaitTimeBase;
@@ -395,7 +395,7 @@ void Player::BehaviorFourthAttackInitialize()
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.5f;
 	isShakeDown = false;
@@ -417,7 +417,7 @@ void Player::BehaviorFifthAttackInitialize()
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;
@@ -836,7 +836,7 @@ void Player::BehaviorStrongAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;
@@ -858,7 +858,7 @@ void Player::BehaviorSecondStrongAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.5f;
 	isShakeDown = false;
@@ -878,7 +878,7 @@ void Player::BehaviorThirdStrongAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.0f;
 	isShakeDown = false;
@@ -898,7 +898,7 @@ void Player::BehaviorFourthStrongAttackInitialize(){
 	//weaponCollisionTransform_.rotate.y = Matrix::GetInstance()->RotateAngleYFromMatrix(playerRotateMatrix_);
 	////weaponCollisionTransform_.rotate.x = 1.57f / 2.0f;
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
-
+	hitRecord_.Clear();
 	workAttack_.AttackTimer_ = 0;
 	easeT_ = 0;
 	WaitTime = WaitTimeBase;
@@ -921,7 +921,7 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	weaponCollisionTransform_.rotate = weaponTransform_.rotate;
 	weaponCollisionTransform_.rotate.x = 0;
 	workAttack_.AttackTimer_ = 0;
-
+	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.0f;
 	isShakeDown = false;

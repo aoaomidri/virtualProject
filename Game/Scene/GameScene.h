@@ -130,6 +130,10 @@ private:
 
 	std::unique_ptr<Sprite> clearSprite_;
 
+	std::unique_ptr<Sprite> actionTextSprite_;
+
+	std::unique_ptr<Sprite> attackSprite_;
+
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;
 

@@ -19,6 +19,10 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");//15
 	textureManager_->Load("resources/skyDome/skyDome.png");
+	textureManager_->Load("resources/texture/STAttack.png");
+	textureManager_->Load("resources/texture/dash.png");
+	textureManager_->Load("resources/texture/RB.png");
+	textureManager_->Load("resources/texture/actionText.png");//20
 }
 
 void GameScene::SoundLoad(){
@@ -37,6 +41,12 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 
 	fadeSprite_ = std::make_unique<Sprite>(textureManager_.get());
 	fadeSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 15);
+
+	actionTextSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	actionTextSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 20);
+
+	attackSprite_ = std::make_unique<Sprite>(textureManager_.get());
+	attackSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 17);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
@@ -119,6 +129,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
 	pressSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
+	actionTextSprite_->position_ = { 1072.0f,500.0f };
+	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
+	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	attackSprite_->position_ = { 1072.0f,650.0f };
+	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
+	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
 	clearSprite_->position_ = { 640.0f,175.0f };
 	clearSprite_->scale_.x = 850.0f;
 	clearSprite_->scale_.y = 150.0f;
@@ -181,6 +199,8 @@ void GameScene::Update(){
 		}*/
 		followCamera_->SetIsMove(true);
 		fadeSprite_->Update();
+		actionTextSprite_->Update();
+		attackSprite_->Update();
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
 			isFade_ = false;
@@ -309,6 +329,8 @@ void GameScene::Draw2D(){
 		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
 		break;
 	case SceneName::GAME:
+		actionTextSprite_->Draw(textureManager_->SendGPUDescriptorHandle(20));
+		attackSprite_->Draw(textureManager_->SendGPUDescriptorHandle(17));
 		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
 		lockOn_->Draw(textureManager_.get());
 		break;
@@ -419,12 +441,12 @@ void GameScene::DrawImgui(){
 	}
 
 	ImGui::Begin("スプライト");
-	ImGui::DragFloat2("title : ポジション", &titleSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("title : 大きさ", &titleSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("title : 色", &titleSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("press : ポジション", &pressSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("press : 大きさ", &pressSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("press : 色", &pressSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("action : ポジション", &attackSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("action : 大きさ", &attackSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("action : 色", &attackSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("press : ポジション", &actionTextSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("press : 大きさ", &actionTextSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("press : 色", &actionTextSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
 	ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);

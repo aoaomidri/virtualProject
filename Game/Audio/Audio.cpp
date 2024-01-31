@@ -179,9 +179,11 @@ void Audio::RePlayWave(uint32_t soundHandle){
 		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == soundHandle; });
 	// 発見
 	if (it != voices_.end()) {
-		(*it)->sourceVoice->Stop(soundHandle);
+		(*it)->sourceVoice->Stop(0);
 		(*it)->sourceVoice->FlushSourceBuffers();
-
+		/*if ((*it)->handle!=soundHandle){
+			assert(true);
+		}*/
 		//参照を取得
 		SoundData& soundData = soundDatas_.at(soundHandle);
 		//未ロードだった場合止める
@@ -197,7 +199,7 @@ void Audio::RePlayWave(uint32_t soundHandle){
 
 		hr_ = (*it)->sourceVoice->SubmitSourceBuffer(&buf);
 
-		(*it)->sourceVoice->Start(soundHandle);
+		(*it)->sourceVoice->Start(0);
 	}
 }
 
@@ -234,7 +236,7 @@ void Audio::PauseWave(uint32_t voiceHandle){
 		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == voiceHandle; });
 	// 発見
 	if (it != voices_.end()) {
-		(*it)->sourceVoice->Stop(voiceHandle);
+		(*it)->sourceVoice->Stop(0);
 	}
 }
 
@@ -246,7 +248,7 @@ void Audio::ResumeWave(uint32_t voiceHandle){
 	if (it != voices_.end()) {
 
 		// 再生位置を指定して再生を再開
-		(*it)->sourceVoice->Start(voiceHandle);
+		(*it)->sourceVoice->Start(0);
 
 	}
 }

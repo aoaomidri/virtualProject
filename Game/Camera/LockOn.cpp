@@ -7,7 +7,7 @@ void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 	lockOnMark_->SetLeftTop({ 0,0 });
 	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
 	lockOnMark_->SetSize({ 512.0f,512.0f });
-	lockOnMark_->SetScale({ 96.0f,96.0f });
+	lockOnMark_->SetScale({ 48.0f,48.0f });
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
@@ -23,13 +23,13 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}		
 	}
 	if (autoLockOn_) {
-		lockOnMark_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			isLockOn_ = true;
 		}
 	}
 	else {
-		lockOnMark_->SetColor({ 0.0f,0.0f,0.0f,1.0f });
+		lockOnMark_->SetColor({ 0.0f,1.0f,1.0f,1.0f });
 	}
 
 	if (target_){
@@ -94,7 +94,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 void LockOn::Draw(TextureManager* textureManager){
 	if (target_){
-		lockOnMark_->Draw(textureManager->SendGPUDescriptorHandle(8));
+		lockOnMark_->Draw(textureManager->SendGPUDescriptorHandle(21));
 	}
 	
 }

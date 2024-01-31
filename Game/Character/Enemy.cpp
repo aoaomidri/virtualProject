@@ -1,4 +1,10 @@
 #include "Enemy.h"
+uint32_t Enemy::nextSerialNumber_ = 0;
+
+Enemy::Enemy(){
+	serialNumber_ = nextSerialNumber_;
+	++nextSerialNumber_;
+}
 
 Enemy::~Enemy(){
 }
@@ -19,6 +25,9 @@ void Enemy::Initialize(const Vector3& position){
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize();
 
+	collisionObj_ = std::make_unique<Object3D>();
+	collisionObj_->Initialize();
+
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
 		particleObj_[i]->Initialize();
@@ -32,6 +41,7 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,3.14f,0.0f},
 		position
 	};
+	collisionTransform_ = transform_;
 
 	partsTransform_ = {
 		{0.9f,0.9f,0.9f},
@@ -54,6 +64,8 @@ void Enemy::Initialize(const Vector3& position){
 	
 	bodyObj_->SetModel(enemyModel_.get());
 	partsObj_->SetModel(partsModel_.get());
+	
+	collisionObj_->SetModel(particleModel_.get());
 	for (int i = 0; i < 20; i++) {
 		particleObj_[i]->SetModel(particleModel_.get());
 	}
@@ -63,7 +75,10 @@ void Enemy::Initialize(const Vector3& position){
 	isParticle_ = true;
 
 	OBB_.center = transform_.translate;
-	OBB_.size = transform_.scale;
+	OBB_.size = { transform_.scale.x + 1.0f,transform_.scale.y + 2.0f,transform_.scale.z + 1.0f };
+	collisionTransform_.translate = OBB_.center;
+	collisionTransform_.scale = OBB_.size;
+
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 
@@ -110,6 +125,8 @@ void Enemy::Update(){
 	for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];
 	}
+	collisionTransform_ = transform_;
+
 
 	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
@@ -121,7 +138,9 @@ void Enemy::Update(){
 
 
 	OBB_.center = transform_.translate;
-	OBB_.size = transform_.scale;
+	collisionTransform_.scale = OBB_.size;
+
+	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 }
@@ -132,7 +151,13 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 	}
 	bodyObj_->Update(matrix_, viewProjection);
 	bodyObj_->Draw(textureManager->SendGPUDescriptorHandle(5));
-	
+
+#ifdef _DEBUG
+
+	collisionObj_->Update(collisionMatrix_, viewProjection);
+	collisionObj_->Draw(textureManager->SendGPUDescriptorHandle(9));
+#endif // _DEBUG
+
 	partsObj_->Update(partsMatrix_, viewProjection);
 	partsObj_->Draw(textureManager->SendGPUDescriptorHandle(6));
 
@@ -167,16 +192,16 @@ void Enemy::Respawn(const Vector3& position){
 }
 
 void Enemy::OnCollision(){
-	if (invincibleTime_<=0){
+	/*if (invincibleTime_<=0){*/
 		enemyLife_--;
 		invincibleTime_ = invincibleTimeBase_;
 		ParticleMove();
-	}	
+	//}	
 	
 }
 
 const Vector3 Enemy::GetCenterPos()const{
-	const Vector3 offset = { 0.0f,1.0f,0.0f };
+	const Vector3 offset = { 0.0f,5.0f,0.0f };
 	//ワールドに変換
 	
 	Vector3 world = Matrix::GetInstance()->TransformVec(offset, matrix_);

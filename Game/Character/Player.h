@@ -8,6 +8,7 @@
 #include"OBB.h"
 #include"Adjustment_Item.h"
 #include"Quaternion.h"
+#include"HitRecord.h"
 #include"ParticleBase.h"
 #include<optional>
 
@@ -57,7 +58,14 @@ public:
 
 	const ParticleBase* GetParticle()const { return particle_.get(); }
 
+	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
+
+	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
+
+	bool OnCollisionEnemy() { return isCollisionEnemy_; }
+
 	//Setter
+	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
@@ -280,12 +288,16 @@ private:
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 private:
+	bool isCollisionEnemy_ = false;
+
+private:
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
 
 	//入力
 	Input* input_ = nullptr;
 
+	HitRecord hitRecord_;
 
 	std::unique_ptr<ParticleBase> particle_;
 };

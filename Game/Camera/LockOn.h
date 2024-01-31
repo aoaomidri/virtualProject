@@ -75,6 +75,12 @@ private:
 
 	bool autoLockOn_ = false;
 
+	float easeT_ = 0.0f;
+
+	float easeY_ = 0.0f;
+
+	Vector2 MinMax_ = { 0.0f,1.0f };
+
 	bool isLockOn_ = false;
 
 	float length = 0;

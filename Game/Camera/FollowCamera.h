@@ -26,6 +26,8 @@ public:
 
 	void Reset();
 
+	void RotateReset();
+
 	Vector3 offsetCalculation(const Vector3& offset) const;
 
 	void DrawImgui();
@@ -36,6 +38,8 @@ public:
 	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix = target; }
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+
+	void SetIsMove(const bool isMove) { isMove_ = isMove; };
 public:
 	ViewingFrustum& GetViewingFrustum() { return viewingFrustum_; }
 
@@ -121,5 +125,8 @@ private:
 
 	//入力
 	Input* input_ = nullptr;
+
+	//カメラを動かすことが出来るフラグ
+	bool isMove_;
 };
 

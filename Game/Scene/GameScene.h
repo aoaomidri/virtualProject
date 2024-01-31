@@ -89,6 +89,17 @@ private:
 
 	uint32_t titleBGM{};
 
+	uint32_t gameBGM{};
+
+	//天球
+	std::unique_ptr<Object3D> skyDomeObj_;
+
+	Model* skyDomeModel_;
+
+	Transform skyDomeTrnasform_;
+
+	Matrix4x4 skyDomeMatrix_;
+
 	//スプライト関連
 	//タイトル
 	std::unique_ptr<Sprite> titleSprite_;

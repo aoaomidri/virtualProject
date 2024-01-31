@@ -55,6 +55,8 @@ void FollowCamera::Update(){
 	
 	//ApplyGlobalVariables();
 
+
+
 	if (lockOn_ && lockOn_->target_) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - target_->translate;
@@ -63,10 +65,11 @@ void FollowCamera::Update(){
 
 		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
-
+		destinationAngleX_ = 0.15f;
 	}
 	else {
-		if (input_->GetConnectPad()){
+
+		if (input_->GetConnectPad() && isMove_) {
 			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
 			Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
 			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
@@ -130,6 +133,11 @@ void FollowCamera::Reset(){
 	}
 	Vector3 offset = offsetCalculation(baseOffset);
 	viewProjection_.translation_ = interTarget_ + offset;
+}
+
+void FollowCamera::RotateReset(){
+	destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleX_ = 0.2f;
 }
 
 Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{

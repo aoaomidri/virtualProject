@@ -19,10 +19,10 @@ enum VertexNumber{
 
 class Sprite {
 public:
-	Sprite(TextureManager* textureManager);
-	~Sprite();
+	Sprite() = default;
+	~Sprite() = default;
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber = UINT32_MAX);
+	void Initialize(uint32_t TextureNumber = UINT32_MAX);
 
 	void Update();
 

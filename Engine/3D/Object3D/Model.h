@@ -64,6 +64,8 @@ public:
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView; }
 
+	MaterialData GetMaterial()const { return material; }
+
 	const std::vector<VertexData> GetVertexData()const { return indices; }
 
 private:

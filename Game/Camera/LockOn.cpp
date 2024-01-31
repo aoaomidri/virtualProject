@@ -1,12 +1,12 @@
 #include "LockOn.h"
 
-void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, TextureManager* textureManager){
-	lockOnMark_ = std::make_unique<Sprite>(textureManager);
-	lockOnMark_->Initialize(device, commandList);
+void LockOn::Initialize(){
+	lockOnMark_ = std::make_unique<Sprite>();
+	lockOnMark_->Initialize(21);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });
 	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
-	lockOnMark_->SetSize({ 512.0f,512.0f });
+	lockOnMark_->SetSize({ 64.0f,64.0f });
 	lockOnMark_->SetScale({ 48.0f,48.0f });
 }
 

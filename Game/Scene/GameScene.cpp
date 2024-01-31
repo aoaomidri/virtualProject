@@ -32,23 +32,23 @@ void GameScene::SoundLoad(){
 }
 
 void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
-	titleSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	titleSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 12);
+	titleSprite_ = std::make_unique<Sprite>();
+	titleSprite_->Initialize(12);
 
-	pressSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	pressSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 13);
+	pressSprite_ = std::make_unique<Sprite>();
+	pressSprite_->Initialize(13);
 
-	clearSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	clearSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 14);
+	clearSprite_ = std::make_unique<Sprite>();
+	clearSprite_->Initialize(14);
 
-	fadeSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	fadeSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 15);
+	fadeSprite_ = std::make_unique<Sprite>();
+	fadeSprite_->Initialize(15);
 
-	actionTextSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	actionTextSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 20);
+	actionTextSprite_ = std::make_unique<Sprite>();
+	actionTextSprite_->Initialize(20);
 
-	attackSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	attackSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 17);
+	attackSprite_ = std::make_unique<Sprite>();
+	attackSprite_->Initialize(17);
 }
 
 void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
@@ -58,13 +58,10 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
 	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
-
-	skyDomeObj_ = std::make_unique<Object3D>();
-	skyDomeObj_->Initialize();
-
 	skyDomeModel_ = Model::LoadObjFile("skyDome");
 
-	skyDomeObj_->SetModel(skyDomeModel_.get());
+	skyDomeObj_ = std::make_unique<Object3D>();
+	skyDomeObj_->Initialize(skyDomeModel_.get());
 
 	skyDomeTrnasform_ = {
 		{100.0f,100.0f,100.0f},
@@ -78,8 +75,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
 
-	textureManager_ = std::make_unique<TextureManager>();
-	textureManager_->Initialize();
+	textureManager_ = TextureManager::GetInstance();
+	
 	TextureLoad();
 	SoundLoad();
 	audio_->SoundPlayWave(titleBGM, 0.5f);
@@ -154,7 +151,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	sceneNum_ = SceneName::TITLE;
 	lockOn_ = std::make_unique<LockOn>();
-	lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), textureManager_.get());
+	lockOn_->Initialize();
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
@@ -283,7 +280,7 @@ void GameScene::DrawParticle(){
 	case SceneName::TITLE:
 		break;
 	case SceneName::GAME:
-		player_->ParticleDraw(textureManager_.get(), followCamera_->GetViewProjection());
+		player_->ParticleDraw(textureManager_, followCamera_->GetViewProjection());
 		break;
 	case SceneName::CLEAR:
 
@@ -299,7 +296,7 @@ void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	skyDomeObj_->Draw(textureManager_->SendGPUDescriptorHandle(16));
+	skyDomeObj_->Draw(16);
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
@@ -307,12 +304,12 @@ void GameScene::Draw3D(){
 		
 		break;
 	case SceneName::GAME:
-		floorManager_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+		floorManager_->Draw(textureManager_, followCamera_->GetViewProjection());
 
-		player_->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+		player_->Draw(textureManager_, followCamera_->GetViewProjection());
 
 		for (const auto& enemy : enemies_) {
-			enemy->Draw(textureManager_.get(), followCamera_->GetViewProjection());
+			enemy->Draw(textureManager_, followCamera_->GetViewProjection());
 		}
 		break;
 	case SceneName::CLEAR:
@@ -342,7 +339,7 @@ void GameScene::Draw2D(){
 		actionTextSprite_->Draw(textureManager_->SendGPUDescriptorHandle(20));
 		attackSprite_->Draw(textureManager_->SendGPUDescriptorHandle(17));
 		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
-		lockOn_->Draw(textureManager_.get());
+		lockOn_->Draw(textureManager_);
 		break;
 	case SceneName::CLEAR:
 		clearSprite_->Draw(textureManager_->SendGPUDescriptorHandle(14));
@@ -360,7 +357,7 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
-	textureManager_->Finalize();
+	
 }
 
 void GameScene::DrawImgui(){

@@ -24,6 +24,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string& filename){
 
 	modelData->MakeVertexResource();
 
+	
 	//4,ModelDataを返す
 	return modelData;
 }
@@ -46,9 +47,23 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 		//identifierに応じた処理
 		if (identifier == "map_Kd") {
 			std::string textureFilename;
+			std::string result;
+
 			s >> textureFilename;
-			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+			size_t slashPos_ = textureFilename.find_last_of('\\');
+			size_t dotPos_ = textureFilename.find_last_of('.');
+			if (slashPos_>1000){
+				//連結してファイルパスにする
+				materialData.textureFilePath = directoryPath + "/" + textureFilename;
+			}
+			else {
+				if (slashPos_ != std::string::npos && dotPos_ != std::string::npos && dotPos_ > slashPos_) {
+					result = textureFilename.substr(slashPos_ + 1, dotPos_ - slashPos_ - 1);
+				}
+				//連結してファイルパスにする
+				materialData.textureFilePath = directoryPath + "/" + result + ".png";
+			}
+			
 		}
 
 	}

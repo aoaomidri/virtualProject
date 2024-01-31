@@ -51,7 +51,7 @@ void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& vi
 
 void FloorManager::AddFloor(Transform transform, bool isMoving){
 	Object3D* object_ = new Object3D();
-	object_->Initialize();
+	object_->Initialize(floorModel_.get());
 	objects_.push_back(object_);
 
 	Floor* floor = new Floor();

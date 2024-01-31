@@ -72,7 +72,7 @@ private:
 	//クラス内変数
 	//基本の宣言はユニークポインタで
 	//テクスチャマネージャー
-	std::unique_ptr<TextureManager> textureManager_;
+	TextureManager* textureManager_ = nullptr;
 
 	std::unique_ptr<FollowCamera> followCamera_;	
 	

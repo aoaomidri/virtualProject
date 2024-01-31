@@ -21,17 +21,18 @@ void Enemy::Initialize(const Vector3& position){
 	particleModel_ = Model::LoadObjFile("box");
 
 	bodyObj_ = std::make_unique<Object3D>();
-	bodyObj_->Initialize();
+	bodyObj_->Initialize(enemyModel_.get());
 	partsObj_ = std::make_unique<Object3D>();
-	partsObj_->Initialize();
+	partsObj_->Initialize(partsModel_.get());
 
 	collisionObj_ = std::make_unique<Object3D>();
-	collisionObj_->Initialize();
+	collisionObj_->Initialize(particleModel_.get());
 
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
-		particleObj_[i]->Initialize();
+		particleObj_[i]->Initialize(particleModel_.get());
 	}
+	
 
 	/*collisionModel_ = std::make_unique<Object3D>();
 	collisionModel_->Initialize(device, commandList, "box");*/
@@ -62,13 +63,6 @@ void Enemy::Initialize(const Vector3& position){
 		particleVec_[i] = {0.0f,0.0f,0.0f};
 	}
 	
-	bodyObj_->SetModel(enemyModel_.get());
-	partsObj_->SetModel(partsModel_.get());
-	
-	collisionObj_->SetModel(particleModel_.get());
-	for (int i = 0; i < 20; i++) {
-		particleObj_[i]->SetModel(particleModel_.get());
-	}
 	
 
 	isDead_ = false;
@@ -150,25 +144,25 @@ void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProje
 		return;
 	}
 	bodyObj_->Update(matrix_, viewProjection);
-	bodyObj_->Draw(textureManager->SendGPUDescriptorHandle(5));
+	bodyObj_->Draw(5);
 
 #ifdef _DEBUG
 
 	collisionObj_->Update(collisionMatrix_, viewProjection);
-	collisionObj_->Draw(textureManager->SendGPUDescriptorHandle(9));
+	collisionObj_->Draw(9);
 #endif // _DEBUG
 
 	partsObj_->Update(partsMatrix_, viewProjection);
-	partsObj_->Draw(textureManager->SendGPUDescriptorHandle(6));
+	partsObj_->Draw(6);
 
 	if (isParticle_){
 		for (int i = 0; i < 10; i++) {
 			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
-			particleObj_[i]->Draw(textureManager->SendGPUDescriptorHandle(9));
+			particleObj_[i]->Draw(9);
 		}
 		for (int i = 10; i < 20; i++) {
 			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
-			particleObj_[i]->Draw(textureManager->SendGPUDescriptorHandle(9));
+			particleObj_[i]->Draw(9);
 		}
 	}
 }

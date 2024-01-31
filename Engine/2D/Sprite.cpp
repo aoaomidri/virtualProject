@@ -7,18 +7,11 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
-Sprite::Sprite(TextureManager* textureManager){
-	textureManager_ = textureManager;
-}
+void Sprite::Initialize(uint32_t TextureNumber){
 
-Sprite::~Sprite(){
-	
-}
-
-void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber){
-
-	device_ = device;
-	commandList_ = commandList;
+	device_ = DirectXCommon::GetInstance()->GetDevice();
+	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
+	textureManager_ = TextureManager::GetInstance();
 
 	makeSpriteResource();
 

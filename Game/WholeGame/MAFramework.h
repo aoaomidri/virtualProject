@@ -6,6 +6,7 @@
 #include"DirectXCommon.h"
 #include"GameScene.h"
 #include"Adjustment_Item.h"
+#include"TextureManager.h"
 class MAFramework{
 public:
 	virtual ~MAFramework() = default;
@@ -40,6 +41,9 @@ public:
 	RandomMaker* randomMaker_ = nullptr;
 	//音楽関連
 	Audio* audio_ = nullptr;
+	//テクスチャ関連
+	TextureManager* texManager_ = nullptr;
+
 private:
 	MSG msg{};
 };

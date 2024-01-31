@@ -9,8 +9,11 @@
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 class TextureManager {
 public:
+	TextureManager() = default;
+	~TextureManager() = default;
+	TextureManager(const TextureManager& TextureManager) = delete;
+	TextureManager& operator=(const TextureManager&) = delete;
 	//TextureManager();
-	~TextureManager();
 
 	void Initialize();
 
@@ -28,7 +31,7 @@ public:
 
 	//void Load(const std::string& filePath, uint32_t index);
 
-	void Load(const std::string& filePath);
+	uint32_t Load(const std::string& filePath);
 
 	void MakeInstancingShaderResourceView(ID3D12Resource* resource);
 

@@ -11,7 +11,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, TextureManager* textureManager);
+	void Initialize();
 
 	/// <summary>
 	/// 更新

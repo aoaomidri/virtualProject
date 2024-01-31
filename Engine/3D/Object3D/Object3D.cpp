@@ -5,12 +5,14 @@
 #include<sstream>
 
 
-void Object3D::Initialize() {
+void Object3D::Initialize(Model* model) {
 	makeResource();
 
 	isDraw_ = true;
 
 	materialDate->enableLighting = false;
+
+	model_ = model;
 
 	transform = {
 		{1.0f,1.0f,1.0f},
@@ -59,7 +61,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
-void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
+void Object3D::Draw(uint32_t textureNumber) {
 
 	if (!isDraw_) {
 		return;
@@ -69,7 +71,7 @@ void Object3D::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle) {
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, GPUHandle);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureNumber));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());

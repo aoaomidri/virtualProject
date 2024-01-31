@@ -36,12 +36,11 @@ void Floor::Update(){
 void Floor::Draw(Object3D* object, Model* model, TextureManager* textureManager, const ViewProjection& viewProjection){
 	if (floorModel_ == nullptr) {
 		floorModel_ = object;
-		floorModel_->SetModel(model);
 	}
 	
 
 	floorModel_->Update(floorMatrix_, viewProjection);
-	floorModel_->Draw(textureManager->SendGPUDescriptorHandle(3));
+	floorModel_->Draw(3);
 }
 
 void Floor::DrawImgui(){

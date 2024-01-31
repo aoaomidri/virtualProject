@@ -94,7 +94,7 @@ private:
 	//天球
 	std::unique_ptr<Object3D> skyDomeObj_;
 
-	Model* skyDomeModel_;
+	std::unique_ptr<Model> skyDomeModel_;
 
 	Transform skyDomeTrnasform_;
 

@@ -95,7 +95,7 @@ private:
 	//オブジェクトリスト
 	std::list<Object3D*> objects_;
 
-	Model* floorModel_ ;
+	std::unique_ptr<Model> floorModel_ ;
 
 	// 床リスト
 	std::list<Floor*> floors_;

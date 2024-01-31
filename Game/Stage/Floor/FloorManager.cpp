@@ -2,7 +2,7 @@
 #include"DirectXCommon.h"
 
 FloorManager::~FloorManager(){
-	delete floorModel_;
+	
 	// 解放
 	for (Floor* floor : floors_) {
 		delete floor;
@@ -43,7 +43,7 @@ void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& vi
 	for (Floor* floor : floors_) {
 		auto it = std::next(objects_.begin(), num);
 		Object3D* object = *it;
-		floor->Draw(object, floorModel_ , textureManager, viewProjection);
+		floor->Draw(object, floorModel_.get(), textureManager, viewProjection);
 		num++;
 	}
 

@@ -7,9 +7,9 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
 	textureManager_->Load("resources/texture/Sky.png");
-	textureManager_->Load("resources/Enemy/EnemyTex.png");//5
-	textureManager_->Load("resources/EnemyParts/EnemyParts.png");
-	textureManager_->Load("resources/Weapon/Sword.png");
+	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");//5
+	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
+	textureManager_->Load("resources/Model/Weapon/Sword.png");
 	textureManager_->Load("resources/texture/Magic.png");
 	textureManager_->Load("resources/texture/Black.png");
 	textureManager_->Load("resources/texture/circle.png");//10
@@ -18,7 +18,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/pressA.png");
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");//15
-	textureManager_->Load("resources/skyDome/skyDome.png");
+	textureManager_->Load("resources/Model/skyDome/skyDome.png");
 	textureManager_->Load("resources/texture/STAttack.png");
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");
@@ -64,7 +64,7 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
 
 	skyDomeModel_ = Model::LoadObjFile("skyDome");
 
-	skyDomeObj_->SetModel(skyDomeModel_);
+	skyDomeObj_->SetModel(skyDomeModel_.get());
 
 	skyDomeTrnasform_ = {
 		{100.0f,100.0f,100.0f},
@@ -361,7 +361,6 @@ void GameScene::Draw2D(){
 
 void GameScene::Finalize(){
 	textureManager_->Finalize();
-	delete skyDomeModel_;
 }
 
 void GameScene::DrawImgui(){

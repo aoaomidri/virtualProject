@@ -16,9 +16,9 @@ Model* Model::GetInstance(){
 	return &instance;
 }
 
-Model* Model::LoadObjFile(const std::string& filename){
+std::unique_ptr<Model> Model::LoadObjFile(const std::string& filename){
 	//1,中で必要になる変数の宣言
-	Model* modelData = new Model();//構築するModelData
+	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
 	
 	modelData->LoadFromOBJInternal(filename);
 
@@ -91,7 +91,6 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 	std::vector<Vector3> normals;//法線
 	std::vector<Vector2> texcoords;//テクスチャ座標
 	std::string line;//ファイルから読んだ1行を格納するもの
-	const std::string ResourcesPath = "resources/";
 
 	//2,ファイルを開く
 

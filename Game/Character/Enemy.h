@@ -70,11 +70,11 @@ private:
 	std::unique_ptr<Object3D> partsObj_;
 	std::unique_ptr<Object3D>particleObj_[particleNum_];
 
-	Model* enemyModel_;
+	std::unique_ptr<Model> enemyModel_;
 
-	Model* partsModel_;
+	std::unique_ptr<Model> partsModel_;
 
-	Model* particleModel_;
+	std::unique_ptr<Model> particleModel_;
 	
 	std::unique_ptr<Object3D> collisionObj_;
 

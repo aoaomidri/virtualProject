@@ -21,7 +21,7 @@ public:
 
 	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
 
-	void DrawImgui();
+	void DrawImgui(std::string name);
 
 	void SetPosition(const Vector3& position) { position_ = position; }
 
@@ -32,6 +32,10 @@ public:
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
 	void SetModel(Model* model) { model_ = model; }
+
+	void SetDirectionalLight(const DirectionalLight* light);
+
+	void SetPointLight(const PointLight* pLight);
 
 	const Vector3& GetPosition()const { return position_; }
 
@@ -60,10 +64,23 @@ private:
 	//データを書き込む
 	TransformationMatrix* wvpData = nullptr;
 
+	/*ライト関連*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
 	DirectionalLight* directionalLightDate = nullptr;
+
+	const DirectionalLight* directionalLight = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
+
+	PointLight* pointLightData = nullptr;
+
+	const PointLight* pointLight = nullptr;
+	/*カメラ関連*/
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
+
+	CameraForGPU* cameraForGPU_ = nullptr;
 
 	//データを書き込む
 
@@ -79,8 +96,12 @@ private:
 
 	Transform transform{};
 
-	const CameraForGPU* cameraForGPU_ = nullptr;
+	bool isUseLight_ = false;
 
 	bool isDraw_ = true;
+
+public:
+	//反射強度
+	float shininess_ = 1.0f;
 };
 

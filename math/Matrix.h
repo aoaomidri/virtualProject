@@ -95,6 +95,8 @@ public:
 	////逆行列
 	Matrix4x4 Inverce(const Matrix4x4& mat);
 
+	Matrix4x4 Trnaspose(const Matrix4x4& mat);
+
 	//ベクトル変換
 	Vector3 TransformVec(const Vector3& v, const Matrix4x4& m);
 

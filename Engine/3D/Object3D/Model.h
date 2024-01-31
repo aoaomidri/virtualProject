@@ -21,6 +21,7 @@ struct Material {
 	int32_t enableLighting;
 	float padding[3];
 	Matrix4x4 uvTransform;
+	float shininess;
 };
 
 struct DirectionalLight {
@@ -29,13 +30,30 @@ struct DirectionalLight {
 	float intensity;	//輝度
 };
 
+struct PointLight {
+	Vector4 color;		//ライトの色
+	Vector3 position;	//ライトの位置
+	float intensity;	//輝度
+	float radius;		//ライトの届く最大距離
+	float decay;		//減衰率
+	float padding[2];
+};
+
+struct SpotLight{
+	Vector4 color;
+	Vector3 position;
+	float intensity;
+};
+
+
+
 class Model{
 public:
 	void Draw(ID3D12GraphicsCommandList* CommandList);
 
 	static Model* GetInstance();
 
-	static Model* LoadObjFile(const std::string& filename);
+	static std::unique_ptr<Model> LoadObjFile(const std::string& filename);
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
@@ -66,7 +84,7 @@ private:
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate = nullptr;
 
-	const std::string ResourcesPath = "resources/";
+	const std::string ResourcesPath = "resources/Model/";
 
 	//頂点インデックス配列
 	std::vector<VertexData> indices;

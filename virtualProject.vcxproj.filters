@@ -76,6 +76,12 @@
     <Filter Include="application\HitRecord">
       <UniqueIdentifier>{49d00413-2390-4252-89f2-df94b8e30d7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\Light">
+      <UniqueIdentifier>{19a65f6d-180a-4da3-99db-4516a4baf1c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wholeGame">
+      <UniqueIdentifier>{91e87e00-062a-4dd4-aea3-2c5b61285c00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -170,6 +176,15 @@
     </ClCompile>
     <ClCompile Include="Game\HitRecord\HitRecord.cpp">
       <Filter>application\HitRecord</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Light\DirectionalLight.cpp">
+      <Filter>application\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WholeGame\WholeGame.cpp">
+      <Filter>wholeGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WholeGame\MAFramework.cpp">
+      <Filter>wholeGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +298,15 @@
     </ClInclude>
     <ClInclude Include="Game\HitRecord\HitRecord.h">
       <Filter>application\HitRecord</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Light\DirectionalLight.h">
+      <Filter>application\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WholeGame\WholeGame.h">
+      <Filter>wholeGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WholeGame\MAFramework.h">
+      <Filter>wholeGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

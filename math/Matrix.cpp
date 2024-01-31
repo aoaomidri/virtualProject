@@ -167,6 +167,16 @@ Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 	return result;
 }
 
+Matrix4x4 Matrix::Trnaspose(const Matrix4x4& mat) {
+	Matrix4x4 result = { 0.0f };
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.m[i][j] = mat.m[j][i];
+		}
+	}
+	return result;
+}
+
 
 
 Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale_){

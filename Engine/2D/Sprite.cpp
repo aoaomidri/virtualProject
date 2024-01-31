@@ -126,7 +126,7 @@ void Sprite::Draw(){
 	if (!isDraw_){
 		return;
 	}
-	
+	Update();
 	//2Dの描画
 	//マテリアルにCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());

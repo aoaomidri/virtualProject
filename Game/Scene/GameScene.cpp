@@ -166,9 +166,7 @@ void GameScene::Update(){
 	switch (sceneNum_){
 	case SceneName::TITLE:
 		
-		titleSprite_->Update();
-		pressSprite_->Update();
-		fadeSprite_->Update();
+		
 		audio_->PauseWave(gameBGM);
 		followCamera_->SetIsMove(false);
 		for (const auto& enemy : enemies_) {
@@ -203,9 +201,8 @@ void GameScene::Update(){
 			sceneNum_ = SceneName::CLEAR;
 		}*/
 		followCamera_->SetIsMove(true);
-		fadeSprite_->Update();
-		actionTextSprite_->Update();
-		attackSprite_->Update();
+		
+		
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
 			
@@ -232,12 +229,12 @@ void GameScene::Update(){
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
 		audio_->PauseWave(gameBGM);
-		clearSprite_->Update();
+		
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
 		}
 
-		fadeSprite_->Update();
+		
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			isFade_ = true;
 		}

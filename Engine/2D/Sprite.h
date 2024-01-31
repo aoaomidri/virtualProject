@@ -23,8 +23,8 @@ public:
 	~Sprite() = default;
 
 	void Initialize(uint32_t TextureNumber = UINT32_MAX);
-
-	void Update();
+	
+	
 
 	void Draw();
 
@@ -83,6 +83,8 @@ public:
 	//テクスチャサイズをイメージに合わせる
 	void AdjustTextureSize();
 private:
+
+	void Update();
 
 private:
 	HRESULT hr;

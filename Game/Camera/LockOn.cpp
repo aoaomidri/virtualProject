@@ -86,7 +86,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		lockOnMark_->SetPosition(screenPos_);
 	}
 
-	lockOnMark_->Update();
+	
 	/*ImGui::Begin("距離");
 	ImGui::DragFloat("最短距離", &length, 0.1f);
 	ImGui::End();*/

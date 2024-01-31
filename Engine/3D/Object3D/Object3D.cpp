@@ -14,6 +14,15 @@ void Object3D::Initialize(Model* model) {
 
 	model_ = model;
 
+	if (model_->GetMaterial().textureFilePath != "") {
+		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
+	}
+	else {
+		texHandle_ = 0;
+	}
+
+	
+
 	transform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
@@ -61,7 +70,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
-void Object3D::Draw(uint32_t textureNumber) {
+void Object3D::Draw() {
 
 	if (!isDraw_) {
 		return;
@@ -71,7 +80,7 @@ void Object3D::Draw(uint32_t textureNumber) {
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureNumber));
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(texHandle_));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());

@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw(TextureManager* textureManager);
+	void Draw();
 
 	void DrawImgui();
 

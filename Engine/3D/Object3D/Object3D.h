@@ -20,7 +20,7 @@ public:
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
-	void Draw(uint32_t textureNumber);
+	void Draw();
 
 	void DrawImgui(std::string name);
 
@@ -50,6 +50,8 @@ public:
 private:
 	//モデル
 	Model* model_ = nullptr;
+
+	uint32_t texHandle_;
 
 	HRESULT hr;
 

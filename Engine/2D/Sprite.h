@@ -26,7 +26,7 @@ public:
 
 	void Update();
 
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw();
 
 	///*Setter*///
 	void SetPosition(const Vector2& position) { position_ = position; }

@@ -18,7 +18,7 @@
 class GameScene{
 public:
 	//初期化
-	void Initialize(DirectXCommon* dxCommon_);
+	void Initialize();
 	//更新
 	void Update();
 
@@ -43,10 +43,10 @@ private:
 	void SoundLoad();
 
 	//スプライト初期化
-	void SpriteInitialize(DirectXCommon* dxCommon_);
+	void SpriteInitialize();
 
 	//オブジェクトの初期化
-	void ObjectInitialize(DirectXCommon* dxCommon_);
+	void ObjectInitialize();
 
 	//imguiの描画
 	void DrawImgui();

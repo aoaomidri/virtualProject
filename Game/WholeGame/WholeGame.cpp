@@ -11,7 +11,7 @@ void WholeGame::Initialize(){
 	adjustment_item->LoadFiles();	
 
 	gameScene_ = std::make_unique<GameScene>();
-	gameScene_->Initialize(dxCom_);
+	gameScene_->Initialize();
 }
 
 void WholeGame::Finalize(){	

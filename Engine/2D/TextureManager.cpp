@@ -60,6 +60,7 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	while (!textureArray_[i].first.empty()){
 		if (textureArray_[i].first == result) {
 			isLoad = true;
+			return i;
 		}
 		i++;
 	}

@@ -34,7 +34,7 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
-	playerModel_ = Model::LoadObjFile("box");
+	playerModel_ = Model::LoadObjFile("float_Head");
 
 	weaponModel_ = Model::LoadObjFile("Weapon");
 	playerObj_ = std::make_unique<Object3D>();
@@ -147,14 +147,14 @@ void Player::Update(){
 	}
 }
 
-void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+void Player::Draw(const ViewProjection& viewProjection){
 
 	playerObj_->Update(playerMatrix_, viewProjection);
-	playerObj_->Draw(4);
+	playerObj_->Draw();
 
 	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->Update(weaponMatrix_, viewProjection);
-		weaponObj_->Draw(7);
+		weaponObj_->Draw();
 
 		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
 		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/

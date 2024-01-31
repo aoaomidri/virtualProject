@@ -92,9 +92,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	ImGui::End();*/
 }
 
-void LockOn::Draw(TextureManager* textureManager){
+void LockOn::Draw(){
 	if (target_){
-		lockOnMark_->Draw(textureManager->SendGPUDescriptorHandle(21));
+		lockOnMark_->Draw();
 	}
 	
 }

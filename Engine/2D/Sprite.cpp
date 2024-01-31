@@ -121,7 +121,7 @@ void Sprite::Update(){
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
-void Sprite::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
+void Sprite::Draw(){
 
 	if (!isDraw_){
 		return;
@@ -130,7 +130,7 @@ void Sprite::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
 	//2Dの描画
 	//マテリアルにCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootDescriptorTable(2, GPUHandle);
+	commandList_->SetGraphicsRootDescriptorTable(2, textureManager_->SendGPUDescriptorHandle(textureNumber_));
 	//Spriteの描画。変更が必要なものだけ変更する
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
 	commandList_->IASetIndexBuffer(&indexBufferViewSprite);

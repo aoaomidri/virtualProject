@@ -2,8 +2,8 @@
 #include"Matrix.h"
 #include <cassert>
 void GameScene::TextureLoad() {
-	textureManager_->Load("resources/texture/uvChecker.png");//0
 	textureManager_->Load("resources/texture/rock.png");
+	textureManager_->Load("resources/texture/uvChecker.png");//0
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
 	textureManager_->Load("resources/texture/Sky.png");
@@ -31,7 +31,7 @@ void GameScene::SoundLoad(){
 	gameBGM = audio_->SoundLoadWave("Game3.wav");
 }
 
-void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
+void GameScene::SpriteInitialize(){
 	titleSprite_ = std::make_unique<Sprite>();
 	titleSprite_->Initialize(12);
 
@@ -51,7 +51,7 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 	attackSprite_->Initialize(17);
 }
 
-void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
+void GameScene::ObjectInitialize() {
 	//particle_ = std::make_unique<ParticleBase>();
 	//particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
 	/*obj_ = std::make_unique<Object3D>();
@@ -59,6 +59,7 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
 	skyDomeModel_ = Model::LoadObjFile("skyDome");
+	skyDomeModel_->GetMaterial().textureFilePath;
 
 	skyDomeObj_ = std::make_unique<Object3D>();
 	skyDomeObj_->Initialize(skyDomeModel_.get());
@@ -71,7 +72,7 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_) {
 
 }
 
-void GameScene::Initialize(DirectXCommon* dxCommon_){
+void GameScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
 
@@ -83,8 +84,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 	audio_->SoundPlayWave(gameBGM, 0.5f);
 	
 
-	SpriteInitialize(dxCommon_);
-	ObjectInitialize(dxCommon_);
+	SpriteInitialize();
+	ObjectInitialize();
 
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
@@ -296,7 +297,7 @@ void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	skyDomeObj_->Draw(16);
+	skyDomeObj_->Draw();
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
@@ -304,12 +305,12 @@ void GameScene::Draw3D(){
 		
 		break;
 	case SceneName::GAME:
-		floorManager_->Draw(textureManager_, followCamera_->GetViewProjection());
+		floorManager_->Draw(followCamera_->GetViewProjection());
 
-		player_->Draw(textureManager_, followCamera_->GetViewProjection());
+		player_->Draw(followCamera_->GetViewProjection());
 
 		for (const auto& enemy : enemies_) {
-			enemy->Draw(textureManager_, followCamera_->GetViewProjection());
+			enemy->Draw(followCamera_->GetViewProjection());
 		}
 		break;
 	case SceneName::CLEAR:
@@ -331,20 +332,20 @@ void GameScene::Draw2D(){
 	///*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
 	case SceneName::TITLE:
-		titleSprite_->Draw(textureManager_->SendGPUDescriptorHandle(12));
-		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
+		titleSprite_->Draw();
+		pressSprite_->Draw();
+		fadeSprite_->Draw();
 		break;
 	case SceneName::GAME:
-		actionTextSprite_->Draw(textureManager_->SendGPUDescriptorHandle(20));
-		attackSprite_->Draw(textureManager_->SendGPUDescriptorHandle(17));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
-		lockOn_->Draw(textureManager_);
+		actionTextSprite_->Draw();
+		attackSprite_->Draw();
+		fadeSprite_->Draw();
+		lockOn_->Draw();
 		break;
 	case SceneName::CLEAR:
-		clearSprite_->Draw(textureManager_->SendGPUDescriptorHandle(14));
-		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
+		clearSprite_->Draw();
+		pressSprite_->Draw();
+		fadeSprite_->Draw();
 		break;
 	default:
 		assert(0);

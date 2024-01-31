@@ -24,7 +24,7 @@ public:
 	//更新処理
 	void Update();
 	//描画
-	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();
 

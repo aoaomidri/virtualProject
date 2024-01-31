@@ -139,30 +139,30 @@ void Enemy::Update(){
 	SetOridentatios(OBB_, enemyRotateMatrix);
 }
 
-void Enemy::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+void Enemy::Draw(const ViewProjection& viewProjection){
 	if (isDead_) {
 		return;
 	}
 	bodyObj_->Update(matrix_, viewProjection);
-	bodyObj_->Draw(5);
+	bodyObj_->Draw();
 
 #ifdef _DEBUG
 
 	collisionObj_->Update(collisionMatrix_, viewProjection);
-	collisionObj_->Draw(9);
+	collisionObj_->Draw();
 #endif // _DEBUG
 
 	partsObj_->Update(partsMatrix_, viewProjection);
-	partsObj_->Draw(6);
+	partsObj_->Draw();
 
 	if (isParticle_){
 		for (int i = 0; i < 10; i++) {
 			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
-			particleObj_[i]->Draw(9);
+			particleObj_[i]->Draw();
 		}
 		for (int i = 10; i < 20; i++) {
 			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
-			particleObj_[i]->Draw(9);
+			particleObj_[i]->Draw();
 		}
 	}
 }

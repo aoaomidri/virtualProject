@@ -29,8 +29,8 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	titleBGM = audio_->SoundLoadWave("honobono.wav");
-	gameBGM = audio_->SoundLoadWave("Game3.wav");
+	/*titleBGM = audio_->SoundLoadWave("honobono.wav");
+	gameBGM = audio_->SoundLoadWave("Game3.wav");*/
 	titleBGM = audio_->SoundLoadWave("honobono.wav");
 }
 
@@ -113,8 +113,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	TextureLoad();
 	SoundLoad();
-	audio_->SoundPlayWave(titleBGM, 0.5f);
-	audio_->SoundPlayWave(gameBGM, 0.5f);
+	//audio_->SoundPlayWave(titleBGM, 0.5f);
+	///audio_->SoundPlayWave(gameBGM, 0.5f);
 	
 
 
@@ -212,7 +212,7 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
-		audio_->PauseWave(gameBGM);
+		//audio_->PauseWave(gameBGM);
 		clearSprite_->Update();
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			sceneNum_ = SceneName::TITLE;
@@ -335,7 +335,7 @@ void GameScene::DrawImgui(){
 #ifdef _DEBUG
 	switch (sceneNum_) {
 	case SceneName::TITLE:
-	ImGui::Begin("BGM関連");
+	/*ImGui::Begin("BGM関連");
 	if (ImGui::Button("音源の復活")){
 		gameBGM = audio_->SoundPlayWave(gameBGM, 0.5f);
 	}
@@ -351,7 +351,7 @@ void GameScene::DrawImgui(){
 	if (ImGui::Button("停止解除")) {
 		audio_->ResumeWave(gameBGM);
 	}
-	ImGui::End();
+	ImGui::End();*/
 
 	ImGui::Begin("テストオブジェ");
 	ImGui::DragFloat3("大きさ", &testTransform_.scale.x, 0.1f);
@@ -372,18 +372,18 @@ void GameScene::DrawImgui(){
 	default:
 		assert(0);
 	}
-
-	ImGui::Begin("スプライト");
-	//ImGui::DragFloat2("action : ポジション", &attackSprite_->position_.x, 1.0f);
-	//ImGui::DragFloat2("action : 大きさ", &attackSprite_->scale_.x, 1.0f);
-	//ImGui::DragFloat4("action : 色", &attackSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	//ImGui::DragFloat2("press : ポジション", &actionTextSprite_->position_.x, 1.0f);
-	//ImGui::DragFloat2("press : 大きさ", &actionTextSprite_->scale_.x, 1.0f);
-	//ImGui::DragFloat4("press : 色", &actionTextSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::End();
+	
+	//ImGui::Begin("スプライト");
+	////ImGui::DragFloat2("action : ポジション", &attackSprite_->position_.x, 1.0f);
+	////ImGui::DragFloat2("action : 大きさ", &attackSprite_->scale_.x, 1.0f);
+	////ImGui::DragFloat4("action : 色", &attackSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	////ImGui::DragFloat2("press : ポジション", &actionTextSprite_->position_.x, 1.0f);
+	////ImGui::DragFloat2("press : 大きさ", &actionTextSprite_->scale_.x, 1.0f);
+	////ImGui::DragFloat4("press : 色", &actionTextSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	//ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
+	//ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
+	//ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	//ImGui::End();
 
 	ImGui::Begin("ライト");
 	ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);

@@ -29,23 +29,21 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	/*titleBGM = audio_->SoundLoadWave("honobono.wav");
-	gameBGM = audio_->SoundLoadWave("Game3.wav");*/
 	titleBGM = audio_->SoundLoadWave("honobono.wav");
 }
 
 void GameScene::SpriteInitialize(){
 	titleSprite_ = std::make_unique<Sprite>();
-	titleSprite_->Initialize(12);
+	titleSprite_->Initialize(0);
 
 	pressSprite_ = std::make_unique<Sprite>();
-	pressSprite_->Initialize(13);
+	pressSprite_->Initialize(1);
 
 	clearSprite_ = std::make_unique<Sprite>();
-	clearSprite_->Initialize(14);
+	clearSprite_->Initialize(2);
 
 	fadeSprite_ = std::make_unique<Sprite>();
-	fadeSprite_->Initialize(15);
+	fadeSprite_->Initialize(3);
 
 	/*actionTextSprite_ = std::make_unique<Sprite>(textureManager_.get());
 	actionTextSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 20);
@@ -97,6 +95,9 @@ void GameScene::ObjectInitialize(){
 	testGroundTransform_.scale = { 1.0f,1.0f,1.0f };
 
 	pointLightTransform_.scale = { 0.005f,0.005f,0.005f };
+
+	particle_ = std::make_unique<ParticleBase>();
+	particle_->Initialize();
 }
 
 void GameScene::Initialize(){
@@ -106,18 +107,15 @@ void GameScene::Initialize(){
 
 	TextureLoad();
 	SoundLoad();
-	//audio_->SoundPlayWave(titleBGM, 0.5f);
-	///audio_->SoundPlayWave(gameBGM, 0.5f);
 	
-
-
 	audio_->SoundPlayWave(titleBGM, 0.2f);
+	audio_->PauseWave(titleBGM);
 
 	SpriteInitialize();
 	ObjectInitialize();
 
 
-	//textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
+	textureManager_->MakeInstancingShaderResourceView(particle_->GetInstancingResource());
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -127,21 +125,13 @@ void GameScene::Initialize(){
 	titleSprite_->scale_.x = 850.0f;
 	titleSprite_->scale_.y = 150.0f;
 	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
-	titleSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	titleSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	pressSprite_->position_ = { 640.0f,500.0f };
 	pressSprite_->scale_.x = 600.0f;
 	pressSprite_->scale_.y = 136.0f;
 	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
 	pressSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	/*actionTextSprite_->position_ = { 1072.0f,500.0f };
-	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
-	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	attackSprite_->position_ = { 1072.0f,650.0f };
-	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
-	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };*/
 
 	clearSprite_->position_ = { 640.0f,175.0f };
 	clearSprite_->scale_.x = 850.0f;
@@ -158,13 +148,6 @@ void GameScene::Initialize(){
 
 	followCamera_->SetTarget(&testTransform_);
 
-	
-	//lockOn_ = std::make_unique<LockOn>();
-	//lockOn_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), textureManager_.get());
-
-	//followCamera_->SetLockOn(lockOn_.get());
-	//player_->SetLockOn(lockOn_.get());
-	////audio_->SoundPlayWave(soundData1);
 }
 
 void GameScene::Update(){
@@ -174,38 +157,23 @@ void GameScene::Update(){
 
 	pointLightMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(pointLightTransform_.scale, pointLightTransform_.rotate, pointLight_.position);;
 
+	followCamera_->Update();
+
 	switch (sceneNum_){
 	case SceneName::TITLE:
 		followCamera_->SetIsMove(true);
-		followCamera_->Update();
-		
 		
 
-		/*titleSprite_->Update();
-		pressSprite_->Update();
-		fadeSprite_->Update();*/
+		
 		break;
 	case SceneName::GAME:
-		/*if (input_->Trigerkey(DIK_1)){
-			sceneNum_ = SceneName::CLEAR;
-		}*/
-		followCamera_->SetIsMove(true);
+	
 		
-		fadeAlpha_ -= 0.01f;
-		if (fadeAlpha_<=0.0f){
-
-		}
 		
-
-		
-		//AllCollision();
-		////particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
-
-		//floorManager_->Update();
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
-		//audio_->PauseWave(gameBGM);
+		
 		
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			sceneNum_ = SceneName::TITLE;
@@ -228,6 +196,14 @@ void GameScene::Update(){
 	else if (fadeAlpha_ <= 0.0f) {
 		fadeAlpha_ = 0.0f;
 	}
+
+	if (input_->Trigerkey(DIK_0) && input_->Pushkey(DIK_RSHIFT)) {
+		sceneNum_ = SceneName::TITLE;
+	}else if (input_->Trigerkey(DIK_1) && input_->Pushkey(DIK_RSHIFT)) {
+		sceneNum_ = SceneName::GAME;
+	}else if (input_->Trigerkey(DIK_2) && input_->Pushkey(DIK_RSHIFT)) {
+		sceneNum_ = SceneName::CLEAR;
+	}
 }
 
 void GameScene::AudioDataUnLoad(){
@@ -240,9 +216,12 @@ void GameScene::DrawParticle(){
 
 	switch (sceneNum_) {
 	case SceneName::TITLE:
+		
 		break;
 	case SceneName::GAME:
-		//player_->ParticleDraw(textureManager_.get(), followCamera_->GetViewProjection());
+		particle_->Update(particleTrnadform_, followCamera_->GetViewProjection());
+		particle_->Draw(textureManager_->SendGPUDescriptorHandle(8),
+			textureManager_->SendInstancingGPUDescriptorHandle());
 		break;
 	case SceneName::CLEAR:
 
@@ -261,10 +240,10 @@ void GameScene::Draw3D(){
 	skyDomeObj_->Draw();*/
 
 	/*ここから下に描画処理を書き込む*/
-	switch (sceneNum_) {
-	case SceneName::TITLE:
 		TestObj_->Update(testMatrix_, followCamera_->GetViewProjection());
 		TestObj_->Draw();
+	switch (sceneNum_) {
+	case SceneName::TITLE:
 
 		TestGroundObj_->Update(testGroundMatrix_, followCamera_->GetViewProjection());
 		TestGroundObj_->Draw();
@@ -299,7 +278,8 @@ void GameScene::Draw2D(){
 		
 		break;
 	case SceneName::GAME:
-		
+		titleSprite_->Draw();
+
 		break;
 	case SceneName::CLEAR:
 	
@@ -321,39 +301,71 @@ void GameScene::Finalize(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-	/*ImGui::Begin("BGM関連");
-	if (ImGui::Button("音源の復活")){
-		gameBGM = audio_->SoundPlayWave(gameBGM, 0.5f);
-	}
-	if (ImGui::Button("最初から再生")) {
-		audio_->RePlayWave(gameBGM);
-	}
-	if (ImGui::Button("完全に停止")) {
-		audio_->StopWave(gameBGM);
-	}
-	if (ImGui::Button("一時停止")){
-		audio_->PauseWave(gameBGM);
-	}
-	if (ImGui::Button("停止解除")) {
-		audio_->ResumeWave(gameBGM);
-	}
-	ImGui::End();*/
-
-	ImGui::Begin("テストオブジェ");
+	followCamera_->DrawImgui();
+	ImGui::Begin("スフィア");
 	ImGui::DragFloat3("大きさ", &testTransform_.scale.x, 0.1f);
 	ImGui::DragFloat3("回転", &testTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("座標", &testTransform_.translate.x, 0.1f);
-
 	ImGui::End();
-	TestObj_->DrawImgui("sphere");
-	TestGroundObj_->DrawImgui("Ground");
 
-	followCamera_->DrawImgui();
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+		
+
+		ImGui::Begin("ライト");
+		ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat3("ライトの向き", &directionalLight_.direction.x, 0.01f, -1.0f, 1.0f);
+		ImGui::DragFloat("ライトの輝き", &directionalLight_.intensity, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat4("ポイントライトの色", &pointLight_.color.x, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat3("ポイントライトの位置", &pointLight_.position.x, 0.01f, -100.0f, 100.0f);
+		ImGui::DragFloat("ポイントライトの輝き", &pointLight_.intensity, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("ポイントライトの届く距離", &pointLight_.radius, 0.1f, 0.0f, 200.0f);
+		ImGui::DragFloat("ポイントライトの減衰率", &pointLight_.decay, 0.01f, 0.0f, 100.0f);
+		ImGui::End();
+
+		ImGui::Begin("スフィア");
+		ImGui::DragFloat3("大きさ", &testTransform_.scale.x, 0.1f);
+		ImGui::DragFloat3("回転", &testTransform_.rotate.x, 0.1f);
+		ImGui::DragFloat3("座標", &testTransform_.translate.x, 0.1f);
+		ImGui::End();
+	
+		TestObj_->DrawImgui("sphere");
+		TestGroundObj_->DrawImgui("Ground");
+
+		
 		break;
 	case SceneName::GAME:
-		
+		particle_->DrawImgui("パーティクル");
+		ImGui::Begin("BGM関連");
+		if (ImGui::Button("音源の復活")){
+			gameBGM = audio_->SoundPlayWave(gameBGM, 0.5f);
+		}
+		if (ImGui::Button("最初から再生")) {
+			audio_->RePlayWave(gameBGM);
+		}
+		if (ImGui::Button("完全に停止")) {
+			audio_->StopWave(gameBGM);
+		}
+		if (ImGui::Button("一時停止")){
+			audio_->PauseWave(gameBGM);
+		}
+		if (ImGui::Button("停止解除")) {
+			audio_->ResumeWave(gameBGM);
+		}
+		ImGui::End();
+
+		ImGui::Begin("テクスチャ関連");
+		ImGui::SliderInt("テクスチャ番号", &changeNumber_, 0, 20);
+		if (ImGui::Button("テクスチャ番号のテクスチャに変更させる")) {
+			titleSprite_->SetTextureNumber(changeNumber_);
+		}
+		ImGui::DragFloat2("ポジション", &titleSprite_->position_.x, 1.0f);
+		ImGui::DragFloat2("大きさ", &titleSprite_->scale_.x, 1.0f);
+		ImGui::DragFloat("回転", &titleSprite_->rotation_, 0.1f);
+		ImGui::ColorEdit4("テクスチャの色", &titleSprite_->color_.x);
+		ImGui::Checkbox("描画するかどうか", &titleSprite_->isDraw_);
+		ImGui::End();
+
 		break;
 	case SceneName::CLEAR:
 		break;
@@ -361,31 +373,22 @@ void GameScene::DrawImgui(){
 		assert(0);
 	}
 	
-	//ImGui::Begin("スプライト");
-	////ImGui::DragFloat2("action : ポジション", &attackSprite_->position_.x, 1.0f);
-	////ImGui::DragFloat2("action : 大きさ", &attackSprite_->scale_.x, 1.0f);
-	////ImGui::DragFloat4("action : 色", &attackSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	////ImGui::DragFloat2("press : ポジション", &actionTextSprite_->position_.x, 1.0f);
-	////ImGui::DragFloat2("press : 大きさ", &actionTextSprite_->scale_.x, 1.0f);
-	////ImGui::DragFloat4("press : 色", &actionTextSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	//ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
-	//ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
-	//ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	//ImGui::End();
+	ImGui::Begin("シーン操作");
+	if (sceneNum_==SceneName::TITLE){
+		ImGui::Text("現在のシーン : 3D");
+	}
+	else if (sceneNum_ == SceneName::GAME) {
+		ImGui::Text("現在のシーン : 2D");
+	}
 
-	ImGui::Begin("ライト");
-	ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("ライトの向き", &directionalLight_.direction.x, 0.01f, -1.0f, 1.0f);
-	ImGui::DragFloat("ライトの輝き", &directionalLight_.intensity, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat4("ポイントライトの色", &pointLight_.color.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("ポイントライトの位置", &pointLight_.position.x, 0.01f, -100.0f, 100.0f);
-	ImGui::DragFloat("ポイントライトの輝き", &pointLight_.intensity, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("ポイントライトの届く距離", &pointLight_.radius, 0.1f, 0.0f, 200.0f);
-	ImGui::DragFloat("ポイントライトの減衰率", &pointLight_.decay, 0.01f, 0.0f, 100.0f);
+	if (ImGui::Button("3D")){
+		sceneNum_ = SceneName::TITLE;
+	}
+	if (ImGui::Button("2D")) {
+		sceneNum_ = SceneName::GAME;
+	}
+
 	ImGui::End();
-
-	//particle_->DrawImgui("ステージパーティクル");
-	
 
 
 #endif // _DEBUG	

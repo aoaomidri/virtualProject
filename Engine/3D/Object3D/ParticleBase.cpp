@@ -86,15 +86,18 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 		velocityRange_.max = velocityRange_.min + 0.1f;
 	}
 
-	emitter_.transform = transform;
+	/*emitter_.transform = transform;*/
 
 	if (!isDraw_) {
 		return;
 	}
 	emitter_.frequencyTime += kDeltaTime_;//時刻を進める
 	if (emitter_.frequency <= emitter_.frequencyTime) {//頻度より大きいなら発生
-		particles_.splice(particles_.end(), Emission(emitter_));//発生処理
-		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度計算する
+		if (particles_.size()+emitter_.count < particleMaxNum_){
+			particles_.splice(particles_.end(), Emission(emitter_));//発生処理
+			emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度計算する
+
+		}
 	}
 
 	assert(particles_.size() < particleMaxNum_);
@@ -197,14 +200,16 @@ void ParticleBase::DrawImgui(const std::string& imguiTag){
 	ImGui::Begin(imguiTag.c_str());
 	ImGui::Text("現在のパーティクルの数 = %d", particles_.size());
 	ImGui::DragFloat3("発生中心位置", &emitter_.transform.translate.x, 0.01f, -100.0f, 100.0f);
-	ImGui::DragFloat2("移動ベクトル範囲", &velocityRange_.min, 0.1f, -5.0f, 5.0f);
-	ImGui::DragFloat2("ランダム発生範囲", &positionRange_.min, 0.1f, -5.0f, 5.0f);
+	ImGui::DragFloat3("一粒の大きさ", &emitter_.transform.scale.x, 0.01f, 0.01f, 50.0f);
+	ImGui::DragFloat2("移動ベクトル範囲", &velocityRange_.min, 0.1f, -10.0f, 10.0f);
+	ImGui::DragFloat2("ランダム発生範囲", &positionRange_.min, 0.1f, -10.0f, 10.0f);
 	ImGui::DragFloat("発生までの時間", &emitter_.frequency, 0.01f, 0.0f, 3.0f);
 	ImGui::SliderInt("一度に発生する個数", &emitter_.count, 0, 6);
 	ImGui::Checkbox("描画するか", &isDraw_);
 	ImGui::Checkbox("ビルボード有効化", &isBillborad_);
 	ImGui::Checkbox("フィールド有効化", &isWind_);
 	if (isWind_){
+		ImGui::DragFloat3("風向き", &accelerationField_.acceleration.x, 0.1f);
 		ImGui::DragFloat3("フィールドの範囲設定(最小)", &accelerationField_.area.min.x, 0.1f, 0.0f, -100.0f);
 		ImGui::DragFloat3("フィールドの範囲設定(最大)", &accelerationField_.area.max.x, 0.1f, 0.0f, 100.0f);
 	}
@@ -362,7 +367,7 @@ void ParticleBase::MoveChange(){
 ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	Particle particle{};
 	color_ = random_->DistributionV3(0.0f, 1.0f);
-	particle.transform.scale = { 0.2f,0.2f,0.2f };
+	particle.transform.scale = emitter_.transform.scale;
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
 	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
 	

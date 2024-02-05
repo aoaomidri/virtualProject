@@ -92,7 +92,7 @@ private:
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
-	//std::unique_ptr<ParticleBase> particle_;
+	std::unique_ptr<ParticleBase> particle_;
 
 	std::unique_ptr<FloorManager> floorManager_;
 
@@ -103,11 +103,6 @@ private:
 	};
 
 	bool isFloorMove_ = false;
-
-	std::unique_ptr<Player> player_;
-
-	std::unique_ptr<Enemy> enemy_;
-	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	int chackCollision = 0;
 
@@ -140,6 +135,8 @@ private:
 
 	//スプライト関連
 	//タイトル
+	int changeNumber_ = 0;
+
 	std::unique_ptr<Sprite> titleSprite_;
 
 	std::unique_ptr<Sprite> fadeSprite_;
@@ -153,9 +150,6 @@ private:
 	std::unique_ptr<Sprite> actionTextSprite_;
 
 	std::unique_ptr<Sprite> attackSprite_;
-
-	/*ロックオン*/
-	std::unique_ptr<LockOn> lockOn_;
 
 	//シーン関連
 	enum SceneName{

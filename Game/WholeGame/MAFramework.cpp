@@ -17,6 +17,9 @@ void MAFramework::Initialize(){
 
 	audio_ = Audio::GetInstance();
 	audio_->Initialize();
+
+	texManager_ = TextureManager::GetInstance();
+	texManager_->Initialize();
 }
 
 void MAFramework::Finalize(){

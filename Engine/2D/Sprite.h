@@ -19,14 +19,14 @@ enum VertexNumber{
 
 class Sprite {
 public:
-	Sprite(TextureManager* textureManager);
-	~Sprite();
+	Sprite() = default;
+	~Sprite() = default;
 
-	void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber = UINT32_MAX);
+	void Initialize(uint32_t TextureNumber = UINT32_MAX);
+	
+	
 
-	void Update();
-
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw();
 
 	///*Setter*///
 	void SetPosition(const Vector2& position) { position_ = position; }
@@ -83,6 +83,8 @@ public:
 	//テクスチャサイズをイメージに合わせる
 	void AdjustTextureSize();
 private:
+
+	void Update();
 
 private:
 	HRESULT hr;

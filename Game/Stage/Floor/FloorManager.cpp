@@ -17,7 +17,7 @@ FloorManager::~FloorManager(){
 
 void FloorManager::Initialize() {
 	
-	floorModel_ = Model::LoadObjFile("box");
+	floorModel_ = Model::LoadObjFile("Floor");
 }
 
 void FloorManager::Update(){
@@ -37,13 +37,13 @@ void FloorManager::Update(){
 	}
 }
 
-void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+void FloorManager::Draw(const ViewProjection& viewProjection){
 	int num = 0;
 
 	for (Floor* floor : floors_) {
 		auto it = std::next(objects_.begin(), num);
 		Object3D* object = *it;
-		floor->Draw(object, floorModel_.get(), textureManager, viewProjection);
+		floor->Draw(object, viewProjection);
 		num++;
 	}
 
@@ -51,7 +51,7 @@ void FloorManager::Draw(TextureManager* textureManager, const ViewProjection& vi
 
 void FloorManager::AddFloor(Transform transform, bool isMoving){
 	Object3D* object_ = new Object3D();
-	object_->Initialize();
+	object_->Initialize(floorModel_.get());
 	objects_.push_back(object_);
 
 	Floor* floor = new Floor();

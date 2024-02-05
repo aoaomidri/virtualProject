@@ -1,12 +1,12 @@
 #include "LockOn.h"
 
-void LockOn::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, TextureManager* textureManager){
-	lockOnMark_ = std::make_unique<Sprite>(textureManager);
-	lockOnMark_->Initialize(device, commandList);
+void LockOn::Initialize(){
+	lockOnMark_ = std::make_unique<Sprite>();
+	lockOnMark_->Initialize(21);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });
 	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
-	lockOnMark_->SetSize({ 512.0f,512.0f });
+	lockOnMark_->SetSize({ 64.0f,64.0f });
 	lockOnMark_->SetScale({ 48.0f,48.0f });
 }
 
@@ -86,15 +86,15 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		lockOnMark_->SetPosition(screenPos_);
 	}
 
-	lockOnMark_->Update();
+	
 	/*ImGui::Begin("距離");
 	ImGui::DragFloat("最短距離", &length, 0.1f);
 	ImGui::End();*/
 }
 
-void LockOn::Draw(TextureManager* textureManager){
+void LockOn::Draw(){
 	if (target_){
-		lockOnMark_->Draw(textureManager->SendGPUDescriptorHandle(21));
+		lockOnMark_->Draw();
 	}
 	
 }

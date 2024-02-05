@@ -27,7 +27,7 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void Draw(TextureManager* textureManager, const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 床追加

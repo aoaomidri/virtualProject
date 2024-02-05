@@ -34,26 +34,20 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
+	playerModel_ = Model::LoadObjFile("float_Head");
+
+	weaponModel_ = Model::LoadObjFile("Weapon");
 	playerObj_ = std::make_unique<Object3D>();
-	playerObj_->Initialize();
+	playerObj_->Initialize(playerModel_.get());
 
 	weaponObj_ = std::make_unique<Object3D>();
-	weaponObj_->Initialize();
+	weaponObj_->Initialize(weaponModel_.get());
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
-	weaponCollisionObj_->Initialize();
+	weaponCollisionObj_->Initialize(playerModel_.get());
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize();
-
-	playerModel_ = Model::LoadObjFile("box");
-
-	weaponModel_ = Model::LoadObjFile("Weapon");
-
-	playerObj_->SetModel(playerModel_.get());
-	weaponCollisionObj_->SetModel(playerModel_.get());
-	weaponObj_->SetModel(weaponModel_.get());
-
 
 	playerTransform_ = {
 		.scale = {0.3f,0.3f,0.3f},
@@ -153,14 +147,14 @@ void Player::Update(){
 	}
 }
 
-void Player::Draw(TextureManager* textureManager, const ViewProjection& viewProjection){
+void Player::Draw(const ViewProjection& viewProjection){
 
 	playerObj_->Update(playerMatrix_, viewProjection);
-	playerObj_->Draw(textureManager->SendGPUDescriptorHandle(4));
+	playerObj_->Draw();
 
 	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->Update(weaponMatrix_, viewProjection);
-		weaponObj_->Draw(textureManager->SendGPUDescriptorHandle(7));
+		weaponObj_->Draw();
 
 		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
 		weaponCollisionObj_->Draw(textureManager->SendGPUDescriptorHandle(7));*/

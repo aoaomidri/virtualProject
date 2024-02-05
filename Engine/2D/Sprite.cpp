@@ -7,18 +7,11 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
-Sprite::Sprite(TextureManager* textureManager){
-	textureManager_ = textureManager;
-}
+void Sprite::Initialize(uint32_t TextureNumber){
 
-Sprite::~Sprite(){
-	
-}
-
-void Sprite::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, uint32_t TextureNumber){
-
-	device_ = device;
-	commandList_ = commandList;
+	device_ = DirectXCommon::GetInstance()->GetDevice();
+	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
+	textureManager_ = TextureManager::GetInstance();
 
 	makeSpriteResource();
 
@@ -128,16 +121,16 @@ void Sprite::Update(){
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
-void Sprite::Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle){
+void Sprite::Draw(){
 
 	if (!isDraw_){
 		return;
 	}
-	
+	Update();
 	//2Dの描画
 	//マテリアルにCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootDescriptorTable(2, GPUHandle);
+	commandList_->SetGraphicsRootDescriptorTable(2, textureManager_->SendGPUDescriptorHandle(textureNumber_));
 	//Spriteの描画。変更が必要なものだけ変更する
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
 	commandList_->IASetIndexBuffer(&indexBufferViewSprite);

@@ -5,6 +5,7 @@
 #include<vector>
 #include<fstream>
 #include<sstream>
+#include"TextureManager.h"
 #include"Model.h"
 #include"ViewProjection.h"
 
@@ -15,11 +16,11 @@ public:
 		Vector3 worldPosition;
 	};
 
-	void Initialize();
+	void Initialize(Model* model);
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle);
+	void Draw();
 
 	void DrawImgui(std::string name);
 
@@ -30,8 +31,6 @@ public:
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
-
-	void SetModel(Model* model) { model_ = model; }
 
 	void SetDirectionalLight(const DirectionalLight* light);
 
@@ -51,6 +50,8 @@ public:
 private:
 	//モデル
 	Model* model_ = nullptr;
+
+	uint32_t texHandle_;
 
 	HRESULT hr;
 

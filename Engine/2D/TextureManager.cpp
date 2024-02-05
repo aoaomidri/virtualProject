@@ -4,14 +4,6 @@
 #include <cassert>
 #include<fstream>
 #include<sstream>
-//TextureManager::TextureManager() {
-//
-//}
-
-TextureManager::~TextureManager(){
-	
-}
-
 
 TextureManager* TextureManager::GetInstance() {
 	static TextureManager instance;
@@ -54,7 +46,7 @@ void TextureManager::Finalize() {
 //	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
 //}
 
-void TextureManager::Load(const std::string& filePath){
+uint32_t TextureManager::Load(const std::string& filePath){
 	int i = 0;
 	bool isLoad = false;
 	std::string result;
@@ -68,12 +60,13 @@ void TextureManager::Load(const std::string& filePath){
 	while (!textureArray_[i].first.empty()){
 		if (textureArray_[i].first == result) {
 			isLoad = true;
+			return i;
 		}
 		i++;
 	}
 
 	if (isLoad) {
-		return;
+		return i;
 	}
 
 	textureArray_[i].first = result;
@@ -96,6 +89,8 @@ void TextureManager::Load(const std::string& filePath){
 
 	//SRVの生成
 	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
+
+	return i;
 }
 
 void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){

@@ -34,18 +34,18 @@ void GameScene::SoundLoad(){
 	titleBGM = audio_->SoundLoadWave("honobono.wav");
 }
 
-void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
-	titleSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	titleSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 12);
+void GameScene::SpriteInitialize(){
+	titleSprite_ = std::make_unique<Sprite>();
+	titleSprite_->Initialize(12);
 
-	pressSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	pressSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 13);
+	pressSprite_ = std::make_unique<Sprite>();
+	pressSprite_->Initialize(13);
 
-	clearSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	clearSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 14);
+	clearSprite_ = std::make_unique<Sprite>();
+	clearSprite_->Initialize(14);
 
-	fadeSprite_ = std::make_unique<Sprite>(textureManager_.get());
-	fadeSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 15);
+	fadeSprite_ = std::make_unique<Sprite>();
+	fadeSprite_->Initialize(15);
 
 	/*actionTextSprite_ = std::make_unique<Sprite>(textureManager_.get());
 	actionTextSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 20);
@@ -54,7 +54,7 @@ void GameScene::SpriteInitialize(DirectXCommon* dxCommon_){
 	attackSprite_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList(), 17);*/
 }
 
-void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
+void GameScene::ObjectInitialize(){
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.direction = { 0.0f,1.0f,0.0f };
 	directionalLight_.intensity = 1.0f;
@@ -65,24 +65,19 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	pointLight_.radius = 50.0f;
 	pointLight_.decay = 1.0f;
 
-	TestObj_ = std::make_unique<Object3D>();
-	TestObj_->Initialize();
-	TestGroundObj_ = std::make_unique<Object3D>();
-	TestGroundObj_->Initialize();
-	pointLightObj_ = std::make_unique<Object3D>();
-	pointLightObj_->Initialize();
-
-	skyDomeObj_ = std::make_unique<Object3D>();
-	skyDomeObj_->Initialize();
-
 	TestModel_ = Model::LoadObjFile("sphere");
 	TestGroundModel_ = Model::LoadObjFile("terrain");
 	skyDomeModel_ = Model::LoadObjFile("skyDome");
 
-	TestObj_->SetModel(TestModel_.get());
-	TestGroundObj_->SetModel(TestGroundModel_.get());
-	pointLightObj_->SetModel(TestModel_.get());
-	skyDomeObj_->SetModel(skyDomeModel_.get());
+	TestObj_ = std::make_unique<Object3D>();
+	TestObj_->Initialize(TestModel_.get());
+	TestGroundObj_ = std::make_unique<Object3D>();
+	TestGroundObj_->Initialize(TestGroundModel_.get());
+	pointLightObj_ = std::make_unique<Object3D>();
+	pointLightObj_->Initialize(skyDomeModel_.get());
+
+	skyDomeObj_ = std::make_unique<Object3D>();
+	skyDomeObj_->Initialize(skyDomeModel_.get());
 
 	TestObj_->SetDirectionalLight(&directionalLight_);
 	TestGroundObj_->SetDirectionalLight(&directionalLight_);
@@ -101,15 +96,13 @@ void GameScene::ObjectInitialize(DirectXCommon* dxCommon_){
 	testTransform_.translate.y = 2.0f;
 	testGroundTransform_.scale = { 1.0f,1.0f,1.0f };
 
-	pointLightTransform_.scale = { 0.5f,0.5f,0.5f };
+	pointLightTransform_.scale = { 0.005f,0.005f,0.005f };
 }
 
-void GameScene::Initialize(DirectXCommon* dxCommon_){
+void GameScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
-
-	textureManager_ = std::make_unique<TextureManager>();
-	textureManager_->Initialize();
+	textureManager_ = TextureManager::GetInstance();
 
 	TextureLoad();
 	SoundLoad();
@@ -120,8 +113,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon_){
 
 	audio_->SoundPlayWave(titleBGM, 0.2f);
 
-	SpriteInitialize(dxCommon_);
-	ObjectInitialize(dxCommon_);
+	SpriteInitialize();
+	ObjectInitialize();
 
 
 	//textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
@@ -197,7 +190,7 @@ void GameScene::Update(){
 			sceneNum_ = SceneName::CLEAR;
 		}*/
 		followCamera_->SetIsMove(true);
-		fadeSprite_->Update();
+		
 		fadeAlpha_ -= 0.01f;
 		if (fadeAlpha_<=0.0f){
 
@@ -213,7 +206,7 @@ void GameScene::Update(){
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
 		//audio_->PauseWave(gameBGM);
-		clearSprite_->Update();
+		
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			sceneNum_ = SceneName::TITLE;
 		}
@@ -264,21 +257,22 @@ void GameScene::DrawParticle(){
 void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
-	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	skyDomeObj_->Draw(textureManager_->SendGPUDescriptorHandle(16));
+	/*skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
+	skyDomeObj_->Draw();*/
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
 	case SceneName::TITLE:
 		TestObj_->Update(testMatrix_, followCamera_->GetViewProjection());
-		TestObj_->Draw(textureManager_->SendGPUDescriptorHandle(0));
+		TestObj_->Draw();
 
 		TestGroundObj_->Update(testGroundMatrix_, followCamera_->GetViewProjection());
-		TestGroundObj_->Draw(textureManager_->SendGPUDescriptorHandle(22));
+		TestGroundObj_->Draw();
 
 		pointLightObj_->Update(pointLightMatrix_, followCamera_->GetViewProjection());
+
+		pointLightObj_->Draw();
 		
-		pointLightObj_->Draw(textureManager_->SendGPUDescriptorHandle(9));
 		break;
 	case SceneName::GAME:
 		
@@ -302,19 +296,13 @@ void GameScene::Draw2D(){
 	///*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
 	case SceneName::TITLE:
-		titleSprite_->Draw(textureManager_->SendGPUDescriptorHandle(12));
-		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
+		
 		break;
 	case SceneName::GAME:
-		//actionTextSprite_->Draw(textureManager_->SendGPUDescriptorHandle(20));
-		//attackSprite_->Draw(textureManager_->SendGPUDescriptorHandle(17));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
+		
 		break;
 	case SceneName::CLEAR:
-		clearSprite_->Draw(textureManager_->SendGPUDescriptorHandle(14));
-		pressSprite_->Draw(textureManager_->SendGPUDescriptorHandle(13));
-		fadeSprite_->Draw(textureManager_->SendGPUDescriptorHandle(15));
+	
 		break;
 	default:
 		assert(0);
@@ -402,163 +390,3 @@ void GameScene::DrawImgui(){
 
 #endif // _DEBUG	
 }
-
-
-
-//void GameScene::AllCollision(){
-//	for (Floor* floor : floorManager_->GetFloors()) {
-//		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
-//			chackCollision = 1;
-//			player_->onFlootCollision(floor->GetOBB());
-//			player_->SetIsDown(false);
-//			break;
-//		}
-//		else {
-//			chackCollision = 0;
-//			player_->SetIsDown(true);
-//		}
-//	}
-//
-//	//if (player_->GetIsRespawn()) {
-//	//	int i = 0;
-//	//	for (const auto& enemy : enemies_) {
-//	//		enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
-//	//		i++;
-//	//	}
-//	//	player_->SetIsRespawn(false);
-//	//}
-//
-//
-//	//for (const auto& enemy : enemies_) {
-//
-//	//	if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB()) && !enemy->GetIsDead()) {
-//	//		int i = 0;
-//	//		player_->Respawn();
-//	//		for (const auto& enemy : enemies_) {
-//	//			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
-//	//			i++;
-//	//		}
-//	//	}
-//	//}
-//	for (const auto& enemy : enemies_) {
-//		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
-//			enemy->OnCollision();
-//		}
-//
-//		if (enemy->GetIsDead()) {
-//			sceneNum_ = SceneName::CLEAR;
-//		}
-//	}
-//	//}
-//
-//}
-//
-//void GameScene::FilesSave(const std::vector<std::string>& stages) {
-//	floorManager_->SaveFile(stages);
-//	std::string message = std::format("{}.json created.", "all");
-//	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-//}
-//
-//void GameScene::FilesOverWrite(const std::string& stage) {
-//	floorManager_->FileOverWrite(stage);
-//	std::string message = std::format("{}.json OverWrite.", "all");
-//	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-//}
-//
-//void GameScene::FilesLoad(const std::string& stage) {
-//	floorManager_->LoadFiles(stage);
-//	std::string message = std::format("{}.json loaded.", "all");
-//	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-//}
-//
-//bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
-//	Vector3 vector{};
-//	Matrix matrix;
-//
-//	Vector3 separatingAxis[15]{};
-//	separatingAxis[0] = obb1.orientations[0];
-//	separatingAxis[1] = obb1.orientations[1];
-//	separatingAxis[2] = obb1.orientations[2];
-//	separatingAxis[3] = obb2.orientations[0];
-//	separatingAxis[4] = obb2.orientations[1];
-//	separatingAxis[5] = obb2.orientations[2];
-//	int axisNum = 6;
-//	for (int index1 = 0; index1 < 3; index1++) {
-//		for (int index2 = 0; index2 < 3; index2++) {
-//			separatingAxis[axisNum] = vector.Cross(obb1.orientations[index1], obb2.orientations[index2]);
-//			axisNum++;
-//		}
-//	}
-//
-//	Vector3 obb1Vertex[8]{};
-//	// bottom
-//	obb1Vertex[0] = Vector3{ -obb1.size.x, -obb1.size.y, -obb1.size.z };
-//	obb1Vertex[1] = Vector3{ +obb1.size.x, -obb1.size.y, -obb1.size.z };
-//	obb1Vertex[2] = Vector3{ -obb1.size.x, -obb1.size.y, +obb1.size.z };
-//	obb1Vertex[3] = Vector3{ +obb1.size.x, -obb1.size.y, +obb1.size.z };
-//	// top
-//	obb1Vertex[4] = Vector3{ -obb1.size.x, +obb1.size.y, -obb1.size.z };
-//	obb1Vertex[5] = Vector3{ +obb1.size.x, +obb1.size.y, -obb1.size.z };
-//	obb1Vertex[6] = Vector3{ -obb1.size.x, +obb1.size.y, +obb1.size.z };
-//	obb1Vertex[7] = Vector3{ +obb1.size.x, +obb1.size.y, +obb1.size.z };
-//
-//	Matrix4x4 rotateMatrix1 = GetRotate(obb1);
-//
-//	Vector3 obb2Vertex[8]{};
-//	// bottom
-//	obb2Vertex[0] = Vector3{ -obb2.size.x, -obb2.size.y, -obb2.size.z };
-//	obb2Vertex[1] = Vector3{ +obb2.size.x, -obb2.size.y, -obb2.size.z };
-//	obb2Vertex[2] = Vector3{ -obb2.size.x, -obb2.size.y, +obb2.size.z };
-//	obb2Vertex[3] = Vector3{ +obb2.size.x, -obb2.size.y, +obb2.size.z };
-//	// top
-//	obb2Vertex[4] = Vector3{ -obb2.size.x, +obb2.size.y, -obb2.size.z };
-//	obb2Vertex[5] = Vector3{ +obb2.size.x, +obb2.size.y, -obb2.size.z };
-//	obb2Vertex[6] = Vector3{ -obb2.size.x, +obb2.size.y, +obb2.size.z };
-//	obb2Vertex[7] = Vector3{ +obb2.size.x, +obb2.size.y, +obb2.size.z };
-//
-//	Matrix4x4 rotateMatrix2 = GetRotate(obb2);
-//
-//	for (int index = 0; index < 8; index++) {
-//		obb1Vertex[index] = matrix.TransformVec(obb1Vertex[index], rotateMatrix1);
-//		obb1Vertex[index] = (obb1Vertex[index] + obb1.center);
-//		obb2Vertex[index] = matrix.TransformVec(obb2Vertex[index], rotateMatrix2);
-//		obb2Vertex[index] = (obb2Vertex[index] + obb2.center);
-//	}
-//
-//	for (axisNum = 0; axisNum < 15; axisNum++) {
-//		float projectionPoint1[8]{};
-//		float projectionPoint2[8]{};
-//		float min1, max1;
-//		float min2, max2;
-//		min1 = vector.Dot(obb1Vertex[0], vector.Normalize(separatingAxis[axisNum]));
-//		min2 = vector.Dot(obb2Vertex[0], vector.Normalize(separatingAxis[axisNum]));
-//		max1 = min1;
-//		max2 = min2;
-//		for (int index = 0; index < 8; index++) {
-//			projectionPoint1[index] =
-//				vector.Dot(obb1Vertex[index], vector.Normalize(separatingAxis[axisNum]));
-//			projectionPoint2[index] =
-//				vector.Dot(obb2Vertex[index], vector.Normalize(separatingAxis[axisNum]));
-//			if (index == 0) {
-//				min1 = projectionPoint1[index];
-//				min2 = projectionPoint2[index];
-//				max1 = min1;
-//				max2 = min2;
-//			}
-//			else {
-//				min1 = min(min1, projectionPoint1[index]);
-//				min2 = min(min2, projectionPoint2[index]);
-//				max1 = max(max1, projectionPoint1[index]);
-//				max2 = max(max2, projectionPoint2[index]);
-//			}
-//		}
-//		float L1 = max1 - min1;
-//		float L2 = max2 - min2;
-//		float sumSpan = L1 + L2;
-//		float longSpan = max(max1, max2) - min(min1, min2);
-//		if (sumSpan < longSpan) {
-//			return false;
-//		}
-//	}
-//	return true;
-//}

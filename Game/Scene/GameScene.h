@@ -53,12 +53,9 @@ private:
 
 
 	/*分ける予定があるけどひとまずのやつ*/
-	void AllCollision();
-	void FilesSave(const std::vector<std::string>& stages);
-	void FilesOverWrite(const std::string& stage);
-	void FilesLoad(const std::string& stage);
+	
 	//OBB同士の当たり判定
-	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
+	
 
 private:
 	/*ファイル関連*/
@@ -71,11 +68,30 @@ private:
 private:
 	//クラス内変数
 	//基本の宣言はユニークポインタで
+	// 
+	//自機のモデル
+	std::unique_ptr<Object3D> TestObj_;
+	std::unique_ptr<Object3D> TestGroundObj_;
+	std::unique_ptr<Object3D> pointLightObj_;
+
+	std::unique_ptr<Model> TestModel_;
+	std::unique_ptr<Model> TestGroundModel_;
+
+	Transform testTransform_;
+	Transform testGroundTransform_;
+	Transform pointLightTransform_;
+
+	Matrix4x4 testMatrix_;
+	Matrix4x4 testGroundMatrix_;
+	Matrix4x4 pointLightMatrix_;
+
+	//テクスチャマネージャー
+	
+
+	std::unique_ptr<FollowCamera> followCamera_;
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
-	std::unique_ptr<FollowCamera> followCamera_;	
-	
 	//std::unique_ptr<ParticleBase> particle_;
 
 	std::unique_ptr<FloorManager> floorManager_;
@@ -95,7 +111,9 @@ private:
 
 	int chackCollision = 0;
 
+	DirectionalLight directionalLight_;
 
+	PointLight pointLight_;
 	Transform particleTrnadform_ = {
 		.scale = {1.0f,1.0f,1.0f},
 		.rotate = {0.0f,0.0f,0.0f},

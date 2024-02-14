@@ -161,7 +161,7 @@ void GameScene::Update(){
 
 	switch (sceneNum_){
 	case SceneName::TITLE:
-		followCamera_->SetIsMove(true);
+		
 		
 
 		
@@ -240,10 +240,10 @@ void GameScene::Draw3D(){
 	skyDomeObj_->Draw();*/
 
 	/*ここから下に描画処理を書き込む*/
-		TestObj_->Update(testMatrix_, followCamera_->GetViewProjection());
-		TestObj_->Draw();
 	switch (sceneNum_) {
 	case SceneName::TITLE:
+		TestObj_->Update(testMatrix_, followCamera_->GetViewProjection());
+		TestObj_->Draw();
 
 		TestGroundObj_->Update(testGroundMatrix_, followCamera_->GetViewProjection());
 		TestGroundObj_->Draw();
@@ -302,15 +302,15 @@ void GameScene::Finalize(){
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
 	followCamera_->DrawImgui();
+
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+		
 	ImGui::Begin("スフィア");
 	ImGui::DragFloat3("大きさ", &testTransform_.scale.x, 0.1f);
 	ImGui::DragFloat3("回転", &testTransform_.rotate.x, 0.1f);
 	ImGui::DragFloat3("座標", &testTransform_.translate.x, 0.1f);
 	ImGui::End();
-
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-		
 
 		ImGui::Begin("ライト");
 		ImGui::DragFloat4("ライトの色", &directionalLight_.color.x, 0.01f, 0.0f, 1.0f);
@@ -387,6 +387,8 @@ void GameScene::DrawImgui(){
 	if (ImGui::Button("2D")) {
 		sceneNum_ = SceneName::GAME;
 	}
+
+	ImGui::Text("キー入力で操作する際は | RShift + 0で3D | RShift + 1で2Dに移行する");
 
 	ImGui::End();
 

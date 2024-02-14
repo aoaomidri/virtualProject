@@ -70,7 +70,19 @@ void FollowCamera::Update(){
 	else {
 
 		if (input_->GetConnectPad() && isMove_) {
+
 			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+			if (input_->Pushkey(DIK_A)){
+				cameraMove_.y += 0.05f;
+			}else if (input_->Pushkey(DIK_D)) {
+				cameraMove_.y -= 0.05f;
+			}
+			if (input_->Pushkey(DIK_W)) {
+				cameraMove_.x -= 0.05f;
+			}
+			else if (input_->Pushkey(DIK_S)) {
+				cameraMove_.x += 0.05f;
+			}
 			Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
 			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
 			postureVec_.y = 0.0f;
@@ -157,12 +169,13 @@ void FollowCamera::SetTarget(const Transform* target){
 void FollowCamera::DrawImgui(){
 	ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
-	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
+	ImGui::DragFloat3("カメラ回転", &cameraMove_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
 	ImGui::DragFloat("オフセット", &distance, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
+	ImGui::Checkbox("コントローラーやボタンで動かすかどうか", &isMove_);
 
 	ImGui::End();
 }

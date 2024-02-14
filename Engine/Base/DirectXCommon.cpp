@@ -1,6 +1,7 @@
 #include "DirectXCommon.h"
 #include <cassert>
 //#include"Log.h"
+#include <thread>
 
 
 DirectXCommon* DirectXCommon::GetInstance(){

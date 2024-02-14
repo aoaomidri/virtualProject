@@ -51,6 +51,13 @@ public:
 
 	void SetLeftTop(const Vector2& leftTop) { textureLeftTop_ = leftTop; }
 
+	void SetTextureNumber(const uint32_t textureNumber) { 
+		textureNumber_ = textureNumber; 
+		AdjustTextureSize();
+		//テクスチャサイズをスプライトのサイズに適用
+		scale_ = textureSize_;
+	}
+
 
 	///*Getter*///
 	const Vector2& GetPosition()const { return position_; }

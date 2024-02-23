@@ -12,12 +12,6 @@
 
 class DirectXCommon{
 public:
-	DirectXCommon() = default;
-	~DirectXCommon() = default;
-	DirectXCommon(const DirectXCommon& DirectXCommon) = delete;
-	DirectXCommon& operator=(const DirectXCommon&) = delete;
-
-
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -60,6 +54,9 @@ public:
 	//コマンドリスト取得
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
 
+	//アダプタの取得
+	IDXGIAdapter4* GetAdapter()const { return useAdapter.Get(); }
+
 	//スワップチェーンの設定を取得
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc() const { return swapChainDesc; }
 
@@ -71,7 +68,10 @@ public:
 
 
 private://メンバ関数
-	
+	DirectXCommon() = default;
+	~DirectXCommon() = default;
+	DirectXCommon(const DirectXCommon& DirectXCommon) = delete;
+	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
 	//デバイスの初期化
 	void DeviceInitialize();
@@ -113,6 +113,9 @@ private://メンバ変数
 
 	//スワップチェーンの生成
 	ComPtr<IDXGISwapChain4> swapChain = nullptr;
+
+	//使用するアダプタ
+	ComPtr<IDXGIAdapter4> useAdapter = nullptr;
 
 	//スワップチェーンを生成
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};

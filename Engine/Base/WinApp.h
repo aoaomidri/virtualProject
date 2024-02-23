@@ -15,10 +15,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 class WinApp
 {
 public: // 
-	WinApp() = default;
-	~WinApp() = default;
-	WinApp(const WinApp&) = delete;
-	WinApp& operator=(const WinApp&) = delete;
+	
 
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -78,7 +75,10 @@ public: // メンバ関数
 	
 
 private: // メンバ関数
-	
+	WinApp() = default;
+	~WinApp() = default;
+	WinApp(const WinApp&) = delete;
+	WinApp& operator=(const WinApp&) = delete;
 
 private: // メンバ変数
 	// Window関連

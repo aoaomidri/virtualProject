@@ -29,6 +29,8 @@ public:
 
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
+	void SetSRV();
+
 	//void Load(const std::string& filePath, uint32_t index);
 
 	uint32_t Load(const std::string& filePath);

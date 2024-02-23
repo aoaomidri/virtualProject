@@ -72,7 +72,7 @@ void DirectXCommon::DeviceInitialize(){
 	assert(SUCCEEDED(hr));
 
 	//使用するアダプタ用の変数。最初にnullptrを入れておく
-	ComPtr<IDXGIAdapter4> useAdapter = nullptr;
+	useAdapter = nullptr;
 
 	//いい順番にアダプタを頼む
 	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) !=

@@ -124,6 +124,18 @@ private:
 	//タイトル
 	std::unique_ptr<Sprite> titleSprite_;
 
+	std::unique_ptr<Sprite> startSprite_;
+
+	std::unique_ptr<Sprite> selectSprite_;
+
+	bool isStart_ = true;
+
+	std::unique_ptr<Sprite> comboSprite_;
+
+	std::unique_ptr<Sprite> controlSprite_;
+
+	std::unique_ptr<Sprite> backSprite_;
+
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
 	bool isFade_ = false;

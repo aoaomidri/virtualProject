@@ -32,8 +32,32 @@ void GameScene::SoundLoad(){
 }
 
 void GameScene::SpriteInitialize(){
+	uint32_t textureHandle = 0;
+
 	titleSprite_ = std::make_unique<Sprite>();
 	titleSprite_->Initialize(12);
+
+	startSprite_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/start.png");
+	startSprite_->Initialize(textureHandle);
+
+	comboSprite_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/combo.png");
+	comboSprite_->Initialize(textureHandle);
+
+	selectSprite_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/LockOn.png");
+	selectSprite_->Initialize(textureHandle);
+
+
+	controlSprite_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/control.png");
+	controlSprite_->Initialize(textureHandle);
+	controlSprite_->isDraw_ = false;
+
+	backSprite_ = std::make_unique<Sprite>();
+	backSprite_->Initialize(15);
+	backSprite_->isDraw_ = false;
 
 	pressSprite_ = std::make_unique<Sprite>();
 	pressSprite_->Initialize(13);
@@ -80,9 +104,9 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	audio_->SoundPlayWave(titleBGM, 0.5f);
-	audio_->SoundPlayWave(gameBGM, 0.5f);
-	
+	audio_->SoundPlayWave(titleBGM, 0.1f);
+	audio_->SoundPlayWave(gameBGM, 0.1f);
+	audio_->PauseWave(gameBGM);
 
 	SpriteInitialize();
 	ObjectInitialize();
@@ -124,6 +148,32 @@ void GameScene::Initialize(){
 	titleSprite_->scale_.y = 150.0f;
 	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
 	titleSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+
+	startSprite_->position_ = { 640.0f,390.0f };
+	startSprite_->anchorPoint_ = { 0.5f,0.5f };
+	startSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	startSprite_->isDraw_ = true;
+
+	selectSprite_->position_ = { 380.0f,390.0f };
+	selectSprite_->rotation_ = -1.57f;
+	selectSprite_->anchorPoint_ = { 0.5f,0.5f };
+	selectSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+	selectSprite_->isDraw_ = true;
+
+	comboSprite_->position_ = { 640.0f,550.0f };
+	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
+	comboSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	comboSprite_->isDraw_ = true;
+
+	controlSprite_->position_ = { 640.0f,360.0f };
+	controlSprite_->anchorPoint_ = { 0.5f,0.5f };
+	controlSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	backSprite_->position_ = { 640.0f,360.0f };
+	backSprite_->anchorPoint_ = { 0.5f,0.5f };
+	backSprite_->scale_.x = 1280.0f;
+	backSprite_->scale_.y = 720.0f;
+	backSprite_->color_ = {0.0f,0.0f,0.0f,0.85f };
 
 	pressSprite_->position_ = { 640.0f,500.0f };
 	pressSprite_->scale_.x = 600.0f;
@@ -174,9 +224,40 @@ void GameScene::Update(){
 		}
 
 		if (fadeAlpha_ <= 0.0f) {
-			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
+			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_UP)|| input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_DOWN)){
+				if (isStart_ == false) {
+					isStart_ = true;
+				}
+				else {
+					isStart_ = false;
+				}
+				controlSprite_->isDraw_ =false;
+				backSprite_->isDraw_ = false;
+			}
+			if (isStart_ == false) {
+				selectSprite_->position_.y = 550.0f;
+			}
+			else {
+				selectSprite_->position_.y = 390.0f;
+			}
+
+			if (controlSprite_->isDraw_ == true) {
+				if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
+					controlSprite_->isDraw_ = false;
+					backSprite_->isDraw_ = false;
+				}
+			}
+
+			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && isStart_ == true) {
 				isFade_ = true;
 			}
+			else if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && isStart_ == false) {
+				controlSprite_->isDraw_ = true;
+				backSprite_->isDraw_ = true;
+			}
+
+			
+
 		}
 		if (isFade_) {
 			fadeAlpha_ += 0.01f;
@@ -330,7 +411,11 @@ void GameScene::Draw2D(){
 	switch (sceneNum_) {
 	case SceneName::TITLE:
 		titleSprite_->Draw();
-		pressSprite_->Draw();
+		startSprite_->Draw();
+		selectSprite_->Draw();
+		comboSprite_->Draw();
+		backSprite_->Draw();
+		controlSprite_->Draw();
 		fadeSprite_->Draw();
 		break;
 	case SceneName::GAME:
@@ -364,19 +449,19 @@ void GameScene::DrawImgui(){
 	case SceneName::TITLE:
 	ImGui::Begin("BGM関連");
 	if (ImGui::Button("音源の復活")){
-		gameBGM = audio_->SoundPlayWave(gameBGM, 0.5f);
+		titleBGM = audio_->SoundPlayWave(titleBGM, 0.5f);
 	}
 	if (ImGui::Button("最初から再生")) {
-		audio_->RePlayWave(gameBGM);
+		audio_->RePlayWave(titleBGM);
 	}
 	if (ImGui::Button("完全に停止")) {
-		audio_->StopWave(gameBGM);
+		audio_->StopWave(titleBGM);
 	}
 	if (ImGui::Button("一時停止")){
-		audio_->PauseWave(gameBGM);
+		audio_->PauseWave(titleBGM);
 	}
 	if (ImGui::Button("停止解除")) {
-		audio_->ResumeWave(gameBGM);
+		audio_->ResumeWave(titleBGM);
 	}
 	ImGui::End();
 		break;
@@ -445,15 +530,19 @@ void GameScene::DrawImgui(){
 	}
 
 	ImGui::Begin("スプライト");
-	ImGui::DragFloat2("action : ポジション", &attackSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("action : 大きさ", &attackSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("action : 色", &attackSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("press : ポジション", &actionTextSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("press : 大きさ", &actionTextSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("press : 色", &actionTextSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("fade : ポジション", &fadeSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("fade : 大きさ", &fadeSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("fade : 色", &fadeSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("start : ポジション", &startSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("start : 大きさ", &startSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("start : 色", &startSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("select : ポジション", &selectSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("select : 大きさ", &selectSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat ("select : 回転", &selectSprite_->rotation_, 0.01f);
+	ImGui::DragFloat4("select : 色", &selectSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("combo : ポジション", &comboSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("combo : 大きさ", &comboSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("combo : 色", &comboSprite_->color_.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("back : ポジション", &backSprite_->position_.x, 1.0f);
+	ImGui::DragFloat2("back : 大きさ", &backSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat4("back : 色", &backSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 	//particle_->DrawImgui("ステージパーティクル");
 	

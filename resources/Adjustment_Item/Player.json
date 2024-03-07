@@ -1,6 +1,6 @@
 {
     "Player": {
-        "DashCoolTime": 30,
-        "DashSpeed": 11.0
+        "DashCoolTime": 10,
+        "DashSpeed": 14.100000381469727
     }
 }

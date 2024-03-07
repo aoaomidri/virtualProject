@@ -200,7 +200,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::TITLE;
+	sceneNum_ = SceneName::GAME;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
@@ -359,7 +359,7 @@ void GameScene::DrawParticle(){
 	case SceneName::TITLE:
 		break;
 	case SceneName::GAME:
-		player_->ParticleDraw(textureManager_, followCamera_->GetViewProjection());
+		player_->ParticleDraw(followCamera_->GetViewProjection());
 		break;
 	case SceneName::CLEAR:
 

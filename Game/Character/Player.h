@@ -28,7 +28,7 @@ public:
 	//描画
 	void Draw(const ViewProjection& viewProjection);
 
-	void ParticleDraw(TextureManager* textureManager, const ViewProjection& viewProjection);
+	void ParticleDraw(const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();
 

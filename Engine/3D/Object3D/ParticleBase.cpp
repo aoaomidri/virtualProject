@@ -1,5 +1,6 @@
 #include "ParticleBase.h"
 #include"../../Base/DirectXCommon.h"
+#include"TextureManager.h"
 #include <cassert>
 #include<fstream>
 #include<sstream>
@@ -20,7 +21,7 @@ void ParticleBase::Initialize() {
 	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
 	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
 
-	accelerationField_.acceleration = { 0.0f,15.0f,0.0f };
+	accelerationField_.acceleration = { 0.0f,30.0f,0.0f };
 	accelerationField_.area.min = { -100.0f,-100.0f,-100.0f };
 	accelerationField_.area.max = { 100.0f,100.0f,100.0f };
 
@@ -67,6 +68,8 @@ void ParticleBase::Initialize() {
 		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeScreen);
 
+	textureHandle_= TextureManager::GetInstance()->Load("resources/texture/circle.png");//10
+
 	isWind_ = true;
 	isBillborad_ = true;
 }
@@ -86,7 +89,7 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 		velocityRange_.max = velocityRange_.min + 0.1f;
 	}
 
-	/*emitter_.transform = transform;*/
+	emitter_.transform = transform;
 
 	if (!isDraw_) {
 		return;
@@ -148,7 +151,7 @@ void ParticleBase::Update(const Transform& transform, const ViewProjection& view
 
 }
 
-void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DESCRIPTOR_HANDLE InstancingHandle) {
+void ParticleBase::Draw() {
 
 	if (!isDraw_) {
 		return;
@@ -186,8 +189,8 @@ void ParticleBase::Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DES
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, InstancingHandle);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureHandle);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, TextureManager::GetInstance()->SendInstancingGPUDescriptorHandle());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureHandle_));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 	//3D三角の描画

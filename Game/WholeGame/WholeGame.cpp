@@ -30,7 +30,7 @@ void WholeGame::Update(){
 	imguiManager_->Begin();
 	//ゲームの処理	
 
-	//adjustment_item->Update();
+	adjustment_item->Update();
 
 	gameScene_->Update();
 

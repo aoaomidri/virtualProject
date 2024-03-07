@@ -23,7 +23,7 @@ public:
 	
 	void Update(const Transform& transform,const ViewProjection& viewProjection);
 
-	void Draw(D3D12_GPU_DESCRIPTOR_HANDLE TextureHandle, D3D12_GPU_DESCRIPTOR_HANDLE InstancingHandle);
+	void Draw();
 
 	void DrawImgui(const std::string& imguiTag);
 
@@ -184,6 +184,8 @@ private:
 	};
 
 	int blend_;
+
+	uint32_t textureHandle_ = 0;
 
 	//ランダム生成
 	RandomMaker* random_ = nullptr;

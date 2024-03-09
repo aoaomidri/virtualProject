@@ -118,6 +118,7 @@ public:
 		bool comboNext_ = false;
 		bool strongComboNext_ = false;
 		uint32_t AttackTimer_ = 0;
+		uint32_t nextAttackTimer = 0;
 	};
 
 	WorkAttack workAttack_;
@@ -268,6 +269,8 @@ private:
 	int WaitTime = 0;
 
 	float easeT_ = 0.0f;
+
+	float motionSpeed_ = 1.0f;
 
 	bool isShakeDown = false;
 

@@ -46,9 +46,11 @@ public:
 
 	const OBB& GetOBB()const { return OBB_; }
 
-	
+	const OBB& GetBodyOBB()const { return bodyOBB_; }
 
-	bool GetIsDead() { return isDead_; }
+	bool GetIsDead() const { return isDead_; }
+
+	bool GetIsNoLife() const { return isNoLife_; }
 
 	uint32_t GetSerialNumber()const { return serialNumber_; }
 
@@ -57,6 +59,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	void SetIsDead(bool isDead) { isDead_ = isDead; }
+
+	void SetTarget(const Transform* target) { target_ = target; }
 
 private:
 	//クラス内関数
@@ -78,6 +82,9 @@ private:
 	
 	std::unique_ptr<Object3D> collisionObj_;
 
+	//プレイヤーの座標
+	// 追従対象
+	const Transform* target_ = nullptr;
 
 	//自機のSRT
 	Transform transform_{};
@@ -112,20 +119,25 @@ private:
 	//自機のOBB
 	OBB OBB_{};
 
+	//自機のOBB
+	OBB bodyOBB_{};
+
 	Vector3 worldPos = {};
+
+	Vector3 deadMove_ = { 0,0.02f,0.1f };
+
+	float deadYAngle_ = 0;
 
 	/// <summary>
 	///倍率
 	/// </summary>
 	float magnification = 1.0f;
 	//移動スピード
-	const float moveSpeed_ = 0.02f;
+	const float moveSpeed_ = 0.01f;
 
 	bool isDead_ = false;
 
-	const int invincibleTimeBase_ = 35;
-
-	int invincibleTime_ = 0;
+	bool isNoLife_ = false;
 
 	int enemyLife_ = 10;
 
@@ -134,6 +146,46 @@ private:
 	bool isParticle_ = false;
 
 	float particleSpeed_;
+
+private:
+	/*振る舞い系*/
+	enum class Behavior {
+		kFirst,			//第一形態
+		kSecond,		//第二形態
+		kThird,			//第三形態
+		kRoot,			//様子見中
+		kDead			//やられた
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+private:
+	//行動全体を制御する
+	void MotionUpdate();
+
+	//攻撃行動初期化
+	void BehaviorFirstInitialize();
+	//攻撃行動初期化
+	void BehaviorSecondInitialize();
+	//攻撃行動
+	void BehaviorThirdInitialize();
+	//攻撃行動初期化
+	void BehaviorRootInitialize();
+	//攻撃行動初期化
+	void BehaviorDeadInitialize();
+	//形態ごとにとる行動
+	void FirstMotion();
+
+	void SecondMotion();
+
+	void ThirdMotion();
+	//様子見状態の行動
+	void RootMotion();
+	//死んだときのモーション
+	void DeadMotion();
+
 
 private:
 	

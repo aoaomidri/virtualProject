@@ -121,7 +121,9 @@ void GameScene::Initialize(){
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize({ 0,1.0f,20.0f });
+	enemy_->SetTarget(&player_->GetTransform());
 	enemies_.push_back(std::move(enemy_));
+
 
 	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
 
@@ -567,27 +569,6 @@ void GameScene::AllCollision(){
 		}
 	}
 
-	//if (player_->GetIsRespawn()) {
-	//	int i = 0;
-	//	for (const auto& enemy : enemies_) {
-	//		enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
-	//		i++;
-	//	}
-	//	player_->SetIsRespawn(false);
-	//}
-
-
-	//for (const auto& enemy : enemies_) {
-
-	//	if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB()) && !enemy->GetIsDead()) {
-	//		int i = 0;
-	//		player_->Respawn();
-	//		for (const auto& enemy : enemies_) {
-	//			enemy->Respawn({ 0.0f,0.7f,(7.0f + i * 4.0f) });
-	//			i++;
-	//		}
-	//	}
-	//}
 	for (const auto& enemy : enemies_) {
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
 			uint32_t serialNumber = enemy->GetSerialNumber();
@@ -607,7 +588,7 @@ void GameScene::AllCollision(){
 	}
 
 	for (const auto& enemy : enemies_) {
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetOBB())) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);
 			break;
 		}

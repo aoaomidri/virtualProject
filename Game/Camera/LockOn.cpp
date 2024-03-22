@@ -11,6 +11,7 @@ void LockOn::Initialize(){
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
+	
 	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
@@ -47,6 +48,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 				it = targets.begin();
 			}
 			target_ = it->second;
+		}
+		else if (target_->GetIsNoLife()) {
+			target_ = nullptr;
 		}
 	}	
 	else {

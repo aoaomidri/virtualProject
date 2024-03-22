@@ -81,8 +81,6 @@ void Player::Initialize(){
 void Player::Update(){
 	ApplyGlobalVariables();
 
-	
-
 	if (behaviorRequest_) {
 		// 振る舞いを変更する
 		behavior_ = behaviorRequest_.value();
@@ -156,8 +154,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 		weaponObj_->Update(weaponMatrix_, viewProjection);
 		weaponObj_->Draw();
 
-		weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
-		weaponCollisionObj_->Draw();
+		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
+		weaponCollisionObj_->Draw();*/
 
 	}
 	

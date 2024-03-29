@@ -128,18 +128,48 @@ private:
 
 	float deadYAngle_ = 0;
 
+	/*様子見状態の変数群*/
+	const int rootTimeMax_ = 10;
+
+	int rootTime_ = 0;
+	//プレイヤーとの距離を保存する用の変数
+	float playerLength_ = 0;
+
+	//プレイヤーが近くにいるときに溜まる
+	int nearTime_ = 0;
+	//近い条件
+	float nearPlayer_ = 10.0f;
+
+	//プレイヤーが遠くにいるときに溜まる
+	int farTime_ = 0;
+	//遠い条件
+	float farPlayer_ = 30.0f;
+
+	//距離に応じた反応の時間制限
+	int lengthJudgment_ = 180;
+
+	int freeTime_ = 0;
+	int	kFreeTime_ = 40;
+
+
 	/// <summary>
 	///倍率
 	/// </summary>
 	float magnification = 1.0f;
 	//移動スピード
-	const float moveSpeed_ = 0.01f;
+	const float moveSpeed_ = 0.03f;
+
+	const float kDashSpeed_ = 5.0f;
+
+	const float kBackSpeed_ = -3.0f;
+
+	int dashTimer_ = 0;
 
 	bool isDead_ = false;
 
 	bool isNoLife_ = false;
 
-	int enemyLife_ = 10;
+	int enemyLife_ = 100;
 
 	Vector3 particleVec_[particleNum_];
 
@@ -154,6 +184,10 @@ private:
 		kSecond,		//第二形態
 		kThird,			//第三形態
 		kRoot,			//様子見中
+		kBack,			//後ろにジャンプ
+		kDash,			//ダッシュ
+		kRun,			//走り
+		kFree,			//遊びの時間
 		kDead			//やられた
 	};
 
@@ -183,9 +217,28 @@ private:
 	void ThirdMotion();
 	//様子見状態の行動
 	void RootMotion();
+	//後退行動初期化
+	void BehaviorBackInitialize();
+	//後ろに下がるモーション
+	void BackStep();
+	//前進行動初期化
+	void BehaviorDashInitialize();
+	//ダッシュモーション
+	void Dash();
+
+	//前進行動初期化
+	void BehaviorRunInitialize();
+	//ダッシュモーション
+	void EnemyRun();
+
+	//遊び行動初期化
+	void BehaviorFreeInitialize();
+	//遊び
+	void Free();
+
 	//死んだときのモーション
 	void DeadMotion();
-
+	
 
 private:
 	

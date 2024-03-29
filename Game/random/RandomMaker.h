@@ -16,6 +16,14 @@ public:
 	/// <param name="min = 最小値"></param>
 	/// <param name="max = 最大値"></param>
 	/// <returns></returns>
+	int DistributionInt(const int min, const int max);
+
+	/// <summary>
+	/// 最小値と最大値を入れ範囲を決める
+	/// </summary>
+	/// <param name="min = 最小値"></param>
+	/// <param name="max = 最大値"></param>
+	/// <returns></returns>
 	float Distribution(const float min, const float max);
 
 	

@@ -1,4 +1,7 @@
 #include "Enemy.h"
+#include"ImGuiManager.h"
+#include"RandomMaker.h"
+
 uint32_t Enemy::nextSerialNumber_ = 0;
 
 Enemy::Enemy(){
@@ -139,8 +142,12 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	}
 }
 
-void Enemy::DrawImgui(){
+void Enemy::DrawImgui() {
+	ImGui::Begin("敵の変数");
 
+	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
+
+	ImGui::End();
 }
 
 void Enemy::onFlootCollision(OBB obb){
@@ -278,6 +285,18 @@ void Enemy::MotionUpdate(){
 		case Behavior::kRoot:
 			BehaviorRootInitialize();
 			break;
+		case Behavior::kBack:
+			BehaviorBackInitialize();
+			break;
+		case Behavior::kDash:
+			BehaviorDashInitialize();
+			break;
+		case Behavior::kRun:
+			BehaviorRunInitialize();
+			break;
+		case Behavior::kFree:
+			BehaviorFreeInitialize();
+			break;
 		case Behavior::kDead:
 			BehaviorDeadInitialize();
 			break;
@@ -300,10 +319,35 @@ void Enemy::MotionUpdate(){
 	case Behavior::kRoot:
 		RootMotion();
 		break;
+	case Behavior::kBack:
+		BackStep();
+		break;
+	case Behavior::kDash:
+		Dash();
+		break;
+	case Behavior::kRun:
+		EnemyRun();
+		break;
+	case Behavior::kFree:
+		Free();
+		break;
 	case Behavior::kDead:
 		DeadMotion();
 		break;
 	}
+
+	Vector3 lockOnPos = target_->translate;
+	Vector3 sub = lockOnPos - transform_.translate;
+
+	playerLength_ = Vector3::Length(sub);
+
+	/*エネミーのパーツ*/
+	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
+	parts_offset = Matrix::GetInstance()->TransformNormal(parts_offset, rotateMatrix_);
+
+	partsTransform_.translate = transform_.translate + parts_offset;
+
+	partsTransform_.rotate.x += 0.3f;
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
@@ -325,6 +369,10 @@ void Enemy::BehaviorThirdInitialize(){
 
 void Enemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+	postureVec_ = { 0.0f,0.0f,1.0f };
+	frontVec_ = { 0.0f,0.0f,1.0f };
+	farTime_ = 0;
+	nearTime_ = 0;
 }
 
 void Enemy::BehaviorDeadInitialize(){
@@ -369,16 +417,117 @@ void Enemy::RootMotion(){
 		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
+
+	if (playerLength_ > farPlayer_) {
+		farTime_++;
+	}
+	else if (playerLength_ < nearPlayer_) {
+		nearTime_++;
+	}
+	if (nearTime_ > lengthJudgment_) {
+		behaviorRequest_ = Behavior::kBack;
+	}
+	else if (farTime_ > lengthJudgment_) {
+		int i = RandomMaker::GetInstance()->DistributionInt(0, 1);
+		if (i == 0) {
+			behaviorRequest_ = Behavior::kDash;
+		}
+		else {
+			behaviorRequest_ = Behavior::kRun;
+		}
+		
+	}
+	
+}
+
+void Enemy::BehaviorBackInitialize(){
+	dashTimer_ = 0;
+}
+
+void Enemy::BackStep(){
+	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
+	move_ = { 0, 0, kBackSpeed_ };
+
+	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
+
+	//ダッシュの時間<frame>
+	const uint32_t behaviorDashTime = 8;
+
+	
+	transform_.translate += move_;
 	
 
-	/*エネミーのパーツ*/
-	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
-	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
-	parts_offset = Matrix::GetInstance()->TransformNormal(parts_offset, rotateMatrix_);
+	//既定の時間経過で通常状態に戻る
+	if (++dashTimer_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kFree;
+	}
+}
 
-	partsTransform_.translate = transform_.translate + parts_offset;
+void Enemy::BehaviorDashInitialize(){
+	dashTimer_ = 0;
+}
 
-	partsTransform_.rotate.x += 0.3f;
+void Enemy::Dash(){
+	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
+	move_ = { 0, 0, kDashSpeed_ };
+
+	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
+
+	//ダッシュの時間<frame>
+	const uint32_t behaviorDashTime = 8;
+
+	if (playerLength_ > 15.0f) {
+		transform_.translate += move_;
+	}
+
+	//既定の時間経過で通常状態に戻る
+	if (++dashTimer_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kFree;
+	}
+}
+
+void Enemy::BehaviorRunInitialize(){
+	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+	postureVec_ = { 0.0f,0.0f,1.0f };
+	frontVec_ = { 0.0f,0.0f,1.0f };
+	farTime_ = 0;
+	nearTime_ = 0;
+}
+
+void Enemy::EnemyRun(){
+	frontVec_ = postureVec_;
+
+	Vector3 move = { 0,0,moveSpeed_ * magnification * 5.0f };
+
+	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
+	move.y = 0;
+	/*敵の移動*/
+	transform_.translate += move;
+
+
+	if (target_) {
+		Vector3 lockOnPos = target_->translate;
+		Vector3 sub = lockOnPos - transform_.translate;
+		sub.y = 0;
+		sub = Vector3::Normalize(sub);
+		postureVec_ = sub;
+
+		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+	}
+	if (playerLength_ < 15.0f) {
+		behaviorRequest_ = Behavior::kFree;
+	}
+}
+
+void Enemy::BehaviorFreeInitialize(){
+	freeTime_ = 0;
+}
+
+void Enemy::Free(){
+	if (++freeTime_>kFreeTime_){
+		behaviorRequest_ = Behavior::kRoot;
+	}
 }
 
 void Enemy::DeadMotion(){

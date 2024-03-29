@@ -472,6 +472,10 @@ void GameScene::DrawImgui(){
 		followCamera_->DrawImgui();
 		lockOn_->DrawImgui();
 
+		for (const auto& enemy : enemies_) {
+			enemy->DrawImgui();
+		}
+		
 		ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
 		if (ImGui::BeginMenuBar()) {

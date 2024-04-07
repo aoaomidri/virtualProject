@@ -5,7 +5,9 @@
 #include<vector>
 #include <Windows.h>
 #include <wrl.h>
-
+#include"assimp/Importer.hpp"
+#include"assimp/scene.h"
+#include"assimp/postprocess.h"
 
 struct MaterialData {
 	std::string textureFilePath;
@@ -57,16 +59,18 @@ public:
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
+
+
 	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
 
 	void Finalize();
 
 public:
-	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView; }
+	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
 
-	MaterialData GetMaterial()const { return material; }
+	MaterialData GetMaterial()const { return material_; }
 
-	const std::vector<VertexData> GetVertexData()const { return indices; }
+	const std::vector<VertexData> GetVertexData()const { return indices_; }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
@@ -75,24 +79,26 @@ private:
 	//OBJファイルから3Dモデルを読み込む(非公開)
 	void LoadFromOBJInternal(const std::string& filename);
 
+	void LoadFromOBJInternalAssimp(const std::string& filename);
+
 	void MakeVertexResource();
 
 private:
 	//頂点バッファービューを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 
 	//頂点リソースにデータを書き込む
-	VertexData* vertexDate = nullptr;
+	VertexData* vertexDate_ = nullptr;
 
-	const std::string ResourcesPath = "resources/Model/";
+	const std::string ResourcesPath_ = "resources/Model/";
 
 	//頂点インデックス配列
-	std::vector<VertexData> indices;
+	std::vector<VertexData> indices_;
 
 	static ID3D12Device* device_;
 
-	MaterialData material;
+	MaterialData material_;
 };
 

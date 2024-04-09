@@ -3,12 +3,13 @@
 #include<cassert>
 #include<fstream>
 #include<sstream>
+#include<filesystem>
 
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
-	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 }
 
 Model* Model::GetInstance(){
@@ -20,7 +21,7 @@ std::unique_ptr<Model> Model::LoadObjFile(const std::string& filename){
 	//1,中で必要になる変数の宣言
 	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
 	
-	modelData->LoadFromOBJInternal(filename);
+	modelData->LoadFromOBJInternalAssimp(filename);
 
 	modelData->MakeVertexResource();
 
@@ -109,7 +110,7 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 
 	//2,ファイルを開く
 
-	std::ifstream file(ResourcesPath + filename + "/" + filename + ".obj");//ファイルを開く
+	std::ifstream file(ResourcesPath_ + filename + "/" + filename + ".obj");//ファイルを開く
 	assert(file.is_open());//とりあえず開けなかったら止める
 
 	//3,実際にファイルを読み、ModelDataを構築していく
@@ -157,38 +158,89 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
 				VertexData vertex = { position,texcoord,normal };
-				indices.push_back(vertex);
+				indices_.push_back(vertex);
 				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
-			indices.push_back(triangle[2]);
-			indices.push_back(triangle[1]);
-			indices.push_back(triangle[0]);
+			indices_.push_back(triangle[2]);
+			indices_.push_back(triangle[1]);
+			indices_.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
 			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
-			material = LoadMaterialTemplateFile(ResourcesPath + filename, materialFilename);
+			material_ = LoadMaterialTemplateFile(ResourcesPath_ + filename, materialFilename);
 		}
 
 	}
 }
 
+void Model::LoadFromOBJInternalAssimp(const std::string& filename){
+	std::string line;//ファイルから読んだ1行を格納するもの
+
+	//2,ファイルを開く
+	Assimp::Importer importer;
+	std::filesystem::path filepath = ResourcesPath_ + filename + "/" + filename + ".obj";
+	const aiScene* scene = importer.ReadFile(filepath.string(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes());//メッシュがないのは対応しない
+
+	//3、Meshの解析
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());//法線がないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは今回は非対応
+		//ここからMeshの中身(face)の解析を行っていく
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);//三角形のみサポート
+			//ここからFaceの中身(Vertex)の解析を行っていく
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+				VertexData vertex;
+				vertex.position = { position.x,position.y,position.z,1.0f };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.texcoord = { texcoord.x,texcoord.y };
+				//aiProcess_MakeLeftHandedはz*=-1で、右手→左手に変換するので手動で対応
+				vertex.position.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+				indices_.push_back(vertex);
+
+			}
+
+		}
+	}
+
+	//4,Materialの解析
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			std::filesystem::path textureFileTemp = textureFilePath.C_Str();
+			material_.textureFilePath = filepath.parent_path().string() + "/" + textureFileTemp.filename().string();
+		}
+	}
+
+}
+
 void Model::MakeVertexResource(){
 	//頂点リソースの作成
-	vertexResource = CreateBufferResource(device_, sizeof(VertexData) * indices.size());
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * indices_.size());
 
 
 	//リソースの先頭のアドレスから使う
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * indices.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * indices_.size());
 	//1頂点当たりのサイズ
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	//書き込むためのアドレスを取得
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
-	std::memcpy(vertexDate, indices.data(), sizeof(VertexData) * indices.size());
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
+	std::memcpy(vertexDate_, indices_.data(), sizeof(VertexData) * indices_.size());
 }

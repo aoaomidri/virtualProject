@@ -84,13 +84,16 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -110,10 +113,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,6 +125,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -143,7 +148,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>None</DebugInformationFormat>
       <SupportJustMyCode>false</SupportJustMyCode>

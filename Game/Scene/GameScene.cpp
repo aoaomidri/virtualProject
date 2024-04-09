@@ -697,8 +697,8 @@ bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
 				max2 = min2;
 			}
 			else {
-				min1 = min(min1, projectionPoint1[index]);
-				min2 = min(min2, projectionPoint2[index]);
+				min1 = std::min(min1, projectionPoint1[index]);
+				min2 = std::min(min2, projectionPoint2[index]);
 				max1 = max(max1, projectionPoint1[index]);
 				max2 = max(max2, projectionPoint2[index]);
 			}
@@ -706,7 +706,7 @@ bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
 		float L1 = max1 - min1;
 		float L2 = max2 - min2;
 		float sumSpan = L1 + L2;
-		float longSpan = max(max1, max2) - min(min1, min2);
+		float longSpan = max(max1, max2) - std::min(min1, min2);
 		if (sumSpan < longSpan) {
 			return false;
 		}

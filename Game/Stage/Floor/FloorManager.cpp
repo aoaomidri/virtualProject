@@ -17,7 +17,7 @@ FloorManager::~FloorManager(){
 
 void FloorManager::Initialize() {
 	
-	floorModel_ = Model::LoadObjFile("Floor");
+	floorModel_ = Model::LoadModelFile("Floor");
 }
 
 void FloorManager::Update(){

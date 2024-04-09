@@ -17,11 +17,11 @@ void Enemy::ApplyGlobalVariables(){
 }
 
 void Enemy::Initialize(const Vector3& position){
-	enemyModel_ = Model::LoadObjFile("Enemy");
+	enemyModel_ = Model::LoadModelFile("Enemy");
 
-	partsModel_ = Model::LoadObjFile("EnemyParts");
+	partsModel_ = Model::LoadModelFile("EnemyParts");
 
-	particleModel_ = Model::LoadObjFile("box");
+	particleModel_ = Model::LoadModelFile("box");
 
 	bodyObj_ = std::make_unique<Object3D>();
 	bodyObj_->Initialize(enemyModel_.get());

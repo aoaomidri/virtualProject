@@ -17,7 +17,7 @@ Model* Model::GetInstance(){
 	return &instance;
 }
 
-std::unique_ptr<Model> Model::LoadObjFile(const std::string& filename){
+std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 	//1,中で必要になる変数の宣言
 	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
 	
@@ -182,7 +182,20 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 
 	//2,ファイルを開く
 	Assimp::Importer importer;
-	std::filesystem::path filepath = ResourcesPath_ + filename + "/" + filename + ".obj";
+	std::string extension;
+	std::filesystem::directory_iterator dIterator{ ResourcesPath_ + filename + "/" };
+	for (const auto& entry : dIterator){
+		const auto& path = entry.path();
+		if (path.extension() == ".obj") {
+			extension = ".obj";
+			break;
+		}
+		else if (path.extension() == ".gltf") {
+			extension = ".gltf";
+			break;
+		}
+	}
+	std::filesystem::path filepath = ResourcesPath_ + filename + "/" + filename + extension;
 	const aiScene* scene = importer.ReadFile(filepath.string(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes());//メッシュがないのは対応しない
 

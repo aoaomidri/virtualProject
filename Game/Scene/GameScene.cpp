@@ -82,7 +82,7 @@ void GameScene::ObjectInitialize() {
 	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
-	skyDomeModel_ = Model::LoadObjFile("skyDome");
+	skyDomeModel_ = Model::LoadModelFile("skyDome");
 	skyDomeModel_->GetMaterial().textureFilePath;
 
 	skyDomeObj_ = std::make_unique<Object3D>();

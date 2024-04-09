@@ -34,9 +34,9 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
-	playerModel_ = Model::LoadObjFile("float_Head");
+	playerModel_ = Model::LoadModelFile("float_Head");
 
-	weaponModel_ = Model::LoadObjFile("Weapon");
+	weaponModel_ = Model::LoadModelFile("Weapon");
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize(playerModel_.get());
 

@@ -44,7 +44,7 @@ public:
 	//テクスチャ関連
 	TextureManager* texManager_ = nullptr;
 
-	//	hoge
+
 
 private:
 	MSG msg{};

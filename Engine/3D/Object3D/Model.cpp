@@ -24,7 +24,6 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 	modelData->LoadFromOBJInternalAssimp(filename);
 
 	modelData->MakeVertexResource();
-
 	
 	//4,ModelDataを返す
 	return modelData;
@@ -158,20 +157,20 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
 				VertexData vertex = { position,texcoord,normal };
-				indices_.push_back(vertex);
+				modelData_.vertices.push_back(vertex);
 				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
-			indices_.push_back(triangle[2]);
-			indices_.push_back(triangle[1]);
-			indices_.push_back(triangle[0]);
+			modelData_.vertices.push_back(triangle[2]);
+			modelData_.vertices.push_back(triangle[1]);
+			modelData_.vertices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
 			//基本的にobjファイルに同一改装にmtlは存在させるので、ディレクトリとファイル名を渡す
-			material_ = LoadMaterialTemplateFile(ResourcesPath_ + filename, materialFilename);
+			modelData_.material = LoadMaterialTemplateFile(ResourcesPath_ + filename, materialFilename);
 		}
 
 	}
@@ -221,7 +220,7 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 				//aiProcess_MakeLeftHandedはz*=-1で、右手→左手に変換するので手動で対応
 				vertex.position.x *= -1.0f;
 				vertex.normal.x *= -1.0f;
-				indices_.push_back(vertex);
+				modelData_.vertices.push_back(vertex);
 
 			}
 
@@ -235,25 +234,49 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			std::filesystem::path textureFileTemp = textureFilePath.C_Str();
-			material_.textureFilePath = filepath.parent_path().string() + "/" + textureFileTemp.filename().string();
+			modelData_.material.textureFilePath = filepath.parent_path().string() + "/" + textureFileTemp.filename().string();
 		}
 	}
+
+	//5,Nodeの解析
+	
+
+	modelData_.rootNode = ReadNode(scene->mRootNode);
 
 }
 
 void Model::MakeVertexResource(){
 	//頂点リソースの作成
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * indices_.size());
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * modelData_.vertices.size());
 
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * indices_.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
-	std::memcpy(vertexDate_, indices_.data(), sizeof(VertexData) * indices_.size());
+	std::memcpy(vertexDate_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+}
+
+Node Model::ReadNode(aiNode* node){
+	Node result;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;//nodeのlocalMatrixを取得
+	aiLocalMatrix.Transpose();//列ベクトル形式を行ベクトル形式に転置
+	for (int i = 0; i < 4; i++){
+		for (int j = 0; j < 4; j++){
+			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
+		}
+	}
+	result.name = node->mName.C_Str();//node名を格納
+	result.children.resize(node->mNumChildren);//子供の数だけ確保
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++){
+		//再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+
+	}
+	return result;
 }

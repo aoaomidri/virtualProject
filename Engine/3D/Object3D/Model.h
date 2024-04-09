@@ -14,9 +14,16 @@ struct MaterialData {
 	std::string textureFilePath;
 };
 
+struct Node {
+	Matrix4x4 localMatrix;
+	std::string name;
+	std::vector<Node> children;
+};
+
 struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
+	Node rootNode;
 };
 
 struct Material {
@@ -66,10 +73,12 @@ public:
 
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
+	
+	Matrix4x4 GetLocalMatrix()const { return modelData_.rootNode.localMatrix; }
 
-	MaterialData GetMaterial()const { return material_; }
+	MaterialData GetMaterial()const { return modelData_.material; }
 
-	const std::vector<VertexData> GetVertexData()const { return indices_; }
+	const std::vector<VertexData> GetVertexData()const { return modelData_.vertices; }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
@@ -81,6 +90,8 @@ private:
 	void LoadFromOBJInternalAssimp(const std::string& filename);
 
 	void MakeVertexResource();
+
+	Node ReadNode(aiNode* node);
 
 private:
 	//頂点バッファービューを作成する
@@ -94,10 +105,9 @@ private:
 	const std::string ResourcesPath_ = "resources/Model/";
 
 	//頂点インデックス配列
-	std::vector<VertexData> indices_;
+	ModelData modelData_;
 
 	static ID3D12Device* device_;
 
-	MaterialData material_;
 };
 

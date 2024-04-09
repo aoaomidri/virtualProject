@@ -44,7 +44,6 @@ public:
 	//テクスチャ関連
 	TextureManager* texManager_ = nullptr;
 
-	//json
 
 private:
 	MSG msg{};

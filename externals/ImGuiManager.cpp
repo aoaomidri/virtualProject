@@ -70,6 +70,10 @@ void ImGuiManager::ImguiInitialize(){
 	//型"ImGuiIO&"の参照(constで修飾されていない)は型"ImGuiIO"の値では初期化できません
 	ImGuiIO& io = ImGui::GetIO();
 
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+
 	io.Fonts->AddFontFromFileTTF("Resources/Fonts/ipaexm.ttf", 13.0f, nullptr, ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
 #endif // _DEBUG
 

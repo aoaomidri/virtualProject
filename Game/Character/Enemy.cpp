@@ -17,23 +17,18 @@ void Enemy::ApplyGlobalVariables(){
 }
 
 void Enemy::Initialize(const Vector3& position){
-	enemyModel_ = Model::LoadModelFile("Enemy");
-
-	partsModel_ = Model::LoadModelFile("EnemyParts");
-
-	particleModel_ = Model::LoadModelFile("box");
 
 	bodyObj_ = std::make_unique<Object3D>();
-	bodyObj_->Initialize(enemyModel_.get());
+	bodyObj_->Initialize("Enemy");
 	partsObj_ = std::make_unique<Object3D>();
-	partsObj_->Initialize(partsModel_.get());
+	partsObj_->Initialize("EnemyParts");
 
 	collisionObj_ = std::make_unique<Object3D>();
-	collisionObj_->Initialize(particleModel_.get());
+	collisionObj_->Initialize("EnemyParts");
 
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
-		particleObj_[i]->Initialize(particleModel_.get());
+		particleObj_[i]->Initialize("box");
 	}
 	
 	transform_ = {

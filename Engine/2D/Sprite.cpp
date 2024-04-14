@@ -211,7 +211,7 @@ void Sprite::makeSpriteResource(){
 	*wvpDataSprite = Matrix::GetInstance()->MakeIdentity4x4();
 
 	//マテリアル用のリソース
-	materialResource = CreateBufferResource(device_, sizeof(Material));
+	materialResource = CreateBufferResource(device_, sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));

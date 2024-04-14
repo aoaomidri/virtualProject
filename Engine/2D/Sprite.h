@@ -114,7 +114,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
 
 	//マテリアルにデータを書き込む
-	Material* materialDate = nullptr;
+	Model::Material* materialDate = nullptr;
 
 	VertexData* vertexDataSprite = nullptr;
 

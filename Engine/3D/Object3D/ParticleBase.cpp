@@ -290,7 +290,7 @@ void ParticleBase::makeResource() {
 	
 
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(sizeof(Material));
+	 materialResource = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
@@ -315,7 +315,7 @@ void ParticleBase::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
 	
 
 	//書き込むためのアドレスを取得
@@ -330,8 +330,8 @@ void ParticleBase::makeResource() {
 }
 
 
-ModelData ParticleBase::MakePrimitive() {
-	ModelData modelData;//構築するModelData
+Model::ModelData ParticleBase::MakePrimitive() {
+	Model::ModelData modelData;//構築するModelData
 	modelData.vertices.push_back({ 
 		{ -1.0f,1.0f,0.0f,1.0f }, { 0.0f,0.0f }, { 0.0f,0.0f,1.0f }});//左上
 	modelData.vertices.push_back({

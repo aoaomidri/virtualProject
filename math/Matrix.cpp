@@ -6,6 +6,7 @@
 Matrix::Matrix(){
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
+			m.m[i][j] = 0.0f;
 			ScaleMatrix.m[i][j] = 0.0f;
 			TranslateMatrix.m[i][j] = 0.0f;
 			RotateMatrixXYZ.m[i][j] = 0.0f;
@@ -265,6 +266,23 @@ Matrix4x4
 
 	return result;
 
+}
+
+Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot, const Vector3& translate_){
+	Matrix4x4 result{};
+
+	//スケーリング行列の作成
+	ScaleMatrix = MakeScaleMatrix(scale_);
+	//正規化したQuaternionの作成
+	//Quaternion normQua = Quaternion::GetInstance()->Normalize(rot);
+	//X,Y,Z軸の回転行列の作成
+	RotateMatrixXYZ = Quaternion::GetInstance()->MakeRotateMatrix(rot);
+	//平行移動行列の作成
+	TranslateMatrix = MakeTranslateMatrix(translate_);
+
+	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
+
+	return result;
 }
 
 Matrix4x4 Matrix::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate){

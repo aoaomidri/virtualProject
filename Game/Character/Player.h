@@ -186,12 +186,6 @@ private:
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
 
-	std::unique_ptr<Model> playerModel_;
-
-	std::unique_ptr<Model> weaponModel_;
-
-
-
 	//自機のSRT
 	Transform playerTransform_{};
 	//武器のSRT

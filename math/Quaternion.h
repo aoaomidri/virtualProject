@@ -1,5 +1,8 @@
 #pragma once
-#include"Matrix.h"
+#include"Matrix4x4.h"
+#include"Vector3.h"
+#include"Vector4.h"
+
 class Quaternion{
 public:
 	Quaternion();
@@ -34,7 +37,7 @@ public:
 	//Quaternionから回転行列を求める
 	Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 	//球面線形補間
-	Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
+	Quaternion Slerp(Quaternion q0, const Quaternion& q1, float t);
 
 public:
 

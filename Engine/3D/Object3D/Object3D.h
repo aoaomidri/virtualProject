@@ -16,27 +16,19 @@ public:
 		Vector3 worldPosition;
 	};
 
-	void Initialize(Model* model);
+	void Initialize(const std::string fileName);
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
 	void Draw();
 
 	void DrawImgui(std::string name);
-
-	void SetPosition(const Vector3& position) { position_ = position; }
-
-	void SetScale(const Vector3& scale) { scale_ = scale; }
-
-	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
-	void SetDirectionalLight(const DirectionalLight* light);
+	void SetDirectionalLight(const Model::DirectionalLight* light);
 
-	void SetPointLight(const PointLight* pLight);
-
-	const Vector3& GetPosition()const { return position_; }
+	void SetPointLight(const Model::PointLight* pLight);
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
@@ -44,12 +36,18 @@ public:
 
 	void makeResource();
 
+private:
+	Vector3 CalculateValue(const std::vector<Model::KeyframeVector3>& keyframes, float time);
+
+	Quaternion CalculateValue(const std::vector<Model::KeyframeQuaternion>& keyframes, float time);
 public:
 	Matrix4x4* parent_{};
 
 private:
 	//モデル
-	Model* model_ = nullptr;
+	std::unique_ptr<Model> model_;
+
+	Model::Animation animation_;
 
 	uint32_t texHandle_;
 
@@ -58,7 +56,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//マテリアルにデータを書き込む
-	Material* materialDate = nullptr;
+	Model::Material* materialDate = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
 
@@ -69,31 +67,35 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
-	DirectionalLight* directionalLightDate = nullptr;
+	Model::DirectionalLight* directionalLightDate = nullptr;
 
-	const DirectionalLight* directionalLight = nullptr;
+	const Model::DirectionalLight* directionalLight = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
 
-	PointLight* pointLightData = nullptr;
+	Model::PointLight* pointLightData = nullptr;
 
-	const PointLight* pointLight = nullptr;
+	const Model::PointLight* pointLight = nullptr;
 	/*カメラ関連*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 
 	CameraForGPU* cameraForGPU_ = nullptr;
 
 	//データを書き込む
+	//アニメーションの再生中の時刻
+	float animationTime = 0.0f;
 
-	Vector3 position_ = { 0.0f,0.0f ,0.0f };
+	Vector3 animeTranslate_;
 
-	Vector3 scale_ = { 1.0f,1.0f ,1.0f };
+	Quaternion animeRotate_;
 
-	Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
+	Vector3 animeScale_;
 
 	Vector4 chackMatrix_ = {};
 
 	Matrix4x4 worldMatrix_{};
+
+	Matrix4x4 localMatrix_;
 
 	Transform transform{};
 

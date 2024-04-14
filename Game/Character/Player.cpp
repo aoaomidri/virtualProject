@@ -34,23 +34,20 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
-	playerModel_ = Model::LoadModelFile("BoomBox");
-
-	weaponModel_ = Model::LoadModelFile("Weapon");
 	playerObj_ = std::make_unique<Object3D>();
-	playerObj_->Initialize(playerModel_.get());
+	playerObj_->Initialize("AnimatedCube");
 
 	weaponObj_ = std::make_unique<Object3D>();
-	weaponObj_->Initialize(weaponModel_.get());
+	weaponObj_->Initialize("Weapon");
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
-	weaponCollisionObj_->Initialize(playerModel_.get());
+	weaponCollisionObj_->Initialize("BoomBox");
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize();
 
 	playerTransform_ = {
-		.scale = {0.8f,0.8f,0.8f},
+		.scale = {1.0f,1.0f,1.0f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.8f,0.0f}
 	};
@@ -188,7 +185,8 @@ void Player::DrawImgui(){
 
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
-	ImGui::End();	
+	ImGui::End();
+	playerObj_->DrawImgui("プレイヤー");
 	particle_->DrawImgui("プレイヤーパーティクル");
 }
 
@@ -227,21 +225,21 @@ void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/
 	if (input_->PushUp()) {
-		move_.z = moveSpeed_;
+		//move_.z = moveSpeed_;
 
 	}
 	else if (input_->PushDown()) {
-		move_.z = -moveSpeed_;
+		//move_.z = -moveSpeed_;
 	}
 	else {
 		move_.z = input_->GetPadLStick().y * moveSpeed_;
 	}
 
 	if (input_->PushRight()) {
-		move_.x = moveSpeed_;
+		//move_.x = moveSpeed_;
 	}
 	else if (input_->PushLeft()) {
-		move_.x = -moveSpeed_;
+		//move_.x = -moveSpeed_;
 	}
 	else {
 		move_.x = input_->GetPadLStick().x * moveSpeed_;

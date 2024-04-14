@@ -186,7 +186,7 @@ public:
 
 	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 		Vector3 result{ 0, 0, 0 };
-		result = v1 + (v2 - v1) * t;
+		result = v1 * (1 - t) + v2 * t;
 		return result;
 	}
 

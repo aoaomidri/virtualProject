@@ -8,62 +8,99 @@
 #include"assimp/Importer.hpp"
 #include"assimp/scene.h"
 #include"assimp/postprocess.h"
-
-
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct Node {
-	Matrix4x4 localMatrix;
-	std::string name;
-	std::vector<Node> children;
-};
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
-	Node rootNode;
-};
-
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
-	float shininess;
-};
-
-struct DirectionalLight {
-	Vector4 color;		//ライトの色
-	Vector3 direction;	//ライトの向き
-	float intensity;	//輝度
-};
-
-struct PointLight {
-	Vector4 color;		//ライトの色
-	Vector3 position;	//ライトの位置
-	float intensity;	//輝度
-	float radius;		//ライトの届く最大距離
-	float decay;		//減衰率
-	float padding[2];
-};
-
-struct SpotLight{
-	Vector4 color;
-	Vector3 position;
-	float intensity;
-};
-
+#include"Quaternion.h"
+#include<map>
 
 
 class Model{
 public:
+	struct MaterialData {
+		std::string textureFilePath;
+	};
+
+	struct Node {
+		Matrix4x4 localMatrix;
+		std::string name;
+		std::vector<Node> children;
+	};
+
+	struct ModelData {
+		std::vector<VertexData> vertices;
+		MaterialData material;
+		Node rootNode;
+	};
+
+	struct Material {
+		Vector4 color;
+		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTransform;
+		float shininess;
+	};
+
+	struct DirectionalLight {
+		Vector4 color;		//ライトの色
+		Vector3 direction;	//ライトの向き
+		float intensity;	//輝度
+	};
+
+	struct PointLight {
+		Vector4 color;		//ライトの色
+		Vector3 position;	//ライトの位置
+		float intensity;	//輝度
+		float radius;		//ライトの届く最大距離
+		float decay;		//減衰率
+		float padding[2];
+	};
+
+	struct SpotLight {
+		Vector4 color;
+		Vector3 position;
+		float intensity;
+	};
+
+	//struct KeyframeVector3 {
+	//	Vector3 value;//キーフレームの値
+	//	float time;//キーフレームの時刻(単位は別)
+	//};
+
+	//struct KeyframeQuaternion {
+	//	Quaternion value;//キーフレームの値
+	//	float time;//キーフレームの時刻(単位は別)
+	//};
+
+	template <typename tValue>
+
+	struct Keyframe{
+		float time;//キーフレームの時刻(単位は別)
+		tValue value;
+	};
+
+	using KeyframeVector3 = Keyframe<Vector3>;
+	using KeyframeQuaternion = Keyframe<Quaternion>;
+
+	struct NodeAnimation {
+		std::vector<KeyframeVector3> translate;
+		std::vector<KeyframeQuaternion> rotate;
+		std::vector<KeyframeVector3> scale;
+	};
+
+	struct Animation{
+		float duration;//アニメーション全体の尺(単位は秒)
+		//NodeAnimationの集合、Node名でひけるようにしておく
+		std::map<std::string, NodeAnimation> nodeAnimations;
+	};
+
+
+	
+public:
 	void Draw(ID3D12GraphicsCommandList* CommandList);
 
 	static Model* GetInstance();
-
+	//modelの読み込み
 	static std::unique_ptr<Model> LoadModelFile(const std::string& filename);
+
+	static Model::Animation LoadAnimationFile(const std::string& filename);
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
@@ -75,6 +112,8 @@ public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
 	
 	Matrix4x4 GetLocalMatrix()const { return modelData_.rootNode.localMatrix; }
+
+	std::string GetNodeName()const { return modelData_.rootNode.name; }
 
 	MaterialData GetMaterial()const { return modelData_.material; }
 
@@ -93,6 +132,7 @@ private:
 
 	Node ReadNode(aiNode* node);
 
+	
 private:
 	//頂点バッファービューを作成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;

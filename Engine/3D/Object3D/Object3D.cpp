@@ -5,14 +5,16 @@
 #include<sstream>
 
 
-void Object3D::Initialize(Model* model) {
+void Object3D::Initialize(const std::string fileName) {
 	makeResource();
 
 	isDraw_ = true;
 
 	materialDate->enableLighting = false;
 
-	model_ = model;
+	model_ = Model::LoadModelFile(fileName);
+
+	animation_ = Model::LoadAnimationFile(fileName);
 
 	if (model_->GetMaterial().textureFilePath != "") {
 		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
@@ -20,8 +22,6 @@ void Object3D::Initialize(Model* model) {
 	else {
 		texHandle_ = 0;
 	}
-
-	
 
 	transform = {
 		{1.0f,1.0f,1.0f},
@@ -38,18 +38,34 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	}
 
 	//rotate_.y += 0.01f;
+
+	if (animation_.duration != 0) {
+		animationTime += 1.0f / 60.0f;
+		animationTime = std::fmod(animationTime, animation_.duration);
+		Model::NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[model_->GetNodeName()];
+		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);
+		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime);
+		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime);
+		localMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
+	}
+	else {
+		localMatrix_ = model_->GetLocalMatrix();
+	}
+
 	worldMatrix_ = worldMatrix;
 	if (parent_){
 		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
 	}
-	position_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
-	chackMatrix_ = { worldMatrix_.m[3][0], worldMatrix_.m[3][1], worldMatrix_.m[3][2], worldMatrix_.m[3][3] };
 
+	
 	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
-	wvpData->WVP = Matrix::GetInstance()->Multiply(model_->GetLocalMatrix(), worldViewProjectionMatrix);
+	
+	wvpData->WVP = Matrix::GetInstance()->Multiply(localMatrix_, worldViewProjectionMatrix);
 	materialDate->enableLighting = isUseLight_;
-	wvpData->World = Matrix::GetInstance()->Multiply(model_->GetLocalMatrix(), worldMatrix_);
+	
+	wvpData->World = Matrix::GetInstance()->Multiply(localMatrix_, worldMatrix_);
 	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Trnaspose(worldMatrix_));
+	
 	if (directionalLight){
 	directionalLightDate->color = directionalLight->color;
 	directionalLightDate->direction = directionalLight->direction;
@@ -93,19 +109,20 @@ void Object3D::Draw() {
 void Object3D::DrawImgui(std::string name){
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
-	ImGui::Checkbox("ライトを適応するか", &isUseLight_);
-	ImGui::Text("ライト関連");
-	
-	ImGui::DragFloat("反射強度", &shininess_, 0.01f, 0.0f, 30.0f);
+	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
+	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
+	for (int i = 0; i < 4; i++){
+		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
+	}
 	ImGui::End();
 
 }
 
-void Object3D::SetDirectionalLight(const DirectionalLight* light){
+void Object3D::SetDirectionalLight(const Model::DirectionalLight* light){
 	directionalLight = light;
 }
 
-void Object3D::SetPointLight(const PointLight* pLight){
+void Object3D::SetPointLight(const Model::PointLight* pLight){
 	pointLight = pLight;
 }
 
@@ -137,7 +154,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(size_t siz
 
 void Object3D::makeResource() {
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(sizeof(Material));
+	 materialResource = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
@@ -161,7 +178,7 @@ void Object3D::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight));	
+	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
 
 	//書き込むためのアドレスを取得
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
@@ -173,7 +190,7 @@ void Object3D::makeResource() {
 	directionalLightDate->intensity = 1.0f;
 
 	//マテリアル用のリソース
-	pointLightResource = CreateBufferResource(sizeof(PointLight));
+	pointLightResource = CreateBufferResource(sizeof(Model::PointLight));
 
 	//書き込むためのアドレスを取得
 	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
@@ -194,4 +211,43 @@ void Object3D::makeResource() {
 
 
 }
+
+Vector3 Object3D::CalculateValue(const std::vector<Model::KeyframeVector3>& keyframes, float time){
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
+
+	for (size_t index = 0; index < keyframes.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの二つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			//範囲内を補完する
+			float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+			return Vector3::Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+
+	return (*keyframes.rbegin()).value;
+}
+
+Quaternion Object3D::CalculateValue(const std::vector<Model::KeyframeQuaternion>& keyframes, float time) {
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
+
+	for (size_t index = 0; index < keyframes.size() - 1; index++) {
+		size_t nextIndex = index + 1;
+		//indexとnextIndexの二つのkeyframeを取得して範囲内に時刻があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			//範囲内を補完する
+			float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+			return Quaternion::GetInstance()->Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+
+	return (*keyframes.rbegin()).value;
+}
+
 

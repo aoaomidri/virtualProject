@@ -75,7 +75,7 @@ private:
 		AABB area;				//範囲
 	};
 
-	ModelData MakePrimitive();
+	Model::ModelData MakePrimitive();
 
 	//座標のリセット
 	void PositionReset();
@@ -113,10 +113,10 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleScreen_;
 
 	//マテリアルにデータを書き込む
-	Material* materialDate = nullptr;
+	Model::Material* materialDate = nullptr;
 
 	//モデル読み込み
-	ModelData modelData_;
+	Model::ModelData modelData_;
 
 	//粒の数
 	int numInstance = 0;
@@ -131,7 +131,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
-	DirectionalLight* directionalLightDate = nullptr;
+	Model::DirectionalLight* directionalLightDate = nullptr;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
 

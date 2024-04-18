@@ -84,8 +84,10 @@ uint32_t TextureManager::Load(const std::string& filePath){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 2 + i);
-	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 2 + i);
+	//インスタンシングやimguiで利用するための2
+	//OffscreenRendering用で3つ使うため合わせて5
+	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 5 + i);
+	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 5 + i);
 
 	//SRVの生成
 	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
@@ -146,9 +148,18 @@ void TextureManager::PostDrawParticle(){
 }
 
 void TextureManager::MakeShaderResourceView() {
-	
+	recderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	recderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	recderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	recderTextureSrvDesc.Texture2D.MipLevels = 1;
 
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
+	renderTextureSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 3);
+	renderTextureSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 3);
+
+	//SRVの生成
+	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetRenderTexture(), &recderTextureSrvDesc, renderTextureSrvHandleCPU);
 
 }
 

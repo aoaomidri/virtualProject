@@ -93,12 +93,18 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU{};
 
+	//RenderTexture用のSRV作成用
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureSrvHandleGPU{};
+
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC recderTextureSrvDesc;
 
 	//SRV
 	ID3D12Device* device_ = nullptr;

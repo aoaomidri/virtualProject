@@ -2,6 +2,7 @@
 #include <format>
 #include<wrl.h>
 #include"WinApp.h"
+#include"math/Vector4.h"
 #include<vector>
 #include<chrono>
 #include <d3d12.h> 
@@ -26,8 +27,11 @@ public:
 	//初期化
 	void Initialize();
 
-	//描画前処理
-	void PreDraw();
+	//RenderTextureに対して描画前処理
+	void PreDrawRenderTexture();
+
+	//SwapChainに対して描画前処理
+	void PreDrawSwapChain();
 
 	//描画後処理
 	void PostDraw();
@@ -50,6 +54,8 @@ public:
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height);
 
+	ComPtr<ID3D12Resource> CreateRenderTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 	void StartImgui();
 
 	void EndImgui();
@@ -65,6 +71,9 @@ public:
 
 	//RTVの設定の取得
 	D3D12_RENDER_TARGET_VIEW_DESC GetRTVDesc() const { return rtvDesc; }
+
+	//RenderTextureを取得する
+	ID3D12Resource* GetRenderTexture()const { return renderTextureResouce.Get(); }
 
 
 	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap.Get(); }
@@ -84,6 +93,8 @@ private://メンバ関数
 
 	//RTV関連の初期化
 	void RTVInitialize();
+
+	void RenderTextureRTVInitialize();
 
 	//深度バッファ関連の初期化
 	void DepthBufferInitialize();
@@ -120,13 +131,19 @@ private://メンバ変数
 	//RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
+
+
 	//バックバッファ
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 
+
+
 	//深度バッファの生成
 	ComPtr<ID3D12Resource> depthStencilResource;
+
+	ComPtr<ID3D12Resource> renderTextureResouce;
 
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 
@@ -134,10 +151,17 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 
 
+
+
 	//フェンスの生成
 	ComPtr<ID3D12Fence> fence = nullptr;
 
 	uint64_t fenceValue = 0;
+
+	int32_t chackHandleNum_;
+
+	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };//いったんわかりやすいように赤
+
 
 	//TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};

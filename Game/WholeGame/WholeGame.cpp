@@ -48,12 +48,13 @@ void WholeGame::Update(){
 }
 
 void WholeGame::Draw(){
-	dxCom_->PreDraw();
+	dxCom_->PreDrawRenderTexture();
 	//3D描画
 	gameScene_->Draw3D();
 	gameScene_->DrawParticle();
 	//2D描画
 	gameScene_->Draw2D();
+	dxCom_->PreDrawSwapChain();
 	imguiManager_->Draw();
 	dxCom_->PostDraw();
 }

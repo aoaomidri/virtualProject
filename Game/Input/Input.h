@@ -13,12 +13,12 @@
 
 class Input
 {
-public:
-public:
+private:
 	Input() = default;
 	~Input() = default;
 	Input(const Input& input) = delete;
 	Input& operator=(const Input&) = delete;
+public:
 
 	/// <summary>
 	/// シングルトンインスタンスの取得

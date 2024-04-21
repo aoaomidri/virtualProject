@@ -1039,3 +1039,47 @@
 //			1.0f - float(latIndex+1) / float(kSubdivision) };
 //	}
 //}
+
+/*assert(soundHandle <= soundDatas_.size());
+
+	if (IsPlaying(soundHandle)){
+		return soundHandle;
+	}
+
+	//参照を取得
+	SoundData& soundData = soundDatas_.at(soundHandle);
+	//未ロードだった場合止める
+	assert(soundData.bufferSize != 0);
+
+	uint32_t playingHandle = indexVoice_;
+
+	IXAudio2SourceVoice* pSourceVoice = nullptr;
+
+	//波形フォーマットを基にSourceVoiceの生成
+	hr_ = this->xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(hr_));
+
+	//再生中データの生成
+	Voice* voice = new Voice();
+	voice->handle = playingHandle;
+	voice->sourceVoice = pSourceVoice;
+	//再生中データの登録
+	voices_.insert(voice);
+
+	//再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.pContext = voice;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+	// 無限ループ
+	buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+
+	//波形データの再生
+	hr_ = pSourceVoice->SubmitSourceBuffer(&buf);
+	pSourceVoice->SetVolume(volume);
+	hr_ = pSourceVoice->Start();
+
+	indexVoice_++;
+
+	return playingHandle;*/

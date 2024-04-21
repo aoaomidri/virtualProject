@@ -11,6 +11,15 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include <codecvt>
+
+#pragma comment(lib, "Mf.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "Mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
 
 
 class Audio{
@@ -88,13 +97,13 @@ public:
 	/// resouces/Audio/は省略
 	/// </summary>
 	/// <param name="fileName">ファイル名</param>
-	uint32_t SoundLoadWave(const char* fileName);
+	//uint32_t SoundLoadWave(const std::string fileName);
 
 	void SoundUnload(SoundData* soundData);
 
-	/// 音声再生
+	/*/// 音声再生
 	/// 0が無音、1が原音
-	uint32_t SoundPlayWave(uint32_t soundHandle, float volume);
+	uint32_t SoundPlayWave(uint32_t soundHandle, float volume);*/
 
 	//最初から再生
 	void RePlayWave(uint32_t soundHandle);
@@ -110,6 +119,18 @@ public:
 
 	/// 音声一時停止からの再開
 	void ResumeWave(uint32_t voiceHandle);
+
+	uint32_t GetIndexVoice()const {
+		return indexVoice_;
+	}
+
+	void AddIndexVoice() {
+		indexVoice_++;
+	}
+
+	void MinusIndexVoice() {
+		indexVoice_--;
+	}
 
 	/// <summary>
 	/// 音量設定
@@ -145,6 +166,67 @@ private:
 	XAudio2VoiceCallback voiceCallback_;
 	std::mutex voiceMutex_;
 
+public:
+	//MediaFoundationでmp3を再生する用の関数、変数
+	//関数軍
+	
 
+	/// <summary>
+	/// ソースリーダーの取得
+	/// </summary>
+	void MakeSourceReader(const std::string fileName);
+
+	/// <summary>
+	/// メディアタイプの作成
+	/// </summary>
+	void GetMediaType();
+
+	/// <summary>
+	/// オーディオデータ形式の作成
+	/// </summary>
+	void MakeAudioData();
+
+	/// <summary>
+	/// データの読み込み
+	/// </summary>
+	uint32_t LoadAudioData(const std::string fileName);
+
+	/// <summary>
+	/// 音楽ファイルを読み込む
+	/// </summary>
+	/// <param name="fileName">ファイルの名前	○○.mp3もしくは.wav</param>
+	/// <returns></returns>
+	uint32_t LoadAudio(const std::string fileName);
+	
+	/// <summary>
+	/// 音楽を再生させる
+	/// </summary>
+	/// <param name="soundHandle">：再生させたいハンドルを指定</param>
+	/// <param name="volume">：再生する音楽の音のボリュームを設定</param>
+	/// <param name="isLoop">：この曲をループさせるかどうか</param>
+	/// <returns></returns>
+	uint32_t PlayAudio(uint32_t soundHandle, float volume, bool isLoop);
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void MediaFinalize();
+private:
+	//変数群
+
+	IMFSourceReader* pMFSourceReader_{ nullptr };
+
+	IMFMediaType* pMFMediaType_{ nullptr };
+
+	WAVEFORMATEX* waveFormat_{ nullptr };
+
+	
+
+	
+
+
+	
+
+	XAUDIO2_BUFFER buffer{ 0 };
 };
 

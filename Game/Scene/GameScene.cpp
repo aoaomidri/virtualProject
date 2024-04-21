@@ -27,8 +27,8 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	titleBGM = audio_->SoundLoadWave("honobono.wav");
-	gameBGM = audio_->SoundLoadWave("Game3.wav");
+	titleBGM = audio_->LoadAudio("honobono.mp3");
+	gameBGM = audio_->LoadAudio("Game3.mp3");
 }
 
 void GameScene::SpriteInitialize(){
@@ -102,9 +102,9 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	audio_->SoundPlayWave(titleBGM, 0.1f);
-	audio_->SoundPlayWave(gameBGM, 0.1f);
-	audio_->PauseWave(gameBGM);
+	audio_->PlayAudio(titleBGM, 0.1f, true);
+	/*audio_->PlayAudio(gameBGM, 0.1f, true);
+	audio_->PauseWave(gameBGM);*/
 
 	SpriteInitialize();
 	ObjectInitialize();
@@ -206,7 +206,6 @@ void GameScene::Initialize(){
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
-	//audio_->SoundPlayWave(soundData1);
 }
 
 void GameScene::Update(){
@@ -217,7 +216,7 @@ void GameScene::Update(){
 	case SceneName::TITLE:
 		
 		
-		audio_->PauseWave(gameBGM);
+		//audio_->PauseWave(gameBGM);
 		followCamera_->SetIsMove(false);
 		for (const auto& enemy : enemies_) {
 			enemy->Update();
@@ -273,7 +272,7 @@ void GameScene::Update(){
 				enemy->Respawn({ 0, 2.0f, 20.0f });
 			}
 			audio_->PauseWave(titleBGM);
-			audio_->RePlayWave(gameBGM);
+			//audio_->RePlayWave(gameBGM);
 			sceneNum_ = SceneName::GAME;
 		}
 		break;
@@ -309,7 +308,7 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
-		audio_->PauseWave(gameBGM);
+		//audio_->PauseWave(gameBGM);
 		
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
@@ -449,7 +448,7 @@ void GameScene::DrawImgui(){
 	case SceneName::TITLE:
 	ImGui::Begin("BGM関連");
 	if (ImGui::Button("音源の復活")){
-		titleBGM = audio_->SoundPlayWave(titleBGM, 0.5f);
+		titleBGM = audio_->PlayAudio(titleBGM, 0.5f, true);
 	}
 	if (ImGui::Button("最初から再生")) {
 		audio_->RePlayWave(titleBGM);
@@ -584,7 +583,7 @@ void GameScene::AllCollision(){
 		}
 
 		if (enemy->GetIsDead()) {
-			audio_->PauseWave(gameBGM);
+			//audio_->PauseWave(gameBGM);
 			sceneNum_ = SceneName::CLEAR;
 		}
 	}

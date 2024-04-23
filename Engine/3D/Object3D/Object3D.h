@@ -30,6 +30,10 @@ public:
 
 	void SetPointLight(const Model::PointLight* pLight);
 
+	void SetAnimation(const Model::Animation animation) {
+		animation_ = animation;
+	}
+
 	const bool& GetIsDraw()const { return isDraw_; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);

@@ -342,7 +342,7 @@ void Enemy::MotionUpdate(){
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 
-	partsTransform_.rotate.x += 0.3f;
+	//partsTransform_.rotate.x += 0.3f;
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
@@ -536,7 +536,7 @@ void Enemy::DeadMotion(){
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 	
-	partsTransform_.rotate.x += 0.3f;
+	//partsTransform_.rotate.x += 0.3f;
 	if (partsTransform_.scale.x > 0.0f) {
 		partsTransform_.scale -= 0.0075f;
 	}

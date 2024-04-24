@@ -109,8 +109,9 @@ void Object3D::Draw() {
 void Object3D::DrawImgui(std::string name){
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
-	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
+	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
+	ImGui::DragFloat3("モデルに設定されたTransform", &animeTranslate_.x, 0.1f);
 	for (int i = 0; i < 4; i++){
 		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
 	}

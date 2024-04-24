@@ -82,7 +82,7 @@ void FollowCamera::Update(){
 		}
 	}
 	
-	if (input_->GetConnectPad()) {
+	/*if (input_->GetConnectPad()) {*/
 		destinationAngleX_ += cameraMove_.x;
 		destinationAngleY_ += cameraMove_.y;
 
@@ -98,7 +98,7 @@ void FollowCamera::Update(){
 			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
 		viewProjection_.rotation_.x =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
-	}
+	//}
 	rootOffset = { 0.0f, 0.0f, distance };
 	baseOffset = rootOffset;
 

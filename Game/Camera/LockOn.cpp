@@ -1,18 +1,26 @@
 #include "LockOn.h"
 
 void LockOn::Initialize(){
-	lockOnMark_ = std::make_unique<Sprite>();
+	LockOnObj_ = std::make_unique<Object3D>();
+	LockOnObj_->Initialize("LockOn");
+
+	lockOnTransfrom_ = {
+		{0.5f,0.5f,0.5f},
+		{0.0f,0.0f,0.0f},
+		{1.0f,1.0f,1.0f}
+	};
+	/*lockOnMark_ = std::make_unique<Sprite>();
 	lockOnMark_->Initialize(21);
 	
 	lockOnMark_->SetLeftTop({ 0,0 });
 	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
 	lockOnMark_->SetSize({ 64.0f,64.0f });
-	lockOnMark_->SetScale({ 48.0f,48.0f });
+	lockOnMark_->SetScale({ 48.0f,48.0f });*/
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
 	
-	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)) {
+	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)||input->Trigerkey(DIK_R)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
 			
@@ -24,24 +32,24 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}		
 	}
 	if (autoLockOn_) {
-		lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+		//lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
 			isLockOn_ = true;
 		}
 	}
 	else {
-		lockOnMark_->SetColor({ 0.0f,1.0f,1.0f,1.0f });
+		//lockOnMark_->SetColor({ 0.0f,1.0f,1.0f,1.0f });
 	}
 
 	if (target_){
-		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
 			target_ = nullptr;
 			isLockOn_ = false;
 		}
 		else if (!InTarget(target_->GetOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
 		}
-		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT)) {
+		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_R)) {
 			
 			++it;
 			if (it == targets.end()) {
@@ -55,7 +63,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}	
 	else {
 		if (!autoLockOn_){
-			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
 				search(enemies, viewprojection, viewingFrustum);
 			}
 
@@ -72,22 +80,27 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	if (target_){
 		
-		// ビューポート行列
-		Matrix4x4 matViewport =
-			Matrix::GetInstance()->MakeViewportMatrix(0, 0, 1280, 720, 0, 1);
+		//// ビューポート行列
+		//Matrix4x4 matViewport =
+		//	Matrix::GetInstance()->MakeViewportMatrix(0, 0, 1280, 720, 0, 1);
 
-		// ビュー行列とプロジェクション行列、ビューポート行列を合成する
-		Matrix4x4 matViewProjectionViewport =
-			Matrix::GetInstance()->Multiply(viewprojection.matViewProjection_, matViewport);
+		//// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+		//Matrix4x4 matViewProjectionViewport =
+		//	Matrix::GetInstance()->Multiply(viewprojection.matViewProjection_, matViewport);
 
-		// ワールド->スクリーン座標変換(ここで3Dから2Dになる)
-		Vector3 screenPos3 = Matrix::GetInstance()->TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
+		//// ワールド->スクリーン座標変換(ここで3Dから2Dになる)
+		//Vector3 screenPos3 = Matrix::GetInstance()->TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
 
-		screenPos_ = { screenPos3.x,screenPos3.y };
+		//screenPos_ = { screenPos3.x,screenPos3.y };
 
-		// スプライトのレティクルに座標設定
-		//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
-		lockOnMark_->SetPosition(screenPos_);
+		//// スプライトのレティクルに座標設定
+		////sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+		//lockOnMark_->SetPosition(screenPos_);
+		lockOnTransfrom_.translate = target_->GetCenterPos();
+
+		lockOnMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(lockOnTransfrom_);
+
+		LockOnObj_->Update(lockOnMatrix_, viewprojection);
 	}
 
 	
@@ -98,16 +111,16 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 void LockOn::Draw(){
 	if (target_){
-		lockOnMark_->Draw();
+		LockOnObj_->Draw();
 	}
 	
 }
 
 void LockOn::DrawImgui(){
-	ImGui::Begin("ロックオンテクスチャ");
-	ImGui::DragFloat2("スケール", &lockOnMark_->scale_.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("サイズ", &lockOnMark_->textureSize_.x, 1.0f, 0.0f, 1280.0f);
-
+	LockOnObj_->DrawImgui("ロックオン");
+	ImGui::Begin("ロックオンのサブステータス");
+	ImGui::DragFloat3("現状の大きさ", &lockOnTransfrom_.scale.x, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat3("現状のポジション", &lockOnTransfrom_.translate.x, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 
 }

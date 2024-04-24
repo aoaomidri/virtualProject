@@ -101,7 +101,7 @@ void Object3D::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 	//3D三角の描画
-	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(model_->GetVertexData().size()), 1, 0, 0);
+	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
 
 }

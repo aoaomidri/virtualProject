@@ -26,6 +26,7 @@ public:
 
 	struct ModelData {
 		std::vector<VertexData> vertices;
+		std::vector<uint32_t> indices;
 		MaterialData material;
 		Node rootNode;
 	};
@@ -89,6 +90,8 @@ public:
 		float duration;//アニメーション全体の尺(単位は秒)
 		//NodeAnimationの集合、Node名でひけるようにしておく
 		std::map<std::string, NodeAnimation> nodeAnimations;
+		//アニメーションをループさせるかどうか
+		bool isAnimLoop;
 	};
 
 
@@ -119,6 +122,8 @@ public:
 
 	const std::vector<VertexData> GetVertexData()const { return modelData_.vertices; }
 
+	const std::vector<uint32_t> GetIndexData()const { return modelData_.indices; }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
@@ -139,8 +144,16 @@ private:
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 
+	//頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate_ = nullptr;
+
+	//頂点リソースにデータを書き込む
+	uint32_t* mappedIndex_ = nullptr;
 
 	const std::string ResourcesPath_ = "resources/Model/";
 

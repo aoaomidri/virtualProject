@@ -10,6 +10,7 @@ ID3D12Device* Model::device_ = nullptr;
 
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
 	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	CommandList->IASetIndexBuffer(&indexBufferView_);
 }
 
 Model* Model::GetInstance(){
@@ -202,27 +203,29 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 		assert(mesh->HasNormals());//法線がないMeshは今回は非対応
 		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは今回は非対応
 		//ここからMeshの中身(face)の解析を行っていく
-		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
-			aiFace& face = mesh->mFaces[faceIndex];
-			assert(face.mNumIndices == 3);//三角形のみサポート
-			//ここからFaceの中身(Vertex)の解析を行っていく
-			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-				VertexData vertex;
-				vertex.position = { position.x,position.y,position.z,1.0f };
-				vertex.normal = { normal.x,normal.y,normal.z };
-				vertex.texcoord = { texcoord.x,texcoord.y };
-				//aiProcess_MakeLeftHandedはz*=-1で、右手→左手に変換するので手動で対応
-				vertex.position.x *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				modelData_.vertices.push_back(vertex);
+		modelData_.vertices.resize(mesh->mNumVertices);//最初に頂点数分のメモリを確保していく
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
 
+			modelData_.vertices[vertexIndex].position = { -position.x,position.y,position.z,1.0f };
+			modelData_.vertices[vertexIndex].normal = { -normal.x,normal.y,normal.z };
+			modelData_.vertices[vertexIndex].texcoord = { texcoord.x,texcoord.y };
+
+		}
+		//Indexを解析していく
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex){
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);
+
+			for (uint32_t element = 0; element < face.mNumIndices; ++element){
+				uint32_t vertexIndex = face.mIndices[element];
+				modelData_.indices.push_back(vertexIndex);
 			}
 
 		}
+
 	}
 
 	//4,Materialの解析
@@ -258,6 +261,25 @@ void Model::MakeVertexResource(){
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
 	std::memcpy(vertexDate_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+
+
+	uint32_t indexSizeInBytes = static_cast<uint32_t>(sizeof(uint32_t) * modelData_.indices.size());
+
+	//インデックスリソースの作成
+	indexResource_ = CreateBufferResource(device_, indexSizeInBytes);
+
+	//リソースの先頭のアドレスから使う
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	//使用するリソースのサイズはindexの数
+	indexBufferView_.SizeInBytes = indexSizeInBytes;
+	//1頂点当たりのサイズ
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndex_));
+	std::memcpy(mappedIndex_, modelData_.indices.data(), indexSizeInBytes);
+	/*std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
+
+	indexResource_->Unmap(0, nullptr);*/
 }
 
 Model::Node Model::ReadNode(aiNode* node){

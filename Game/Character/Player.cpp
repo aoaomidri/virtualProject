@@ -172,6 +172,7 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 }
 
 void Player::DrawImgui(){
+#ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
@@ -188,6 +189,7 @@ void Player::DrawImgui(){
 	ImGui::End();
 	playerObj_->DrawImgui("プレイヤー");
 	particle_->DrawImgui("プレイヤーパーティクル");
+#endif
 }
 
 void Player::onFlootCollision(OBB obb){

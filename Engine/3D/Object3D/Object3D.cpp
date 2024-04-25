@@ -107,6 +107,7 @@ void Object3D::Draw() {
 }
 
 void Object3D::DrawImgui(std::string name){
+#ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
@@ -116,7 +117,7 @@ void Object3D::DrawImgui(std::string name){
 		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
 	}
 	ImGui::End();
-
+#endif
 }
 
 void Object3D::SetDirectionalLight(const Model::DirectionalLight* light){

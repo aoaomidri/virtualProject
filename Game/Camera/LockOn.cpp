@@ -117,12 +117,13 @@ void LockOn::Draw(){
 }
 
 void LockOn::DrawImgui(){
+#ifdef _DEBUG
 	LockOnObj_->DrawImgui("ロックオン");
 	ImGui::Begin("ロックオンのサブステータス");
 	ImGui::DragFloat3("現状の大きさ", &lockOnTransfrom_.scale.x, 0.1f, 0.0f, 10.0f);
 	ImGui::DragFloat3("現状のポジション", &lockOnTransfrom_.translate.x, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
-
+#endif
 }
 
 void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){

@@ -138,11 +138,13 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 }
 
 void Enemy::DrawImgui() {
+#ifdef _DEBUG
 	ImGui::Begin("敵の変数");
 
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 
 	ImGui::End();
+#endif
 }
 
 void Enemy::onFlootCollision(OBB obb){

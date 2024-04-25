@@ -11,6 +11,7 @@ Adjustment_Item* Adjustment_Item::GetInstance() {
 }
 
 void Adjustment_Item::Update() {
+#ifdef _DEBUG
 	if (!ImGui::Begin("Adjustment_Item", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
@@ -63,6 +64,7 @@ void Adjustment_Item::Update() {
 
 	ImGui::EndMenuBar();
 	ImGui::End();
+#endif
 }
 
 void Adjustment_Item::CreateGroup(const std::string& groupName) {

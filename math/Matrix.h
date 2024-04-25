@@ -64,6 +64,8 @@ public:
 	//トランスフォームから作るアフィン行列
 	Matrix4x4 MakeAffineMatrix(const EulerTransform& transform);
 
+	Matrix4x4 MakeAffineMatrix(const QuaternionTransform& transform);
+
 	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
 
 	Matrix4x4 MakeRotateMatrixX(const Vector3& rot);

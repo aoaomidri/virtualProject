@@ -4,6 +4,7 @@
 #include<fstream>
 #include<sstream>
 #include<filesystem>
+#include"Matrix.h"
 
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
@@ -284,13 +285,15 @@ void Model::MakeVertexResource(){
 
 Model::Node Model::ReadNode(aiNode* node){
 	Node result;
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation;//nodeのlocalMatrixを取得
-	aiLocalMatrix.Transpose();//列ベクトル形式を行ベクトル形式に転置
-	for (int i = 0; i < 4; i++){
-		for (int j = 0; j < 4; j++){
-			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
-		}
-	}
+	aiVector3D scale, translate;
+	aiQuaternion rotate;
+
+	node->mTransformation.Decompose(scale, rotate, translate);
+	result.transform.scale = { scale.x,scale.y,scale.z };
+	result.transform.rotate.quaternion_ = { rotate.x,-rotate.y,-rotate.z,rotate.w };
+	result.transform.translate = { -translate.x,translate.y,translate.z };
+	result.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(result.transform);
+	
 	result.name = node->mName.C_Str();//node名を格納
 	result.children.resize(node->mNumChildren);//子供の数だけ確保
 	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++){

@@ -310,6 +310,10 @@ Matrix4x4 Matrix::MakeAffineMatrix(const EulerTransform& transform){
 	return result;
 }
 
+Matrix4x4 Matrix::MakeAffineMatrix(const QuaternionTransform& transform){
+	return MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+}
+
 Vector3 Matrix::Normalize(const Vector3& v) {
 	Vector3 result{0, 0, 0};
 	float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));

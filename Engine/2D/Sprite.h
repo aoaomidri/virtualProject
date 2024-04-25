@@ -41,7 +41,7 @@ public:
 
 	void SetSize(const Vector2& size) { textureSize_ = size; }
 
-	void SetUVTransform(const Transform& uvTransform) { uvTransform_ = uvTransform; }
+	void SetUVTransform(const EulerTransform& uvTransform) { uvTransform_ = uvTransform; }
 
 	void SetIsDraw(bool isDraw) { isDraw_ = isDraw; }
 
@@ -74,7 +74,7 @@ public:
 
 	const Vector2& GetSize()const { return textureSize_; }
 
-	const Transform& GetUVTransform()const { return uvTransform_; }
+	const EulerTransform& GetUVTransform()const { return uvTransform_; }
 
 	bool GetIsDraw() { return isDraw_; }
 
@@ -122,9 +122,9 @@ private:
 
 	TextureManager* textureManager_ = nullptr;
 
-	Transform transformSprite{};
+	EulerTransform transformSprite{};
 
-	Transform cameraTransform{};
+	EulerTransform cameraTransform{};
 
 	int textureNumber_;
 
@@ -146,7 +146,7 @@ public:
 	//テクスチャ切り出しサイズ
 	Vector2 textureSize_ = { 100.0f,100.0f };
 
-	Transform uvTransform_{};
+	EulerTransform uvTransform_{};
 	//描画設定
 	bool isDraw_ = true;
 	//左右フリップ

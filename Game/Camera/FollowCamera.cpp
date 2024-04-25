@@ -149,7 +149,7 @@ Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	return offset_;
 }
 
-void FollowCamera::SetTarget(const Transform* target){
+void FollowCamera::SetTarget(const EulerTransform* target){
 	target_ = target;
 	Reset();
 }

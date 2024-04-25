@@ -159,7 +159,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
-	Transform newTrans = playerTransform_;
+	EulerTransform newTrans = playerTransform_;
 	newTrans.translate.y += 3.0f;
 
 	particle_->Update(newTrans, viewProjection);

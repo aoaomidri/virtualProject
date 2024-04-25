@@ -74,7 +74,7 @@ void ParticleBase::Initialize() {
 	isBillborad_ = true;
 }
 
-void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
+void ParticleBase::Update(const EulerTransform& transform, const ViewProjection& viewProjection) {
 	/*imguiで値がおかしくならないように調整*/
 	if (positionRange_.min >= positionRange_.max) {
 		positionRange_.min = positionRange_.max - 0.1f;

@@ -38,7 +38,7 @@ public:
 
 public:
 	//Getter
-	const Transform& GetTransform() const { return transform_; }
+	const EulerTransform& GetTransform() const { return transform_; }
 
 	const Vector3 GetCenterPos()const;
 
@@ -60,7 +60,7 @@ public:
 
 	void SetIsDead(bool isDead) { isDead_ = isDead; }
 
-	void SetTarget(const Transform* target) { target_ = target; }
+	void SetTarget(const EulerTransform* target) { target_ = target; }
 
 private:
 	//クラス内関数
@@ -84,13 +84,13 @@ private:
 
 	//プレイヤーの座標
 	// 追従対象
-	const Transform* target_ = nullptr;
+	const EulerTransform* target_ = nullptr;
 
 	//自機のSRT
-	Transform transform_{};
-	Transform partsTransform_{};
-	Transform particleTransform_[particleNum_]{};
-	Transform collisionTransform_{};
+	EulerTransform transform_{};
+	EulerTransform partsTransform_{};
+	EulerTransform particleTransform_[particleNum_]{};
+	EulerTransform collisionTransform_{};
 
 	//プレイヤーのマトリックス
 	Matrix4x4 matrix_{};

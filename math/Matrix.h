@@ -62,7 +62,7 @@ public:
 	Matrix4x4 MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate);
 
 	//トランスフォームから作るアフィン行列
-	Matrix4x4 MakeAffineMatrix(const Transform& transform);
+	Matrix4x4 MakeAffineMatrix(const EulerTransform& transform);
 
 	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
 

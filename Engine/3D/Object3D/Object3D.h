@@ -101,7 +101,7 @@ private:
 
 	Matrix4x4 localMatrix_;
 
-	Transform transform{};
+	EulerTransform transform;
 
 	bool isUseLight_ = false;
 

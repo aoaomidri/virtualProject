@@ -291,7 +291,7 @@ Matrix4x4 Matrix::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot,
 	return result;
 }
 
-Matrix4x4 Matrix::MakeAffineMatrix(const Transform& transform){
+Matrix4x4 Matrix::MakeAffineMatrix(const EulerTransform& transform){
 	Matrix4x4 result{};
 
 	//スケーリング行列の作成

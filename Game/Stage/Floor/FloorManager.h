@@ -32,7 +32,7 @@ public:
 	/// <summary>
 	/// 床追加
 	/// </summary>
-	void AddFloor(Transform transform, bool isMoving);
+	void AddFloor(EulerTransform transform, bool isMoving);
 
 	/// <summary>
 	/// imgui表示

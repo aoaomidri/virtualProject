@@ -21,7 +21,7 @@ public:
 
 	void Initialize();
 	
-	void Update(const Transform& transform,const ViewProjection& viewProjection);
+	void Update(const EulerTransform& transform,const ViewProjection& viewProjection);
 
 	void Draw();
 
@@ -51,7 +51,7 @@ public:
 
 private:
 	struct Particle {
-		Transform transform;	//座標
+		EulerTransform transform;	//座標
 		Vector3 velocity;		//移動ベクトル
 		Vector4 color;			//色
 		float lifeTime;			//生存可能な時間
@@ -64,7 +64,7 @@ private:
 	};
 
 	struct Emitter {
-		Transform transform;//エミッターのTransform
+		EulerTransform transform;//エミッターのTransform
 		int count;		//発生数
 		float frequency;	//発生頻度
 		float frequencyTime;//頻度用時刻
@@ -163,7 +163,7 @@ private:
 
 	AccelerationField accelerationField_{};
 
-	Transform cameraTransform{};
+	EulerTransform cameraTransform{};
 
 	bool isDraw_ = true;
 

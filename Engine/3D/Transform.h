@@ -3,11 +3,18 @@
 #include"Vector3.h"
 #include"Vector4.h"
 #include"Matrix4x4.h"
+#include"Quaternion.h"
 #include<cstdint>
 
-struct Transform {
+struct EulerTransform {
 	Vector3 scale;
 	Vector3 rotate;
+	Vector3 translate;
+};
+
+struct QuaternionTransform {
+	Vector3 scale;
+	Quaternion rotate;
 	Vector3 translate;
 };
 

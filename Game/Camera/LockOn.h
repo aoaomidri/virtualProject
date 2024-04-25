@@ -64,7 +64,7 @@ private:
 
 	std::unique_ptr<Object3D> LockOnObj_;
 
-	Transform lockOnTransfrom_;
+	EulerTransform lockOnTransfrom_;
 
 	Matrix4x4 lockOnMatrix_;
 

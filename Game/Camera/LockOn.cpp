@@ -255,10 +255,10 @@ bool LockOn::IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewin
 
 	// obbの行列
 	Matrix4x4 worldMatrix = {
-		obb.orientations[0].x, obb.orientations[0].y, obb.orientations[0].z, 0,
-		obb.orientations[1].x, obb.orientations[1].y, obb.orientations[1].z, 0,
-		obb.orientations[2].x, obb.orientations[2].y, obb.orientations[2].z, 0,
-		obb.center.x,          obb.center.y,          obb.center.z,          1 };
+		{obb.orientations[0].x, obb.orientations[0].y, obb.orientations[0].z, 0},
+		{obb.orientations[1].x, obb.orientations[1].y, obb.orientations[1].z, 0},
+		{obb.orientations[2].x, obb.orientations[2].y, obb.orientations[2].z, 0},
+		{obb.center.x,          obb.center.y,          obb.center.z,          1} };
 
 	obbPoints[0] = obb.size * -1;
 	obbPoints[1] = { obb.size.x * -1, obb.size.y * -1, obb.size.z };
@@ -422,10 +422,10 @@ bool LockOn::IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum
 
 	// obbの行列
 	Matrix4x4 worldMatrix = {
-		obb.orientations[0].x, obb.orientations[0].y, obb.orientations[0].z, 0,
-		obb.orientations[1].x, obb.orientations[1].y, obb.orientations[1].z, 0,
-		obb.orientations[2].x, obb.orientations[2].y, obb.orientations[2].z, 0,
-		obb.center.x,          obb.center.y,          obb.center.z,          1 };
+		{obb.orientations[0].x, obb.orientations[0].y, obb.orientations[0].z, 0},
+		{obb.orientations[1].x, obb.orientations[1].y, obb.orientations[1].z, 0},
+		{obb.orientations[2].x, obb.orientations[2].y, obb.orientations[2].z, 0},
+		{obb.center.x,          obb.center.y,          obb.center.z,          1} };
 
 	// 手前
 	obbPoints[0] = { obb.size.x * -1, obb.size.y, obb.size.z * -1 }; // 左上

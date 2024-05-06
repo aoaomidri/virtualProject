@@ -95,8 +95,6 @@ public:
 	//任意軸回転行列
 	Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
 
-	Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
-
 	////逆行列
 	Matrix4x4 Inverce(const Matrix4x4& mat);
 
@@ -109,18 +107,5 @@ public:
 
 	float RotateAngleYFromMatrix(const Matrix4x4& m);
 
-	Matrix4x4 operator+(const Matrix4x4& mat) const;
-
-	Matrix4x4& operator+=(const Matrix4x4& mat);
-
-	Matrix4x4 operator-(const Matrix4x4& mat) const;
-
-	Matrix4x4& operator-=(const Matrix4x4& mat);
-
-	Matrix4x4 operator*(const Matrix4x4& mat) const;
-
-	Matrix4x4& operator*=(const Matrix4x4& mat);
-
-	Matrix4x4& operator=(const Matrix4x4& mat);
 
 };

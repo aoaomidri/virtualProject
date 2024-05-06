@@ -10,6 +10,7 @@
 #include"assimp/postprocess.h"
 #include"Quaternion.h"
 #include<map>
+#include<optional>
 
 
 class Model{
@@ -95,6 +96,22 @@ public:
 		bool isAnimLoop;
 	};
 
+	struct Joint {
+		QuaternionTransform transform;//Trnasform情報
+		Matrix4x4 localMatrix;//localMatrix
+		Matrix4x4 skeltonSpaceMatrix;//子JointのIndexのリスト。いなければ空
+		std::string name;
+		std::vector<int32_t> children;
+		int32_t index;//自身のIndex
+		std::optional<int32_t> parent;//親JointのIndex。いなければnull
+	};
+
+	struct Skeleton{
+		int32_t root;
+		std::map<std::string, int32_t> jointMap;
+		std::vector<Joint> joints;
+	};
+
 
 	
 public:
@@ -137,6 +154,10 @@ private:
 	void MakeVertexResource();
 
 	Node ReadNode(aiNode* node);
+
+	Skeleton CreateSkeleton(const Node& rootNode);
+
+	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 
 	
 private:

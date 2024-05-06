@@ -63,7 +63,8 @@ void FollowCamera::Update(){
 		sub.y = 0;
 		postureVec_ = sub;
 
-		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
+		Matrix4x4 newMatrix;
+		newMatrix.DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
 		destinationAngleX_ = 0.15f;
 	}

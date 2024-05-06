@@ -411,7 +411,8 @@ void Enemy::RootMotion(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 
@@ -509,7 +510,9 @@ void Enemy::EnemyRun(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {

@@ -292,7 +292,7 @@ Model::Node Model::ReadNode(aiNode* node){
 	result.transform.scale = { scale.x,scale.y,scale.z };
 	result.transform.rotate.quaternion_ = { rotate.x,-rotate.y,-rotate.z,rotate.w };
 	result.transform.translate = { -translate.x,translate.y,translate.z };
-	result.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(result.transform);
+	result.localMatrix =Matrix::GetInstance()->MakeAffineMatrix(result.transform);
 	
 	result.name = node->mName.C_Str();//node名を格納
 	result.children.resize(node->mNumChildren);//子供の数だけ確保
@@ -302,6 +302,25 @@ Model::Node Model::ReadNode(aiNode* node){
 
 	}
 	return result;
+}
+
+Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
+	/*Skeleton skeleton;
+	skeleton.root=create*/
+
+
+	return Model::Skeleton();
+
+}
+
+int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints){
+	/*Joint joint;
+	joint.name = node.name;
+	joint.localMatrix = node.localMatrix;
+	joint.skeltonSpaceMatrix=*/
+
+
+	return 0;
 }
 
 Model::Animation Model::LoadAnimationFile(const std::string& filename){

@@ -165,7 +165,7 @@ void Object3D::makeResource() {
 
 	materialDate->enableLighting = false;
 
-	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate->uvTransform.Identity();
 
 	materialDate->shininess = 1.0f;
 

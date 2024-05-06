@@ -71,7 +71,7 @@ Matrix4x4 Matrix::Minus(const Matrix4x4& m1, const Matrix4x4& m2){
 
 ////積
 Matrix4x4 Matrix::Multiply(const Matrix4x4& mat1, const Matrix4x4& mat2) {
-	Matrix4x4 result = {0.0f};
+	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			result.m[i][j] = mat1.m[i][0] * mat2.m[0][j] + mat1.m[i][1] * mat2.m[1][j] +
@@ -83,7 +83,7 @@ Matrix4x4 Matrix::Multiply(const Matrix4x4& mat1, const Matrix4x4& mat2) {
 
 Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 	float A = 0.0f;
-	Matrix4x4 result = { 0.0f };
+	Matrix4x4 result = {};
 	//行列式の計算
 	A = mat.m[0][0] * mat.m[1][1] * mat.m[2][2] * mat.m[3][3] +
 		mat.m[0][0] * mat.m[1][2] * mat.m[2][3] * mat.m[3][1] +
@@ -169,7 +169,7 @@ Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 }
 
 Matrix4x4 Matrix::Trnaspose(const Matrix4x4& mat) {
-	Matrix4x4 result = { 0.0f };
+	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			result.m[i][j] = mat.m[j][i];
@@ -366,7 +366,7 @@ float Matrix::RotateAngleYFromMatrix(const Matrix4x4& m){
 
 
 Matrix4x4 Matrix::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
-	Matrix4x4 result{ 0 };
+	Matrix4x4 result{};
 
 	result.m[0][0] = (1.0f / aspectRatio) * (1.0f / tanf(fovY / 2.0f));
 	result.m[1][1] = (1.0f / tanf(fovY / 2.0f));
@@ -378,7 +378,7 @@ Matrix4x4 Matrix::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float 
 }
 
 Matrix4x4 Matrix::MakeOrthographicMatrix(float left,float top ,float right, float bottom, float nearClip, float farClip) {
-	Matrix4x4 result{ 0 };
+	Matrix4x4 result{};
 
 	result.m[0][0] = 2.0f / (right - left);
 	result.m[1][1] = 2.0f / (top - bottom);
@@ -392,7 +392,7 @@ Matrix4x4 Matrix::MakeOrthographicMatrix(float left,float top ,float right, floa
 }
 
 Matrix4x4 Matrix::MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
-	Matrix4x4 result{ 0 };
+	Matrix4x4 result{};
 
 	result.m[0][0] = width / 2.0f;
 	result.m[1][1] = -(height / 2.0f);
@@ -406,7 +406,7 @@ Matrix4x4 Matrix::MakeViewportMatrix(float left, float top, float width, float h
 }
 
 Matrix4x4 Matrix::MakeIdentity4x4() {
-	Matrix4x4 result = { 0.0f };
+	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		result.m[i][i] = 1.0f;
 	}
@@ -428,99 +428,3 @@ Matrix4x4 Matrix::MakeRotateAxisAngle(const Vector3& axis, float angle){
 	return matrix;
 }
 
-Matrix4x4 Matrix::DirectionToDirection(const Vector3& from, const Vector3& to){
-	Matrix4x4 matrix{};
-	Vector3 normalizeVec{};
-	Vector3 cross = Vector3::Cross(from, to);
-
-	if (Vector3::Dot(from, to) == -1){
-		if ( from.x != 0.0f|| from.z != 0.0f){
-			normalizeVec = { from.z,0,-from.x };
-		}
-		else if (from.x != 0.0f || from.y != 0.0f) {
-			normalizeVec = { from.y,-from.x,0.0f };
-		}
-	}
-	else {
-		normalizeVec = Vector3::Normalize(cross);
-	}	
-	float sinTheta = Vector3::Length(cross);
-	float cosTheta = Vector3::Dot(from, to);
-	matrix.m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
-	matrix.m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
-	matrix.m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
-	matrix.m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
-	matrix.m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
-	matrix.m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
-	matrix.m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
-	matrix.m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
-	matrix.m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
-
-	matrix.m[3][3] = 1.0f;
-	return matrix;
-}
-
-Matrix4x4 Matrix::operator+(const Matrix4x4& mat) const
-{
-	Matrix4x4 result{};
-	for (int y = 0; y < 4; y++)
-	{
-		for (int x = 0; x < 4; x++)
-		{
-			result.m[y][x] = this->m.m[y][x] + mat.m[y][x];
-		}
-	}
-
-	return result;
-}
-//Matrix4x4& Matrix::operator+=(const Matrix4x4& mat)
-//{
-//	this->m = this->m + mat;
-//	return this->m;
-//}
-//	減算
-Matrix4x4 Matrix::operator-(const Matrix4x4& mat) const
-{
-	Matrix4x4 result;
-	for (int y = 0; y < 4; y++)
-	{
-		for (int x = 0; x < 4; x++)
-		{
-			result.m[y][x] = this->m.m[y][x] - mat.m[y][x];
-		}
-	}
-	return result;
-}
-//Matrix4x4& Matrix::operator-=(const Matrix4x4& mat)
-//{
-//	*this = *this - mat;
-//	return this;
-//}
-//	行列の積
-Matrix4x4 Matrix::operator*(const Matrix4x4& mat) const
-{
-	Matrix4x4 result;
-
-	for (int y = 0; y < 4; y++) {
-		for (int x = 0; x < 4; x++)
-		{
-			for (int i = 0; i < 4; i++) {
-				result.m[y][x] += m.m[y][i] * mat.m[i][x];
-			}
-		}
-	}
-
-	return result;
-}
-
-//Matrix4x4& Matrix::operator*=(const Matrix4x4& mat)
-//{
-//	*this = *this * mat;
-//	return *this;
-//}
-
-Matrix4x4& Matrix::operator=(const Matrix4x4& mat)
-{
-	this->m = mat;
-	return this->m;
-}

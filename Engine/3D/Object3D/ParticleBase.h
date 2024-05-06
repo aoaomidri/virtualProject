@@ -14,6 +14,7 @@
 #include<numbers>
 #include<list>
 #include"OBB.h"
+#include"TextureManager.h"
 
 
 class ParticleBase{

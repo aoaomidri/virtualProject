@@ -192,6 +192,9 @@
     <ClCompile Include="Game\Character\Player.cpp">
       <Filter>application\Character\Player</Filter>
     </ClCompile>
+    <ClCompile Include="math\Matrix4x4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\Matrix.h">

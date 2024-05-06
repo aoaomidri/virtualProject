@@ -7,6 +7,13 @@
 #include"Texture.h"
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+struct ParticleForGPU {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+	Vector4 color;
+};
+
 class TextureManager {
 public:
 	TextureManager() = default;

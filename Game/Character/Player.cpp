@@ -257,7 +257,8 @@ void Player::BehaviorRootUpdate(){
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 		
-		Matrix4x4 directionTodirection_= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 		
 	}
@@ -268,7 +269,8 @@ void Player::BehaviorRootUpdate(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
@@ -436,7 +438,8 @@ void Player::BehaviorAttackUpdate(){
 				postureVec_ = Matrix::GetInstance()->TransformNormal(postureVec_, newRotateMatrix);
 				postureVec_.y = 0;
 				postureVec_ = Vector3::Normalize(postureVec_);
-				Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+				Matrix4x4 directionTodirection_;
+				directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 				playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 			}
@@ -448,7 +451,8 @@ void Player::BehaviorAttackUpdate(){
 				postureVec_ = sub;
 
 
-				Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+				Matrix4x4 directionTodirection_;
+				directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 				playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 
@@ -562,7 +566,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		postureVec_.y = 0;
 		postureVec_ = Vector3::Normalize(postureVec_);
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 	}
@@ -573,7 +578,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 	}

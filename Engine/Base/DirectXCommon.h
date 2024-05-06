@@ -165,6 +165,11 @@ private://メンバ変数
 
 	//TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
+
+	D3D12_VIEWPORT viewport{};
+
+	//シザー矩形
+	D3D12_RECT scissorRect{};
 	
 	//HRESULTはWindows系のエラーコード
 	//関数が成功したかどうかをSUCCEEDEDマクロで判定できる

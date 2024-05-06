@@ -34,6 +34,8 @@ public:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE SendInstancingGPUDescriptorHandle()const { return instancingSrvHandleGPU; }
 
+	D3D12_GPU_DESCRIPTOR_HANDLE SendRenderGPUDescriptorHandle()const { return renderTextureSrvHandleGPU; }
+
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
 	//void Load(const std::string& filePath, uint32_t index);
@@ -53,6 +55,8 @@ public:
 	void PreDrawParticle();
 
 	void PostDrawParticle();
+
+	void DrawCopy();
 
 	void MakeShaderResourceView();
 
@@ -87,6 +91,8 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineCopy_;
 	
 
 

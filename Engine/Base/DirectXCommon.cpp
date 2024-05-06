@@ -9,8 +9,6 @@ DirectXCommon* DirectXCommon::GetInstance(){
 	return &instance;
 }
 
-
-
 void DirectXCommon::Initialize(){
 	winapp_ = WinApp::GetInstance();
 
@@ -247,18 +245,18 @@ void DirectXCommon::UpdateFixFPS(){
 }
 
 void DirectXCommon::PreDrawRenderTexture(){
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResouce.Get();
-	//遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	//遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+	////今回のバリアはTransition
+	//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	////Noneにしておく
+	//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	////バリアを張る対象のリソース。現在のバックバッファに対して行う
+	//barrier.Transition.pResource = renderTextureResouce.Get();
+	////遷移前(現在)のResouceState
+	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	////遷移後のResouceState
+	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	////TransitionBarrierを張る
+	//commandList->ResourceBarrier(1, &barrier);
 
 	//描画用のDescriptorHeapの設定
 
@@ -269,17 +267,12 @@ void DirectXCommon::PreDrawRenderTexture(){
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_ = GetCPUDescriptorHandle(
 		rtvDescriptorHeap, device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), chackHandleNum_);
-	
+
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	commandList->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle);
 
 	//指定した色で画面全体をクリアする
-	float clearColor[] = { 
-		kRenderTargetClearValue.x,
-		kRenderTargetClearValue.y,
-		kRenderTargetClearValue.z,
-		kRenderTargetClearValue.w,
-	};
+	float clearColor[] = { 1.0f,0.f,0.f,1.0f };//青っぽい色、RGBAの順番
 
 	//レンダーターゲットクリア
 	commandList->ClearRenderTargetView(rtvHandle_, clearColor, 0, nullptr);
@@ -287,11 +280,8 @@ void DirectXCommon::PreDrawRenderTexture(){
 	//深度バッファクリア
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-
-	
-
 	//ビューポート
-	D3D12_VIEWPORT viewport{};
+	
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport.Width = static_cast<float>(winapp_->kWindowWidth);
 	viewport.Height = static_cast<float>(winapp_->kWindowHeight);
@@ -300,8 +290,7 @@ void DirectXCommon::PreDrawRenderTexture(){
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
-	//シザー矩形
-	D3D12_RECT scissorRect{};
+	
 	//基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect.left = 0;
 	scissorRect.right = winapp_->kWindowWidth;
@@ -313,14 +302,11 @@ void DirectXCommon::PreDrawRenderTexture(){
 	//シザリング矩形の設定
 	commandList->RSSetScissorRects(1, &scissorRect);
 
-
-
 }
 
 void DirectXCommon::PreDrawSwapChain(){
 	//これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-
 	//今回のバリアはTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	//Noneにしておく
@@ -333,6 +319,7 @@ void DirectXCommon::PreDrawSwapChain(){
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
+
 
 	//描画用のDescriptorHeapの設定
 
@@ -347,47 +334,43 @@ void DirectXCommon::PreDrawSwapChain(){
 	commandList->OMSetRenderTargets(1, &rtvHandle_, false, nullptr);
 
 	float clearColor[] = {
-	kRenderTargetClearValue.x,
-	kRenderTargetClearValue.y,
-	kRenderTargetClearValue.z,
+	0.0f,
+	0.25f,
+	0.5f,
 	kRenderTargetClearValue.w,
 	};
 
 	//レンダーターゲットクリア
 	commandList->ClearRenderTargetView(rtvHandle_, clearColor, 0, nullptr);
 
-	//ビューポート
-	D3D12_VIEWPORT viewport{};
-	//クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = static_cast<float>(winapp_->kWindowWidth);
-	viewport.Height = static_cast<float>(winapp_->kWindowHeight);
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	//シザー矩形
-	D3D12_RECT scissorRect{};
-	//基本的にビューポートと同じ矩形が構成されるようにする
-	scissorRect.left = 0;
-	scissorRect.right = winapp_->kWindowWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = winapp_->kWindowHeight;
-
 	//ビューポートの設定
 	commandList->RSSetViewports(1, &viewport);
 	//シザリング矩形の設定
 	commandList->RSSetScissorRects(1, &scissorRect);
+
+
+	
+	
+
 }
 
 void DirectXCommon::PostDraw(){
-
-	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	//遷移前(現在)のResouceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//遷移後のResouceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+	//遷移前(現在)のResouceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//遷移後のResouceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
 
 	//今回はRenderTargetからPresentにする
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
 	//TransitionのBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
 

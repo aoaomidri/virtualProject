@@ -22,10 +22,12 @@ public:
 	~GraphicsPipeline();
 
 	static GraphicsPipeline* GetInstance();
-
+	//通常の初期化
 	void Initialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
 	//パーティクル専用の初期化処理
 	void ParticleExclusiveInitialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend);
+	//コピー用の初期化
+	void InitializeCopy(const std::wstring& VSname, const std::wstring& PSname);
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
@@ -47,11 +49,17 @@ private:
 
 	void makeGraphicsPipelineParticle(ID3D12Device* device);
 
+	void makeGraphicsPipelineCopy(ID3D12Device* device);
+
 	void makeRootSignature(ID3D12Device* device);
 
 	void makeParticleRootSignature(ID3D12Device* device);
 
+	void makeRootSignatureCopy(ID3D12Device* device);
+
 	void makeInputLayout();
+
+	void makeInputLayoutCopy();
 
 	void makeBlendState(const BlendMode& blend);
 
@@ -60,6 +68,8 @@ private:
 	void ShaderCompile(const std::wstring& VSname, const std::wstring& PSname);
 
 	void makeDepthStencil(D3D12_DEPTH_WRITE_MASK depthWriteMask);
+
+	void makeDepthStencilCopy();
 
 
 private:

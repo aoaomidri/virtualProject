@@ -15,6 +15,8 @@ void TextureManager::Initialize() {
 	GraphicsPipeline2D_->Initialize(L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl", false);
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
+	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineCopy_->Initialize(L"resources/shaders/CopyImage.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl", true);
 	
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -145,6 +147,16 @@ void TextureManager::PreDrawParticle(){
 
 void TextureManager::PostDrawParticle(){
 
+}
+
+void TextureManager::DrawCopy(){
+	////RootSignatureを設定。PSOに設定しているが別途設定が必要
+	//DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
+	//DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+	//DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2,SendGPUDescriptorHandle(15));
+	////commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	//DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
 void TextureManager::MakeShaderResourceView() {

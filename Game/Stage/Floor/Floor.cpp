@@ -1,6 +1,6 @@
 #include "Floor.h"
 
-void Floor::Initialize(Transform transform){
+void Floor::Initialize(EulerTransform transform){
 	
 	
 	floorTransform_ = transform;

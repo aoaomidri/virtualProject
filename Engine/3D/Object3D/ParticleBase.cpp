@@ -74,7 +74,7 @@ void ParticleBase::Initialize() {
 	isBillborad_ = true;
 }
 
-void ParticleBase::Update(const Transform& transform, const ViewProjection& viewProjection) {
+void ParticleBase::Update(const EulerTransform& transform, const ViewProjection& viewProjection) {
 	/*imguiで値がおかしくならないように調整*/
 	if (positionRange_.min >= positionRange_.max) {
 		positionRange_.min = positionRange_.max - 0.1f;
@@ -200,6 +200,7 @@ void ParticleBase::Draw() {
 }
 
 void ParticleBase::DrawImgui(const std::string& imguiTag){
+#ifdef _DEBUG
 	ImGui::Begin(imguiTag.c_str());
 	ImGui::Text("現在のパーティクルの数 = %d", particles_.size());
 	ImGui::DragFloat3("発生中心位置", &emitter_.transform.translate.x, 0.01f, -100.0f, 100.0f);
@@ -243,7 +244,7 @@ void ParticleBase::DrawImgui(const std::string& imguiTag){
 		ImGui::TreePop();
 	}
 	ImGui::End();
-
+#endif
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(size_t sizeInBytes) {

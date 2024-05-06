@@ -10,6 +10,7 @@
 #include"assimp/postprocess.h"
 #include"Quaternion.h"
 #include<map>
+#include<optional>
 
 
 class Model{
@@ -19,6 +20,7 @@ public:
 	};
 
 	struct Node {
+		QuaternionTransform transform;
 		Matrix4x4 localMatrix;
 		std::string name;
 		std::vector<Node> children;
@@ -26,6 +28,7 @@ public:
 
 	struct ModelData {
 		std::vector<VertexData> vertices;
+		std::vector<uint32_t> indices;
 		MaterialData material;
 		Node rootNode;
 	};
@@ -89,6 +92,24 @@ public:
 		float duration;//アニメーション全体の尺(単位は秒)
 		//NodeAnimationの集合、Node名でひけるようにしておく
 		std::map<std::string, NodeAnimation> nodeAnimations;
+		//アニメーションをループさせるかどうか
+		bool isAnimLoop;
+	};
+
+	struct Joint {
+		QuaternionTransform transform;//Trnasform情報
+		Matrix4x4 localMatrix;//localMatrix
+		Matrix4x4 skeltonSpaceMatrix;//子JointのIndexのリスト。いなければ空
+		std::string name;
+		std::vector<int32_t> children;
+		int32_t index;//自身のIndex
+		std::optional<int32_t> parent;//親JointのIndex。いなければnull
+	};
+
+	struct Skeleton{
+		int32_t root;
+		std::map<std::string, int32_t> jointMap;
+		std::vector<Joint> joints;
 	};
 
 
@@ -119,6 +140,8 @@ public:
 
 	const std::vector<VertexData> GetVertexData()const { return modelData_.vertices; }
 
+	const std::vector<uint32_t> GetIndexData()const { return modelData_.indices; }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
@@ -132,6 +155,10 @@ private:
 
 	Node ReadNode(aiNode* node);
 
+	Skeleton CreateSkeleton(const Node& rootNode);
+
+	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
+
 	
 private:
 	//頂点バッファービューを作成する
@@ -139,8 +166,16 @@ private:
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 
+	//頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate_ = nullptr;
+
+	//頂点リソースにデータを書き込む
+	uint32_t* mappedIndex_ = nullptr;
 
 	const std::string ResourcesPath_ = "resources/Model/";
 

@@ -33,7 +33,7 @@ public:
 	void DrawImgui();
 public:
 
-	void SetTarget(const Transform* target);
+	void SetTarget(const EulerTransform* target);
 
 	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix = target; }
 
@@ -85,7 +85,7 @@ private:
 	Matrix4x4 cameraMatrix_{};
 
 	// 追従対象
-	const Transform* target_ = nullptr;
+	const EulerTransform* target_ = nullptr;
 
 	// 追従対象
 	const Matrix4x4* targetRotateMatrix = nullptr;

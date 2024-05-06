@@ -80,7 +80,7 @@ private:
 
 	std::unique_ptr<FloorManager> floorManager_;
 
-	Transform firstFloor_ = {
+	EulerTransform firstFloor_ = {
 		.scale = {2.0f,0.5f,2.0f},
 		.rotate = {0},
 		.translate = {0}
@@ -96,7 +96,7 @@ private:
 	int chackCollision = 0;
 
 
-	Transform particleTrnadform_ = {
+	EulerTransform particleTrnadform_ = {
 		.scale = {1.0f,1.0f,1.0f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
@@ -116,7 +116,7 @@ private:
 
 	std::unique_ptr<Model> skyDomeModel_;
 
-	Transform skyDomeTrnasform_;
+	EulerTransform skyDomeTrnasform_;
 
 	Matrix4x4 skyDomeMatrix_;
 

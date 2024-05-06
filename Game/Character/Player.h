@@ -40,7 +40,7 @@ public:
 
 public:
 	//Getter
-	const Transform& GetTransform() const { return playerTransform_; }
+	const EulerTransform& GetTransform() const { return playerTransform_; }
 
 	const Vector3& GetTranslate() const { return playerTransform_.translate; }
 
@@ -187,10 +187,10 @@ private:
 	std::unique_ptr<Object3D> weaponCollisionObj_;
 
 	//自機のSRT
-	Transform playerTransform_{};
+	EulerTransform playerTransform_{};
 	//武器のSRT
-	Transform weaponTransform_{};
-	Transform weaponCollisionTransform_{};
+	EulerTransform weaponTransform_{};
+	EulerTransform weaponCollisionTransform_{};
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};

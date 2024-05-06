@@ -101,21 +101,23 @@ void Object3D::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 	//3D三角の描画
-	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(model_->GetVertexData().size()), 1, 0, 0);
+	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
 
 }
 
 void Object3D::DrawImgui(std::string name){
+#ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
-	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
+	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
+	ImGui::DragFloat3("モデルに設定されたTransform", &animeTranslate_.x, 0.1f);
 	for (int i = 0; i < 4; i++){
 		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
 	}
 	ImGui::End();
-
+#endif
 }
 
 void Object3D::SetDirectionalLight(const Model::DirectionalLight* light){
@@ -163,7 +165,7 @@ void Object3D::makeResource() {
 
 	materialDate->enableLighting = false;
 
-	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate->uvTransform.Identity();
 
 	materialDate->shininess = 1.0f;
 

@@ -49,7 +49,7 @@ void FloorManager::Draw(const ViewProjection& viewProjection){
 
 }
 
-void FloorManager::AddFloor(Transform transform, bool isMoving){
+void FloorManager::AddFloor(EulerTransform transform, bool isMoving){
 	Object3D* object_ = new Object3D();
 	object_->Initialize("Floor");
 	objects_.push_back(object_);
@@ -298,7 +298,7 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 	//各アイテムについて
 	for (const auto& i : root[groupName][stage]) {
 		int count = 0;
-		Transform newTrans{};
+		EulerTransform newTrans{};
 		bool isNewMove = false;
 		for (const auto& j : i) {
 			Vector3 v{};

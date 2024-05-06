@@ -159,7 +159,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
-	Transform newTrans = playerTransform_;
+	EulerTransform newTrans = playerTransform_;
 	newTrans.translate.y += 3.0f;
 
 	particle_->Update(newTrans, viewProjection);
@@ -172,6 +172,7 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 }
 
 void Player::DrawImgui(){
+#ifdef _DEBUG
 	ImGui::Begin("プレイヤー");
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
@@ -188,6 +189,7 @@ void Player::DrawImgui(){
 	ImGui::End();
 	playerObj_->DrawImgui("プレイヤー");
 	particle_->DrawImgui("プレイヤーパーティクル");
+#endif
 }
 
 void Player::onFlootCollision(OBB obb){
@@ -255,7 +257,8 @@ void Player::BehaviorRootUpdate(){
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 		
-		Matrix4x4 directionTodirection_= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 		
 	}
@@ -266,7 +269,8 @@ void Player::BehaviorRootUpdate(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 	}
 
@@ -434,7 +438,8 @@ void Player::BehaviorAttackUpdate(){
 				postureVec_ = Matrix::GetInstance()->TransformNormal(postureVec_, newRotateMatrix);
 				postureVec_.y = 0;
 				postureVec_ = Vector3::Normalize(postureVec_);
-				Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+				Matrix4x4 directionTodirection_;
+				directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 				playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 			}
@@ -446,7 +451,8 @@ void Player::BehaviorAttackUpdate(){
 				postureVec_ = sub;
 
 
-				Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+				Matrix4x4 directionTodirection_;
+				directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 				playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 
@@ -560,7 +566,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		postureVec_.y = 0;
 		postureVec_ = Vector3::Normalize(postureVec_);
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 	}
@@ -571,7 +578,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
 
 	}

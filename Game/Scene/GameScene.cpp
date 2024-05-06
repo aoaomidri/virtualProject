@@ -23,7 +23,6 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");
 	textureManager_->Load("resources/texture/actionText.png");//20
-	textureManager_->Load("resources/texture/LockOn.png");//21
 }
 
 void GameScene::SoundLoad(){
@@ -46,7 +45,7 @@ void GameScene::SpriteInitialize(){
 	comboSprite_->Initialize(textureHandle);
 
 	selectSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/LockOn.png");
+	textureHandle = textureManager_->Load("resources/texture/select.png");
 	selectSprite_->Initialize(textureHandle);
 
 
@@ -389,6 +388,8 @@ void GameScene::Draw3D(){
 		for (const auto& enemy : enemies_) {
 			enemy->Draw(followCamera_->GetViewProjection());
 		}
+
+		lockOn_->Draw();
 		break;
 	case SceneName::CLEAR:
 		
@@ -421,7 +422,7 @@ void GameScene::Draw2D(){
 		actionTextSprite_->Draw();
 		attackSprite_->Draw();
 		fadeSprite_->Draw();
-		lockOn_->Draw();
+		
 		break;
 	case SceneName::CLEAR:
 		clearSprite_->Draw();

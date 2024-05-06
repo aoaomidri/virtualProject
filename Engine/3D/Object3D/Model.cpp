@@ -4,12 +4,14 @@
 #include<fstream>
 #include<sstream>
 #include<filesystem>
+#include"Matrix.h"
 
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
 	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	CommandList->IASetIndexBuffer(&indexBufferView_);
 }
 
 Model* Model::GetInstance(){
@@ -202,27 +204,29 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 		assert(mesh->HasNormals());//法線がないMeshは今回は非対応
 		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは今回は非対応
 		//ここからMeshの中身(face)の解析を行っていく
-		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
-			aiFace& face = mesh->mFaces[faceIndex];
-			assert(face.mNumIndices == 3);//三角形のみサポート
-			//ここからFaceの中身(Vertex)の解析を行っていく
-			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-				VertexData vertex;
-				vertex.position = { position.x,position.y,position.z,1.0f };
-				vertex.normal = { normal.x,normal.y,normal.z };
-				vertex.texcoord = { texcoord.x,texcoord.y };
-				//aiProcess_MakeLeftHandedはz*=-1で、右手→左手に変換するので手動で対応
-				vertex.position.x *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				modelData_.vertices.push_back(vertex);
+		modelData_.vertices.resize(mesh->mNumVertices);//最初に頂点数分のメモリを確保していく
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
 
+			modelData_.vertices[vertexIndex].position = { -position.x,position.y,position.z,1.0f };
+			modelData_.vertices[vertexIndex].normal = { -normal.x,normal.y,normal.z };
+			modelData_.vertices[vertexIndex].texcoord = { texcoord.x,texcoord.y };
+
+		}
+		//Indexを解析していく
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex){
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);
+
+			for (uint32_t element = 0; element < face.mNumIndices; ++element){
+				uint32_t vertexIndex = face.mIndices[element];
+				modelData_.indices.push_back(vertexIndex);
 			}
 
 		}
+
 	}
 
 	//4,Materialの解析
@@ -258,17 +262,38 @@ void Model::MakeVertexResource(){
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
 	std::memcpy(vertexDate_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+
+
+	uint32_t indexSizeInBytes = static_cast<uint32_t>(sizeof(uint32_t) * modelData_.indices.size());
+
+	//インデックスリソースの作成
+	indexResource_ = CreateBufferResource(device_, indexSizeInBytes);
+
+	//リソースの先頭のアドレスから使う
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	//使用するリソースのサイズはindexの数
+	indexBufferView_.SizeInBytes = indexSizeInBytes;
+	//1頂点当たりのサイズ
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndex_));
+	std::memcpy(mappedIndex_, modelData_.indices.data(), indexSizeInBytes);
+	/*std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
+
+	indexResource_->Unmap(0, nullptr);*/
 }
 
 Model::Node Model::ReadNode(aiNode* node){
 	Node result;
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation;//nodeのlocalMatrixを取得
-	aiLocalMatrix.Transpose();//列ベクトル形式を行ベクトル形式に転置
-	for (int i = 0; i < 4; i++){
-		for (int j = 0; j < 4; j++){
-			result.localMatrix.m[i][j] = aiLocalMatrix[i][j];
-		}
-	}
+	aiVector3D scale, translate;
+	aiQuaternion rotate;
+
+	node->mTransformation.Decompose(scale, rotate, translate);
+	result.transform.scale = { scale.x,scale.y,scale.z };
+	result.transform.rotate.quaternion_ = { rotate.x,-rotate.y,-rotate.z,rotate.w };
+	result.transform.translate = { -translate.x,translate.y,translate.z };
+	result.localMatrix =Matrix::GetInstance()->MakeAffineMatrix(result.transform);
+	
 	result.name = node->mName.C_Str();//node名を格納
 	result.children.resize(node->mNumChildren);//子供の数だけ確保
 	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++){
@@ -277,6 +302,25 @@ Model::Node Model::ReadNode(aiNode* node){
 
 	}
 	return result;
+}
+
+Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
+	/*Skeleton skeleton;
+	skeleton.root=create*/
+
+
+	return Model::Skeleton();
+
+}
+
+int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints){
+	/*Joint joint;
+	joint.name = node.name;
+	joint.localMatrix = node.localMatrix;
+	joint.skeltonSpaceMatrix=*/
+
+
+	return 0;
 }
 
 Model::Animation Model::LoadAnimationFile(const std::string& filename){

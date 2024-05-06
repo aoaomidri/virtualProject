@@ -63,7 +63,8 @@ void FollowCamera::Update(){
 		sub.y = 0;
 		postureVec_ = sub;
 
-		Matrix4x4 newMatrix= Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
+		Matrix4x4 newMatrix;
+		newMatrix.DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
 		destinationAngleX_ = 0.15f;
 	}
@@ -82,7 +83,7 @@ void FollowCamera::Update(){
 		}
 	}
 	
-	if (input_->GetConnectPad()) {
+	/*if (input_->GetConnectPad()) {*/
 		destinationAngleX_ += cameraMove_.x;
 		destinationAngleY_ += cameraMove_.y;
 
@@ -98,7 +99,7 @@ void FollowCamera::Update(){
 			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
 		viewProjection_.rotation_.x =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
-	}
+	//}
 	rootOffset = { 0.0f, 0.0f, distance };
 	baseOffset = rootOffset;
 
@@ -149,12 +150,13 @@ Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	return offset_;
 }
 
-void FollowCamera::SetTarget(const Transform* target){
+void FollowCamera::SetTarget(const EulerTransform* target){
 	target_ = target;
 	Reset();
 }
 
 void FollowCamera::DrawImgui(){
+#ifdef _DEBUG
 	ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
@@ -165,5 +167,6 @@ void FollowCamera::DrawImgui(){
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
 
 	ImGui::End();
+#endif
 }
 

@@ -138,11 +138,13 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 }
 
 void Enemy::DrawImgui() {
+#ifdef _DEBUG
 	ImGui::Begin("敵の変数");
 
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 
 	ImGui::End();
+#endif
 }
 
 void Enemy::onFlootCollision(OBB obb){
@@ -342,7 +344,7 @@ void Enemy::MotionUpdate(){
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 
-	partsTransform_.rotate.x += 0.3f;
+	//partsTransform_.rotate.x += 0.3f;
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
@@ -409,7 +411,8 @@ void Enemy::RootMotion(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 
@@ -507,7 +510,9 @@ void Enemy::EnemyRun(){
 		sub = Vector3::Normalize(sub);
 		postureVec_ = sub;
 
-		Matrix4x4 directionTodirection_ = Matrix::GetInstance()->DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {
@@ -536,7 +541,7 @@ void Enemy::DeadMotion(){
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 	
-	partsTransform_.rotate.x += 0.3f;
+	//partsTransform_.rotate.x += 0.3f;
 	if (partsTransform_.scale.x > 0.0f) {
 		partsTransform_.scale -= 0.0075f;
 	}

@@ -61,7 +61,12 @@ public:
 
 private:
 	//ロックオンマーク用スプライト
-	std::unique_ptr<Sprite> lockOnMark_;
+
+	std::unique_ptr<Object3D> LockOnObj_;
+
+	EulerTransform lockOnTransfrom_;
+
+	Matrix4x4 lockOnMatrix_;
 
 	const ViewProjection* viewProjection_ = nullptr;
 

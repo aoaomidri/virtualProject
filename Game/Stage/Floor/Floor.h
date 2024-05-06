@@ -11,7 +11,7 @@
 class Floor{
 public:
 	//初期化
-	void Initialize(Transform transform);
+	void Initialize(EulerTransform transform);
 	//更新処理
 	void Update();
 	//描画
@@ -21,7 +21,7 @@ public:
 
 public:
 	//Getter
-	const Transform& GetTransform() const { return floorTransform_; }
+	const EulerTransform& GetTransform() const { return floorTransform_; }
 
 	bool GetIsMove() { return isMove_; }
 
@@ -32,7 +32,7 @@ public:
 private:
 	Object3D* floorModel_ = nullptr;
 
-	Transform floorTransform_{};
+	EulerTransform floorTransform_{};
 
 	OBB floorOBB_;
 

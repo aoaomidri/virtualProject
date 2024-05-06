@@ -12,13 +12,13 @@
 
 
 class DirectXCommon{
-public:
+private:
 	DirectXCommon() = default;
 	~DirectXCommon() = default;
 	DirectXCommon(const DirectXCommon& DirectXCommon) = delete;
 	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
-
+public:
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 

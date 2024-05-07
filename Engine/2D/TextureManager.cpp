@@ -158,7 +158,7 @@ void TextureManager::DrawCopy(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
 	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, renderTextureSrvHandleGPU);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
 	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);

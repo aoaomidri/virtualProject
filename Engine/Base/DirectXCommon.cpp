@@ -245,6 +245,8 @@ void DirectXCommon::UpdateFixFPS(){
 }
 
 void DirectXCommon::PreDrawRenderTexture(){
+	//これから書き込むバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 	//描画用のDescriptorHeapの設定
 
@@ -310,14 +312,6 @@ void DirectXCommon::PreDrawCopy(){
 void DirectXCommon::PreDrawSwapChain(){
 	//これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-	////バリアを張る対象のリソース。
-	//renderTexBarrier.Transition.pResource = renderTextureResouce.Get();
-	////遷移前(現在)のResouceState
-	//renderTexBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	////遷移後のResouceState
-	//renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	////TransitionBarrierを張る
-	//commandList->ResourceBarrier(1, &renderTexBarrier);
 
 	//今回のバリアはTransition
 	swapBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

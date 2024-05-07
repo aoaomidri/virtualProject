@@ -39,7 +39,7 @@ void GraphicsPipeline::InitializeCopy(const std::wstring& VSname, const std::wst
 	makeRootSignatureCopy(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayoutCopy();
 	makeRasterizerState(false);
-	makeBlendState(kBlendModeNormal);
+	makeBlendState(kBlendModeNone);
 	ShaderCompile(VSname, PSname);
 	makeDepthStencilCopy();
 
@@ -193,22 +193,15 @@ void GraphicsPipeline::makeRootSignatureCopy(ID3D12Device* device){
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[3] = {};
-	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[0].Descriptor.ShaderRegister = 0;
-
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 0;
+	D3D12_ROOT_PARAMETER rootParameter[1] = {};
 
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
 
-	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[0].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};

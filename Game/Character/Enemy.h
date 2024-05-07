@@ -169,7 +169,7 @@ private:
 
 	bool isNoLife_ = false;
 
-	int enemyLife_ = 100;
+	int enemyLife_ = 10;
 
 	Vector3 particleVec_[particleNum_];
 

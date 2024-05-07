@@ -16,7 +16,7 @@ void TextureManager::Initialize() {
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/CopyImage.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
+	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
 	
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);

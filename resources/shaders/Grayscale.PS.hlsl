@@ -12,7 +12,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 
 	output.color = gTexture.Sample(gSampler,input.texcoord);
-	// output.color.w = 1.0f;
+	float32_t value = dot(output.color.rgb,float32_t3(0.2125f,0.7154f,0.0721f));
+	output.color.rgb = float32_t3(value,value,value);
 
 	return output;
 }

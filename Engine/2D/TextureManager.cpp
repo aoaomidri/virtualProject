@@ -16,7 +16,7 @@ void TextureManager::Initialize() {
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineCopy_->Initialize(L"resources/shaders/CopyImage.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl", true);
+	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/CopyImage.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
 	
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -149,17 +149,23 @@ void TextureManager::PostDrawParticle(){
 
 }
 
-void TextureManager::DrawCopy(){
-	////RootSignatureを設定。PSOに設定しているが別途設定が必要
-	//DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
-	//DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
-	//DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2,SendGPUDescriptorHandle(15));
-	////commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+void TextureManager::PreDrawCopy(){
+	MakeShaderResourceView();
+}
 
-	//DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+void TextureManager::DrawCopy(){
+	
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
+	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, renderTextureSrvHandleGPU);
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
 void TextureManager::MakeShaderResourceView() {
+
 	recderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	recderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	recderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;

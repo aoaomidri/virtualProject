@@ -54,9 +54,10 @@ void WholeGame::Draw(){
 	gameScene_->DrawParticle();
 	//2D描画
 	gameScene_->Draw2D();
-
+	
+	dxCom_->PreDrawCopy();
+	//TextureManager::GetInstance()->DrawCopy();
 	dxCom_->PreDrawSwapChain();
-	TextureManager::GetInstance()->DrawCopy();
 	imguiManager_->Draw();
 	dxCom_->PostDraw();
 }

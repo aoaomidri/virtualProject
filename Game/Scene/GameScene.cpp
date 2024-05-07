@@ -82,14 +82,14 @@ void GameScene::ObjectInitialize() {
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
 
-	skyDomeObj_ = std::make_unique<Object3D>();
+	/*skyDomeObj_ = std::make_unique<Object3D>();
 	skyDomeObj_->Initialize("skyDome");
 
 	skyDomeTrnasform_ = {
 		{100.0f,100.0f,100.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
-	};
+	};*/
 
 }
 
@@ -123,6 +123,7 @@ void GameScene::Initialize(){
 
 
 	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
+	textureManager_->MakeShaderResourceView();
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -334,8 +335,8 @@ void GameScene::Update(){
 		assert(0);
 	}
 	fadeSprite_->color_.w = fadeAlpha_;
-	skyDomeTrnasform_.rotate.y += 0.001f;
-	skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
+	//skyDomeTrnasform_.rotate.y += 0.001f;
+	//skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
 
 	if (fadeAlpha_>=1.0f){
 		fadeAlpha_ = 1.0f;
@@ -372,8 +373,8 @@ void GameScene::DrawParticle(){
 void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
-	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	skyDomeObj_->Draw();
+	//skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
+	//skyDomeObj_->Draw();
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {

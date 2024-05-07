@@ -56,6 +56,8 @@ public:
 
 	void PostDrawParticle();
 
+	void PreDrawCopy();
+
 	void DrawCopy();
 
 	void MakeShaderResourceView();

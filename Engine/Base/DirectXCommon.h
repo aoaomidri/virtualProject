@@ -30,6 +30,9 @@ public:
 	//RenderTextureに対して描画前処理
 	void PreDrawRenderTexture();
 
+	void PreDrawCopy();
+
+
 	//SwapChainに対して描画前処理
 	void PreDrawSwapChain();
 

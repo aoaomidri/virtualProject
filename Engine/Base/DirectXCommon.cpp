@@ -245,20 +245,6 @@ void DirectXCommon::UpdateFixFPS(){
 }
 
 void DirectXCommon::PreDrawRenderTexture(){
-	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = backBuffers_[backBufferIndex].Get();
-	//遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	//遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
 
 	//描画用のDescriptorHeapの設定
 
@@ -307,30 +293,44 @@ void DirectXCommon::PreDrawRenderTexture(){
 }
 
 void DirectXCommon::PreDrawCopy(){
-	
+	//今回のバリアはTransition
+	renderTexBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにしておく
+	renderTexBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	renderTexBarrier.Transition.pResource = renderTextureResouce.Get();
 	//遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	renderTexBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+	commandList->ResourceBarrier(1, &renderTexBarrier);
 }
 
 void DirectXCommon::PreDrawSwapChain(){
 	//これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	////バリアを張る対象のリソース。
+	//renderTexBarrier.Transition.pResource = renderTextureResouce.Get();
+	////遷移前(現在)のResouceState
+	//renderTexBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	////遷移後のResouceState
+	//renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	////TransitionBarrierを張る
+	//commandList->ResourceBarrier(1, &renderTexBarrier);
+
 	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	swapBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	swapBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = backBuffers_[backBufferIndex].Get();
+	swapBarrier.Transition.pResource = backBuffers_[backBufferIndex].Get();
 	//遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	swapBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	//遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	swapBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+	commandList->ResourceBarrier(1, &swapBarrier);
 
 
 	//描画用のDescriptorHeapの設定
@@ -358,21 +358,31 @@ void DirectXCommon::PreDrawSwapChain(){
 	//ビューポートの設定
 	commandList->RSSetViewports(1, &viewport);
 	//シザリング矩形の設定
-	commandList->RSSetScissorRects(1, &scissorRect);
-
-
-	
-	
+	commandList->RSSetScissorRects(1, &scissorRect);	
 
 }
 
 void DirectXCommon::PostDraw(){
 	
+
+	//今回のバリアはTransition
+	renderTexBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにしておく
+	renderTexBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	renderTexBarrier.Transition.pResource = renderTextureResouce.Get();
+	//遷移前(現在)のResouceState
+	renderTexBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//遷移後のResouceState
+	renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &renderTexBarrier);
+
 	//今回はRenderTargetからPresentにする
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	swapBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	swapBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	//TransitionのBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+	commandList->ResourceBarrier(1, &swapBarrier);
 
 	//コマンドリストの内容を確定させる
 	hr = commandList->Close();

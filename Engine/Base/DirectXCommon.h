@@ -167,7 +167,10 @@ private://メンバ変数
 
 
 	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+	D3D12_RESOURCE_BARRIER renderTexBarrier{};
+
+	//TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER swapBarrier{};
 
 	D3D12_VIEWPORT viewport{};
 

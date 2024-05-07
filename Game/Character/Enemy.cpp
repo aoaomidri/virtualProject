@@ -348,6 +348,7 @@ void Enemy::MotionUpdate(){
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
+		TextureManager::GetInstance()->SetPostEffect(TextureManager::PostEffect::Gray);
 		behaviorRequest_ = Behavior::kDead;
 	}
 }

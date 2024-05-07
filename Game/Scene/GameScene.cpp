@@ -82,14 +82,14 @@ void GameScene::ObjectInitialize() {
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
 
-	/*skyDomeObj_ = std::make_unique<Object3D>();
+	skyDomeObj_ = std::make_unique<Object3D>();
 	skyDomeObj_->Initialize("skyDome");
 
 	skyDomeTrnasform_ = {
 		{100.0f,100.0f,100.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
-	};*/
+	};
 
 }
 
@@ -313,7 +313,8 @@ void GameScene::Update(){
 		for (const auto& enemy : enemies_) {
 			enemy->Respawn({ 0, 2.0f, 20.0f });
 		}
-
+		
+		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
 		
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			isFade_ = true;
@@ -335,8 +336,8 @@ void GameScene::Update(){
 		assert(0);
 	}
 	fadeSprite_->color_.w = fadeAlpha_;
-	//skyDomeTrnasform_.rotate.y += 0.001f;
-	//skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
+	skyDomeTrnasform_.rotate.y += 0.001f;
+	skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
 
 	if (fadeAlpha_>=1.0f){
 		fadeAlpha_ = 1.0f;
@@ -373,8 +374,8 @@ void GameScene::DrawParticle(){
 void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
-	//skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	//skyDomeObj_->Draw();
+	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
+	skyDomeObj_->Draw();
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
@@ -550,7 +551,17 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat4("back : 色", &backSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 	//particle_->DrawImgui("ステージパーティクル");
-	
+	ImGui::Begin("ポストエフェクト");
+	if (ImGui::Button("None")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
+	}
+	if (ImGui::Button("Gray")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Gray);
+	}
+	if (ImGui::Button("Sepia")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Sepia);
+	}
+	ImGui::End();
 
 
 #endif // _DEBUG	
@@ -585,6 +596,7 @@ void GameScene::AllCollision(){
 		}
 
 		if (enemy->GetIsDead()) {
+			
 			//audio_->PauseWave(gameBGM);
 			sceneNum_ = SceneName::CLEAR;
 		}

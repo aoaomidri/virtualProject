@@ -17,6 +17,10 @@ void TextureManager::Initialize() {
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
+	GraphicsPipelineGray_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Grayscale.PS.hlsl");
+	GraphicsPipelineSepia_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Sepiascale.PS.hlsl");
 	
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -156,8 +160,24 @@ void TextureManager::PreDrawCopy(){
 void TextureManager::DrawCopy(){
 	
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+	if (selectPost_ == 0 || selectPost_ >= PostEffect::Over) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+
+	}
+	else if (selectPost_ == PostEffect::Gray) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineGray_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineGray_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::Sepia) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepia_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepia_->GetPipeLineState());
+	}
+	else {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+	}
+
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
 	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 

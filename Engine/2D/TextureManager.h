@@ -38,6 +38,8 @@ public:
 
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
+	
+
 	//void Load(const std::string& filePath, uint32_t index);
 
 	uint32_t Load(const std::string& filePath);
@@ -61,6 +63,18 @@ public:
 	void DrawCopy();
 
 	void MakeShaderResourceView();
+
+public:
+	enum  PostEffect{
+		None,//なし
+		Gray,//グレースケール
+		Sepia,//セピア調
+		Over,//これ以上ないことを表す
+	};
+
+	void SetPostEffect(const PostEffect& name) {
+		selectPost_ = name;
+	}
 
 private:
 	// DirectX12のTextureResourceを作る
@@ -95,7 +109,8 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineCopy_;
-	
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGray_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepia_;
 
 
 	ComPtr<ID3D12Resource> textureResource;
@@ -123,6 +138,9 @@ private:
 
 	//SRV
 	ID3D12Device* device_ = nullptr;
+
+	//どのポストエフェクトを選択しているか
+	uint32_t selectPost_ = 0;
 
 private:
 	/// <summary>

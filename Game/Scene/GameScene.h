@@ -112,13 +112,13 @@ private:
 	uint32_t gameBGM{};
 
 	//天球
-	//std::unique_ptr<Object3D> skyDomeObj_;
+	std::unique_ptr<Object3D> skyDomeObj_;
 
-	//std::unique_ptr<Model> skyDomeModel_;
+	std::unique_ptr<Model> skyDomeModel_;
 
-	//EulerTransform skyDomeTrnasform_;
+	EulerTransform skyDomeTrnasform_;
 
-	//Matrix4x4 skyDomeMatrix_;
+	Matrix4x4 skyDomeMatrix_;
 
 	//スプライト関連
 	//タイトル

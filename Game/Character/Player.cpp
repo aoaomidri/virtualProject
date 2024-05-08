@@ -46,7 +46,7 @@ void Player::Initialize(){
 		Vector3 trans{};
 		trans = { 0.1f,0.1f,0.1f };
 		debugSphere_[i] = std::make_unique<Object3D>();
-		debugSphere_[i]->Initialize("sphere");
+		debugSphere_[i]->Initialize("box");
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeScaleMatrix(trans);
 	}
 

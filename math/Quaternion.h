@@ -4,6 +4,7 @@
 class Quaternion{
 public:
 	Quaternion();
+	Quaternion(const Vector4& vec);
 	~Quaternion();
 
 	static Quaternion* GetInstance();

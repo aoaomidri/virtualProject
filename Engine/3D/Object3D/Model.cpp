@@ -1,5 +1,6 @@
 #include "Model.h"
 #include"DirectXCommon.h"
+#include"TextureManager.h"
 #include<cassert>
 #include<fstream>
 #include<sstream>
@@ -239,6 +240,27 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 			}
 
 		}
+		//SkinCluster構築用のデータ取得を追加
+		for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
+			aiBone* bone = mesh->mBones[boneIndex];
+			std::string jointName = bone->mName.C_Str();
+			JointWeightData& jointWeightData = modelData_.skinClusterData[jointName];
+
+			aiMatrix4x4 bindPoseMatrixAssimp = bone->mOffsetMatrix.Inverse();
+			aiVector3D scale, translate;
+			aiQuaternion rotate;
+			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+			Matrix4x4 bindPoseMatrix = 
+				Matrix::GetInstance()->MakeAffineMatrix(
+					Vector3({ scale.x,scale.y,scale.z }), 
+					Quaternion({ rotate.x,-rotate.y,-rotate.z,rotate.w }), 
+					Vector3({ -translate.x,translate.y,translate.z }));
+
+			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex){
+				jointWeightData.vertexWeights.push_back({ bone->mWeights[weightIndex].mWeight,bone->mWeights[weightIndex].mVertexId });
+			}
+
+		}
 
 	}
 
@@ -328,6 +350,44 @@ Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
 
 	return skeleton;
 
+}
+
+Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, uint32_t descriptorSize){
+	SkinCluster skinCluster;
+
+	//palette用のResourceを確保
+	skinCluster.paletteResouce = CreateBufferResource(device_, sizeof(WellForGPU) * skeleton.joints.size());
+	WellForGPU* mappedPalette = nullptr;
+	skinCluster.paletteResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
+	skinCluster.mappedPalette = { mappedPalette,skeleton.joints.size() };//spanを使ってアクセスするようにする
+	//テクスチャまでで260程利用するので270から入れ始める
+	skinCluster.paletteSrvHandle.first = TextureManager::GetInstance()->GetCPUDescriptorHandle(descriptorSize, 270);
+	skinCluster.paletteSrvHandle.second = TextureManager::GetInstance()->GetGPUDescriptorHandle(descriptorSize, 270);
+	
+	//palette用のsrvを作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC paretteSrvDesc{};
+	paretteSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	paretteSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	paretteSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	paretteSrvDesc.Buffer.FirstElement = 0;
+	paretteSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	paretteSrvDesc.Buffer.NumElements = UINT(skeleton.joints.size());
+	paretteSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
+	device_->CreateShaderResourceView(skinCluster.paletteResouce.Get(), &paretteSrvDesc, skinCluster.paletteSrvHandle.first);
+	
+	//influence用のResourceを確保
+
+	
+	//influence用のVBVを作成
+
+	
+	//InerseBindPoseMatrixの保存領域を作成
+
+	
+	//ModelDataのSkinCluster情報を解析してinfluenceの中身を埋める
+
+
+	return skinCluster;
 }
 
 int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints){

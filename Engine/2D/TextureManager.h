@@ -76,6 +76,14 @@ public:
 		selectPost_ = name;
 	}
 
+public:
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
+		uint32_t descriptorSize, uint32_t index);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
+		uint32_t descriptorSize, uint32_t index);
+
 private:
 	// DirectX12のTextureResourceを作る
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
@@ -89,11 +97,7 @@ private:
 
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(
-		uint32_t descriptorSize, uint32_t index);
 
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
-		uint32_t descriptorSize, uint32_t index);
 
 private:
 	//SRVの最大個数

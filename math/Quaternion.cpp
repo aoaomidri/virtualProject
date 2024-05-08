@@ -6,6 +6,12 @@ Quaternion::Quaternion(){
 	w = 0.0f;
 }
 
+Quaternion::Quaternion(const Vector4& vec){
+	quaternion_ = vec;
+	vector_ = { vec.x,vec.y,vec.z };
+	w = vec.w;
+}
+
 Quaternion::~Quaternion(){
 
 

@@ -37,6 +37,19 @@ void Player::Initialize(){
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
 	playerSkinAnimObj_->Initialize("simpleSkin");
 
+	debugJoints_ = playerSkinAnimObj_->GetJoint();
+
+	debugSphere_.resize(debugJoints_.size());
+	debugMatrix_.resize(debugJoints_.size());
+
+	for (size_t i = 0; i < debugJoints_.size(); i++){
+		Vector3 trans{};
+		trans = { 0.1f,0.1f,0.1f };
+		debugSphere_[i] = std::make_unique<Object3D>();
+		debugSphere_[i]->Initialize("sphere");
+		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeScaleMatrix(trans);
+	}
+
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize("AnimatedCube");
 
@@ -140,6 +153,8 @@ void Player::Update(){
 	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
+	
+
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
 	}
@@ -147,8 +162,17 @@ void Player::Update(){
 
 void Player::Draw(const ViewProjection& viewProjection){
 
-	playerObj_->Update(playerMatrix_, viewProjection);
-	playerObj_->Draw();
+	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
+	playerSkinAnimObj_->Draw();
+	for (size_t i = 0; i < debugJoints_.size(); i++) {
+		EulerTransform trans{};
+		trans.translate = { 0.0f,3.0f,0.0f };
+		trans.scale = { 0.5f,0.5f,0.5f };
+		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeAffineMatrix(trans);
+
+		debugSphere_[i]->Update(debugMatrix_[i], viewProjection);
+		debugSphere_[i]->Draw();
+	}
 
 	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->Update(weaponMatrix_, viewProjection);

@@ -186,6 +186,8 @@ private:
 
 	std::vector<std::unique_ptr<Object3D>> debugSphere_;
 
+	std::vector<Model::Joint> debugJoints_;
+
 	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
 	//武器のモデル

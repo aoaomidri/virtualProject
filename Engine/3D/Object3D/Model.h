@@ -121,9 +121,15 @@ public:
 
 	static Model* GetInstance();
 	//modelの読み込み
+	//ファイルの名前と一致しているならば
 	static std::unique_ptr<Model> LoadModelFile(const std::string& filename);
-
+	//ファイルの名前が違うのであれば
+	static std::unique_ptr<Model> LoadModelFile(const std::string& filename, const std::string& modelName);
+	// ファイルの名前と一致しているならば
 	static Model::Animation LoadAnimationFile(const std::string& filename);
+	//ファイルの名前が違うのであれば
+	static Model::Animation LoadAnimationFile(const std::string& filename, const std::string& modelName);
+
 
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
@@ -155,7 +161,7 @@ private:
 	//OBJファイルから3Dモデルを読み込む(非公開)
 	void LoadFromOBJInternal(const std::string& filename);
 
-	void LoadFromOBJInternalAssimp(const std::string& filename);
+	void LoadFromOBJInternalAssimp(const std::string& filename, const std::string& modelName);
 
 	void MakeVertexResource();
 

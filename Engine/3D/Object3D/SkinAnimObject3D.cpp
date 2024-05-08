@@ -34,6 +34,35 @@ void SkinAnimObject3D::Initialize(const std::string fileName) {
 	
 }
 
+void SkinAnimObject3D::Initialize(const std::string fileName, const std::string& modelName) {
+	makeResource();
+
+	isDraw_ = true;
+
+	materialDate->enableLighting = false;
+
+	model_ = Model::LoadModelFile(fileName, modelName);
+
+	animation_ = Model::LoadAnimationFile(fileName, modelName);
+
+	skeleton_ = model_->CreateSkeleton(model_->GetNode());
+
+	if (model_->GetMaterial().textureFilePath != "") {
+		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
+	}
+	else {
+		texHandle_ = 0;
+	}
+
+	transform = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+
+
+}
+
 void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;

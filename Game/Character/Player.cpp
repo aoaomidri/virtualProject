@@ -35,7 +35,7 @@ void Player::Initialize(){
 	input_ = Input::GetInstance();
 
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
-	playerSkinAnimObj_->Initialize("simpleSkin");
+	playerSkinAnimObj_->Initialize("human", "sneakWalk");
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
@@ -63,7 +63,7 @@ void Player::Initialize(){
 	particle_->Initialize();
 
 	playerTransform_ = {
-		.scale = {1.0f,1.0f,1.0f},
+		.scale = {0.05f,0.05f,0.05f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.8f,0.0f}
 	};
@@ -163,11 +163,11 @@ void Player::Update(){
 void Player::Draw(const ViewProjection& viewProjection){
 
 	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
-	playerSkinAnimObj_->Draw();
+	//playerSkinAnimObj_->Draw();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
 		EulerTransform trans{};
-		trans.translate = { 0.0f,3.0f,0.0f };
-		trans.scale = { 0.5f,0.5f,0.5f };
+		trans.translate = { 0.0f,0.0f,0.0f };
+		trans.scale = { 5.0f,5.0f,5.0f };
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeAffineMatrix(trans);
 
 		debugSphere_[i]->Update(debugMatrix_[i], viewProjection);

@@ -37,7 +37,19 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 	//1,中で必要になる変数の宣言
 	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
 	
-	modelData->LoadFromOBJInternalAssimp(filename);
+	modelData->LoadFromOBJInternalAssimp(filename, filename);
+
+	modelData->MakeVertexResource();
+
+	//4,ModelDataを返す
+	return modelData;
+}
+
+std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename, const std::string& modelName){
+	//1,中で必要になる変数の宣言
+	std::unique_ptr<Model> modelData = std::make_unique<Model>();//構築するModelData
+
+	modelData->LoadFromOBJInternalAssimp(filename, modelName);
 
 	modelData->MakeVertexResource();
 
@@ -192,7 +204,7 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 	}
 }
 
-void Model::LoadFromOBJInternalAssimp(const std::string& filename){
+void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::string& modelName) {
 	//2,ファイルを開く
 	Assimp::Importer importer;
 	std::string extension;
@@ -208,7 +220,7 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename){
 			break;
 		}
 	}
-	std::filesystem::path filepath = ResourcesPath_ + filename + "/" + filename + extension;
+	std::filesystem::path filepath = ResourcesPath_ + filename + "/" + modelName + extension;
 	const aiScene* scene = importer.ReadFile(filepath.string(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes());//メッシュがないのは対応しない
 
@@ -385,6 +397,75 @@ Model::Animation Model::LoadAnimationFile(const std::string& filename){
 
 		//positionについて
 		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex){
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+			KeyframeVector3 pos{};
+
+			pos.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//此処も秒に変換
+			pos.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手->左手
+
+			nodeAnimation.translate.push_back(pos);
+		}
+
+		//rotateについて
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; ++keyIndex) {
+			aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+			KeyframeQuaternion rotate{};
+
+			rotate.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//此処も秒に変換
+			rotate.value.quaternion_ = { keyAssimp.mValue.x,keyAssimp.mValue.y * -1.0f ,keyAssimp.mValue.z * -1.0f ,keyAssimp.mValue.w }; //右手->左手
+
+			nodeAnimation.rotate.push_back(rotate);
+		}
+
+		//scaleについて
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+			KeyframeVector3 scale{};
+
+			scale.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);//此処も秒に変換
+			scale.value = { keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };//右手->左手
+
+			nodeAnimation.scale.push_back(scale);
+		}
+	}
+	//解析完了
+	return animation;
+}
+
+Model::Animation Model::LoadAnimationFile(const std::string& filename, const std::string& modelName){
+	Model::Animation animation;//今回作るアニメーション
+	Assimp::Importer importer;
+	std::string extension;
+	std::filesystem::directory_iterator dIterator{ "resources/Model/" + filename + "/" };
+	for (const auto& entry : dIterator) {
+		const auto& path = entry.path();
+		if (path.extension() == ".obj") {
+			extension = ".obj";
+			return Model::Animation();
+		}
+		else if (path.extension() == ".gltf") {
+			extension = ".gltf";
+			break;
+		}
+	}
+	std::filesystem::path filepath = "resources/Model/" + filename + "/" + modelName + extension;
+
+	const aiScene* scene = importer.ReadFile(filepath.string().c_str(), 0);
+	if (scene->mNumAnimations == 0) {
+		return Model::Animation();
+	}
+	assert(scene->mNumAnimations != 0);//アニメーションがない
+	aiAnimation* animationAssimp = scene->mAnimations[0];//最初のアニメーションだけ採用。もちろん複数対応するに越したことはない
+	animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);//時間の単位を秒に変換
+
+	//assimpでは個々のNodeのAnimationをchannelと読んでいるのでchannelを回してNodeAnimationの情報をとってくる
+	for (uint32_t channelIndex = 0; channelIndex < animationAssimp->mNumChannels; ++channelIndex) {
+
+		aiNodeAnim* nodeAnimationAssimp = animationAssimp->mChannels[channelIndex];
+		NodeAnimation& nodeAnimation = animation.nodeAnimations[nodeAnimationAssimp->mNodeName.C_Str()];
+
+		//positionについて
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex) {
 			aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
 			KeyframeVector3 pos{};
 

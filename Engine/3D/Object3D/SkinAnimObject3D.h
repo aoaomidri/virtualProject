@@ -17,6 +17,8 @@ public:
 	};
 
 	void Initialize(const std::string fileName);
+
+	void Initialize(const std::string fileName, const std::string& modelName);
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 

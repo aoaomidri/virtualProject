@@ -115,8 +115,6 @@ public:
 
 	
 public:
-	void Update(Skeleton& skeleton);
-
 	void Draw(ID3D12GraphicsCommandList* CommandList);
 
 	static Model* GetInstance();

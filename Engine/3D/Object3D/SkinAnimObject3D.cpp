@@ -47,6 +47,8 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 	skeleton_ = model_->CreateSkeleton(model_->GetNode());
 
+	SkeletonUpdate(skeleton_);
+
 	if (model_->GetMaterial().textureFilePath != "") {
 		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
 	}
@@ -73,7 +75,7 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 		animationTime += 1.0f / 60.0f;
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
-		model_->Update(skeleton_);
+		SkeletonUpdate(skeleton_);
 		
 	}
 	else {
@@ -115,6 +117,19 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
+void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
+	//全てのJointを更新。親が若いので通常ループで処理可能になっている
+	for (Model::Joint& joint : skeleton.joints) {
+		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
+		if (joint.parent) {//親がいれば親の行列を掛ける
+			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
+		}
+		else {//親がいないのでlocalMatrixとskeletonspacematrixは一致する
+			joint.skeltonSpaceMatrix = joint.localMatrix;
+		}
+	}
+}
+
 void SkinAnimObject3D::Draw() {
 
 	if (!isDraw_) {
@@ -138,9 +153,16 @@ void SkinAnimObject3D::Draw() {
 void SkinAnimObject3D::DrawImgui(std::string name){
 #ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
+	ImGui::Text("アニメーションの時間 = %.1f", animationTime);
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	for (int i = 0; i < 4; i++){
-		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
+		ImGui::DragFloat4(("LocalMat1" + std::to_string(i)).c_str(), skeleton_.joints[0].skeltonSpaceMatrix.m[i], 0.1f);
+	}
+	for (int i = 0; i < 4; i++) {
+		ImGui::DragFloat4(("LocalMat2" + std::to_string(i)).c_str(), skeleton_.joints[1].skeltonSpaceMatrix.m[i], 0.1f);
+	}
+	for (int i = 0; i < 4; i++) {
+		ImGui::DragFloat4(("LocalMat3" + std::to_string(i)).c_str(), skeleton_.joints[2].skeltonSpaceMatrix.m[i], 0.1f);
 	}
 	ImGui::End();
 #endif

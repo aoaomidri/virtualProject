@@ -63,7 +63,7 @@ void Player::Initialize(){
 	particle_->Initialize();
 
 	playerTransform_ = {
-		.scale = {0.05f,0.05f,0.05f},
+		.scale = {5.f,5.f,5.f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.8f,0.0f}
 	};
@@ -163,7 +163,8 @@ void Player::Update(){
 void Player::Draw(const ViewProjection& viewProjection){
 
 	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
-	//playerSkinAnimObj_->Draw();
+	playerSkinAnimObj_->Draw();
+	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
 		EulerTransform trans{};
 		trans.translate = { 0.0f,0.0f,0.0f };
@@ -200,7 +201,7 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 
 void Player::DrawImgui(){
 #ifdef _DEBUG
-	ImGui::Begin("プレイヤー");
+	ImGui::Begin("プレイヤーのステータス");
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_);
@@ -214,7 +215,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
 	ImGui::End();
-	playerObj_->DrawImgui("プレイヤー");
+	playerSkinAnimObj_->DrawImgui("プレイヤー");
 	particle_->DrawImgui("プレイヤーパーティクル");
 #endif
 }

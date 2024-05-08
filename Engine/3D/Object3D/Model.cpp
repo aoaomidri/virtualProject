@@ -9,19 +9,6 @@
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
-void Model::Update(Skeleton& skeleton){
-	//全てのJointを更新。親が若いので通常ループで処理可能になっている
-	for (Joint& joint : skeleton.joints) {
-		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
-		if (joint.parent){//親がいれば親の行列を掛ける
-			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
-		}
-		else {//親がいないのでlocalMatrixとskeletonspacematrixは一致する
-			joint.skeltonSpaceMatrix = joint.localMatrix;
-		}
-	}
-
-}
 
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
 	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -338,8 +325,6 @@ Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
 	for (const Joint& joint : skeleton.joints) {
 		skeleton.jointMap.emplace(joint.name, joint.index);
 	}
-
-	Update(skeleton);
 
 	return skeleton;
 

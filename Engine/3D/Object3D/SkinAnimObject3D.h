@@ -22,6 +22,8 @@ public:
 	
 	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
 
+	void SkeletonUpdate(Model::Skeleton& skeleton);
+
 	void Draw();
 
 	void DrawImgui(std::string name);

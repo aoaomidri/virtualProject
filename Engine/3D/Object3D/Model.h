@@ -99,9 +99,9 @@ public:
 	struct Joint {
 		QuaternionTransform transform;//Trnasform情報
 		Matrix4x4 localMatrix;//localMatrix
-		Matrix4x4 skeltonSpaceMatrix;//子JointのIndexのリスト。いなければ空
+		Matrix4x4 skeltonSpaceMatrix;
 		std::string name;
-		std::vector<int32_t> children;
+		std::vector<int32_t> children;//子JointのIndexのリスト。いなければ空
 		int32_t index;//自身のIndex
 		std::optional<int32_t> parent;//親JointのIndex。いなければnull
 	};
@@ -115,6 +115,8 @@ public:
 
 	
 public:
+	void Update(Skeleton& skeleton);
+
 	void Draw(ID3D12GraphicsCommandList* CommandList);
 
 	static Model* GetInstance();
@@ -129,10 +131,14 @@ public:
 
 	void Finalize();
 
+	Skeleton CreateSkeleton(const Node& rootNode);
+
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
 	
 	Matrix4x4 GetLocalMatrix()const { return modelData_.rootNode.localMatrix; }
+
+	Node GetNode()const { return modelData_.rootNode; }
 
 	std::string GetNodeName()const { return modelData_.rootNode.name; }
 
@@ -154,8 +160,6 @@ private:
 	void MakeVertexResource();
 
 	Node ReadNode(aiNode* node);
-
-	Skeleton CreateSkeleton(const Node& rootNode);
 
 	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 

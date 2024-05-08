@@ -9,6 +9,20 @@
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
+void Model::Update(Skeleton& skeleton){
+	//全てのJointを更新。親が若いので通常ループで処理可能になっている
+	for (Joint& joint : skeleton.joints) {
+		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
+		if (joint.parent){//親がいれば親の行列を掛ける
+			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
+		}
+		else {//親がいないのでlocalMatrixとskeletonspacematrixは一致する
+			joint.skeltonSpaceMatrix = joint.localMatrix;
+		}
+	}
+
+}
+
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
 	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	CommandList->IASetIndexBuffer(&indexBufferView_);
@@ -26,7 +40,7 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 	modelData->LoadFromOBJInternalAssimp(filename);
 
 	modelData->MakeVertexResource();
-	
+
 	//4,ModelDataを返す
 	return modelData;
 }
@@ -305,22 +319,36 @@ Model::Node Model::ReadNode(aiNode* node){
 }
 
 Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
-	/*Skeleton skeleton;
-	skeleton.root=create*/
+	Skeleton skeleton;
+	skeleton.root = CreateJoint(rootNode, {}, skeleton.joints);
 
+	//名前とIndexのマッピングを行いアクセスしやすくする
+	for (const Joint& joint : skeleton.joints) {
+		skeleton.jointMap.emplace(joint.name, joint.index);
+	}
 
-	return Model::Skeleton();
+	Update(skeleton);
+
+	return skeleton;
 
 }
 
 int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints){
-	/*Joint joint;
+	Joint joint;
 	joint.name = node.name;
 	joint.localMatrix = node.localMatrix;
-	joint.skeltonSpaceMatrix=*/
+	joint.skeltonSpaceMatrix.Identity();
+	joint.transform = node.transform;
+	joint.index = int32_t(joints.size());//現在登録されている数をIndexに
+	joint.parent = parent;
+	joints.push_back(joint);//SkeltonのJoint列に追加
+	for (const Node& child : node.children) {
+		//子Jointを作成し、そのIndexを登録
+		int32_t childIndex = CreateJoint(child, joint.index, joints);
+		joints[joint.index].children.push_back(childIndex);
+	}
 
-
-	return 0;
+	return joint.index;
 }
 
 Model::Animation Model::LoadAnimationFile(const std::string& filename){

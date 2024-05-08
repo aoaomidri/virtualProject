@@ -3,6 +3,7 @@
 #include"TextureManager.h"
 #include"Matrix.h"
 #include"Object3D.h"
+#include"SkinAnimObject3D.h"
 #include"ViewProjection.h"
 #include"Input.h"
 #include"OBB.h"
@@ -181,6 +182,11 @@ private:
 
 private:
 	//自機のモデル
+	std::unique_ptr<SkinAnimObject3D> playerSkinAnimObj_;
+
+	std::vector<std::unique_ptr<Object3D>> debugSphere_;
+
+	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
@@ -194,6 +200,8 @@ private:
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
+
+	std::vector<Matrix4x4> debugMatrix_;
 
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};

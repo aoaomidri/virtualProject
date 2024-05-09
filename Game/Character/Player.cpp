@@ -19,7 +19,7 @@ void Player::ApplyGlobalVariables() {
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 
-	kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
+	//kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 }
 
@@ -713,7 +713,7 @@ void Player::BehaviorDashUpdate(){
 
 	playerSkinAnimObj_->ChangeAnimation("Run");
 	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 10;
+	const uint32_t behaviorDashTime = 15;
 
 	if (!isCollisionEnemy_) {
 		playerTransform_.translate += move_;

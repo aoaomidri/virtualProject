@@ -247,7 +247,7 @@ private:
 	const float moveSpeed_ = 0.1f;
 
 	//ダッシュ時のスピード倍率
-	float kDashSpeed = 15.0f;
+	float kDashSpeed = 10.0f;
 	//ダッシュのクールタイム
 	int kDashCoolTime = 20;
 

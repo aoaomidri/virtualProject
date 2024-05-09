@@ -47,7 +47,6 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 	animations_.push_back({ modelName, animation_ });
 
-	animationModels_.push_back({ modelName,Model::LoadModelFile(fileName, modelName) });
 	animationName.reserve(animations_.size()); // ベクトルの領域を事前に確保
 
 	for (const auto& animation : animations_) {

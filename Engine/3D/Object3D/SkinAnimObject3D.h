@@ -41,11 +41,9 @@ public:
 
 		animation = Model::LoadAnimationFile(fileName, modelName);
 
-		animations_.push_back({ modelName, animation_ });
+		animations_.push_back({ modelName, animation });
 
 		animationName.push_back(modelName);
-
-		animationModels_.push_back({ modelName,Model::LoadModelFile(fileName, modelName) });
 	}
 
 	void ChangeAnimation(const std::string& modelName) {
@@ -87,8 +85,6 @@ private:
 	uint32_t animNum_ = 0;
 
 	std::vector<std::pair<std::string, Model::Animation>>animations_;
-
-	std::vector<std::pair<std::string, std::unique_ptr<Model>>>animationModels_;
 
 	std::vector<std::string> animationName;
 

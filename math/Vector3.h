@@ -78,6 +78,14 @@ public:
 		return result;
 	}
 
+	Vector3 operator*=(float num) {
+		this->x *= num;
+		this->y *= num;
+		this->z *= num;
+
+		return *this;
+	}
+
 	Vector3 operator/(Vector3 num) {
 		Vector3 result{};
 		result.x = this->x / num.x;

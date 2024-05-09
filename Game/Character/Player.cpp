@@ -35,8 +35,9 @@ void Player::Initialize(){
 	input_ = Input::GetInstance();
 
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
-	playerSkinAnimObj_->Initialize("human", "sneakWalk");
-	playerSkinAnimObj_->SetAnimation("human", "walk");
+	playerSkinAnimObj_->Initialize("human", "walk");
+	playerSkinAnimObj_->SetAnimation("human", "stand");
+	playerSkinAnimObj_->SetAnimation("human", "Run");
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
@@ -64,9 +65,9 @@ void Player::Initialize(){
 	particle_->Initialize();
 
 	playerTransform_ = {
-		.scale = {5.f,5.f,5.f},
+		.scale = {1.5f,1.5f,1.5f},
 		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.8f,0.0f}
+		.translate = {0.0f,-1.0f,0.0f}
 	};
 
 	weaponTransform_ = {
@@ -142,6 +143,7 @@ void Player::Update(){
 	playerOBB_.center = playerTransform_.translate;
 	
 	playerOBB_.size = playerTransform_.scale;
+	playerOBB_.size.y = 0.8f;
 	SetOridentatios(playerOBB_, playerRotateMatrix_);
 	
 	
@@ -166,10 +168,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 	
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
-		EulerTransform trans{};
-		trans.translate = { 0.0f,0.0f,0.0f };
-		trans.scale = { 5.0f,5.0f,5.0f };
-		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeAffineMatrix(trans);
+		
+		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * playerMatrix_;
 
 		debugSphere_[i]->Update(debugMatrix_[i], viewProjection);
 		debugSphere_[i]->Draw();
@@ -248,7 +248,7 @@ void Player::Respawn(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 
 	playerTransform_ = {
-			.scale = {0.8f,0.8f,0.8f},
+			.scale = {1.5f,1.5f,1.5f},
 			.rotate = {0.0f,0.0f,0.0f},
 			.translate = {0.0f,0.8f,0.0f}
 	};
@@ -297,13 +297,16 @@ void Player::BehaviorRootUpdate(){
 	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_*3.0f);
 	move_.y = 0.0f;
 	
-
+	
+	playerSkinAnimObj_->ChangeAnimation("stand");
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
+
+		playerSkinAnimObj_->ChangeAnimation("walk");
 		
 	}
 	else if(lockOn_&&lockOn_->ExistTarget()){
@@ -708,8 +711,9 @@ void Player::BehaviorDashUpdate(){
 
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
 
+	playerSkinAnimObj_->ChangeAnimation("Run");
 	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 5;
+	const uint32_t behaviorDashTime = 10;
 
 	if (!isCollisionEnemy_) {
 		playerTransform_.translate += move_;
@@ -719,6 +723,7 @@ void Player::BehaviorDashUpdate(){
 	if (++workDash_.dashParameter_ >= behaviorDashTime) {
 		dashCoolTime = kDashCoolTime;
 		behaviorRequest_ = Behavior::kRoot;
+		playerSkinAnimObj_->ChangeAnimation("stand");
 	}
 }
 

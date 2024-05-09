@@ -341,7 +341,6 @@ void SkinAnimObject3D::ApplyAnimation(Model::Skeleton& skeleton, Model::Animatio
 			joint.transform.translate = CalculateValue(rootNodeAnimation.translate, animationTime);
 			joint.transform.rotate = CalculateValue(rootNodeAnimation.rotate, animationTime);
 			joint.transform.scale = CalculateValue(rootNodeAnimation.scale, animationTime);
-
 		}
 	}
 

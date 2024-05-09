@@ -40,7 +40,7 @@ void Floor::Draw(Object3D* object,const ViewProjection& viewProjection){
 	
 
 	floorModel_->Update(floorMatrix_, viewProjection);
-	//floorModel_->Draw();
+	floorModel_->Draw();
 }
 
 void Floor::DrawImgui(){

@@ -256,6 +256,8 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 					Quaternion({ rotate.x,-rotate.y,-rotate.z,rotate.w }), 
 					Vector3({ -translate.x,translate.y,translate.z }));
 
+			jointWeightData.inverseBindPoseMatrix = bindPoseMatrix.Inverce();
+
 			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex){
 				jointWeightData.vertexWeights.push_back({ bone->mWeights[weightIndex].mWeight,bone->mWeights[weightIndex].mVertexId });
 			}
@@ -363,7 +365,6 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//テクスチャまでで260程利用するので270から入れ始める
 	skinCluster.paletteSrvHandle.first = TextureManager::GetInstance()->GetCPUDescriptorHandle(descriptorSizeSRV, 100);
 	skinCluster.paletteSrvHandle.second = TextureManager::GetInstance()->GetGPUDescriptorHandle(descriptorSizeSRV, 100);
 	

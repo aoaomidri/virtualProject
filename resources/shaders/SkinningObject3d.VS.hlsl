@@ -39,9 +39,9 @@ Skinned Skinning(VertexShaderInput input){
 
 	//法線の変換
 	skinned.normal = mul(input.normal, (float32_t3x3)gMatrixParette[input.index.x].skeletonSpaceInverseTransposeMatrix) * input.weight.x;
-	skinned.normal = mul(input.normal, (float32_t3x3)gMatrixParette[input.index.y].skeletonSpaceInverseTransposeMatrix) * input.weight.y;
-	skinned.normal = mul(input.normal, (float32_t3x3)gMatrixParette[input.index.z].skeletonSpaceInverseTransposeMatrix) * input.weight.z;
-	skinned.normal = mul(input.normal, (float32_t3x3)gMatrixParette[input.index.w].skeletonSpaceInverseTransposeMatrix) * input.weight.w;
+	skinned.normal += mul(input.normal, (float32_t3x3)gMatrixParette[input.index.y].skeletonSpaceInverseTransposeMatrix) * input.weight.y;
+	skinned.normal += mul(input.normal, (float32_t3x3)gMatrixParette[input.index.z].skeletonSpaceInverseTransposeMatrix) * input.weight.z;
+	skinned.normal += mul(input.normal, (float32_t3x3)gMatrixParette[input.index.w].skeletonSpaceInverseTransposeMatrix) * input.weight.w;
 	skinned.normal = normalize(skinned.normal);//正規化して戻してあげる
 
 	return skinned;

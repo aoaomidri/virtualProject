@@ -347,19 +347,23 @@ void GraphicsPipeline::makeInputLayoutSkinning(){
 	inputElementSkinDescs_[0].SemanticIndex = 0;
 	inputElementSkinDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementSkinDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputElementSkinDescs_[1].SemanticName = "TEXCOORD";
 	inputElementSkinDescs_[1].SemanticIndex = 0;
 	inputElementSkinDescs_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementSkinDescs_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputElementSkinDescs_[2].SemanticName = "NORMAL";
 	inputElementSkinDescs_[2].SemanticIndex = 0;
 	inputElementSkinDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementSkinDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputElementSkinDescs_[3].SemanticName = "WEIGHT";
 	inputElementSkinDescs_[3].SemanticIndex = 0;
 	inputElementSkinDescs_[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementSkinDescs_[3].InputSlot = 1;
 	inputElementSkinDescs_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputElementSkinDescs_[4].SemanticName = "INDEX";
 	inputElementSkinDescs_[4].SemanticIndex = 0;
 	inputElementSkinDescs_[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;

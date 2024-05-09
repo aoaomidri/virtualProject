@@ -41,12 +41,9 @@ private:
 
 	Vector3 v2;
 
-	
-
 public:
 	Vector3 cross;
 	Vector3 screenVertices[3];
-
 
 public:
 	void Update();

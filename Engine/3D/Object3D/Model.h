@@ -180,6 +180,7 @@ public:
 
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
+	D3D12_INDEX_BUFFER_VIEW GetIndexBifferView()const { return indexBufferView_; }
 	
 	Matrix4x4 GetLocalMatrix()const { return modelData_.rootNode.localMatrix; }
 

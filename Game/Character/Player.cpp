@@ -35,7 +35,7 @@ void Player::Initialize(){
 	input_ = Input::GetInstance();
 
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
-	playerSkinAnimObj_->Initialize("human", "sneakWalk");
+	playerSkinAnimObj_->Initialize("human", "walk");
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 

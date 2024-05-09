@@ -73,8 +73,6 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 	if (!isDraw_) {
 		return;
 	}
-
-
 	if (animation_.duration != 0) {
 		animationTime += 1.0f / 60.0f;
 		animationTime = std::fmod(animationTime, animation_.duration);
@@ -144,8 +142,7 @@ void SkinAnimObject3D::SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Sk
 			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
 
 		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
-			Matrix::GetInstance()->Transpose(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix.Inverce());
-
+			Matrix::GetInstance()->Transpose(Matrix::GetInstance()->Inverce(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
 	}	
 }
 

@@ -88,8 +88,6 @@ public:
 
 public:
 	float m[4][4];
-private:
-	float base[4][4];
 };
 
 

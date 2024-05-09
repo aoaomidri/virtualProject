@@ -5,7 +5,7 @@
 Matrix4x4::Matrix4x4(){
 	for (int y = 0; y < 4; y++){
 		for (int x = 0; x < 4; x++){
-			base[y][x] = 0;
+			//base[y][x] = 0;
 			m[y][x] = 0;
 		}
 	}

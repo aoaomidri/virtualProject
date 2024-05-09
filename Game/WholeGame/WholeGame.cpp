@@ -50,6 +50,7 @@ void WholeGame::Update(){
 void WholeGame::Draw(){
 	dxCom_->PreDrawRenderTexture();
 	//3D描画
+	gameScene_->DrawSkin3D();
 	gameScene_->Draw3D();
 	gameScene_->DrawParticle();
 	//2D描画

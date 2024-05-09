@@ -46,6 +46,17 @@ void GraphicsPipeline::InitializeCopy(const std::wstring& VSname, const std::wst
 	makeGraphicsPipelineCopy(DirectXCommon::GetInstance()->GetDevice());
 }
 
+void GraphicsPipeline::InitializeSkinning(const std::wstring& VSname, const std::wstring& PSname, bool isCulling) {
+	makeRootSignatureSkinning(DirectXCommon::GetInstance()->GetDevice());
+	makeInputLayoutSkinning();
+	makeRasterizerState(isCulling);
+	makeBlendState(kBlendModeNormal);
+	ShaderCompile(VSname, PSname);
+	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
+
+	makeGraphicsPipeline(DirectXCommon::GetInstance()->GetDevice());
+}
+
 
 void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	//RootSignature作成
@@ -231,28 +242,132 @@ void GraphicsPipeline::makeRootSignatureCopy(ID3D12Device* device){
 	assert(SUCCEEDED(hr));
 }
 
+void GraphicsPipeline::makeRootSignatureSkinning(ID3D12Device* device){
+	//RootSignature作成
+	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	//DescriptorRangeの設定
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRange[0].NumDescriptors = 1;//数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
+	//RootParameter作成。複数設定できるので配列。
+	D3D12_ROOT_PARAMETER rootParameter[7] = {};
+	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[0].Descriptor.ShaderRegister = 1;
+
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[1].Descriptor.ShaderRegister = 0;
+
+	descriptionRootSignature.pParameters = rootParameter;
+	descriptionRootSignature.NumParameters = _countof(rootParameter);
+
+	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+
+	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[3].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameter[3].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+
+	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[4].Descriptor.ShaderRegister = 2;
+
+	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[5].Descriptor.ShaderRegister = 3;
+
+	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[6].Descriptor.ShaderRegister = 4;
+
+	//Samplerの設定
+	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
+	staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0～1の範囲外をリピート
+	staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
+	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
+	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+
+	descriptionRootSignature.pStaticSamplers = staticSampler;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSampler);
+
+	//シリアライズしてバイナリする
+
+	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(hr)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	//バイナリを元に生成
+
+	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	assert(SUCCEEDED(hr));
+}
+
 void GraphicsPipeline::makeInputLayout(){
 	//InputLayout
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs_[0].SemanticName = "POSITION";
+	inputElementDescs_[0].SemanticIndex = 0;
+	inputElementDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs_[1].SemanticName = "TEXCOORD";
+	inputElementDescs_[1].SemanticIndex = 0;
+	inputElementDescs_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs_[2].SemanticName = "NORMAL";
+	inputElementDescs_[2].SemanticIndex = 0;
+	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.pInputElementDescs = inputElementDescs_.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs_.size());
 }
 
 void GraphicsPipeline::makeInputLayoutCopy(){
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
+}
+
+void GraphicsPipeline::makeInputLayoutSkinning(){
+	//InputLayout
+	inputElementSkinDescs_[0].SemanticName = "POSITION";
+	inputElementSkinDescs_[0].SemanticIndex = 0;
+	inputElementSkinDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementSkinDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementSkinDescs_[1].SemanticName = "TEXCOORD";
+	inputElementSkinDescs_[1].SemanticIndex = 0;
+	inputElementSkinDescs_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementSkinDescs_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementSkinDescs_[2].SemanticName = "NORMAL";
+	inputElementSkinDescs_[2].SemanticIndex = 0;
+	inputElementSkinDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementSkinDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementSkinDescs_[3].SemanticName = "WEIGHT";
+	inputElementSkinDescs_[3].SemanticIndex = 0;
+	inputElementSkinDescs_[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementSkinDescs_[3].InputSlot = 1;
+	inputElementSkinDescs_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementSkinDescs_[4].SemanticName = "INDEX";
+	inputElementSkinDescs_[4].SemanticIndex = 0;
+	inputElementSkinDescs_[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;
+	inputElementSkinDescs_[4].InputSlot = 1;
+	inputElementSkinDescs_[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputLayoutDesc.pInputElementDescs = inputElementSkinDescs_.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementSkinDescs_.size());
 }
 
 void GraphicsPipeline::makeBlendState(const BlendMode& blend){
@@ -443,6 +558,8 @@ void GraphicsPipeline::makeGraphicsPipelineCopy(ID3D12Device* device){
 	hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }
+
+
 
 
 IDxcBlob* GraphicsPipeline::CompileShader(

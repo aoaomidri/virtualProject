@@ -366,5 +366,8 @@
     <FxCompile Include="resources\shaders\FullScreen.VS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\SkinningObject3d.VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

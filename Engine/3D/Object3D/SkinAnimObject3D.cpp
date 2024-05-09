@@ -47,7 +47,11 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 	skeleton_ = model_->CreateSkeleton(model_->GetNode());
 
+	skinCluster_ = model_->CreateSkinCluster(skeleton_);
+
 	SkeletonUpdate(skeleton_);
+
+	SkeletonUpdate(skinCluster_, skeleton_);
 
 	if (model_->GetMaterial().textureFilePath != "") {
 		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
@@ -76,6 +80,8 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
 		SkeletonUpdate(skeleton_);
+
+		SkeletonUpdate(skinCluster_, skeleton_);
 		
 	}
 	else {
@@ -95,7 +101,7 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 	materialDate->enableLighting = isUseLight_;
 
 	wvpData->World = worldViewProjectionMatrix;
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Trnaspose(worldMatrix_));
+	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 			
 	if (directionalLight){
 	directionalLightDate->color = directionalLight->color;
@@ -118,7 +124,6 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 }
 
 void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
-	//全てのJointを更新。親が若いので通常ループで処理可能になっている
 	for (Model::Joint& joint : skeleton.joints) {
 		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
 		if (joint.parent) {//親がいれば親の行列を掛ける
@@ -130,20 +135,43 @@ void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
 	}
 }
 
+void SkinAnimObject3D::SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Skeleton& skeleton){
+	//全てのJointを更新。親が若いので通常ループで処理可能になっている
+	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex){
+		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
+
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix =
+			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
+
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
+			Matrix::GetInstance()->Transpose(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix.Inverce());
+
+	}	
+}
+
 void SkinAnimObject3D::Draw() {
 
 	if (!isDraw_) {
 		return;
 	}
 	model_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+		model_->GetVertexBufferView(),
+		skinCluster_.influenceBufferView//INfluenceのVBV
+	};
+
+	DirectXCommon::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(texHandle_));
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(3, skinCluster_.paletteSrvHandle.second);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 

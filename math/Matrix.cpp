@@ -168,7 +168,7 @@ Matrix4x4 Matrix::Inverce(const Matrix4x4& mat) {
 	return result;
 }
 
-Matrix4x4 Matrix::Trnaspose(const Matrix4x4& mat) {
+Matrix4x4 Matrix::Transpose(const Matrix4x4& mat) {
 	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {

@@ -29,6 +29,9 @@ public:
 	//描画
 	void Draw(const ViewProjection& viewProjection);
 
+	//描画
+	void SkinningDraw(const ViewProjection& viewProjection);
+
 	void ParticleDraw(const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();

@@ -64,7 +64,7 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	materialDate->enableLighting = isUseLight_;
 
 	wvpData->World = Matrix::GetInstance()->Multiply(localMatrix_, worldMatrix_);
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Trnaspose(worldMatrix_));
+	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 	
 	if (directionalLight){
 	directionalLightDate->color = directionalLight->color;

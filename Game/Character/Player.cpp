@@ -162,8 +162,7 @@ void Player::Update(){
 
 void Player::Draw(const ViewProjection& viewProjection){
 
-	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
-	playerSkinAnimObj_->Draw();
+	
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
 		EulerTransform trans{};
@@ -184,6 +183,11 @@ void Player::Draw(const ViewProjection& viewProjection){
 
 	}
 	
+}
+
+void Player::SkinningDraw(const ViewProjection& viewProjection){
+	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
+	playerSkinAnimObj_->Draw();
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){

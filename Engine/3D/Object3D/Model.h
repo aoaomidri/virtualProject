@@ -34,7 +34,7 @@ public:
 	};
 
 	struct JointWeightData {
-		Matrix4x4 weight;
+		Matrix4x4 inverseBindPoseMatrix;
 		std::vector<VertexWeightData> vertexWeights;
 	};
 
@@ -176,7 +176,7 @@ public:
 
 	Skeleton CreateSkeleton(const Node& rootNode);
 
-	SkinCluster CreateSkinCluster(const Skeleton& skeleton, uint32_t descriptorSize);
+	SkinCluster CreateSkinCluster(const Skeleton& skeleton);
 
 public:
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }

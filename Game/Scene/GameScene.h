@@ -27,8 +27,12 @@ public:
 	//パーティクルの描画
 	void DrawParticle();
 
+	void DrawSkin3D();
+
 	//3Dオブジェクトの描画
 	void Draw3D();
+
+
 	//テクスチャ関連の描画
 	void Draw2D();
 	//削除をまとめた関数

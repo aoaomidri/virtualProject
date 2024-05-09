@@ -1,5 +1,6 @@
 #pragma once
 #include"Log.h"
+#include<array>
 #include<wrl.h>
 
 enum BlendMode {
@@ -29,6 +30,9 @@ public:
 	//コピー用の初期化
 	void InitializeCopy(const std::wstring& VSname, const std::wstring& PSname);
 
+	//Skinning用の初期化処理
+	void InitializeSkinning(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
+
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
 	ID3D12PipelineState* GetPipeLineState() {
@@ -57,9 +61,13 @@ private:
 
 	void makeRootSignatureCopy(ID3D12Device* device);
 
+	void makeRootSignatureSkinning(ID3D12Device* device);
+
 	void makeInputLayout();
 
 	void makeInputLayoutCopy();
+
+	void makeInputLayoutSkinning();
 
 	void makeBlendState(const BlendMode& blend);
 
@@ -85,7 +93,9 @@ private:
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	std::array<D3D12_INPUT_ELEMENT_DESC, 3> inputElementDescs_{};
+
+	std::array<D3D12_INPUT_ELEMENT_DESC, 5> inputElementSkinDescs_{};
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 

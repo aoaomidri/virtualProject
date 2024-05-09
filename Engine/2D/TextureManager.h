@@ -54,6 +54,10 @@ public:
 
 	void PostDraw3D();
 
+	void PreDrawSkin3D();
+
+	void PostDrawSkin3D();
+
 	void PreDrawParticle();
 
 	void PostDrawParticle();
@@ -111,6 +115,8 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkinning3D_;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineCopy_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGray_;

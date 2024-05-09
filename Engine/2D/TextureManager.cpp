@@ -15,6 +15,10 @@ void TextureManager::Initialize() {
 	GraphicsPipeline2D_->Initialize(L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl", false);
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
+
+	GraphicsPipelineSkinning3D_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/SkinningObject3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
+	
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
 	GraphicsPipelineGray_ = std::make_unique<GraphicsPipeline>();
@@ -141,7 +145,20 @@ void TextureManager::PreDraw3D(){
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void TextureManager::PostDraw3D()
+void TextureManager::PostDraw3D(){
+
+}
+
+void TextureManager::PreDrawSkin3D(){
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSkinning3D_->GetRootSignature());
+	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSkinning3D_->GetPipeLineState());
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void TextureManager::PostDrawSkin3D()
 {
 }
 

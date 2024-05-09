@@ -24,6 +24,8 @@ public:
 
 	void SkeletonUpdate(Model::Skeleton& skeleton);
 
+	void SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Skeleton& skeleton);
+
 	void Draw();
 
 	void DrawImgui(std::string name);
@@ -62,6 +64,8 @@ private:
 	Model::Animation animation_;
 
 	Model::Skeleton skeleton_;
+
+	Model::SkinCluster skinCluster_;
 
 	uint32_t texHandle_;
 

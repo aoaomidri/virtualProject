@@ -352,7 +352,7 @@ Model::Skeleton Model::CreateSkeleton(const Node& rootNode){
 
 }
 
-Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, uint32_t descriptorSize){
+Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	SkinCluster skinCluster;
 
 	//palette用のResourceを確保
@@ -360,11 +360,14 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, uint32_t d
 	WellForGPU* mappedPalette = nullptr;
 	skinCluster.paletteResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	skinCluster.mappedPalette = { mappedPalette,skeleton.joints.size() };//spanを使ってアクセスするようにする
+
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//テクスチャまでで260程利用するので270から入れ始める
-	skinCluster.paletteSrvHandle.first = TextureManager::GetInstance()->GetCPUDescriptorHandle(descriptorSize, 270);
-	skinCluster.paletteSrvHandle.second = TextureManager::GetInstance()->GetGPUDescriptorHandle(descriptorSize, 270);
+	skinCluster.paletteSrvHandle.first = TextureManager::GetInstance()->GetCPUDescriptorHandle(descriptorSizeSRV, 100);
+	skinCluster.paletteSrvHandle.second = TextureManager::GetInstance()->GetGPUDescriptorHandle(descriptorSizeSRV, 100);
 	
-	//palette用のsrvを作成
+	//palette用のsrvを作成。StructuredBufferでアクセスできるようにする。
 	D3D12_SHADER_RESOURCE_VIEW_DESC paretteSrvDesc{};
 	paretteSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
 	paretteSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -375,17 +378,47 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, uint32_t d
 	paretteSrvDesc.Buffer.StructureByteStride = sizeof(WellForGPU);
 	device_->CreateShaderResourceView(skinCluster.paletteResouce.Get(), &paretteSrvDesc, skinCluster.paletteSrvHandle.first);
 	
-	//influence用のResourceを確保
+	//influence用のResourceを確保。頂点ごとにinfluence情報を追加できるようにする
+	skinCluster.influenceResouce = CreateBufferResource(device_, sizeof(VertexInfluence) * modelData_.vertices.size());
+	VertexInfluence* mappedInfluence = nullptr;
+	skinCluster.influenceResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluence));
+	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * modelData_.vertices.size());//0埋め、weightを0にしておく
+	skinCluster.mappedInfluence = { mappedInfluence,modelData_.vertices.size() };
 
-	
 	//influence用のVBVを作成
-
-	
+	skinCluster.influenceBufferView.BufferLocation = skinCluster.influenceResouce->GetGPUVirtualAddress();
+	skinCluster.influenceBufferView.SizeInBytes = UINT(sizeof(VertexInfluence) * modelData_.vertices.size());
+	skinCluster.influenceBufferView.StrideInBytes = sizeof(VertexInfluence);
 	//InerseBindPoseMatrixの保存領域を作成
+	skinCluster.inverseBindPoseMatrices.resize(skeleton.joints.size());
 
+	for (size_t i = 0; i < skinCluster.inverseBindPoseMatrices.size(); ++i){
+		skinCluster.inverseBindPoseMatrices[i].Identity();
+	}
 	
 	//ModelDataのSkinCluster情報を解析してinfluenceの中身を埋める
+	for (const auto& jointWeight : modelData_.skinClusterData){//ModelのSkinClusterの情報を解析
+		auto it = skeleton.jointMap.find(jointWeight.first);//jointWeight.firstのJoint名なので、skeletonに対象となるJointが含まれているかどうか判断
+		if (it == skeleton.jointMap.end()) {//そんな名前のJointは存在しない。なので次に回す
+			continue;
+		}
 
+		//(*it).secondにはJointのIndexが入っているので、外套のIndexのinverseBindPoseMatrixを代入
+		skinCluster.inverseBindPoseMatrices[(*it).second] = jointWeight.second.inverseBindPoseMatrix;
+		for (const auto& vertexWeight : jointWeight.second.vertexWeights){
+			auto& currentInfluence = skinCluster.mappedInfluence[vertexWeight.vertexIndex];//該当のvertexIndexのinfluence情報を参照しておく
+
+			for (uint32_t index = 0; index < kNumMaxInfluence; ++index){//空いているところに入れる
+				if (currentInfluence.weights[index] == 0.0f) {//weight==0が空いている状態なので、その場所にweightとJointのIndexを代入
+					currentInfluence.weights[index] = vertexWeight.weight;
+					currentInfluence.jointIndices[index] = (*it).second;
+					break;
+				}
+			}
+
+		}
+
+	}
 
 	return skinCluster;
 }

@@ -371,6 +371,12 @@ void GameScene::DrawParticle(){
 	textureManager_->PostDrawParticle();
 }
 
+void GameScene::DrawSkin3D(){
+	textureManager_->PreDrawSkin3D();
+	player_->SkinningDraw(followCamera_->GetViewProjection());
+
+}
+
 void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDraw3D();

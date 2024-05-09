@@ -36,6 +36,7 @@ void Player::Initialize(){
 
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
 	playerSkinAnimObj_->Initialize("human", "walk");
+	playerSkinAnimObj_->SetAnimation("human", "sneakWalk");
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
@@ -218,6 +219,17 @@ void Player::DrawImgui(){
 
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
+	ImGui::End();
+
+
+	ImGui::Begin("プレイヤーのアニメーション");
+	animetionNames_ = playerSkinAnimObj_->GetAnimations();
+	for (size_t i = 0; i < animetionNames_.size(); i++){
+		if (ImGui::Button(animetionNames_[i].c_str())) {
+			playerSkinAnimObj_->ChangeAnimation(animetionNames_[i]);
+		}
+	}
+
 	ImGui::End();
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
 	particle_->DrawImgui("プレイヤーパーティクル");

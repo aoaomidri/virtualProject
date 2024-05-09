@@ -45,6 +45,15 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 	animation_ = Model::LoadAnimationFile(fileName, modelName);
 
+	animations_.push_back({ modelName, animation_ });
+
+	animationModels_.push_back({ modelName,Model::LoadModelFile(fileName, modelName) });
+	animationName.reserve(animations_.size()); // ベクトルの領域を事前に確保
+
+	for (const auto& animation : animations_) {
+		animationName.push_back(animation.first);
+	}
+
 	skeleton_ = model_->CreateSkeleton(model_->GetNode());
 
 	skinCluster_ = model_->CreateSkinCluster(skeleton_);

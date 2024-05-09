@@ -189,6 +189,8 @@ private:
 
 	std::vector<std::unique_ptr<Object3D>> debugSphere_;
 
+	std::vector<std::string> animetionNames_;
+
 	std::vector<Model::Joint> debugJoints_;
 
 	//自機のモデル

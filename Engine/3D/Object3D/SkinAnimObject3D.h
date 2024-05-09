@@ -36,9 +36,32 @@ public:
 
 	void SetPointLight(const Model::PointLight* pLight);
 
-	void SetAnimation(const Model::Animation animation) {
-		animation_ = animation;
+	void SetAnimation(const std::string fileName, const std::string& modelName) {
+		Model::Animation animation;
+
+		animation = Model::LoadAnimationFile(fileName, modelName);
+
+		animations_.push_back({ modelName, animation_ });
+
+		animationName.push_back(modelName);
+
+		animationModels_.push_back({ modelName,Model::LoadModelFile(fileName, modelName) });
 	}
+
+	void ChangeAnimation(const std::string& modelName) {
+		for (size_t i = 0; i < animations_.size(); i++){
+			if (animations_[i].first == modelName) {
+				animation_ = animations_[i].second;
+				break;
+			}
+		}
+
+		
+	}
+	const std::vector<std::string>& GetAnimations() {
+		return animationName;
+	}
+
 
 	const bool GetIsDraw()const { return isDraw_; }
 
@@ -60,6 +83,14 @@ public:
 private:
 	//モデル
 	std::unique_ptr<Model> model_;
+
+	uint32_t animNum_ = 0;
+
+	std::vector<std::pair<std::string, Model::Animation>>animations_;
+
+	std::vector<std::pair<std::string, std::unique_ptr<Model>>>animationModels_;
+
+	std::vector<std::string> animationName;
 
 	Model::Animation animation_;
 

@@ -51,19 +51,19 @@ void Input::Update() {
 	if (isConnectPad) {
 
 		// デッドzoneの設定
-		if ((xinputState.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE*1.5f &&
-			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f) &&
-			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f &&
-				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * 1.5f))
+		if ((xinputState.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_&&
+			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_) &&
+			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_ &&
+				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_))
 		{
 			xinputState.Gamepad.sThumbLX = 0;
 			xinputState.Gamepad.sThumbLY = 0;
 		}
 
-		if ((xinputState.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
-			xinputState.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) &&
-			(xinputState.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
-				xinputState.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+		if ((xinputState.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
+			xinputState.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_) &&
+			(xinputState.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
+				xinputState.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_))
 		{
 			xinputState.Gamepad.sThumbRX = 0;
 			xinputState.Gamepad.sThumbRY = 0;

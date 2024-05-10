@@ -14,7 +14,6 @@
 class Input
 {
 public:
-public:
 	Input() = default;
 	~Input() = default;
 	Input(const Input& input) = delete;
@@ -80,6 +79,8 @@ public:
 private:
 	BYTE key[256] = {};
 	BYTE prekey[256] = {};
+
+	const float DeadZone_ = 2.0f;
 
 	bool isConnectPad = false;
 

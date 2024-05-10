@@ -5,52 +5,24 @@
 #include<sstream>
 
 
-void SkinAnimObject3D::Initialize(const std::string fileName) {
+void SkinAnimObject3D::Initialize(const std::string fileName, const bool isLoop) {
 	makeResource();
 
 	isDraw_ = true;
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
 	model_ = Model::LoadModelFile(fileName);
 
 	animation_ = Model::LoadAnimationFile(fileName);
+	animation_.isAnimLoop = isLoop;
 
-	skeleton_ = model_->CreateSkeleton(model_->GetNode());
+	animations_.push_back({ fileName, animation_ });
 
-	if (model_->GetMaterial().textureFilePath != "") {
-		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
-	}
-	else {
-		texHandle_ = 0;
-	}
-
-	transform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};
-
-	
-}
-
-void SkinAnimObject3D::Initialize(const std::string fileName, const std::string& modelName) {
-	makeResource();
-
-	isDraw_ = true;
-
-	materialDate->enableLighting = false;
-
-	model_ = Model::LoadModelFile(fileName, modelName);
-
-	animation_ = Model::LoadAnimationFile(fileName, modelName);
-
-	animations_.push_back({ modelName, animation_ });
-
-	animationName.reserve(animations_.size()); // ベクトルの領域を事前に確保
+	animationName_.reserve(animations_.size()); // ベクトルの領域を事前に確保
 
 	for (const auto& animation : animations_) {
-		animationName.push_back(animation.first);
+		animationName_.push_back(animation.first);
 	}
 
 	skeleton_ = model_->CreateSkeleton(model_->GetNode());
@@ -68,7 +40,52 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 		texHandle_ = 0;
 	}
 
-	transform = {
+	transform_ = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+
+	
+}
+
+void SkinAnimObject3D::Initialize(const std::string fileName, const std::string& modelName, const bool isLoop) {
+	makeResource();
+
+	isDraw_ = true;
+
+	materialDate_->enableLighting = false;
+
+	model_ = Model::LoadModelFile(fileName, modelName);
+
+	animation_ = Model::LoadAnimationFile(fileName, modelName);
+	animation_.isAnimLoop = isLoop;
+
+
+	animations_.push_back({ modelName, animation_ });
+
+	animationName_.reserve(animations_.size()); // ベクトルの領域を事前に確保
+
+	for (const auto& animation : animations_) {
+		animationName_.push_back(animation.first);
+	}
+
+	skeleton_ = model_->CreateSkeleton(model_->GetNode());
+
+	skinCluster_ = model_->CreateSkinCluster(skeleton_);
+
+	SkeletonUpdate(skeleton_);
+
+	SkeletonUpdate(skinCluster_, skeleton_);
+
+	if (model_->GetMaterial().textureFilePath != "") {
+		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
+	}
+	else {
+		texHandle_ = 0;
+	}
+
+	transform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
@@ -82,9 +99,23 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 		return;
 	}
 	if (animation_.duration != 0) {
-		animationTime += 1.0f / 60.0f;
-		animationTime = std::fmod(animationTime, animation_.duration);
-		ApplyAnimation(skeleton_, animation_, animationTime);
+
+		if (isAnimation_){
+			animationTime_ += (1.0f / 60.0f) * animSpeed_;
+		}
+		
+		if (animation_.isAnimLoop){
+			animationTime_ = std::fmod(animationTime_, animation_.duration);
+		}
+		else {
+			if (animationTime_)
+			{
+
+			}
+		}
+		
+
+		ApplyAnimation(skeleton_, animation_, animationTime_);
 		SkeletonUpdate(skeleton_);
 
 		SkeletonUpdate(skinCluster_, skeleton_);
@@ -103,28 +134,28 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
 	
 
-	wvpData->WVP = worldViewProjectionMatrix;
-	materialDate->enableLighting = isUseLight_;
+	wvpData_->WVP = worldViewProjectionMatrix;
+	materialDate_->enableLighting = isUseLight_;
 
-	wvpData->World = worldViewProjectionMatrix;
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
+	wvpData_->World = worldViewProjectionMatrix;
+	wvpData_->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 			
-	if (directionalLight){
-	directionalLightDate->color = directionalLight->color;
-	directionalLightDate->direction = directionalLight->direction;
-	directionalLightDate->intensity = directionalLight->intensity;
+	if (directionalLight_){
+	directionalLightDate_->color = directionalLight_->color;
+	directionalLightDate_->direction = directionalLight_->direction;
+	directionalLightDate_->intensity = directionalLight_->intensity;
 
 	}
-	if (pointLight){
-	pointLightData->color = pointLight->color;
-	pointLightData->position = pointLight->position;
-	pointLightData->intensity = pointLight->intensity;
-	pointLightData->radius = pointLight->radius;
-	pointLightData->decay = pointLight->decay;
+	if (pointLight_){
+	pointLightData_->color = pointLight_->color;
+	pointLightData_->position = pointLight_->position;
+	pointLightData_->intensity = pointLight_->intensity;
+	pointLightData_->radius = pointLight_->radius;
+	pointLightData_->decay = pointLight_->decay;
 
 	}
 
-	materialDate->shininess = shininess_;
+	materialDate_->shininess = shininess_;
 
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
@@ -170,13 +201,13 @@ void SkinAnimObject3D::Draw() {
 
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(texHandle_));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(3, skinCluster_.paletteSrvHandle.second);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
@@ -186,7 +217,7 @@ void SkinAnimObject3D::Draw() {
 void SkinAnimObject3D::DrawImgui(std::string name){
 #ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
-	ImGui::Text("アニメーションの時間 = %.1f", animationTime);
+	ImGui::Text("アニメーションの時間 = %.1f", animationTime_);
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	for (int i = 0; i < 4; i++){
 		ImGui::DragFloat4(("LocalMat1" + std::to_string(i)).c_str(), skeleton_.joints[0].skeltonSpaceMatrix.m[i], 0.1f);
@@ -202,11 +233,11 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 }
 
 void SkinAnimObject3D::SetDirectionalLight(const Model::DirectionalLight* light){
-	directionalLight = light;
+	directionalLight_ = light;
 }
 
 void SkinAnimObject3D::SetPointLight(const Model::PointLight* pLight){
-	pointLight = pLight;
+	pointLight_ = pLight;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> SkinAnimObject3D::CreateBufferResource(size_t sizeInBytes) {
@@ -237,52 +268,52 @@ Microsoft::WRL::ComPtr<ID3D12Resource> SkinAnimObject3D::CreateBufferResource(si
 
 void SkinAnimObject3D::makeResource() {
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(sizeof(Model::Material));
+	 materialResource_ = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
 	//今回は赤を書き込んでみる
-	materialDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
-	materialDate->uvTransform.Identity();
+	materialDate_->uvTransform.Identity();
 
-	materialDate->shininess = 1.0f;
+	materialDate_->shininess = 1.0f;
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpResource = CreateBufferResource(sizeof(TransformationMatrix));
+	wvpResource_ = CreateBufferResource(sizeof(TransformationMatrix));
 	//書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData->WVP = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData->World = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData_->WVP = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData_->World = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData_->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
+	directionalLightResource_ = CreateBufferResource(sizeof(Model::DirectionalLight));
 
 	//書き込むためのアドレスを取得
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
+	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate_));
 	//今回は白を書き込んでみる
-	directionalLightDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLightDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	directionalLightDate->direction = { 0.0f,-1.0f,0.0f };
+	directionalLightDate_->direction = { 0.0f,-1.0f,0.0f };
 
-	directionalLightDate->intensity = 1.0f;
+	directionalLightDate_->intensity = 1.0f;
 
 	//マテリアル用のリソース
-	pointLightResource = CreateBufferResource(sizeof(Model::PointLight));
+	pointLightResource_ = CreateBufferResource(sizeof(Model::PointLight));
 
 	//書き込むためのアドレスを取得
-	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
 	//今回は白を書き込んでみる
-	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	pointLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	pointLightData->position = { 0.0f,10.0f,0.0f };
+	pointLightData_->position = { 0.0f,10.0f,0.0f };
 
-	pointLightData->intensity = 1.0f;
+	pointLightData_->intensity = 1.0f;
 
 	/*カメラリソース関連*/
 	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));

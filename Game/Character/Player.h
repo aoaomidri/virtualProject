@@ -73,7 +73,7 @@ public:
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
-	void SetIsDown(bool isDown) { isDown_ = isDown; }
+	void SetIsDown(bool isDown);
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 

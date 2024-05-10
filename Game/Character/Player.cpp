@@ -35,9 +35,10 @@ void Player::Initialize(){
 	input_ = Input::GetInstance();
 
 	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
-	playerSkinAnimObj_->Initialize("human", "walk");
-	playerSkinAnimObj_->SetAnimation("human", "stand");
-	playerSkinAnimObj_->SetAnimation("human", "Run");
+	playerSkinAnimObj_->Initialize("human", "walk", true);
+	playerSkinAnimObj_->SetAnimation("human", "stand", true);
+	playerSkinAnimObj_->SetAnimation("human", "Run", true);
+	playerSkinAnimObj_->SetAnimation("human", "jump", false);
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
@@ -255,6 +256,15 @@ void Player::Respawn(){
 	downVector = { 0.0f,0.0f,0.0f };
 }
 
+void Player::SetIsDown(bool isDown){
+	if (move_.x == 0.0f && move_.z == 0.0f) {
+		if (isDown_ == true && isDown == false) {
+
+		}
+	}
+	isDown_ = isDown;
+}
+
 void Player::BehaviorRootInitialize(){
 	move_ = { 0.0f,0.0f,0.0f };
 	Weapon_offset_Base = { 0.0f,3.0f,0.0f };
@@ -297,17 +307,16 @@ void Player::BehaviorRootUpdate(){
 	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_*3.0f);
 	move_.y = 0.0f;
 	
-	
-	playerSkinAnimObj_->ChangeAnimation("stand");
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::GetInstance()->Multiply(playerRotateMatrix_, directionTodirection_);
-
-		playerSkinAnimObj_->ChangeAnimation("walk");
-		
+		if (!isDown_) {
+			playerSkinAnimObj_->SetAnimSpeed(1.0f);
+			playerSkinAnimObj_->ChangeAnimation("walk");
+		}
 	}
 	else if(lockOn_&&lockOn_->ExistTarget()){
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -329,8 +338,18 @@ void Player::BehaviorRootUpdate(){
 	
 	if (isDown_) {
 		downVector.y += downSpeed;
+		playerSkinAnimObj_->SetAnimSpeed(2.0f);
+	
+		playerSkinAnimObj_->ChangeAnimation("jump");
+		playerSkinAnimObj_->AnimationTimeStop(60.0f);
+
 	}
 	else {
+		if (move_.x == 0.0f && move_.z == 0.0f && playerSkinAnimObj_->ChackAnimationName() != "jump") {
+			playerSkinAnimObj_->ChangeAnimation("stand");
+			playerSkinAnimObj_->SetAnimSpeed(1.0f);
+		}
+		playerSkinAnimObj_->AnimationStart();
 		
 	}
 	if (dashCoolTime != 0) {

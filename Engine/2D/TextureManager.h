@@ -78,6 +78,9 @@ public:
 		SepiaVignetting,//セピアヴィネッティング
 		VignettingGrayScale,//グレーヴィネッティング
 		VignettingSepiaScale,//セピアヴィネッティング
+		Smoothing3x3,//スモーシング弱
+		Smoothing5x5,//スモーシング中
+		Smoothing9x9,//スモーシング強
 		Inverse,//色反転
 		Over,//これ以上ないことを表す
 	};
@@ -139,7 +142,10 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingGrayScale_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingSepiaScale_;
 
-	
+	//Smoothing
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing3x3;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing5x5;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing9x9;
 
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;

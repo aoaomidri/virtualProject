@@ -570,6 +570,15 @@ void GameScene::DrawImgui(){
 	if (ImGui::Button("Inverse")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
 	}
+	if (ImGui::Button("Smoothing3x3")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
+	}
+	if (ImGui::Button("Smoothing5x5")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing5x5);
+	}
+	if (ImGui::Button("Smoothing9x9")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
+	}
 	if (ImGui::Button("NormalVignetting")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::NormalVignetting);
 	}

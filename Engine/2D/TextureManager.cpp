@@ -36,11 +36,19 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSepiaVignetting_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/SepiaVignetting.PS.hlsl");
 	
-	//反転
+	//順序反転
 	GraphicsPipelineVignettingGrayScale_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineVignettingGrayScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingGrayScale.PS.hlsl");
 	GraphicsPipelineVignettingSepiaScale_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingSepiaScale.PS.hlsl");
+
+	//smoothing
+	GraphicsPipelineSmoothing3x3 = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing3x3.PS.hlsl");
+	GraphicsPipelineSmoothing5x5 = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing5x5.PS.hlsl");
+	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing9x9.PS.hlsl");
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -226,6 +234,18 @@ void TextureManager::DrawCopy(){
 	else if (selectPost_ == PostEffect::VignettingSepiaScale) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineVignettingSepiaScale_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineVignettingSepiaScale_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::Smoothing3x3) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing3x3->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing3x3->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::Smoothing5x5) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing5x5->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing5x5->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::Smoothing9x9) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing9x9->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing9x9->GetPipeLineState());
 	}
 	else {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());

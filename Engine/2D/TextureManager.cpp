@@ -44,11 +44,11 @@ void TextureManager::Initialize() {
 
 	//smoothing
 	GraphicsPipelineSmoothing3x3 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing3x3.PS.hlsl");
+	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter3x3.PS.hlsl");
 	GraphicsPipelineSmoothing5x5 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing5x5.PS.hlsl");
+	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter5x5.PS.hlsl");
 	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Smoothing9x9.PS.hlsl");
+	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter9x9.PS.hlsl");
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);

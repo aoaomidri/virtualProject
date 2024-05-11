@@ -595,7 +595,9 @@ void GameScene::DrawImgui(){
 		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingSepiaScale);
 	}
 	ImGui::End();
-
+	ImGui::Begin("FPS");
+	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+	ImGui::End();
 
 #endif // _DEBUG	
 }

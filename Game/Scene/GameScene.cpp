@@ -567,6 +567,9 @@ void GameScene::DrawImgui(){
 	if (ImGui::Button("Sepia")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Sepia);
 	}
+	if (ImGui::Button("Inverse")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
+	}
 	if (ImGui::Button("NormalVignetting")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::NormalVignetting);
 	}
@@ -575,6 +578,12 @@ void GameScene::DrawImgui(){
 	}
 	if (ImGui::Button("SepiaVignetting")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::SepiaVignetting);
+	}
+	if (ImGui::Button("VignettingGrayScale")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingGrayScale);
+	}
+	if (ImGui::Button("VignettingSepiaScale")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingSepiaScale);
 	}
 	ImGui::End();
 

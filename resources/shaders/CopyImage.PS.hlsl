@@ -12,7 +12,6 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 
 	output.color = gTexture.Sample(gSampler,input.texcoord);
-	// output.color.w = 1.0f;
-
+	
 	return output;
 }

@@ -26,6 +26,8 @@ void TextureManager::Initialize() {
 	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Grayscale.PS.hlsl");
 	GraphicsPipelineSepia_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Sepiascale.PS.hlsl");
+	GraphicsPipelineInverse_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineInverse_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/InvertedColor.PS.hlsl");
 	//ヴィネッティングあり
 	GraphicsPipelineNormalVignetting_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineNormalVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/NormalVignetting.PS.hlsl");
@@ -34,6 +36,12 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSepiaVignetting_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/SepiaVignetting.PS.hlsl");
 	
+	//反転
+	GraphicsPipelineVignettingGrayScale_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineVignettingGrayScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingGrayScale.PS.hlsl");
+	GraphicsPipelineVignettingSepiaScale_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingSepiaScale.PS.hlsl");
+
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
 
@@ -135,7 +143,6 @@ void TextureManager::PreDraw2D(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipeline2D_->GetRootSignature());
 	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipeline2D_->GetPipeLineState());
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -148,7 +155,6 @@ void TextureManager::PreDraw3D(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipeline3D_->GetRootSignature());
 	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipeline3D_->GetPipeLineState());
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -161,7 +167,6 @@ void TextureManager::PreDrawSkin3D(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSkinning3D_->GetRootSignature());
 	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSkinning3D_->GetPipeLineState());
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -198,6 +203,10 @@ void TextureManager::DrawCopy(){
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepia_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepia_->GetPipeLineState());
 	}
+	else if (selectPost_ == PostEffect::Inverse) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineInverse_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineInverse_->GetPipeLineState());
+	}
 	else if (selectPost_ == PostEffect::NormalVignetting) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineNormalVignetting_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineNormalVignetting_->GetPipeLineState());
@@ -210,13 +219,20 @@ void TextureManager::DrawCopy(){
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepiaVignetting_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepiaVignetting_->GetPipeLineState());
 	}
+	else if (selectPost_ == PostEffect::VignettingGrayScale) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineVignettingGrayScale_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineVignettingGrayScale_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::VignettingSepiaScale) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineVignettingSepiaScale_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineVignettingSepiaScale_->GetPipeLineState());
+	}
 	else {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
 	}
 
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }

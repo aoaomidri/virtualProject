@@ -74,8 +74,11 @@ public:
 		Gray,//グレースケール
 		Sepia,//セピア調
 		NormalVignetting,//ヴィネッティング
-		GrayVignetting,//ヴィネッティング
-		SepiaVignetting,//ヴィネッティング
+		GrayVignetting,//グレーヴィネッティング
+		SepiaVignetting,//セピアヴィネッティング
+		VignettingGrayScale,//グレーヴィネッティング
+		VignettingSepiaScale,//セピアヴィネッティング
+		Inverse,//色反転
 		Over,//これ以上ないことを表す
 	};
 
@@ -121,13 +124,22 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkinning3D_;
 
+	//ポストエフェクト
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineCopy_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGray_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepia_;
 
+	//色反転
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineInverse_;
+
+	/*ヴィネッティング*/
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineNormalVignetting_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGrayVignetting_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepiaVignetting_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingGrayScale_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingSepiaScale_;
+
+	
 
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;

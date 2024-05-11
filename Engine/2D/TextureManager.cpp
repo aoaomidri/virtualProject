@@ -19,12 +19,20 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSkinning3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/SkinningObject3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
 	
+	//ヴィネッティングなし
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
 	GraphicsPipelineGray_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Grayscale.PS.hlsl");
 	GraphicsPipelineSepia_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Sepiascale.PS.hlsl");
+	//ヴィネッティングあり
+	GraphicsPipelineNormalVignetting_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineNormalVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/NormalVignetting.PS.hlsl");
+	GraphicsPipelineGrayVignetting_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineGrayVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GrayVignetting.PS.hlsl");
+	GraphicsPipelineSepiaVignetting_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/SepiaVignetting.PS.hlsl");
 	
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -189,6 +197,18 @@ void TextureManager::DrawCopy(){
 	else if (selectPost_ == PostEffect::Sepia) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepia_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepia_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::NormalVignetting) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineNormalVignetting_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineNormalVignetting_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::GrayVignetting) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineGrayVignetting_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineGrayVignetting_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::SepiaVignetting) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepiaVignetting_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepiaVignetting_->GetPipeLineState());
 	}
 	else {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());

@@ -73,6 +73,9 @@ public:
 		None,//なし
 		Gray,//グレースケール
 		Sepia,//セピア調
+		NormalVignetting,//ヴィネッティング
+		GrayVignetting,//ヴィネッティング
+		SepiaVignetting,//ヴィネッティング
 		Over,//これ以上ないことを表す
 	};
 
@@ -122,6 +125,9 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGray_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepia_;
 
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineNormalVignetting_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGrayVignetting_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepiaVignetting_;
 
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;

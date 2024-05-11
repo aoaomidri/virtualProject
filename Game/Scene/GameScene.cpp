@@ -567,6 +567,15 @@ void GameScene::DrawImgui(){
 	if (ImGui::Button("Sepia")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Sepia);
 	}
+	if (ImGui::Button("NormalVignetting")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::NormalVignetting);
+	}
+	if (ImGui::Button("GrayVignetting")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::GrayVignetting);
+	}
+	if (ImGui::Button("SepiaVignetting")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::SepiaVignetting);
+	}
 	ImGui::End();
 
 

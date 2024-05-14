@@ -18,6 +18,9 @@ public:
 	//描画
 	void Draw()override;
 
+	//ゲーム全体にかかわるImgui
+	void DrawImgui();
+
 private:	
 	//Imgui関連
 	std::unique_ptr<ImGuiManager> imguiManager_;	
@@ -25,6 +28,8 @@ private:
 	std::unique_ptr<GameScene> gameScene_;
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item = nullptr;
+
+	TextureManager* textureManager_ = nullptr;
 		
 };
 

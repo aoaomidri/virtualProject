@@ -11,6 +11,7 @@
 #pragma comment(lib,"xinput.lib")
 
 
+
 class Input
 {
 public:
@@ -18,6 +19,27 @@ public:
 	~Input() = default;
 	Input(const Input& input) = delete;
 	Input& operator=(const Input&) = delete;
+
+
+public:
+	enum GamePad {
+		A = XINPUT_GAMEPAD_A,
+		B = XINPUT_GAMEPAD_B,
+		X = XINPUT_GAMEPAD_X,
+		Y = XINPUT_GAMEPAD_Y,
+		LB = XINPUT_GAMEPAD_LEFT_SHOULDER,
+		LT,
+		RB = XINPUT_GAMEPAD_RIGHT_SHOULDER,
+		RT,
+		UP = XINPUT_GAMEPAD_DPAD_UP,//十字上
+		DOWN = XINPUT_GAMEPAD_DPAD_DOWN,//十字下
+		RIGHT = XINPUT_GAMEPAD_DPAD_RIGHT,//十字右
+		LEFT = XINPUT_GAMEPAD_DPAD_LEFT,//十字左
+		START = XINPUT_GAMEPAD_START,
+		BACK = XINPUT_GAMEPAD_BACK,
+		L_THUMB = XINPUT_GAMEPAD_RIGHT_THUMB,//Lスティック押し込み
+		R_THUMB = XINPUT_GAMEPAD_LEFT_THUMB,//Rスティック押し込み
+	};
 
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -74,7 +96,7 @@ public:
 
 	bool GetRTrigger();
 
-	bool GetConnectPad() { return isConnectPad; }
+	bool GetConnectPad() const { return isConnectPad; }
 
 private:
 	BYTE key[256] = {};

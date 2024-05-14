@@ -557,47 +557,7 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat4("back : 色", &backSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 	//particle_->DrawImgui("ステージパーティクル");
-	ImGui::Begin("ポストエフェクト");
-	if (ImGui::Button("None")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
-	}
-	if (ImGui::Button("Gray")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Gray);
-	}
-	if (ImGui::Button("Sepia")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Sepia);
-	}
-	if (ImGui::Button("Inverse")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
-	}
-	if (ImGui::Button("Smoothing3x3")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
-	}
-	if (ImGui::Button("Smoothing5x5")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing5x5);
-	}
-	if (ImGui::Button("Smoothing9x9")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
-	}
-	if (ImGui::Button("NormalVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::NormalVignetting);
-	}
-	if (ImGui::Button("GrayVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::GrayVignetting);
-	}
-	if (ImGui::Button("SepiaVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::SepiaVignetting);
-	}
-	if (ImGui::Button("VignettingGrayScale")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingGrayScale);
-	}
-	if (ImGui::Button("VignettingSepiaScale")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingSepiaScale);
-	}
-	ImGui::End();
-	ImGui::Begin("FPS");
-	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
-	ImGui::End();
+
 
 #endif // _DEBUG	
 }

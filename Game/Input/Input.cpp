@@ -160,8 +160,15 @@ bool Input::TrigerDown() {
 }
 
 
-bool Input::GetPadButton(UINT button)
-{
+bool Input::GetPadButton(UINT button){
+	if (button == GamePad::LT) {
+		return GetLTrigger();
+	}
+
+	if (button == GamePad::RT) {
+		return GetRTrigger();
+	}
+
 	return xinputState.Gamepad.wButtons == button;
 }
 
@@ -170,8 +177,15 @@ bool Input::GetPadButtonRelease(UINT button)
 	return xinputState.Gamepad.wButtons != button && oldXInputState.Gamepad.wButtons == button;
 }
 
-bool Input::GetPadButtonTriger(UINT button)
-{
+bool Input::GetPadButtonTriger(UINT button){
+	if (button == GamePad::LT) {
+		return GetLTriggerDown();
+	}
+
+	if (button == GamePad::RT) {
+		return GetRTriggerDown();
+	}
+
 	return xinputState.Gamepad.wButtons == button && oldXInputState.Gamepad.wButtons != button;
 }
 

@@ -23,7 +23,7 @@ void DirectXCommon::Initialize(){
 	SwapchainInitialize();
 	RTVInitialize();
 	RenderTextureRTVInitialize();
-	srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 512, true);
 	DepthBufferInitialize();
 	FenceInitialize();
 

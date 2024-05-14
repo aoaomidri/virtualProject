@@ -14,6 +14,11 @@ void WholeGame::Initialize(){
 
 	gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize();
+
+	vignettingData_ = {
+		.scale = 16.0f,
+		.pow = 0.8f,
+	};
 }
 
 void WholeGame::Finalize(){	
@@ -108,4 +113,10 @@ void WholeGame::DrawImgui(){
 	ImGui::Begin("FPS");
 	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 	ImGui::End();
+
+	ImGui::Begin("Vignettingの情報");
+	ImGui::DragFloat("Scale", &vignettingData_.scale, 0.1f, 0.0f, 100.0f);
+	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
+	ImGui::End();
+	textureManager_->SetVignettingData(vignettingData_);
 }

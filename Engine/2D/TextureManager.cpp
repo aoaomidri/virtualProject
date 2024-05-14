@@ -50,9 +50,11 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter9x9.PS.hlsl");
 
+
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
 
+	CreateVignettingResource();
 }
 
 void TextureManager::Finalize() {
@@ -253,6 +255,9 @@ void TextureManager::DrawCopy(){
 	}
 
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
+	if (selectPost_ == PostEffect::NormalVignetting || selectPost_ == PostEffect::GrayVignetting || selectPost_ == PostEffect::SepiaVignetting) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, vignettingResource_->GetGPUVirtualAddress());
+	}
 
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
@@ -359,6 +364,31 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	assert(SUCCEEDED(hr));
 
 	return resource;
+}
+
+void TextureManager::CreateVignettingResource(){
+	/*//マテリアル用のリソース
+	 materialResource_ = CreateBufferResource(sizeof(Model::Material));
+
+	//書き込むためのアドレスを取得
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
+	//今回は赤を書き込んでみる
+	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	materialDate_->enableLighting = false;
+
+	materialDate_->uvTransform.Identity();
+
+	materialDate_->shininess = 1.0f;*/
+
+	vignettingResource_ = CreateBufferResource(sizeof(Vignetting));
+
+	vignettingResource_->Map(0, nullptr, reinterpret_cast<void**>(&vignettingData_));
+
+	vignettingData_->scale = 16.0f;
+
+	vignettingData_->pow = 0.8f;
+
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(uint32_t descriptorSize, uint32_t index) {

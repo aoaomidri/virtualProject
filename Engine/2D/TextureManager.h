@@ -85,6 +85,16 @@ public:
 		Over,//これ以上ないことを表す
 	};
 
+	struct Vignetting {
+		float scale;//大きさ
+		float pow;//掛ける累乗
+	};
+
+	void SetVignettingData(const Vignetting& data) {
+		vignettingData_->scale = data.scale;
+		vignettingData_->pow = data.pow;
+	}
+
 	void SetPostEffect(const PostEffect& name) {
 		selectPost_ = name;
 	}
@@ -110,7 +120,7 @@ private:
 
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
-
+	void CreateVignettingResource();
 
 private:
 	//SRVの最大個数
@@ -150,6 +160,10 @@ private:
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;
 
+	ComPtr<ID3D12Resource> vignettingResource_;
+
+	Vignetting* vignettingData_ = nullptr;
+
 	////SRVを作成するDescripterHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kMaxSRVConst]{};
@@ -181,6 +195,8 @@ private:
 	/// Textureのコンテナ(キー値: ファイルネーム,番号);
 	/// </summary>
 	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst> textureArray_;
+
+	
 	
 	size_t slashPos_;
 	size_t dotPos_;

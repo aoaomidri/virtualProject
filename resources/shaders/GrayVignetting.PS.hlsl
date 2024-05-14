@@ -1,5 +1,12 @@
 #include "FullScreen.hlsli"
 
+struct Vignetting{
+	float32_t scale;
+	float32_t pow;
+};
+
+ConstantBuffer<Vignetting> gVignetting : register(b1);
+
 Texture2D<float32_t4> gTexture : register(t0);
 
 SamplerState gSampler : register(s0);
@@ -18,9 +25,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	//周囲を0に、中心になるほど明るくなるように計算で調整
 	float32_t2 correct = input.texcoord * (1.0f - input.texcoord.yx);
 	//correctだけで計算すると中心の最大値が0.0625で暗すぎるのでscaleで調整。この例では16倍にして1にしている
-	float vignette = correct.x * correct.y * 16.0f;
+	float vignette = correct.x * correct.y * gVignetting.scale;
 	//とりあえず0.8乗でそれっぽくしてみた。
-	vignette = saturate(pow(vignette, 0.8f));
+	vignette = saturate(pow(vignette, gVignetting.pow));
 	//係数として乗算
 	output.color.rgb *= vignette;
 

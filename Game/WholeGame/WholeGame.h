@@ -30,6 +30,8 @@ private:
 	Adjustment_Item* adjustment_item = nullptr;
 
 	TextureManager* textureManager_ = nullptr;
+
+	TextureManager::Vignetting vignettingData_;
 		
 };
 

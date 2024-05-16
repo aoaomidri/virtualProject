@@ -46,6 +46,17 @@ void GraphicsPipeline::InitializeCopy(const std::wstring& VSname, const std::wst
 	makeGraphicsPipelineCopy(DirectXCommon::GetInstance()->GetDevice());
 }
 
+void GraphicsPipeline::InitializeSkyBox(const std::wstring& VSname, const std::wstring& PSname){
+	makeRootSignatureSkyBox(DirectXCommon::GetInstance()->GetDevice());
+	makeInputLayoutSkyBox();
+	makeRasterizerState(true);
+	makeBlendState(kBlendModeNormal);
+	ShaderCompile(VSname, PSname);
+	makeDepthStencilSkyBox();
+
+	makeGraphicsPipeline(DirectXCommon::GetInstance()->GetDevice());
+}
+
 void GraphicsPipeline::InitializeSkinning(const std::wstring& VSname, const std::wstring& PSname, bool isCulling) {
 	makeRootSignatureSkinning(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayoutSkinning();
@@ -128,6 +139,63 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 
 	
 
+}
+
+void GraphicsPipeline::makeRootSignatureSkyBox(ID3D12Device* device){
+	//RootSignature作成
+	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	//DescriptorRangeの設定
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
+	descriptorRange[0].NumDescriptors = 1;//数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
+	//RootParameter作成。複数設定できるので配列。
+	D3D12_ROOT_PARAMETER rootParameter[3] = {};
+	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[0].Descriptor.ShaderRegister = 0;
+
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[1].Descriptor.ShaderRegister = 1;
+
+	descriptionRootSignature.pParameters = rootParameter;
+	descriptionRootSignature.NumParameters = _countof(rootParameter);
+
+	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[2].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameter[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+
+	//Samplerの設定
+	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
+	staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0～1の範囲外をリピート
+	staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
+	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
+	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+
+	descriptionRootSignature.pStaticSamplers = staticSampler;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSampler);
+
+	//シリアライズしてバイナリする
+
+	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(hr)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	//バイナリを元に生成
+
+	hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	assert(SUCCEEDED(hr));
 }
 
 void GraphicsPipeline::makeParticleRootSignature(ID3D12Device* device){
@@ -340,6 +408,17 @@ void GraphicsPipeline::makeInputLayout(){
 	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs_.size());
 }
 
+void GraphicsPipeline::makeInputLayoutSkyBox(){
+	//InputLayout
+	inputElementSkyDescs_[0].SemanticName = "POSITION";
+	inputElementSkyDescs_[0].SemanticIndex = 0;
+	inputElementSkyDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementSkyDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputLayoutDesc.pInputElementDescs = inputElementSkyDescs_.data();
+	inputLayoutDesc.NumElements = static_cast<UINT>(inputElementSkyDescs_.size());
+}
+
 void GraphicsPipeline::makeInputLayoutCopy(){
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
@@ -475,6 +554,15 @@ void GraphicsPipeline::makeDepthStencil(D3D12_DEPTH_WRITE_MASK depthWriteMask){
 
 void GraphicsPipeline::makeDepthStencilCopy(){
 	depthStencilDesc.DepthEnable = false;
+}
+
+void GraphicsPipeline::makeDepthStencilSkyBox(){
+	//Depthの機能を有効化する
+	depthStencilDesc.DepthEnable = true;
+	//書き込みします
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO/*D3D12_DEPTH_WRITE_MASK_ZERO*/;
+	//比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
 void GraphicsPipeline::makeGraphicsPipeline(ID3D12Device* device) {

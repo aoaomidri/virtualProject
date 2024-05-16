@@ -198,6 +198,9 @@
     <ClCompile Include="Engine\3D\Object3D\SkinAnimObject3D.cpp">
       <Filter>engine\3D\Object3D</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\SkyBox.cpp">
+      <Filter>engine\3D\Object3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\Matrix.h">
@@ -321,6 +324,9 @@
       <Filter>application\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\SkinAnimObject3D.h">
+      <Filter>engine\3D\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\SkyBox.h">
       <Filter>engine\3D\Object3D</Filter>
     </ClInclude>
   </ItemGroup>

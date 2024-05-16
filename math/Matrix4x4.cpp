@@ -233,7 +233,7 @@ Matrix4x4 Matrix4x4::MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& r
 }
 
 Matrix4x4 Matrix4x4::MakeAffineMatrix(const EulerTransform& transform){
-	return MakeAffineMatrix(transform.scale, transform.scale, transform.translate);
+	return MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 }
 
 Matrix4x4 Matrix4x4::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip){

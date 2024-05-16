@@ -45,27 +45,27 @@ void ParticleBase::Initialize() {
 
 	GraphicsPipelineParticleNone_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleNone_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeNone);
 	GraphicsPipelineParticleNormal_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleNormal_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeNormal);
 	GraphicsPipelineParticleAdd_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleAdd_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeAdd);
 	GraphicsPipelineParticleSubtract_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleSubtract_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeSubtract);
 	GraphicsPipelineParticleMultily_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleMultily_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeMultily);
 	GraphicsPipelineParticleScreen_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineParticleScreen_->ParticleExclusiveInitialize(
-		L"resources/shaders/Particle.VS.hlsl", L"resources/shaders/Particle.PS.hlsl",
+		L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl",
 		true, BlendMode::kBlendModeScreen);
 
 	textureHandle_= TextureManager::GetInstance()->Load("resources/texture/circle.png");//10

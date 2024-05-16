@@ -12,43 +12,47 @@ TextureManager* TextureManager::GetInstance() {
 
 void TextureManager::Initialize() {
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline2D_->Initialize(L"resources/shaders/Object2d.VS.hlsl", L"resources/shaders/Object2d.PS.hlsl", false);
+	GraphicsPipeline2D_->Initialize(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl", false);
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline3D_->Initialize(L"resources/shaders/Object3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
+	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
+
+	GraphicsPipelineSkyBox_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSkyBox_->InitializeSkyBox(L"resources/shaders/SkyBox/Skybox.VS.hlsl", L"resources/shaders/SkyBox/Skybox.PS.hlsl");
+
 
 	GraphicsPipelineSkinning3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/SkinningObject3d.VS.hlsl", L"resources/shaders/Object3d.PS.hlsl", true);
+	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/object3D/SkinningObject3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
 	
 	//ヴィネッティングなし
 	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/CopyImage.PS.hlsl");
+	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/CopyImage.PS.hlsl");
 	GraphicsPipelineGray_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Grayscale.PS.hlsl");
+	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/Grayscale.PS.hlsl");
 	GraphicsPipelineSepia_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/Sepiascale.PS.hlsl");
+	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/Sepiascale.PS.hlsl");
 	GraphicsPipelineInverse_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineInverse_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/InvertedColor.PS.hlsl");
+	GraphicsPipelineInverse_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/InvertedColor.PS.hlsl");
 	//ヴィネッティングあり
 	GraphicsPipelineNormalVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineNormalVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/NormalVignetting.PS.hlsl");
+	GraphicsPipelineNormalVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/NormalVignetting.PS.hlsl");
 	GraphicsPipelineGrayVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineGrayVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GrayVignetting.PS.hlsl");
+	GraphicsPipelineGrayVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GrayVignetting.PS.hlsl");
 	GraphicsPipelineSepiaVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/SepiaVignetting.PS.hlsl");
+	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/SepiaVignetting.PS.hlsl");
 	
 	//順序反転
 	GraphicsPipelineVignettingGrayScale_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineVignettingGrayScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingGrayScale.PS.hlsl");
+	GraphicsPipelineVignettingGrayScale_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/VignettingGrayScale.PS.hlsl");
 	GraphicsPipelineVignettingSepiaScale_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/VignettingSepiaScale.PS.hlsl");
+	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/VignettingSepiaScale.PS.hlsl");
 
 	//smoothing
 	GraphicsPipelineSmoothing3x3 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter3x3.PS.hlsl");
+	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter3x3.PS.hlsl");
 	GraphicsPipelineSmoothing5x5 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter5x5.PS.hlsl");
+	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter5x5.PS.hlsl");
 	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/FullScreen.VS.hlsl", L"resources/shaders/GaussianFilter9x9.PS.hlsl");
+	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter9x9.PS.hlsl");
 
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
@@ -115,8 +119,17 @@ uint32_t TextureManager::Load(const std::string& filePath){
 
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	if (metadata.IsCubemap()){
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	}
+	else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	}
+	
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -170,6 +183,18 @@ void TextureManager::PreDraw3D(){
 }
 
 void TextureManager::PostDraw3D(){
+
+}
+
+void TextureManager::PreDrawSkyBox(){
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSkyBox_->GetRootSignature());
+	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSkyBox_->GetPipeLineState());
+
+	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void TextureManager::PostDrawSkyBox(){
 
 }
 
@@ -283,13 +308,25 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
 	//	テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	HRESULT hr;
+	if (filePathW.ends_with(L".dds")) {
+		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	}
+	else {
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 	assert(SUCCEEDED(hr));
 
 	//	ミニマップの作成
 	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+	if (DirectX::IsCompressed(image.GetMetadata().format)) {//圧縮フォーマットかどうか調べる
+		mipImages = std::move(image);
+	}
+	else {
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		assert(SUCCEEDED(hr));
+	}
+	
 	//	ミニマップ付きのデータを返す
 	return mipImages;
 }

@@ -175,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Object3D\Object3D.cpp" />
     <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp" />
     <ClCompile Include="Engine\3D\Object3D\SkinAnimObject3D.cpp" />
+    <ClCompile Include="Engine\3D\Object3D\SkyBox.cpp" />
     <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
     <ClCompile Include="Engine\3D\ViewProjection.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
@@ -213,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Object3D\Object3D.h" />
     <ClInclude Include="Engine\3D\Object3D\ParticleBase.h" />
     <ClInclude Include="Engine\3D\Object3D\SkinAnimObject3D.h" />
+    <ClInclude Include="Engine\3D\Object3D\SkyBox.h" />
     <ClInclude Include="Engine\3D\Shape\OBB.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />

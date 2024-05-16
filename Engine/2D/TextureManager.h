@@ -54,6 +54,10 @@ public:
 
 	void PostDraw3D();
 
+	void PreDrawSkyBox();
+
+	void PostDrawSkyBox();
+
 	void PreDrawSkin3D();
 
 	void PostDrawSkin3D();
@@ -134,6 +138,8 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkyBox_;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkinning3D_;
 

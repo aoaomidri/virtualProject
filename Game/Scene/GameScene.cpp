@@ -23,6 +23,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");
 	textureManager_->Load("resources/texture/actionText.png");//20
+	textureManager_->Load("resources/DDS/rostock_laage_airport_4k.dds");
 }
 
 void GameScene::SoundLoad(){
@@ -82,14 +83,19 @@ void GameScene::ObjectInitialize() {
 	//model_ = Model::LoadObjFile("skyDome");
 	//boxModel_ = Model::LoadObjFile("box");
 
-	skyDomeObj_ = std::make_unique<Object3D>();
+	/*skyDomeObj_ = std::make_unique<Object3D>();
 	skyDomeObj_->Initialize("skyDome");
 
 	skyDomeTrnasform_ = {
 		{100.0f,100.0f,100.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
-	};
+	};*/
+
+	skyBox_ = std::make_unique<SkyBox>();
+	skyBox_->Initialize("resources/DDS/rostock_laage_airport_4k.dds");
+
+	skyBox_->transform_.scale = { 100.0f,100.0f,100.0f };
 
 }
 
@@ -336,8 +342,7 @@ void GameScene::Update(){
 		assert(0);
 	}
 	fadeSprite_->color_.w = fadeAlpha_;
-	skyDomeTrnasform_.rotate.y += 0.001f;
-	skyDomeMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(skyDomeTrnasform_);
+	
 
 	if (fadeAlpha_>=1.0f){
 		fadeAlpha_ = 1.0f;
@@ -378,10 +383,15 @@ void GameScene::DrawSkin3D(){
 }
 
 void GameScene::Draw3D(){
+
+	textureManager_->PreDrawSkyBox();
+
+	skyBox_->Update(followCamera_->GetViewProjection());
+	skyBox_->Draw();
+
+
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
-	skyDomeObj_->Update(skyDomeMatrix_, followCamera_->GetViewProjection());
-	skyDomeObj_->Draw();
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {

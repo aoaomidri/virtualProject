@@ -30,6 +30,8 @@ public:
 	//コピー用の初期化
 	void InitializeCopy(const std::wstring& VSname, const std::wstring& PSname);
 
+	void InitializeSkyBox(const std::wstring& VSname, const std::wstring& PSname);
+
 	//Skinning用の初期化処理
 	void InitializeSkinning(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
 
@@ -57,6 +59,8 @@ private:
 
 	void makeRootSignature(ID3D12Device* device);
 
+	void makeRootSignatureSkyBox(ID3D12Device* device);
+
 	void makeParticleRootSignature(ID3D12Device* device);
 
 	void makeRootSignatureCopy(ID3D12Device* device);
@@ -64,6 +68,8 @@ private:
 	void makeRootSignatureSkinning(ID3D12Device* device);
 
 	void makeInputLayout();
+
+	void makeInputLayoutSkyBox();
 
 	void makeInputLayoutCopy();
 
@@ -79,9 +85,11 @@ private:
 
 	void makeDepthStencilCopy();
 
+	void makeDepthStencilSkyBox();
+
 
 private:
-	HRESULT hr;
+	HRESULT hr{};
 
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
@@ -92,6 +100,8 @@ private:
 
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
+
+	std::array<D3D12_INPUT_ELEMENT_DESC, 1> inputElementSkyDescs_{};
 
 	std::array<D3D12_INPUT_ELEMENT_DESC, 3> inputElementDescs_{};
 

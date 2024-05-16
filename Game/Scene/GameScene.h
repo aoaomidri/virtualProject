@@ -13,6 +13,7 @@
 #include"FloorManager.h"
 #include"LockOn.h"
 #include"ParticleBase.h"
+#include"SkyBox.h"
 #include"Audio.h"
 
 class GameScene{
@@ -116,13 +117,15 @@ private:
 	uint32_t gameBGM{};
 
 	//天球
-	std::unique_ptr<Object3D> skyDomeObj_;
+	/*std::unique_ptr<Object3D> skyDomeObj_;
 
 	std::unique_ptr<Model> skyDomeModel_;
 
 	EulerTransform skyDomeTrnasform_;
 
-	Matrix4x4 skyDomeMatrix_;
+	Matrix4x4 skyDomeMatrix_;*/
+
+	std::unique_ptr<SkyBox> skyBox_;
 
 	//スプライト関連
 	//タイトル

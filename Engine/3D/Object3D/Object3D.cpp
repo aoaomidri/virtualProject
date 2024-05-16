@@ -120,7 +120,7 @@ void Object3D::DrawImgui(std::string name){
 #endif
 }
 
-void Object3D::SetDirectionalLight(const Model::DirectionalLight* light){
+void Object3D::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light){
 	directionalLight = light;
 }
 
@@ -180,7 +180,7 @@ void Object3D::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
+	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
 
 	//書き込むためのアドレスを取得
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));

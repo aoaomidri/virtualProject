@@ -8,17 +8,25 @@ void WholeGame::Initialize(){
 
 	adjustment_item = Adjustment_Item::GetInstance();
 	//グローバル変数の読み込み
-	adjustment_item->LoadFiles();	
-
+	adjustment_item->LoadFiles();
 	textureManager_ = TextureManager::GetInstance();
+
+	directionalLight_ = DirectionalLight::GetInstance();
+	directionalLight_->Initialize();
+
+	directionalData_.color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalData_.direction = { 0.0f,-1.0f,0.0f };
+	directionalData_.intensity = { 1.0f };
 
 	gameScene_ = std::make_unique<GameScene>();
 	gameScene_->Initialize();
+
 
 	vignettingData_ = {
 		.scale = 16.0f,
 		.pow = 0.8f,
 	};
+	
 }
 
 void WholeGame::Finalize(){	
@@ -119,4 +127,12 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
 	ImGui::End();
 	textureManager_->SetVignettingData(vignettingData_);
+
+	ImGui::Begin("DirectionalLightの情報");
+	ImGui::ColorEdit4("ライトの色", &directionalData_.color.x);
+	ImGui::DragFloat3("ライトの向き", &directionalData_.direction.x, 0.01f, -1.0f, 1.0f);
+	ImGui::DragFloat("ライトの輝き", &directionalData_.intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+
+	directionalLight_->SetLightData(directionalData_);
 }

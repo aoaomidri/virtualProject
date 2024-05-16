@@ -1,6 +1,7 @@
 #pragma once
 
 #include"MAFramework.h"
+#include"DirectionalLight.h"
 //ゲーム全体を管理するクラス
 class WholeGame : public MAFramework{
 public:
@@ -32,6 +33,11 @@ private:
 	TextureManager* textureManager_ = nullptr;
 
 	TextureManager::Vignetting vignettingData_;
+
+	/*光源*/
+	DirectionalLight* directionalLight_ = nullptr;
+
+	DirectionalLight::DirectionalLightData directionalData_;
 		
 };
 

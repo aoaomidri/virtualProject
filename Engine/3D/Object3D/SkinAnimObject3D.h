@@ -8,7 +8,7 @@
 #include"TextureManager.h"
 #include"Model.h"
 #include"ViewProjection.h"
-
+#include <DirectionalLight.h>
 
 class SkinAnimObject3D{
 public:
@@ -32,7 +32,9 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
-	void SetDirectionalLight(const Model::DirectionalLight* light);
+	void SetIsLighting(const bool& isLighting) { isUseLight_ = isLighting; }
+
+	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
 	void SetPointLight(const Model::PointLight* pLight);
 
@@ -181,9 +183,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_;
 
 	//マテリアルにデータを書き込む
-	Model::DirectionalLight* directionalLightDate_ = nullptr;
+	DirectionalLight::DirectionalLightData* directionalLightDate_ = nullptr;
 
-	const Model::DirectionalLight* directionalLight_ = nullptr;
+	const DirectionalLight::DirectionalLightData* directionalLight_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource_;
 

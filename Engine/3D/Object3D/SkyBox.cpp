@@ -90,7 +90,7 @@ void SkyBox::DrawImgui(std::string name) {
 #endif
 }
 
-void SkyBox::SetDirectionalLight(const Model::DirectionalLight* light) {
+void SkyBox::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light) {
 	directionalLight = light;
 }
 
@@ -244,7 +244,7 @@ void SkyBox::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
+	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
 
 	//書き込むためのアドレスを取得
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));

@@ -8,6 +8,7 @@
 #include"TextureManager.h"
 #include"Model.h"
 #include"ViewProjection.h"
+#include"DirectionalLight.h"
 
 
 class Object3D{
@@ -26,7 +27,7 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
-	void SetDirectionalLight(const Model::DirectionalLight* light);
+	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
 	void SetPointLight(const Model::PointLight* pLight);
 
@@ -71,9 +72,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
-	Model::DirectionalLight* directionalLightDate = nullptr;
+	DirectionalLight::DirectionalLightData* directionalLightDate = nullptr;
 
-	const Model::DirectionalLight* directionalLight = nullptr;
+	const DirectionalLight::DirectionalLightData* directionalLight = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
 

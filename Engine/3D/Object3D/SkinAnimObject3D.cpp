@@ -5,6 +5,7 @@
 #include<sstream>
 
 
+
 void SkinAnimObject3D::Initialize(const std::string fileName, const bool isLoop) {
 	makeResource();
 
@@ -137,22 +138,20 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 	wvpData_->WVP = worldViewProjectionMatrix;
 	materialDate_->enableLighting = isUseLight_;
 
-	wvpData_->World = worldViewProjectionMatrix;
+	wvpData_->World = worldMatrix_;
 	wvpData_->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 			
 	if (directionalLight_){
-	directionalLightDate_->color = directionalLight_->color;
-	directionalLightDate_->direction = directionalLight_->direction;
-	directionalLightDate_->intensity = directionalLight_->intensity;
-
+		directionalLightDate_->color = directionalLight_->color;
+		directionalLightDate_->direction = directionalLight_->direction;
+		directionalLightDate_->intensity = directionalLight_->intensity;
 	}
 	if (pointLight_){
-	pointLightData_->color = pointLight_->color;
-	pointLightData_->position = pointLight_->position;
-	pointLightData_->intensity = pointLight_->intensity;
-	pointLightData_->radius = pointLight_->radius;
-	pointLightData_->decay = pointLight_->decay;
-
+		pointLightData_->color = pointLight_->color;
+		pointLightData_->position = pointLight_->position;
+		pointLightData_->intensity = pointLight_->intensity;
+		pointLightData_->radius = pointLight_->radius;
+		pointLightData_->decay = pointLight_->decay;
 	}
 
 	materialDate_->shininess = shininess_;
@@ -219,23 +218,18 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Text("アニメーションの時間 = %.1f", animationTime_);
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
-	for (int i = 0; i < 4; i++){
-		ImGui::DragFloat4(("LocalMat1" + std::to_string(i)).c_str(), skeleton_.joints[0].skeltonSpaceMatrix.m[i], 0.1f);
-	}
-	for (int i = 0; i < 4; i++) {
-		ImGui::DragFloat4(("LocalMat2" + std::to_string(i)).c_str(), skeleton_.joints[1].skeltonSpaceMatrix.m[i], 0.1f);
-	}
-	for (int i = 0; i < 4; i++) {
-		ImGui::DragFloat4(("LocalMat3" + std::to_string(i)).c_str(), skeleton_.joints[2].skeltonSpaceMatrix.m[i], 0.1f);
-	}
+	ImGui::Checkbox("ライティングするかどうか", &isUseLight_);
+	ImGui::DragFloat("反射強度", &shininess_, 0.01f, 0.0f, 100.0f);
+	ImGui::ColorEdit4("ライトの色", &directionalLightDate_->color.x);
+	ImGui::DragFloat3("ライトの向き", &directionalLightDate_->direction.x, 0.01f, -1.0f, 1.0f);
+	ImGui::DragFloat("ライトの輝き", &directionalLightDate_->intensity, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 #endif
 }
 
-void SkinAnimObject3D::SetDirectionalLight(const Model::DirectionalLight* light){
+void SkinAnimObject3D::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light){
 	directionalLight_ = light;
 }
-
 void SkinAnimObject3D::SetPointLight(const Model::PointLight* pLight){
 	pointLight_ = pLight;
 }
@@ -275,7 +269,7 @@ void SkinAnimObject3D::makeResource() {
 	//今回は赤を書き込んでみる
 	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	materialDate_->enableLighting = false;
+	materialDate_->enableLighting = true;
 
 	materialDate_->uvTransform.Identity();
 
@@ -292,7 +286,7 @@ void SkinAnimObject3D::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource_ = CreateBufferResource(sizeof(Model::DirectionalLight));
+	directionalLightResource_ = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
 
 	//書き込むためのアドレスを取得
 	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate_));

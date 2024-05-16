@@ -40,6 +40,8 @@ void Player::Initialize(){
 	playerSkinAnimObj_->SetAnimation("human", "Run", true);
 	playerSkinAnimObj_->SetAnimation("human", "jump", false);
 
+	playerSkinAnimObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
+
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
 	debugSphere_.resize(debugJoints_.size());

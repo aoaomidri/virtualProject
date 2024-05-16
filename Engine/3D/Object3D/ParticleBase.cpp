@@ -316,7 +316,7 @@ void ParticleBase::makeResource() {
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(Model::DirectionalLight));
+	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
 	
 
 	//書き込むためのアドレスを取得

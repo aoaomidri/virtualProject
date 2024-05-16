@@ -15,6 +15,7 @@
 #include<list>
 #include"OBB.h"
 #include"TextureManager.h"
+#include"DirectionalLight.h"
 
 
 class ParticleBase{
@@ -132,7 +133,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	//マテリアルにデータを書き込む
-	Model::DirectionalLight* directionalLightDate = nullptr;
+	DirectionalLight::DirectionalLightData* directionalLightDate = nullptr;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
 

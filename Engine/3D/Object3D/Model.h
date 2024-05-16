@@ -54,12 +54,6 @@ public:
 		float shininess;
 	};
 
-	struct DirectionalLight {
-		Vector4 color;		//ライトの色
-		Vector3 direction;	//ライトの向き
-		float intensity;	//輝度
-	};
-
 	struct PointLight {
 		Vector4 color;		//ライトの色
 		Vector3 position;	//ライトの位置

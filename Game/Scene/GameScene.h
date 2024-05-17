@@ -86,9 +86,9 @@ private:
 	std::unique_ptr<FloorManager> floorManager_;
 
 	EulerTransform firstFloor_ = {
-		.scale = {2.0f,0.5f,2.0f},
+		.scale = {50.0f,1.0f,50.0f},
 		.rotate = {0},
-		.translate = {0}
+		.translate = {0,0.f,0.0f}
 	};
 
 	bool isFloorMove_ = false;

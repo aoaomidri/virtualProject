@@ -15,7 +15,7 @@ public:
 	//更新処理
 	void Update();
 	//描画
-	void Draw(Object3D* object, const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection);
 	//Imgui描画
 	void DrawImgui();
 
@@ -30,7 +30,7 @@ public:
 	const OBB& GetOBB()const { return floorOBB_; }
 
 private:
-	Object3D* floorModel_ = nullptr;
+	std::unique_ptr<Object3D> floorObj_;
 
 	EulerTransform floorTransform_{};
 

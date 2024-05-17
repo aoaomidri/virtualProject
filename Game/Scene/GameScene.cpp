@@ -147,7 +147,6 @@ void GameScene::Initialize(){
 	};
 
 	stageName_ = stages_[0].c_str();
-	floorManager_->LoadFiles(stageName_);
 
 	titleSprite_->position_ = { 640.0f,175.0f };
 	titleSprite_->scale_.x = 850.0f;
@@ -384,10 +383,7 @@ void GameScene::DrawSkin3D(){
 
 void GameScene::Draw3D(){
 
-	textureManager_->PreDrawSkyBox();
-
-	skyBox_->Update(followCamera_->GetViewProjection());
-	skyBox_->Draw();
+	
 
 
 	/*描画前処理*/
@@ -420,6 +416,11 @@ void GameScene::Draw3D(){
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
+
+	textureManager_->PreDrawSkyBox();
+
+	skyBox_->Update(followCamera_->GetViewProjection());
+	skyBox_->Draw();
 }
 
 void GameScene::Draw2D(){
@@ -487,6 +488,7 @@ void GameScene::DrawImgui(){
 		player_->DrawImgui();
 		followCamera_->DrawImgui();
 		lockOn_->DrawImgui();
+		floorManager_->DrawImgui();
 
 		for (const auto& enemy : enemies_) {
 			enemy->DrawImgui();
@@ -512,15 +514,7 @@ void GameScene::DrawImgui(){
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("オブジェクト一覧")) {
-				if (ImGui::BeginMenu("床一覧")) {
-					floorManager_->DrawImgui();
-					ImGui::EndMenu();
-				}
-
-
-				ImGui::EndMenu();
-			}
+			
 			if (ImGui::BeginMenu("ファイル関連")) {
 				for (size_t i = 0; i < stages_.size(); i++) {
 					if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
@@ -575,7 +569,7 @@ void GameScene::DrawImgui(){
 
 
 void GameScene::AllCollision(){
-	for (Floor* floor : floorManager_->GetFloors()) {
+	for (const auto& floor : floorManager_->GetFloors()) {
 		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
 			chackCollision = 1;
 			player_->onFlootCollision(floor->GetOBB());

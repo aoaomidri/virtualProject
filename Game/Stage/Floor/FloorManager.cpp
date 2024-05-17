@@ -3,26 +3,15 @@
 
 FloorManager::~FloorManager(){
 	
-	// 解放
-	for (Floor* floor : floors_) {
-		delete floor;
-	}
-
-	for (Object3D* object : objects_) {
-		delete object;
-	}
-	floors_.clear();
-	objects_.clear();
 }
 
 void FloorManager::Initialize() {
 	
-	floorModel_ = Model::LoadModelFile("Floor");
 }
 
 void FloorManager::Update(){
 	//ブレイクフラグの立った床を削除
-	floors_.remove_if([](Floor* floor) {
+	/*floors_.remove_if([](Floor* floor) {
 		if (floor->GetIsDelete()) {
 			delete floor;
 
@@ -30,47 +19,40 @@ void FloorManager::Update(){
 		}
 		return false;
 
-		});
-
-	for (Floor* floor : floors_) {
-		floor->Update();
+	});*/
+	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
+		(*it)->Update();
 	}
+	
 }
 
 void FloorManager::Draw(const ViewProjection& viewProjection){
 	int num = 0;
 
-	for (Floor* floor : floors_) {
-		auto it = std::next(objects_.begin(), num);
-		Object3D* object = *it;
-		floor->Draw(object, viewProjection);
-		num++;
+	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
+		(*it)->Draw(viewProjection);
 	}
 
 }
 
-void FloorManager::AddFloor(EulerTransform transform, bool isMoving){
-	Object3D* object_ = new Object3D();
-	object_->Initialize("Floor");
-	objects_.push_back(object_);
+void FloorManager::AddFloor(const EulerTransform& transform, bool isMoving){
+	//std::unique_ptr<Object3D> object_ = std::make_unique<Object3D>();
+	//object_->Initialize("Floor");
+	//objects_.emplace_back(std::move(object_));
 
-	Floor* floor = new Floor();
+	std::unique_ptr<Floor> floor = std::make_unique<Floor>();
 	
 
 	floor->Initialize(transform);
 
-	floors_.push_back(floor);
+	floors_.emplace_back(std::move(floor));
 }
 
 void FloorManager::DrawImgui() {
 	int i = 0;
 
-	for (Floor* floor : floors_) {
-		/*if (ImGui::TreeNode((std::to_string(i + 1) + "個目の床").c_str())) {
-			floor->DrawImgui();
-
-			ImGui::TreePop();
-		}*/
+	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
+		(*it)->DrawImgui();	
 		i++;
 	}
 }
@@ -83,21 +65,21 @@ void FloorManager::SaveFile(const std::vector<std::string>& stages) {
 
 	for (size_t j = 0; j < stages.size(); ++j) {
 		int i = 0;
-		for (Floor* floor : floors_) {
+		for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 			root[kItemName_][stages[j].c_str()][i][0] = json::array(
-				{ floor->GetTransform().scale.x,
-				  floor->GetTransform().scale.y,
-				  floor->GetTransform().scale.z
+				{ (*it)->GetTransform().scale.x,
+				  (*it)->GetTransform().scale.y,
+				  (*it)->GetTransform().scale.z
 				});
 			root[kItemName_][stages[j].c_str()][i][1] = json::array(
-				{ floor->GetTransform().rotate.x,
-				  floor->GetTransform().rotate.y,
-				  floor->GetTransform().rotate.z
+				{ (*it)->GetTransform().rotate.x,
+				  (*it)->GetTransform().rotate.y,
+				  (*it)->GetTransform().rotate.z
 				});
 			root[kItemName_][stages[j].c_str()][i][2] = json::array(
-				{ floor->GetTransform().translate.x,
-				  floor->GetTransform().translate.y,
-				  floor->GetTransform().translate.z
+				{ (*it)->GetTransform().translate.x,
+				  (*it)->GetTransform().translate.y,
+				  (*it)->GetTransform().translate.z
 				});
 			std::filesystem::path dir(kDirectoryPath);
 			if (!std::filesystem::exists(kDirectoryName)) {
@@ -141,25 +123,25 @@ void FloorManager::FileOverWrite(const std::string& stage) {
 	json overWrite;
 
 	int i = 0;
-	for (Floor* floor : floors_) {
+	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 		overWrite[i][0] = json::array(
-			{ floor->GetTransform().scale.x,
-			  floor->GetTransform().scale.y,
-			  floor->GetTransform().scale.z
+			{ (*it)->GetTransform().scale.x,
+			  (*it)->GetTransform().scale.y,
+			  (*it)->GetTransform().scale.z
 			});
 		overWrite[i][1] = json::array(
-			{ floor->GetTransform().rotate.x,
-			  floor->GetTransform().rotate.y,
-			  floor->GetTransform().rotate.z
+			{ (*it)->GetTransform().rotate.x,
+			  (*it)->GetTransform().rotate.y,
+			  (*it)->GetTransform().rotate.z
 			});
 		overWrite[i][2] = json::array(
-			{ floor->GetTransform().translate.x,
-			  floor->GetTransform().translate.y,
-			  floor->GetTransform().translate.z
+			{ (*it)->GetTransform().translate.x,
+			  (*it)->GetTransform().translate.y,
+			  (*it)->GetTransform().translate.z
 			});
-		overWrite[i][3] = floor->GetIsMove();
-		i++;
-	}
+		overWrite[i][3] = (*it)->GetIsMove();
+		i++;			  
+	}					  
 
 	root[kItemName_][stage] = overWrite;
 
@@ -280,16 +262,6 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 	//ファイルを閉じる
 	ifs.close();
 
-	for (Floor* floor : floors_) {
-		delete floor;
-	}
-
-	for (Object3D* object : objects_) {
-		delete object;
-	}
-
-	floors_.clear();
-	objects_.clear();
 
 	//グループを検索
 	nlohmann::json::iterator itGroup = root.find(groupName);

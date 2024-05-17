@@ -1,7 +1,8 @@
 #include "Floor.h"
 
 void Floor::Initialize(EulerTransform transform){
-	
+	floorObj_ = std::make_unique<Object3D>();
+	floorObj_->Initialize("Floor");
 	
 	floorTransform_ = transform;
 
@@ -9,6 +10,9 @@ void Floor::Initialize(EulerTransform transform){
 	floorOBB_.size = floorTransform_.scale;
 	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
+
+	floorObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
+	
 
 	isDelete_ = false;
 }
@@ -29,28 +33,17 @@ void Floor::Update(){
 	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
-	floorMatrix_ = 
-		Matrix::GetInstance()->MakeAffineMatrix(floorTransform_.scale, floorTransform_.rotate, floorTransform_.translate);
+	floorMatrix_.MakeAffineMatrix(floorTransform_.scale, floorTransform_.rotate, floorTransform_.translate);
 }
 
-void Floor::Draw(Object3D* object,const ViewProjection& viewProjection){
-	if (floorModel_ == nullptr) {
-		floorModel_ = object;
-	}
-	
+void Floor::Draw(const ViewProjection& viewProjection){
 
-	floorModel_->Update(floorMatrix_, viewProjection);
-	floorModel_->Draw();
+	floorObj_->Update(floorMatrix_, viewProjection);
+	floorObj_->Draw();
 }
 
 void Floor::DrawImgui(){
-	/*ImGui::DragFloat3("床の座標", &floorTransform_.translate.x, 0.01f);
-	ImGui::DragFloat3("床の回転", &floorTransform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("床の大きさ", &floorTransform_.scale.x, 0.01f);
-	ImGui::Checkbox("動くかどうか", &isMove_);
-	if (ImGui::Button("このオブジェを削除")) {
-		isDelete_ = true;
-	}*/
+	floorObj_->DrawImgui("床");
 }
 
 

@@ -110,6 +110,7 @@ void Object3D::DrawImgui(std::string name){
 #ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
+	ImGui::Checkbox("ライティングするかどうか", &isUseLight_);
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
 	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
 	ImGui::DragFloat3("モデルに設定されたTransform", &animeTranslate_.x, 0.1f);

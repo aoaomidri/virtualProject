@@ -32,7 +32,7 @@ public:
 	/// <summary>
 	/// 床追加
 	/// </summary>
-	void AddFloor(EulerTransform transform, bool isMoving);
+	void AddFloor(const EulerTransform& transform, bool isMoving);
 
 	/// <summary>
 	/// imgui表示
@@ -45,7 +45,7 @@ public: // アクセッサ
 	/// 床リストゲッター
 	/// </summary>
 	/// <returns></returns>
-	std::list<Floor*> GetFloors() { return floors_; }
+	const std::list<std::unique_ptr<Floor>>& GetFloors()const { return floors_; }
 
 	/// <summary>
 	/// デバッグ描画セッター
@@ -91,14 +91,8 @@ private:
 private:
 
 	//オブジェクトの情報
-
-	//オブジェクトリスト
-	std::list<Object3D*> objects_;
-
-	std::unique_ptr<Model> floorModel_ ;
-
 	// 床リスト
-	std::list<Floor*> floors_;
+	std::list<std::unique_ptr<Floor>> floors_;
 
 };
 

@@ -51,33 +51,36 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 	if(gMaterial.enableLighting != 0){
 		//ここからディレクショナルライト
-		float NdotL = dot(normalize(input.normal),gDirectionalLight.direction);
-		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-		
-		// float32_t3 reflectLight = reflect(-gDirectionalLight.direction,normalize(input.normal));
-		// float RdotE=dot(reflectLight,toEye);
-		float32_t3 halfVector = normalize(gDirectionalLight.direction + toEye);
+		float32_t3 halfVector = normalize(-gDirectionalLight.direction + toEye);
 		float NDotH = dot(normalize(input.normal),halfVector);
-		float specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
+		float specularPow = pow(saturate(NDotH),gMaterial.shininess);//反射強度
 
-		//拡散反射
+		float NdotL = dot(normalize(input.normal),-gDirectionalLight.direction);
+		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+
+		// //拡散反射
 		float32_t3 diffuseDirectionalLight = 
 		gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
 
-		//鏡面反射
+		// //鏡面反射
 		float32_t3 specularDirectionalLight = 
 		gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
 
-		//ここからポイントライト
+		// //ここからポイントライト
 
 		float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
 		halfVector = normalize(-pointLightDirection + toEye);
 		NDotH = dot(normalize(input.normal),halfVector);
 		specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
 
+		NdotL = dot(normalize(input.normal),-pointLightDirection);
+		cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+
+
+		
 		//減衰計算
 		float32_t distance = length(gPointLight.position - input.worldPosition);//ポイントライトへの距離
-		float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
+		float32_t factor = 1.0f / (distance * distance); //指数によるコントロール
 
 		//拡散反射
 		float32_t3 diffusePointLight = 
@@ -87,10 +90,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 specularPointLight = 
 		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
 
-		//各ライトの色を計算
-
 		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
 		output.color.a = gMaterial.color.a * textureColor.a;
+		
 	}else{
 		output.color = gMaterial.color * textureColor;
 	}

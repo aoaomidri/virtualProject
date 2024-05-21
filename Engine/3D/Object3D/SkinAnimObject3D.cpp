@@ -230,7 +230,7 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 void SkinAnimObject3D::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light){
 	directionalLight_ = light;
 }
-void SkinAnimObject3D::SetPointLight(const Model::PointLight* pLight){
+void SkinAnimObject3D::SetPointLight(const PointLight::PointLightData* pLight){
 	pointLight_ = pLight;
 }
 
@@ -298,7 +298,7 @@ void SkinAnimObject3D::makeResource() {
 	directionalLightDate_->intensity = 1.0f;
 
 	//マテリアル用のリソース
-	pointLightResource_ = CreateBufferResource(sizeof(Model::PointLight));
+	pointLightResource_ = CreateBufferResource(sizeof(PointLight::PointLightData));
 
 	//書き込むためのアドレスを取得
 	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
@@ -308,6 +308,10 @@ void SkinAnimObject3D::makeResource() {
 	pointLightData_->position = { 0.0f,10.0f,0.0f };
 
 	pointLightData_->intensity = 1.0f;
+
+	pointLightData_->radius = 10.0f;
+
+	pointLightData_->decay = 1.0f;
 
 	/*カメラリソース関連*/
 	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));

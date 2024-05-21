@@ -44,24 +44,9 @@ void SkyBox::Update(const ViewProjection& viewProjection) {
 	wvpData->World = worldMatrix_;
 	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 
-	if (directionalLight) {
-		directionalLightDate->color = directionalLight->color;
-		directionalLightDate->direction = directionalLight->direction;
-		directionalLightDate->intensity = directionalLight->intensity;
-
-	}
-	if (pointLight) {
-		pointLightData->color = pointLight->color;
-		pointLightData->position = pointLight->position;
-		pointLightData->intensity = pointLight->intensity;
-		pointLightData->radius = pointLight->radius;
-		pointLightData->decay = pointLight->decay;
-
-	}
 
 	materialDate->shininess = shininess_;
 
-	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
 void SkyBox::Draw() {
@@ -90,13 +75,6 @@ void SkyBox::DrawImgui(std::string name) {
 #endif
 }
 
-void SkyBox::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light) {
-	directionalLight = light;
-}
-
-void SkyBox::SetPointLight(const Model::PointLight* pLight) {
-	pointLight = pLight;
-}
 
 Microsoft::WRL::ComPtr<ID3D12Resource> SkyBox::CreateBufferResource(size_t sizeInBytes) {
 
@@ -242,38 +220,6 @@ void SkyBox::makeResource() {
 	wvpData->World = Matrix::GetInstance()->MakeIdentity4x4();
 	wvpData->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
 
-	/*平行光源用リソース関連*/
-	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
-
-	//書き込むためのアドレスを取得
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
-	//今回は白を書き込んでみる
-	directionalLightDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	directionalLightDate->direction = { 0.0f,-1.0f,0.0f };
-
-	directionalLightDate->intensity = 1.0f;
-
-	//マテリアル用のリソース
-	pointLightResource = CreateBufferResource(sizeof(Model::PointLight));
-
-	//書き込むためのアドレスを取得
-	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
-	//今回は白を書き込んでみる
-	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	pointLightData->position = { 0.0f,10.0f,0.0f };
-
-	pointLightData->intensity = 1.0f;
-
-	/*カメラリソース関連*/
-	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));
-
-	//書き込むためのアドレスを取得
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
-
-	cameraForGPU_->worldPosition = { 0.0f,0.0f,0.0f };
 
 
 }

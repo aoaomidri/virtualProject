@@ -9,6 +9,7 @@
 #include"Model.h"
 #include"ViewProjection.h"
 #include <DirectionalLight.h>
+#include <PointLight.h>
 
 class SkinAnimObject3D{
 public:
@@ -36,7 +37,7 @@ public:
 
 	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
-	void SetPointLight(const Model::PointLight* pLight);
+	void SetPointLight(const PointLight::PointLightData* pLight);
 
 
 	/*アニメーション関連の関数*/
@@ -189,9 +190,9 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource_;
 
-	Model::PointLight* pointLightData_ = nullptr;
+	PointLight::PointLightData* pointLightData_ = nullptr;
 
-	const Model::PointLight* pointLight_ = nullptr;
+	const PointLight::PointLightData* pointLight_ = nullptr;
 	/*カメラ関連*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 

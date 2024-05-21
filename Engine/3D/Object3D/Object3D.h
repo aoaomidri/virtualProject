@@ -9,7 +9,7 @@
 #include"Model.h"
 #include"ViewProjection.h"
 #include"DirectionalLight.h"
-
+#include"PointLight.h"
 
 class Object3D{
 public:
@@ -29,7 +29,7 @@ public:
 
 	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
-	void SetPointLight(const Model::PointLight* pLight);
+	void SetPointLight(const PointLight::PointLightData* pLight);
 
 	void SetAnimation(const Model::Animation animation) {
 		animation_ = animation;
@@ -78,9 +78,9 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
 
-	Model::PointLight* pointLightData = nullptr;
+	PointLight::PointLightData* pointLightData = nullptr;
 
-	const Model::PointLight* pointLight = nullptr;
+	const PointLight::PointLightData* pointLight = nullptr;
 	/*カメラ関連*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 

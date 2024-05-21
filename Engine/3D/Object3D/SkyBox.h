@@ -30,10 +30,6 @@ public:
 
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
-	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
-
-	void SetPointLight(const Model::PointLight* pLight);
-
 	const bool& GetIsDraw()const { return isDraw_; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
@@ -83,20 +79,6 @@ private:
 	/*ライト関連*/
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
-	//マテリアルにデータを書き込む
-	DirectionalLight::DirectionalLightData* directionalLightDate = nullptr;
-
-	const DirectionalLight::DirectionalLightData* directionalLight = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
-
-	Model::PointLight* pointLightData = nullptr;
-
-	const Model::PointLight* pointLight = nullptr;
-	/*カメラ関連*/
-	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
-
-	CameraForGPU* cameraForGPU_ = nullptr;
 
 	//データを書き込む
 	//アニメーションの再生中の時刻

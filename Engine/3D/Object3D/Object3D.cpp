@@ -125,7 +125,7 @@ void Object3D::SetDirectionalLight(const DirectionalLight::DirectionalLightData*
 	directionalLight = light;
 }
 
-void Object3D::SetPointLight(const Model::PointLight* pLight){
+void Object3D::SetPointLight(const PointLight::PointLightData* pLight){
 	pointLight = pLight;
 }
 
@@ -193,7 +193,7 @@ void Object3D::makeResource() {
 	directionalLightDate->intensity = 1.0f;
 
 	//マテリアル用のリソース
-	pointLightResource = CreateBufferResource(sizeof(Model::PointLight));
+	pointLightResource = CreateBufferResource(sizeof(PointLight::PointLightData));
 
 	//書き込むためのアドレスを取得
 	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
@@ -203,6 +203,10 @@ void Object3D::makeResource() {
 	pointLightData->position = { 0.0f,10.0f,0.0f };
 
 	pointLightData->intensity = 1.0f;
+
+	pointLightData->radius = 1.0f;
+
+	pointLightData->decay = 1.0f;
 
 	/*カメラリソース関連*/
 	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));

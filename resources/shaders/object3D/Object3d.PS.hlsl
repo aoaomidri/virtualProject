@@ -80,7 +80,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		
 		//減衰計算
 		float32_t distance = length(gPointLight.position - input.worldPosition);//ポイントライトへの距離
-		float32_t factor = 1.0f / (distance * distance); //指数によるコントロール
+		float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
 
 		//拡散反射
 		float32_t3 diffusePointLight = 

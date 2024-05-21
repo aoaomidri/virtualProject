@@ -193,6 +193,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Input\Input.cpp" />
     <ClCompile Include="Game\Item\Adjustment_Item.cpp" />
     <ClCompile Include="Game\Light\DirectionalLight.cpp" />
+    <ClCompile Include="Game\Light\PointLight.cpp" />
+    <ClCompile Include="Game\Light\SpotLight.cpp" />
     <ClCompile Include="Game\random\RandomMaker.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
@@ -234,6 +236,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Input\Input.h" />
     <ClInclude Include="Game\Item\Adjustment_Item.h" />
     <ClInclude Include="Game\Light\DirectionalLight.h" />
+    <ClInclude Include="Game\Light\PointLight.h" />
+    <ClInclude Include="Game\Light\SpotLight.h" />
     <ClInclude Include="Game\random\RandomMaker.h" />
     <ClInclude Include="Game\Scene\GameScene.h" />
     <ClInclude Include="Game\Stage\Floor\Floor.h" />

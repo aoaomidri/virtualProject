@@ -14,6 +14,8 @@ void SkyBox::Initialize(const std::string fileName) {
 	
 	texHandle_ = TextureManager::GetInstance()->Load(fileName);	
 
+	TextureManager::GetInstance()->SetSkyBoxTex(texHandle_);
+
 	transform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},

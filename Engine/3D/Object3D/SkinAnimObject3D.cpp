@@ -189,6 +189,7 @@ void SkinAnimObject3D::Draw() {
 	if (!isDraw_) {
 		return;
 	}
+	const auto texManagerIns = TextureManager::GetInstance();
 	model_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
@@ -202,11 +203,12 @@ void SkinAnimObject3D::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(texHandle_));
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(3, skinCluster_.paletteSrvHandle.second);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, texManagerIns->SendGPUDescriptorHandle(texHandle_));
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(3, texManagerIns->SendGPUDescriptorHandle(texManagerIns->GetSkyBoxTex()));
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(4, skinCluster_.paletteSrvHandle.second);
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, directionalLightResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(7, pointLightResource_->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 

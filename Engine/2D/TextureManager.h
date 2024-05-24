@@ -116,6 +116,14 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(
 		uint32_t descriptorSize, uint32_t index);
 
+	const uint32_t GetSkyBoxTex()const {
+		return skyBoxTexNumber_;
+	}
+
+	void  SetSkyBoxTex(const uint32_t texNum) {
+		skyBoxTexNumber_ = texNum;
+	}
+
 private:
 	// DirectX12のTextureResourceを作る
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
@@ -204,6 +212,9 @@ private:
 
 	//どのポストエフェクトを選択しているか
 	uint32_t selectPost_ = 0;
+
+	//スカイボックスのテクスチャ番号
+	uint32_t skyBoxTexNumber_;
 
 	Matrix4x4 matProjectionInverse_;
 

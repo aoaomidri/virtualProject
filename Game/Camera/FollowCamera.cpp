@@ -35,10 +35,10 @@ void FollowCamera::Initialize(){
 
 	destinationAngleX_ = 0.0f;
 
-	distance = 30.0f;
+	distance = 25.0f;
 	distance *= -1.0f;
 
-	rootOffset = { 0.0f, 0.0f, distance };
+	rootOffset = { 0.0f, height_, distance };
 
 	minRotate = 0.1f;
 	maxRotate = 0.9f;
@@ -100,7 +100,7 @@ void FollowCamera::Update(){
 		viewProjection_.rotation_.x =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	//}
-	rootOffset = { 0.0f, 0.0f, distance };
+	rootOffset = { 0.0f, height_, distance };
 	baseOffset = rootOffset;
 
 	if (target_) {
@@ -157,12 +157,14 @@ void FollowCamera::SetTarget(const EulerTransform* target){
 
 void FollowCamera::DrawImgui(){
 #ifdef _DEBUG
+
 	ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
-	ImGui::DragFloat("オフセット", &distance, 0.1f);
+	ImGui::DragFloat("オフセットZ", &distance, 0.1f);
+	ImGui::DragFloat("オフセットY", &height_, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
 

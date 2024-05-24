@@ -99,6 +99,7 @@ private:
 	Vector3 interTarget_ = {};
 
 	float distance;
+	float height_ = 1.5f;
 	const float offset_t = 0.1f;
 
 	// 位置補完レート

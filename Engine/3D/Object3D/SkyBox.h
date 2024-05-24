@@ -32,6 +32,8 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
+private:
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	void MakeVertexResouce();

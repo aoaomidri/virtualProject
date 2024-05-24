@@ -29,6 +29,8 @@ ConstantBuffer<Material> gMaterial : register(b1);
 
 Texture2D<float32_t4> gTexture : register(t0);
 
+TextureCube<float32_t4> gEnvironmentTexture : register(t1);
+
 SamplerState gSampler : register(s0);
 
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
@@ -91,7 +93,13 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
 
 		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
-		
+
+		float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+		float32_t3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+		float32_t4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+
+		output.color.rgb += environmentColor.rgb;
+
 		output.color.a = gMaterial.color.a * textureColor.a;
 		
 	}else{

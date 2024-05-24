@@ -4,7 +4,7 @@
 #include"Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
-#include"GameScene.h"
+#include"GameScene/GameScene.h"
 #include"Adjustment_Item.h"
 #include"TextureManager.h"
 class MAFramework{

@@ -26,7 +26,7 @@ private:
 	//Imgui関連
 	std::unique_ptr<ImGuiManager> imguiManager_;	
 	//ゲームシーン
-	std::unique_ptr<GameScene> gameScene_;
+	GameScene* gameScene_;
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item = nullptr;
 

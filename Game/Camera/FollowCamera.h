@@ -46,6 +46,11 @@ public:
 	ViewingFrustum& GetLockViewingFrustum() { return lockViewingFrustum_; }
 
 	const ViewProjection& GetViewProjection()const { return viewProjection_; }
+
+	const Matrix4x4 GetProjectionInverse()const { 
+		Matrix4x4 mat = viewProjection_.matProjection_.Inverce();
+		return mat;
+	}
 private:
 	
 

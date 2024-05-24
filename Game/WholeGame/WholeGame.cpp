@@ -18,7 +18,7 @@ void WholeGame::Initialize(){
 	directionalData_.direction = { 0.0f,-1.0f,0.0f };
 	directionalData_.intensity = { 1.0f };
 
-	gameScene_ = std::make_unique<GameScene>();
+	gameScene_ = new GameScene();
 	gameScene_->Initialize();
 
 
@@ -35,6 +35,8 @@ void WholeGame::Finalize(){
 	gameScene_->AudioDataUnLoad();
 
 	gameScene_->Finalize();
+
+	delete gameScene_;
 	
 	MAFramework::Finalize();
 }
@@ -92,6 +94,9 @@ void WholeGame::DrawImgui(){
 	}
 	if (ImGui::Button("Inverse")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
+	}
+	if (ImGui::Button("OutLine")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::OutLine);
 	}
 	if (ImGui::Button("Smoothing3x3")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);

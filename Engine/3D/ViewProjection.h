@@ -4,6 +4,7 @@ class ViewProjection{
 public:
 	void UpdateMatrix();
 
+
 public:
 #pragma region ビュー行列の設定
 	// X,Y,Z軸回りのローカル回転角

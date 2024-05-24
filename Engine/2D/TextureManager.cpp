@@ -54,6 +54,9 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter9x9.PS.hlsl");
 
+	//outline
+	GraphicsPipelineOutLine_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineOutLine_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/LuminanceBasedOutline.PS.hlsl");
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
@@ -273,6 +276,10 @@ void TextureManager::DrawCopy(){
 	else if (selectPost_ == PostEffect::Smoothing9x9) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing9x9->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing9x9->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::OutLine) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineOutLine_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineOutLine_->GetPipeLineState());
 	}
 	else {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());

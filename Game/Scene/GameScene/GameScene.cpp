@@ -217,6 +217,7 @@ void GameScene::Update(){
 	DrawImgui();
 	
 	followCamera_->Update();
+	textureManager_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 	switch (sceneNum_){
 	case SceneName::TITLE:
 		
@@ -356,6 +357,10 @@ void GameScene::AudioDataUnLoad(){
 	
 }
 
+void GameScene::Debug(){
+
+}
+
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
@@ -460,6 +465,10 @@ void GameScene::Draw2D(){
 
 void GameScene::Finalize(){
 	
+}
+
+void GameScene::Draw(){
+
 }
 
 void GameScene::DrawImgui(){

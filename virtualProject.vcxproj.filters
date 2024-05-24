@@ -88,6 +88,18 @@
     <Filter Include="application\Character\Player">
       <UniqueIdentifier>{17ff3d3d-93ff-4eee-bf94-bde1ecefb5d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\Scene\BaseScene">
+      <UniqueIdentifier>{a1712128-8b53-4552-a452-48976a6b6286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Scene\TitleScene">
+      <UniqueIdentifier>{ba5f7d60-d06e-43da-860f-0765ee4b5a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Scene\GameScene">
+      <UniqueIdentifier>{90c21b67-8116-45ff-a076-105bc309089e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Scene\ResultScene">
+      <UniqueIdentifier>{4c9d954e-feca-43cb-b40f-899b85ba2b7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -150,9 +162,6 @@
     <ClCompile Include="Game\Input\Input.cpp">
       <Filter>application\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GameScene.cpp">
-      <Filter>application\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Stage\Goal\Goal.cpp">
       <Filter>application\Stage\Goal</Filter>
     </ClCompile>
@@ -206,6 +215,18 @@
     </ClCompile>
     <ClCompile Include="Game\Light\SpotLight.cpp">
       <Filter>application\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\BaseScene\BaseScene.cpp">
+      <Filter>application\Scene\BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
+      <Filter>application\Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GameScene\GameScene.cpp">
+      <Filter>application\Scene\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\ResultScene\ResultScene.cpp">
+      <Filter>application\Scene\ResultScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -284,9 +305,6 @@
     <ClInclude Include="Game\Input\Input.h">
       <Filter>application\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GameScene.h">
-      <Filter>application\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Stage\Goal\Goal.h">
       <Filter>application\Stage\Goal</Filter>
     </ClInclude>
@@ -340,6 +358,18 @@
     </ClInclude>
     <ClInclude Include="Game\Light\SpotLight.h">
       <Filter>application\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\BaseScene\BaseScene.h">
+      <Filter>application\Scene\BaseScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
+      <Filter>application\Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\GameScene\GameScene.h">
+      <Filter>application\Scene\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\ResultScene\ResultScene.h">
+      <Filter>application\Scene\ResultScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

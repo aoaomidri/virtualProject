@@ -86,6 +86,7 @@ public:
 		Smoothing5x5,//スモーシング中
 		Smoothing9x9,//スモーシング強
 		Inverse,//色反転
+		OutLine,//アウトライン
 		Over,//これ以上ないことを表す
 	};
 
@@ -101,6 +102,10 @@ public:
 
 	void SetPostEffect(const PostEffect& name) {
 		selectPost_ = name;
+	}
+
+	void SetMatProjectionInverse(const Matrix4x4& mat) {
+		matProjectionInverse_ = mat;
 	}
 
 public:
@@ -163,6 +168,10 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing5x5;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing9x9;
 
+	//LuminanceOutLine
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineOutLine_;
+
+
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;
 
@@ -195,6 +204,8 @@ private:
 
 	//どのポストエフェクトを選択しているか
 	uint32_t selectPost_ = 0;
+
+	Matrix4x4 matProjectionInverse_;
 
 private:
 	/// <summary>

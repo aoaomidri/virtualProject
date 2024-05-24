@@ -1,4 +1,5 @@
 #pragma once
+#include"BaseScene/BaseScene.h"
 #include"DirectXCommon.h"
 #include"Input.h"
 #include"TextureManager.h"
@@ -16,15 +17,23 @@
 #include"SkyBox.h"
 #include"Audio.h"
 
-class GameScene{
+class GameScene : public BaseScene{
 public:
 	//初期化
-	void Initialize();
+	void Initialize()override;
 	//更新
-	void Update();
+	void Update()override;
 
 	void AudioDataUnLoad();
 
+	//削除をまとめた関数
+	void Finalize()override ;
+
+	//描画
+	void Draw()override;
+
+	//ゲーム全体にかかわるImgui
+	void Debug() override;
 	//パーティクルの描画
 	void DrawParticle();
 
@@ -36,8 +45,6 @@ public:
 
 	//テクスチャ関連の描画
 	void Draw2D();
-	//削除をまとめた関数
-	void Finalize();
 
 private:
 	//クラス内関数

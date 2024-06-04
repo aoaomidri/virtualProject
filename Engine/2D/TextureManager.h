@@ -70,7 +70,7 @@ public:
 
 	void DrawCopy();
 
-	void MakeShaderResourceView();
+	
 
 public:
 	enum  PostEffect{
@@ -95,6 +95,10 @@ public:
 		float pow;//掛ける累乗
 	};
 
+	struct CameraMat {
+		Matrix4x4 matProjectionInverse_;
+	};
+
 	void SetVignettingData(const Vignetting& data) {
 		vignettingData_->scale = data.scale;
 		vignettingData_->pow = data.pow;
@@ -105,8 +109,12 @@ public:
 	}
 
 	void SetMatProjectionInverse(const Matrix4x4& mat) {
-		matProjectionInverse_ = mat;
+		cameraData_->matProjectionInverse_ = mat;
 	}
+
+	void MakeRenderTexShaderResourceView();
+
+	void MakeDepthShaderResouceView();
 
 public:
 
@@ -137,7 +145,11 @@ private:
 
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
+
+
 	void CreateVignettingResource();
+
+	void ProjectInverseResource();
 
 private:
 	//SRVの最大個数
@@ -187,6 +199,10 @@ private:
 
 	Vignetting* vignettingData_ = nullptr;
 
+	ComPtr<ID3D12Resource> cameraResource_;
+
+	CameraMat* cameraData_ = nullptr;
+
 	////SRVを作成するDescripterHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kMaxSRVConst]{};
@@ -198,6 +214,10 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureSrvHandleGPU{};
 
+	//RenderTexture用のSRV作成用
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU{};
+
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;
 
@@ -206,6 +226,8 @@ private:
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC recderTextureSrvDesc;
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC depthTextureSrvDesc_;
 
 	//SRV
 	ID3D12Device* device_ = nullptr;
@@ -216,7 +238,6 @@ private:
 	//スカイボックスのテクスチャ番号
 	uint32_t skyBoxTexNumber_;
 
-	Matrix4x4 matProjectionInverse_;
 
 private:
 	/// <summary>

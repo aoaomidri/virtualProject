@@ -83,8 +83,8 @@ public:
 
 	Matrix4x4 operator*=(const Matrix4x4& mat);
 
-	Matrix4x4& operator=(const Matrix4x4&) = default;
-	Matrix4x4& operator=(Matrix4x4&&) = default;
+	constexpr Matrix4x4& operator=(const Matrix4x4&) = default;
+	constexpr Matrix4x4& operator=(Matrix4x4&&) = default;
 
 public:
 	float m[4][4];

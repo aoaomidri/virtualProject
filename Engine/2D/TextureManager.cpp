@@ -56,12 +56,14 @@ void TextureManager::Initialize() {
 
 	//outline
 	GraphicsPipelineOutLine_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineOutLine_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/LuminanceBasedOutline.PS.hlsl");
+	GraphicsPipelineOutLine_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/DepthBasedOutline.PS.hlsl");
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
 
 	CreateVignettingResource();
+	ProjectInverseResource();
+	
 }
 
 void TextureManager::Finalize() {
@@ -137,9 +139,10 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//インスタンシングやimguiで利用するための2
-	//OffscreenRendering用で3つ使うため合わせて5
-	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 5 + i);
-	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 5 + i);
+	// depthで使う3
+	//OffscreenRendering用で3つ使うため合わせて6個使われている
+	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 7 + i);
+	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 7 + i);
 
 	//SRVの生成
 	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
@@ -222,7 +225,8 @@ void TextureManager::PostDrawParticle(){
 }
 
 void TextureManager::PreDrawCopy(){
-	MakeShaderResourceView();
+	MakeRenderTexShaderResourceView();
+	MakeDepthShaderResouceView();
 }
 
 void TextureManager::DrawCopy(){
@@ -287,14 +291,19 @@ void TextureManager::DrawCopy(){
 	}
 
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
+	if (selectPost_ == PostEffect::OutLine){
+
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
+	}
 	if (selectPost_ == PostEffect::NormalVignetting || selectPost_ == PostEffect::GrayVignetting || selectPost_ == PostEffect::SepiaVignetting) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, vignettingResource_->GetGPUVirtualAddress());
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, vignettingResource_->GetGPUVirtualAddress());
 	}
 
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
-void TextureManager::MakeShaderResourceView() {
+void TextureManager::MakeRenderTexShaderResourceView() {
 
 	recderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	recderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -309,6 +318,21 @@ void TextureManager::MakeShaderResourceView() {
 	//SRVの生成
 	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetRenderTexture(), &recderTextureSrvDesc, renderTextureSrvHandleCPU);
 
+}
+
+void TextureManager::MakeDepthShaderResouceView(){
+	//DXGI_FORMAT_D24_UNORM_S8_UINTのDepthを読むときはDXGI_FORMAT_R24_UNORM_X8_TYPELESS
+	depthTextureSrvDesc_.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	depthTextureSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	depthTextureSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	depthTextureSrvDesc_.Texture2D.MipLevels = 1;
+
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	depthStencilSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 6);
+	depthStencilSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 6);
+
+	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetDepthStencil(), &depthTextureSrvDesc_, depthStencilSrvHandleCPU);
 }
 
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
@@ -433,6 +457,14 @@ void TextureManager::CreateVignettingResource(){
 
 	vignettingData_->pow = 0.8f;
 
+}
+
+void TextureManager::ProjectInverseResource(){
+	cameraResource_ = CreateBufferResource(sizeof(CameraMat));
+
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+
+	cameraData_->matProjectionInverse_.Identity();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(uint32_t descriptorSize, uint32_t index) {

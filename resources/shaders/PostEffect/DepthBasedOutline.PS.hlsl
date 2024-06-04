@@ -1,5 +1,9 @@
 #include "FullScreen.hlsli"
 
+struct CameraMat{
+	float32_t4x4 projectInverce;
+};
+
 Texture2D<float32_t4> gTexture : register(t0);
 
 Texture2D<float32_t> gDepthTexture : register(t1);
@@ -7,6 +11,8 @@ Texture2D<float32_t> gDepthTexture : register(t1);
 SamplerState gSampler : register(s0);
 
 SamplerState gSamplerPoint : register(s1);
+
+ConstantBuffer<CameraMat> gCamera : register(b0);
 
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
@@ -43,10 +49,10 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	for(int32_t x = 0; x < 3; ++x) {
 		for(int32_t y = 0; y < 3; ++y){
 			float32_t2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-			float32_t ndcDepth = gTexture.Sample(gSamplerPoint, texcoord);
+			float32_t ndcDepth = gDepthTexture.Sample(gSamplerPoint, texcoord);
 			//NDC->View。p^{-1}においてxとyはzwに影響を与えないので何でも良い。なので、わざわざ行列を渡さなくてもいい
 			//gMaterial.projectionInverceはCbufferを使って渡しておくこと
-			float32_t4 viewSpece = mul(float32_t4(0.0f,0.0f,ndcDepth,1.0f),gMaterial.projectInverce);
+			float32_t4 viewSpece = mul(float32_t4(0.0f,0.0f,ndcDepth,1.0f),gCamera.projectInverce);
 			float32_t viewZ = viewSpece.z * rcp(viewSpece.w);
 			difference.x += viewZ * kPrewittHorizontalKernel[x][y];
 			difference.y += viewZ * kPrewittVerticalKernel[x][y];

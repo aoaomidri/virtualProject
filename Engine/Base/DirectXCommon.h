@@ -78,6 +78,8 @@ public:
 	//RenderTextureを取得する
 	ID3D12Resource* GetRenderTexture()const { return renderTextureResouce.Get(); }
 
+	ID3D12Resource* GetDepthStencil()const { return depthStencilResource.Get(); }
+
 
 	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap.Get(); }
 

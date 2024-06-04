@@ -129,7 +129,8 @@ void GameScene::Initialize(){
 
 
 	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
-	textureManager_->MakeShaderResourceView();
+	textureManager_->MakeRenderTexShaderResourceView();
+	textureManager_->MakeDepthShaderResouceView();
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();

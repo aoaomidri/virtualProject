@@ -33,12 +33,12 @@ void Floor::Update(){
 	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
-	floorMatrix_.MakeAffineMatrix(floorTransform_.scale, floorTransform_.rotate, floorTransform_.translate);
+	floorObj_->transform_ = floorTransform_;
 }
 
 void Floor::Draw(const ViewProjection& viewProjection){
 
-	floorObj_->Update(floorMatrix_, viewProjection);
+	floorObj_->Update(viewProjection);
 	floorObj_->Draw();
 }
 

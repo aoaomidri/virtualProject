@@ -23,7 +23,7 @@ void Object3D::Initialize(const std::string fileName) {
 		texHandle_ = 0;
 	}
 
-	transform = {
+	transform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
@@ -32,7 +32,7 @@ void Object3D::Initialize(const std::string fileName) {
 	
 }
 
-void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
+void Object3D::Update(const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
@@ -51,10 +51,15 @@ void Object3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewPr
 	else {
 		localMatrix_ = model_->GetLocalMatrix();
 	}
-
-	worldMatrix_ = worldMatrix;
+	if (setMatrix_.m[3][3] != 0) {
+		worldMatrix_ = setMatrix_;
+	}
+	else {
+		worldMatrix_.MakeAffineMatrix(transform_);
+	}
+	
 	if (parent_){
-		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
+		worldMatrix_.Multiply(*parent_);
 	}
 
 	

@@ -19,7 +19,7 @@ public:
 
 	void Initialize(const std::string fileName);
 	
-	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
+	void Update(const ViewProjection& viewProjection);
 
 	void Draw();
 
@@ -30,6 +30,10 @@ public:
 	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
+
+	void SetMatrix(const Matrix4x4& matrix) {
+		setMatrix_ = matrix;
+	}
 
 	void SetAnimation(const Model::Animation animation) {
 		animation_ = animation;
@@ -47,6 +51,8 @@ private:
 	Quaternion CalculateValue(const std::vector<Model::KeyframeQuaternion>& keyframes, float time);
 public:
 	Matrix4x4* parent_{};
+
+	EulerTransform transform_;
 
 private:
 	//モデル
@@ -100,9 +106,9 @@ private:
 
 	Matrix4x4 worldMatrix_{};
 
-	Matrix4x4 localMatrix_;
+	Matrix4x4 localMatrix_{};
 
-	EulerTransform transform;
+	Matrix4x4 setMatrix_{};
 
 	bool isUseLight_ = false;
 

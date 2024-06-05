@@ -7,6 +7,9 @@ LevelLoader* LevelLoader::GetInstance(){
 }
 
 void LevelLoader::LoadLevelData(){
+	objects_.clear();
+	skinAnimObjects_.clear();
+
 	//連結してフルパスを作る
 	const std::string fullpath = kDirectoryPath_ + kfileName_ + kExtexsion_;
 
@@ -36,6 +39,37 @@ void LevelLoader::LoadLevelData(){
 
 	//正しいレベルデータファイルかチェック
 	assert(name.compare("scene") == 0);
+
+	for (json& object : deserialized["object"]) {
+		assert(object.contains("type"));
+		//種類を取得
+		std::string type = object["type"].get< std::string>();
+
+		//MESH
+		if (type.compare("MESH") == 0) {
+			objects_.emplace_back(std::pair<std::string, std::unique_ptr<Object3D>>());
+
+			objects_.back().second = std::make_unique<Object3D>();
+
+			std::unique_ptr<Object3D>& objectData = objects_.back().second;
+
+			if (object.contains("file_name")){
+				//ファイル名
+				objects_.back().first = object["file_name"];
+			}
+
+			json& transform = object["transform"];
+			//平行移動
+			objectData->transform_;
+			//回転角
+
+			//スケーリング
+
+
+		}
+
+	}
+
 }
 
 void LevelLoader::GetLevelObject(){

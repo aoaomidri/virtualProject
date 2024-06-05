@@ -21,7 +21,7 @@ public:
 
 	void Initialize(const std::string fileName, const std::string& modelName, const bool isLoop);
 	
-	void Update(const Matrix4x4& worldMatrix,const ViewProjection& viewProjection);
+	void Update(const ViewProjection& viewProjection);
 
 	void SkeletonUpdate(Model::Skeleton& skeleton);
 
@@ -105,6 +105,10 @@ public:
 		return animationName_;
 	}
 
+	void SetMatrix(const Matrix4x4& matrix) {
+		setMatrix_ = matrix;
+	}
+
 	void SetAnimSpeed(const float speed) {
 		animSpeed_ = speed;
 	}
@@ -147,6 +151,8 @@ private:
 	void ApplyAnimation(Model::Skeleton& skeleton, Model::Animation& animation, float animationTime);
 public:
 	Matrix4x4* parent_{};
+
+	EulerTransform transform_;
 
 private:
 	//モデル
@@ -212,7 +218,7 @@ private:
 
 	Matrix4x4 localMatrix_;
 
-	EulerTransform transform_;
+	Matrix4x4 setMatrix_{};
 
 	bool isSkinAnim_ = false;
 

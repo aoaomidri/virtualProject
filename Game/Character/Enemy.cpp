@@ -113,7 +113,8 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	if (isDead_) {
 		return;
 	}
-	bodyObj_->Update(matrix_, viewProjection);
+	bodyObj_->SetMatrix(matrix_);
+	bodyObj_->Update(viewProjection);
 	bodyObj_->Draw();
 
 #ifdef _DEBUG
@@ -121,17 +122,19 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	/*collisionObj_->Update(collisionMatrix_, viewProjection);
 	collisionObj_->Draw();*/
 #endif // _DEBUG
-
-	partsObj_->Update(partsMatrix_, viewProjection);
+	partsObj_->SetMatrix(partsMatrix_);
+	partsObj_->Update(viewProjection);
 	partsObj_->Draw();
 
 	if (isParticle_){
 		for (int i = 0; i < 10; i++) {
-			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
+			particleObj_[i]->SetMatrix(particleMatrix_[i]);
+			particleObj_[i]->Update(viewProjection);
 			particleObj_[i]->Draw();
 		}
 		for (int i = 10; i < 20; i++) {
-			particleObj_[i]->Update(particleMatrix_[i], viewProjection);
+			particleObj_[i]->SetMatrix(particleMatrix_[i]);
+			particleObj_[i]->Update(viewProjection);
 			particleObj_[i]->Draw();
 		}
 	}

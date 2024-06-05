@@ -95,7 +95,7 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 }
 
-void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection& viewProjection) {
+void SkinAnimObject3D::Update(const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
@@ -126,9 +126,14 @@ void SkinAnimObject3D::Update(const Matrix4x4& worldMatrix, const ViewProjection
 		localMatrix_ = model_->GetLocalMatrix();
 	}
 
-	worldMatrix_ = worldMatrix;
+	if (setMatrix_.m[3][3] != 0) {
+		worldMatrix_ = setMatrix_;
+	}
+	else {
+		worldMatrix_.MakeAffineMatrix(transform_);
+	}
 	if (parent_){
-		worldMatrix_ = Matrix::GetInstance()->Multiply(worldMatrix, *parent_);
+		worldMatrix_.Multiply(*parent_);
 	}
 
 	

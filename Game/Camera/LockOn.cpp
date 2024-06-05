@@ -98,9 +98,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		//lockOnMark_->SetPosition(screenPos_);
 		lockOnTransfrom_.translate = target_->GetCenterPos();
 
-		lockOnMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(lockOnTransfrom_);
+		LockOnObj_->transform_ = lockOnTransfrom_;
 
-		LockOnObj_->Update(lockOnMatrix_, viewprojection);
+		LockOnObj_->Update(viewprojection);
 	}
 
 	

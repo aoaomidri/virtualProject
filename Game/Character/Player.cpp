@@ -174,12 +174,14 @@ void Player::Draw(const ViewProjection& viewProjection){
 		
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * playerMatrix_;
 
-		debugSphere_[i]->Update(debugMatrix_[i], viewProjection);
+		debugSphere_[i]->SetMatrix(debugMatrix_[i]);
+		debugSphere_[i]->Update(viewProjection);
 		debugSphere_[i]->Draw();
 	}
 
 	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
-		weaponObj_->Update(weaponMatrix_, viewProjection);
+		weaponObj_->SetMatrix(weaponMatrix_);
+		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
 
 		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
@@ -190,7 +192,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 }
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
-	playerSkinAnimObj_->Update(playerMatrix_, viewProjection);
+	playerSkinAnimObj_->SetMatrix(playerMatrix_);
+	playerSkinAnimObj_->Update(viewProjection);
 	playerSkinAnimObj_->Draw();
 }
 

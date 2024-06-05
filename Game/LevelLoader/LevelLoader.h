@@ -28,10 +28,10 @@ public:
 	void GetLevelObject();
 
 private:
-	std::pair<std::string, std::vector<std::unique_ptr<Object3D>>> 
+	std::vector < std::pair<std::string, std::unique_ptr<Object3D>>>
 		objects_;
 
-	std::pair<std::string, std::vector<std::unique_ptr<SkinAnimObject3D>>> 
+	std::vector < std::pair<std::string, std::unique_ptr<SkinAnimObject3D>>>
 		skinAnimObjects_;
 
 

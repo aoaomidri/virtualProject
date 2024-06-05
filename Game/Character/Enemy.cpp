@@ -33,7 +33,7 @@ void Enemy::Initialize(const Vector3& position){
 		particleObj_[i]->Initialize("box");
 	}
 
-	boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
+	//boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
 	
 	transform_ = {
 		{0.9f,0.9f,0.9f},
@@ -121,8 +121,8 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	bodyObj_->Update(viewProjection);
 	bodyObj_->Draw();
 
-	boxObj_->Update(viewProjection);
-	boxObj_->Draw();
+	//boxObj_->Update(viewProjection);
+	//boxObj_->Draw();
 
 #ifdef _DEBUG
 

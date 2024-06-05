@@ -185,7 +185,7 @@ private:
 
 private:
 	//自機のモデル
-	std::unique_ptr<SkinAnimObject3D> playerSkinAnimObj_;
+	SkinAnimObject3D* playerSkinAnimObj_ = nullptr;
 
 	std::vector<std::unique_ptr<Object3D>> debugSphere_;
 
@@ -193,11 +193,6 @@ private:
 
 	std::vector<Model::Joint> debugJoints_;
 
-	//自機のモデル
-	std::unique_ptr<Object3D> playerObj_;
-
-	//自機のモデル
-	Object3D* boxObj_;
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;

@@ -6,7 +6,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/uvChecker.png");//0
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
-	textureManager_->Load("resources/texture/Sky.png");
+	//textureManager_->Load("resources/texture/Sky.png");
 	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");//5
 	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Model/Weapon/Sword.png");
@@ -389,9 +389,6 @@ void GameScene::DrawSkin3D(){
 
 void GameScene::Draw3D(){
 
-	
-
-
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 
@@ -401,17 +398,15 @@ void GameScene::Draw3D(){
 		
 		break;
 	case SceneName::GAME:
-		/*floorManager_->Draw(followCamera_->GetViewProjection());
+		floorManager_->Draw(followCamera_->GetViewProjection());
 
-		player_->Draw(followCamera_->GetViewProjection());*/
+		player_->Draw(followCamera_->GetViewProjection());
 
-		LevelLoader::GetInstance()->Draw(followCamera_->GetViewProjection());
-
-		/*for (const auto& enemy : enemies_) {
+		for (const auto& enemy : enemies_) {
 			enemy->Draw(followCamera_->GetViewProjection());
 		}
 
-		lockOn_->Draw();*/
+		lockOn_->Draw();
 		break;
 	case SceneName::CLEAR:
 		

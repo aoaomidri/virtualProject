@@ -35,8 +35,7 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
-	playerSkinAnimObj_ = std::make_unique<SkinAnimObject3D>();
-	playerSkinAnimObj_->Initialize("human", "walk", true);
+	playerSkinAnimObj_ = LevelLoader::GetInstance()->GetLevelSkinAnimObject("Player");
 	playerSkinAnimObj_->SetAnimation("human", "stand", true);
 	playerSkinAnimObj_->SetAnimation("human", "Run", true);
 	playerSkinAnimObj_->SetAnimation("human", "jump", false);
@@ -56,25 +55,17 @@ void Player::Initialize(){
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeScaleMatrix(trans);
 	}
 
-	playerObj_ = std::make_unique<Object3D>();
-	playerObj_->Initialize("AnimatedCube");
-
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("BoomBox");
 
-	boxObj_ = LevelLoader::GetInstance()->GetLevelObject("PLCube");
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize();
 
-	playerTransform_ = {
-		.scale = {1.5f,1.5f,1.5f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,-1.0f,0.0f}
-	};
+	playerTransform_ = playerSkinAnimObj_->transform_;
 
 	weaponTransform_ = {
 		.scale = {0.3f,0.3f,0.3f},
@@ -192,8 +183,6 @@ void Player::Draw(const ViewProjection& viewProjection){
 
 	}
 
-	boxObj_->Update(viewProjection);
-	boxObj_->Draw();
 	
 }
 
@@ -228,11 +217,6 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
-
-	ImGui::DragFloat3("箱の一", &boxObj_->transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("箱の回転", &boxObj_->transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("箱の大きさ", &boxObj_->transform_.scale.x, 0.1f);
-
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
 	ImGui::End();

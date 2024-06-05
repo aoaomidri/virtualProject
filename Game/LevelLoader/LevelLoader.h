@@ -14,15 +14,24 @@ public:
 	LevelLoader(const LevelLoader& input) = delete;
 	LevelLoader& operator=(const LevelLoader&) = delete;
 
+private:
+	using json = nlohmann::json;
 public:
 	static LevelLoader* GetInstance();
+
+
 
 	/// <summary>
 	/// レベルデータを読み込む
 	/// </summary>
 	void LoadLevelData();
 
-	void Draw(const ViewProjection& viewProjection);
+	/// <summary>
+	/// 再帰的に呼び出せるように
+	/// </summary>
+	void LoadJson(json jData);
+
+	//void Draw(const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 読み込んだレベルデータを取得する
@@ -44,8 +53,7 @@ private:
 
 	/*ファイル制御関連*/
 private:
-	//メンバ関数
-	using json = nlohmann::json;
+	
 	//ファイルが存在するか確認する
 	void ChackFiles();
 

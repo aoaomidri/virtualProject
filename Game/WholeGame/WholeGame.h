@@ -1,6 +1,7 @@
 #pragma once
 
 #include"MAFramework.h"
+#include"LevelLoader/LevelLoader.h"
 #include"DirectionalLight.h"
 //ゲーム全体を管理するクラス
 class WholeGame : public MAFramework{
@@ -39,5 +40,6 @@ private:
 
 	DirectionalLight::DirectionalLightData directionalData_;
 		
+	LevelLoader* levelLoader_ = nullptr;
 };
 

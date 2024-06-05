@@ -7,12 +7,6 @@ Matrix::Matrix(){
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			m.m[i][j] = 0.0f;
-			ScaleMatrix.m[i][j] = 0.0f;
-			TranslateMatrix.m[i][j] = 0.0f;
-			RotateMatrixXYZ.m[i][j] = 0.0f;
-			RotateMatrixX.m[i][j] = 0.0f;
-			RotateMatrixY.m[i][j] = 0.0f;
-			RotateMatrixZ.m[i][j] = 0.0f;
 			worldMatrix.m[i][j] = 0.0f;
 			cameraMatrix.m[i][j] = 0.0f;
 			viewMatrix.m[i][j] = 0.0f;
@@ -224,9 +218,9 @@ Matrix4x4 Matrix::MakeRotateMatrixZ(const Vector3& rot) {
 Matrix4x4 Matrix::MakeRotateMatrix(const Vector3& rot) {
 	Matrix4x4 result{};
 	// X,Y,Z軸の回転行列の作成
-	RotateMatrixX = MakeRotateMatrixX(rot);
-	RotateMatrixY = MakeRotateMatrixY(rot);
-	RotateMatrixZ = MakeRotateMatrixZ(rot);
+	Matrix4x4 RotateMatrixX = MakeRotateMatrixX(rot);
+	Matrix4x4 RotateMatrixY = MakeRotateMatrixY(rot);
+	Matrix4x4 RotateMatrixZ = MakeRotateMatrixZ(rot);
 
 	result = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
 
@@ -252,15 +246,15 @@ Matrix4x4
 	Matrix4x4 result{};
 
 	//スケーリング行列の作成
-	ScaleMatrix = MakeScaleMatrix(scale_);
+	Matrix4x4 ScaleMatrix = MakeScaleMatrix(scale_);
 	//X,Y,Z軸の回転行列の作成
-	RotateMatrixX = MakeRotateMatrixX(rot);
-	RotateMatrixY = MakeRotateMatrixY(rot);
-	RotateMatrixZ = MakeRotateMatrixZ(rot);
+	Matrix4x4 RotateMatrixX = MakeRotateMatrixX(rot);
+	Matrix4x4 RotateMatrixY = MakeRotateMatrixY(rot);
+	Matrix4x4 RotateMatrixZ = MakeRotateMatrixZ(rot);
 	//回転行列の結合
-	RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
+	Matrix4x4 RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
 	//平行移動行列の作成
-	TranslateMatrix = MakeTranslateMatrix(translate_);
+	Matrix4x4 TranslateMatrix = MakeTranslateMatrix(translate_);
 
 	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
 
@@ -272,13 +266,13 @@ Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot,
 	Matrix4x4 result{};
 
 	//スケーリング行列の作成
-	ScaleMatrix = MakeScaleMatrix(scale_);
+	Matrix4x4 ScaleMatrix = MakeScaleMatrix(scale_);
 	//正規化したQuaternionの作成
 	//Quaternion normQua = Quaternion::GetInstance()->Normalize(rot);
 	//X,Y,Z軸の回転行列の作成
-	RotateMatrixXYZ = Quaternion::GetInstance()->MakeRotateMatrix(rot);
+	Matrix4x4 RotateMatrixXYZ = Quaternion::GetInstance()->MakeRotateMatrix(rot);
 	//平行移動行列の作成
-	TranslateMatrix = MakeTranslateMatrix(translate_);
+	Matrix4x4 TranslateMatrix = MakeTranslateMatrix(translate_);
 
 	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
 
@@ -295,15 +289,15 @@ Matrix4x4 Matrix::MakeAffineMatrix(const EulerTransform& transform){
 	Matrix4x4 result{};
 
 	//スケーリング行列の作成
-	ScaleMatrix = MakeScaleMatrix(transform.scale);
+	Matrix4x4 ScaleMatrix = MakeScaleMatrix(transform.scale);
 	//X,Y,Z軸の回転行列の作成
-	RotateMatrixX = MakeRotateMatrixX(transform.rotate);
-	RotateMatrixY = MakeRotateMatrixY(transform.rotate);
-	RotateMatrixZ = MakeRotateMatrixZ(transform.rotate);
+	Matrix4x4 RotateMatrixX = MakeRotateMatrixX(transform.rotate);
+	Matrix4x4 RotateMatrixY = MakeRotateMatrixY(transform.rotate);
+	Matrix4x4 RotateMatrixZ = MakeRotateMatrixZ(transform.rotate);
 	//回転行列の結合
-	RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
+	Matrix4x4 RotateMatrixXYZ = Multiply(RotateMatrixX, Multiply(RotateMatrixY, RotateMatrixZ));
 	//平行移動行列の作成
-	TranslateMatrix = MakeTranslateMatrix(transform.translate);
+	Matrix4x4 TranslateMatrix = MakeTranslateMatrix(transform.translate);
 
 	result = Multiply(ScaleMatrix, Multiply(RotateMatrixXYZ, TranslateMatrix));
 

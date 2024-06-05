@@ -18,6 +18,9 @@ void WholeGame::Initialize(){
 	directionalData_.direction = { 0.0f,-1.0f,0.0f };
 	directionalData_.intensity = { 1.0f };
 
+	levelLoader_ = LevelLoader::GetInstance();
+	levelLoader_->LoadLevelData();
+
 	gameScene_ = new GameScene();
 	gameScene_->Initialize();
 

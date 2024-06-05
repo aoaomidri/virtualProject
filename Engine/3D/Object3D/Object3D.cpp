@@ -46,7 +46,7 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);
 		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime);
 		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime);
-		localMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
+		localMatrix_ = Matrix::MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
 	}
 	else {
 		localMatrix_ = model_->GetLocalMatrix();
@@ -55,7 +55,8 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 		worldMatrix_ = setMatrix_;
 	}
 	else {
-		worldMatrix_.MakeAffineMatrix(transform_);
+
+		worldMatrix_ = Matrix::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	}
 	
 	if (parent_){
@@ -63,12 +64,12 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 	}
 
 	
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
+	Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 	
-	wvpData->WVP = Matrix::GetInstance()->Multiply(localMatrix_, worldViewProjectionMatrix);
+	wvpData->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
 	materialDate->enableLighting = isUseLight_;
 
-	wvpData->World = Matrix::GetInstance()->Multiply(localMatrix_, worldMatrix_);
+	wvpData->World = Matrix::Multiply(localMatrix_, worldMatrix_);
 	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
 	
 	if (directionalLight){

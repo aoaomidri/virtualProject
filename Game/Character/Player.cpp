@@ -2,6 +2,7 @@
 #include"LockOn.h"
 #include"ImGuiManager.h"
 #include"Ease/Ease.h"
+#include"LevelLoader/LevelLoader.h"
 
 const std::array<Player::ConstAttack, Player::ConboNum>
 Player::kConstAttacks_ = {
@@ -63,6 +64,8 @@ void Player::Initialize(){
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("BoomBox");
+
+	boxObj_ = LevelLoader::GetInstance()->GetLevelObject("PLCube");
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize();
@@ -188,6 +191,9 @@ void Player::Draw(const ViewProjection& viewProjection){
 		weaponCollisionObj_->Draw();*/
 
 	}
+
+	boxObj_->Update(viewProjection);
+	boxObj_->Draw();
 	
 }
 
@@ -222,6 +228,10 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
+
+	ImGui::DragFloat3("箱の一", &boxObj_->transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("箱の回転", &boxObj_->transform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("箱の大きさ", &boxObj_->transform_.scale.x, 0.1f);
 
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	

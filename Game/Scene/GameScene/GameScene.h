@@ -166,7 +166,7 @@ private:
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;
 
-	LevelLoader* levelLoader_ = nullptr;
+	
 
 	//シーン関連
 	enum SceneName{

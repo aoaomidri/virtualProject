@@ -20,15 +20,6 @@ private:
 
 	Vector3 translate;
 
-	Matrix4x4 ScaleMatrix;	
-
-	Matrix4x4 TranslateMatrix;
-
-	Matrix4x4 RotateMatrixXYZ;
-	Matrix4x4 RotateMatrixX;
-	Matrix4x4 RotateMatrixY;
-	Matrix4x4 RotateMatrixZ;
-
 	Matrix4x4 worldMatrix;
 	Matrix4x4 cameraMatrix;
 	Matrix4x4 viewMatrix;
@@ -52,30 +43,30 @@ public:
 
 	Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
 
-	Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
+	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
 	//Quaternionを用いたアフィン行列
-	Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot, const Vector3& translate_);
+	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot, const Vector3& translate_);
 	//マトリックスから作るアフィン行列
-	Matrix4x4 MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate);
+	static Matrix4x4 MakeAffineMatrix(const Matrix4x4& scale, const Matrix4x4& rot, const Matrix4x4& translate);
 
 	//トランスフォームから作るアフィン行列
-	Matrix4x4 MakeAffineMatrix(const EulerTransform& transform);
+	static Matrix4x4 MakeAffineMatrix(const EulerTransform& transform);
 
-	Matrix4x4 MakeAffineMatrix(const QuaternionTransform& transform);
+	static Matrix4x4 MakeAffineMatrix(const QuaternionTransform& transform);
 
-	Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
+	static Matrix4x4 MakeScaleMatrix(const Vector3& scale_);
 
-	Matrix4x4 MakeRotateMatrixX(const Vector3& rot);
-	Matrix4x4 MakeRotateMatrixY(const Vector3& rot);
-	Matrix4x4 MakeRotateMatrixZ(const Vector3& rot);
+	static Matrix4x4 MakeRotateMatrixX(const Vector3& rot);
+	static Matrix4x4 MakeRotateMatrixY(const Vector3& rot);
+	static Matrix4x4 MakeRotateMatrixZ(const Vector3& rot);
 
-	Matrix4x4 MakeRotateMatrix(const Vector3& rot);
+	static Matrix4x4 MakeRotateMatrix(const Vector3& rot);
 	
 
-	Matrix4x4 MakeTranslateMatrix(const Vector3& translate_);
+	static Matrix4x4 MakeTranslateMatrix(const Vector3& translate_);
 
 	////積
-	Matrix4x4 Multiply(const Matrix4x4& mat1, const Matrix4x4& mat2);
+	static Matrix4x4 Multiply(const Matrix4x4& mat1, const Matrix4x4& mat2);
 
 	//正規化
 	Vector3 Normalize(const Vector3& v);

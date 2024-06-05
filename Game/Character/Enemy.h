@@ -74,6 +74,9 @@ private:
 	std::unique_ptr<Object3D> partsObj_;
 	std::unique_ptr<Object3D>particleObj_[particleNum_];
 
+	//自機のモデル
+	Object3D* boxObj_;
+
 	std::unique_ptr<Model> enemyModel_;
 
 	std::unique_ptr<Model> partsModel_;

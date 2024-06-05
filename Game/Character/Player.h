@@ -195,6 +195,9 @@ private:
 
 	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
+
+	//自機のモデル
+	Object3D* boxObj_;
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;

@@ -262,7 +262,7 @@ void DirectXCommon::PreDrawRenderTexture(){
 	commandList->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle);
 
 	//指定した色で画面全体をクリアする
-	float clearColor[] = { 0.0f,0.f,0.f,1.0f };//青っぽい色、RGBAの順番
+	float clearColor[] = { 0.0f,0.25f,0.5f,1.0f };//青っぽい色、RGBAの順番
 
 	//レンダーターゲットクリア
 	commandList->ClearRenderTargetView(rtvHandle_, clearColor, 0, nullptr);

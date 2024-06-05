@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include"ImGuiManager.h"
 #include"RandomMaker.h"
+#include"LevelLoader/LevelLoader.h"
+
 
 uint32_t Enemy::nextSerialNumber_ = 0;
 
@@ -30,6 +32,8 @@ void Enemy::Initialize(const Vector3& position){
 		particleObj_[i] = std::make_unique<Object3D>();
 		particleObj_[i]->Initialize("box");
 	}
+
+	boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
 	
 	transform_ = {
 		{0.9f,0.9f,0.9f},
@@ -116,6 +120,9 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	bodyObj_->SetMatrix(matrix_);
 	bodyObj_->Update(viewProjection);
 	bodyObj_->Draw();
+
+	boxObj_->Update(viewProjection);
+	boxObj_->Draw();
 
 #ifdef _DEBUG
 

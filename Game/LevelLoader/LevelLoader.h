@@ -22,10 +22,17 @@ public:
 	/// </summary>
 	void LoadLevelData();
 
+	void Draw(const ViewProjection& viewProjection);
+
 	/// <summary>
 	/// 読み込んだレベルデータを取得する
 	/// </summary>
-	void GetLevelObject();
+	Object3D* GetLevelObject(const std::string tag);
+
+	/// <summary>
+	/// 読み込んだレベルデータを取得する
+	/// </summary>
+	SkinAnimObject3D* GetLevelSkinAnimObject(const std::string tag);
 
 private:
 	std::vector < std::pair<std::string, std::unique_ptr<Object3D>>>

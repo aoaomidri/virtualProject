@@ -165,7 +165,7 @@ private://メンバ変数
 
 	int32_t chackHandleNum_;
 
-	const Vector4 kRenderTargetClearValue{ 0.0f,0.f,0.f,1.0f };//いったんわかりやすいように赤
+	const Vector4 kRenderTargetClearValue{ 0.0f,0.25f,0.5f,1.0f };//いったんわかりやすいように赤
 
 
 	//TransitionBarrierの設定

@@ -140,9 +140,6 @@ void GameScene::Initialize(){
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
-	levelLoader_ = LevelLoader::GetInstance();
-	levelLoader_->LoadLevelData();
-
 	stages_ = {
 		"Stage1",
 		"Stage2",
@@ -404,15 +401,17 @@ void GameScene::Draw3D(){
 		
 		break;
 	case SceneName::GAME:
-		floorManager_->Draw(followCamera_->GetViewProjection());
+		/*floorManager_->Draw(followCamera_->GetViewProjection());
 
-		player_->Draw(followCamera_->GetViewProjection());
+		player_->Draw(followCamera_->GetViewProjection());*/
 
-		for (const auto& enemy : enemies_) {
+		LevelLoader::GetInstance()->Draw(followCamera_->GetViewProjection());
+
+		/*for (const auto& enemy : enemies_) {
 			enemy->Draw(followCamera_->GetViewProjection());
 		}
 
-		lockOn_->Draw();
+		lockOn_->Draw();*/
 		break;
 	case SceneName::CLEAR:
 		

@@ -16,6 +16,7 @@
 #include"ParticleBase.h"
 #include"SkyBox.h"
 #include"Audio.h"
+#include"LevelLoader/LevelLoader.h"
 
 class GameScene : public BaseScene{
 public:
@@ -164,6 +165,8 @@ private:
 
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;
+
+	LevelLoader* levelLoader_ = nullptr;
 
 	//シーン関連
 	enum SceneName{

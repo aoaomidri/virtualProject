@@ -140,6 +140,9 @@ void GameScene::Initialize(){
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
+	levelLoader_ = LevelLoader::GetInstance();
+	levelLoader_->LoadLevelData();
+
 	stages_ = {
 		"Stage1",
 		"Stage2",

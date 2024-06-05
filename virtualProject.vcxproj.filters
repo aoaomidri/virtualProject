@@ -100,6 +100,9 @@
     <Filter Include="application\Scene\ResultScene">
       <UniqueIdentifier>{4c9d954e-feca-43cb-b40f-899b85ba2b7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\LevelLoader">
+      <UniqueIdentifier>{3b8e8723-e044-40a0-92bf-44dd4855f026}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -227,6 +230,12 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\ResultScene\ResultScene.cpp">
       <Filter>application\Scene\ResultScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Base\DescriptorHeap.cpp">
+      <Filter>engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\LevelLoader\LevelLoader.cpp">
+      <Filter>application\LevelLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +379,12 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\ResultScene\ResultScene.h">
       <Filter>application\Scene\ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\DescriptorHeap.h">
+      <Filter>engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LevelLoader\LevelLoader.h">
+      <Filter>application\LevelLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

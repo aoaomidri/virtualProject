@@ -84,7 +84,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,6 +178,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Object3D\SkyBox.cpp" />
     <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
     <ClCompile Include="Engine\3D\ViewProjection.cpp" />
+    <ClCompile Include="Engine\Base\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipeline.cpp" />
     <ClCompile Include="Engine\Base\ResourceObject.cpp" />
@@ -192,6 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\HitRecord\HitRecord.cpp" />
     <ClCompile Include="Game\Input\Input.cpp" />
     <ClCompile Include="Game\Item\Adjustment_Item.cpp" />
+    <ClCompile Include="Game\LevelLoader\LevelLoader.cpp" />
     <ClCompile Include="Game\Light\DirectionalLight.cpp" />
     <ClCompile Include="Game\Light\PointLight.cpp" />
     <ClCompile Include="Game\Light\SpotLight.cpp" />
@@ -223,6 +225,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Shape\OBB.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />
+    <ClInclude Include="Engine\Base\DescriptorHeap.h" />
     <ClInclude Include="Engine\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\GraphicsPipeline.h" />
     <ClInclude Include="Engine\Base\Log.h" />
@@ -238,6 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\HitRecord\HitRecord.h" />
     <ClInclude Include="Game\Input\Input.h" />
     <ClInclude Include="Game\Item\Adjustment_Item.h" />
+    <ClInclude Include="Game\LevelLoader\LevelLoader.h" />
     <ClInclude Include="Game\Light\DirectionalLight.h" />
     <ClInclude Include="Game\Light\PointLight.h" />
     <ClInclude Include="Game\Light\SpotLight.h" />

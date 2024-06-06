@@ -84,8 +84,7 @@ public:
 	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap.Get(); }
 
 
-private://メンバ関数
-	
+private://メンバ関数	
 
 	//デバイスの初期化
 	void DeviceInitialize();

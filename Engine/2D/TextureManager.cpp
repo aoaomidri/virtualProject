@@ -71,26 +71,6 @@ void TextureManager::Finalize() {
 }
 
 
-//void TextureManager::Load(const std::string& filePath, uint32_t index){
-//	mipImages = LoadTexture(filePath);
-//	metadata = mipImages.GetMetadata();
-//	textureBuffers_[index] = CreateTextureResource(device_, metadata);
-//	intermediateBuffers_[index] = UploadTextureData(textureBuffers_[index], mipImages, device_, commandList_);
-//
-//	srvDesc.Format = metadata.format;
-//	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-//	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-//	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-//
-//	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-//
-//	textureSrvHandleCPU[index] = GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
-//	textureSrvHandleGPU[index] = GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV, 2 + index);
-//
-//	//SRVの生成
-//	device_->CreateShaderResourceView(textureBuffers_[index].Get(), &srvDesc, textureSrvHandleCPU[index]);
-//}
-
 uint32_t TextureManager::Load(const std::string& filePath){
 	int i = 0;
 	bool isLoad = false;

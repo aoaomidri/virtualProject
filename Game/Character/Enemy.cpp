@@ -19,12 +19,35 @@ void Enemy::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Enemy";
 
-
-
+	nearPlayer_ = adjustment_item->GetfloatValue(groupName, "NearPlayer");
+	farPlayer_ = adjustment_item->GetfloatValue(groupName, "FarPlayer");
+	lengthJudgment_ = adjustment_item->GetIntValue(groupName, "LengthJudgment");
+	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
+	dashSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
+	backSpeed_ = adjustment_item->GetfloatValue(groupName, "BackSpeed");
+	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
+	freeTimeMax_ = adjustment_item->GetIntValue(groupName, "FreeTimeMax");
 
 }
 
 void Enemy::Initialize(const Vector3& position){
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Enemy";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "NearPlayer", nearPlayer_);
+	adjustment_item->AddItem(groupName, "FarPlayer", farPlayer_);
+	adjustment_item->AddItem(groupName, "LengthJudgment", lengthJudgment_);
+	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
+	adjustment_item->AddItem(groupName, "DownSpeed", dashSpeed_);
+	adjustment_item->AddItem(groupName, "BackSpeed", backSpeed_);
+	adjustment_item->AddItem(groupName, "EnemyLifeMax", enemyLifeMax_);
+	adjustment_item->AddItem(groupName, "FreeTimeMax", freeTimeMax_);
+
+	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
+
+	enemyLife_ = enemyLifeMax_;
 
 	bodyObj_ = LevelLoader::GetInstance()->GetLevelObject("Enemy");
 	partsObj_ = std::make_unique<Object3D>();
@@ -89,6 +112,7 @@ void Enemy::Initialize(const Vector3& position){
 }
 
 void Enemy::Update(){
+	ApplyGlobalVariables();
 	MotionUpdate();
 
 	for (int i = 0; i < particleNum_; i++) {
@@ -460,7 +484,7 @@ void Enemy::BehaviorBackInitialize(){
 
 void Enemy::BackStep(){
 	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
-	move_ = { 0, 0, kBackSpeed_ };
+	move_ = { 0, 0, backSpeed_ };
 
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
 
@@ -483,7 +507,7 @@ void Enemy::BehaviorDashInitialize(){
 
 void Enemy::Dash(){
 	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
-	move_ = { 0, 0, kDashSpeed_ };
+	move_ = { 0, 0, dashSpeed_ };
 
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
 
@@ -511,7 +535,7 @@ void Enemy::BehaviorRunInitialize(){
 void Enemy::EnemyRun(){
 	frontVec_ = postureVec_;
 
-	Vector3 move = { 0,0,moveSpeed_ * magnification * 5.0f };
+	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ };
 
 	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
 	move.y = 0;
@@ -541,7 +565,7 @@ void Enemy::BehaviorFreeInitialize(){
 }
 
 void Enemy::Free(){
-	if (++freeTime_>kFreeTime_){
+	if (++freeTime_ > freeTimeMax_) {
 		behaviorRequest_ = Behavior::kRoot;
 	}
 }

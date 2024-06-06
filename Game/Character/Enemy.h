@@ -125,10 +125,6 @@ private:
 
 	float deadYAngle_ = 0;
 
-	/*様子見状態の変数群*/
-	const int rootTimeMax_ = 10;
-
-	int rootTime_ = 0;
 	//プレイヤーとの距離を保存する用の変数
 	float playerLength_ = 0;
 
@@ -146,7 +142,7 @@ private:
 	int lengthJudgment_ = 180;
 
 	int freeTime_ = 0;
-	int	kFreeTime_ = 40;
+	int	freeTimeMax_ = 40;
 
 
 	/// <summary>
@@ -154,17 +150,19 @@ private:
 	/// </summary>
 	float magnification = 1.0f;
 	//移動スピード
-	const float moveSpeed_ = 0.03f;
+	float moveSpeed_ = 0.03f;
 
-	const float kDashSpeed_ = 3.0f;
+	float dashSpeed_ = 3.0f;
 
-	const float kBackSpeed_ = -2.0f;
+	float backSpeed_ = -2.0f;
 
 	int dashTimer_ = 0;
 
 	bool isDead_ = false;
 
 	bool isNoLife_ = false;
+
+	int32_t enemyLifeMax_ = 10;
 
 	int enemyLife_ = 10;
 

@@ -1,0 +1,12 @@
+{
+    "Enemy": {
+        "BackSpeed": -2.0,
+        "DownSpeed": 3.0,
+        "EnemyLifeMax": 3,
+        "FarPlayer": 30.0,
+        "FreeTimeMax": 90,
+        "LengthJudgment": 180,
+        "MoveSpeed": 0.07000000029802322,
+        "NearPlayer": 14.949999809265137
+    }
+}

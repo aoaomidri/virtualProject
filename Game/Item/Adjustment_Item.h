@@ -41,7 +41,7 @@ public:
 	//毎フレーム処理
 	void Update();
 
-private:
+public:
 	//コンストラクタ
 	Adjustment_Item() = default;
 	//デストラクタ
@@ -51,6 +51,11 @@ private:
 	//コピー代入演算子
 	Adjustment_Item& operator=(const Adjustment_Item&) = delete;
 
+private:
+	//imguiの操作をそのまま続けるかどうかのメッセージボックスを表示
+	bool OperationConfirmation();
+
+
 	using Item = std::variant<int32_t, float, Vector3>;
 
 	using Group = std::map<std::string, Item>;
@@ -59,6 +64,6 @@ private:
 	std::map<std::string, Group> datas_;
 
 	//グローバル変数の保存先ファイルパス
-	const std::string kDirectoryPath = "Resources/Adjustment_Item/";
+	const std::string kDirectoryPath = "Resources/Datas/Adjustment_Item/";
 };
 

@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include"ImGuiManager.h"
 #include"RandomMaker.h"
+#include"Adjustment_Item.h"
 #include"LevelLoader/LevelLoader.h"
 
 
@@ -15,13 +16,17 @@ Enemy::~Enemy(){
 }
 
 void Enemy::ApplyGlobalVariables(){
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Enemy";
+
+
+
 
 }
 
 void Enemy::Initialize(const Vector3& position){
 
-	bodyObj_ = std::make_unique<Object3D>();
-	bodyObj_->Initialize("Enemy");
+	bodyObj_ = LevelLoader::GetInstance()->GetLevelObject("Enemy");
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
 

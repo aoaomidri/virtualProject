@@ -70,18 +70,12 @@ private:
 	static const int particleNum_ = 20;
 
 	//自機のモデル
-	std::unique_ptr<Object3D> bodyObj_;
+	Object3D* bodyObj_;
 	std::unique_ptr<Object3D> partsObj_;
 	std::unique_ptr<Object3D>particleObj_[particleNum_];
 
 	//自機のモデル
 	//Object3D* boxObj_;
-
-	std::unique_ptr<Model> enemyModel_;
-
-	std::unique_ptr<Model> partsModel_;
-
-	std::unique_ptr<Model> particleModel_;
 	
 	std::unique_ptr<Object3D> collisionObj_;
 
@@ -162,9 +156,9 @@ private:
 	//移動スピード
 	const float moveSpeed_ = 0.03f;
 
-	const float kDashSpeed_ = 5.0f;
+	const float kDashSpeed_ = 3.0f;
 
-	const float kBackSpeed_ = -3.0f;
+	const float kBackSpeed_ = -2.0f;
 
 	int dashTimer_ = 0;
 
@@ -179,6 +173,8 @@ private:
 	bool isParticle_ = false;
 
 	float particleSpeed_;
+
+	
 
 private:
 	/*振る舞い系*/

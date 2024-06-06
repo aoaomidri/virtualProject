@@ -20,8 +20,14 @@ void Player::ApplyGlobalVariables() {
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 
-	//kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
+	kDashSpeed = adjustment_item->GetfloatValue(groupName, "DashSpeed");
 	kDashCoolTime = adjustment_item->GetIntValue(groupName, "DashCoolTime");
+	jumpPower = adjustment_item->GetfloatValue(groupName, "JumpPower");
+	downSpeed = adjustment_item->GetfloatValue(groupName, "DownSpeed");
+	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
+	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
+
+
 }
 
 void Player::Initialize(){
@@ -32,6 +38,10 @@ void Player::Initialize(){
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "DashCoolTime", kDashCoolTime);
 	adjustment_item->AddItem(groupName, "DashSpeed", kDashSpeed);
+	adjustment_item->AddItem(groupName, "JumpPower", jumpPower);
+	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed);
+	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
+	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
 	
 	input_ = Input::GetInstance();
 

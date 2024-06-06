@@ -226,7 +226,7 @@ private:
 	float jumpPower = 0.2f;
 
 	//落下関連
-	const float downSpeed = -0.01f;
+	float downSpeed = -0.01f;
 	Vector3 downVector = { 0 };
 
 	//姿勢ベクトル
@@ -241,8 +241,11 @@ private:
 	//武器のOBB
 	OBB weaponOBB_{};
 
+	//プレイヤーの基礎攻撃力
+	int baseAttackPower_ = 3;
+
 	//移動スピード
-	const float moveSpeed_ = 0.1f;
+	float moveSpeed_ = 0.1f;
 
 	//ダッシュ時のスピード倍率
 	float kDashSpeed = 10.0f;

@@ -38,18 +38,18 @@ void Adjustment_Item::Update() {
 			//int32_t型の値を保持していれば
 			if (std::holds_alternative<int32_t>(item)) {
 				int32_t* ptr = std::get_if<int32_t>(&item);
-				ImGui::SliderInt(itemName.c_str(), ptr, 0, 120);
+				ImGui::DragInt(itemName.c_str(), ptr, 1, 0, 9999);
 			}
 			//float型の値を保存していれば
 			else if (std::holds_alternative<float>(item)) {
 				float* ptr = std::get_if<float>(&item);
-				ImGui::SliderFloat(itemName.c_str(), ptr, 0.0f, 15.0f, "%0.1f");
+				ImGui::DragFloat(itemName.c_str(), ptr, 0.01f, -100.0f, 100.0f);
 			}
 			//Vector3型の値を保持していれば
 			else if (std::holds_alternative<Vector3>(item)) {
 				Vector3* ptr = std::get_if<Vector3>(&item);
-				ImGui::SliderFloat3(
-					itemName.c_str(), reinterpret_cast<float*>(ptr), -5.0f, 5.0f, "%0.1f");
+				ImGui::DragFloat3(
+					itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f, -100.0f, 100.0f);
 			}
 		}
 		//改行
@@ -65,6 +65,19 @@ void Adjustment_Item::Update() {
 	ImGui::EndMenuBar();
 	ImGui::End();
 #endif
+}
+
+bool Adjustment_Item::OperationConfirmation(){
+	int result = MessageBox(WinApp::GetInstance()->GetHwnd(), L"この操作を続けますか?", L"Confirmation", MB_YESNO | MB_ICONQUESTION);
+	if (result == IDYES) {
+		return true;
+	}
+	else if (result == IDNO) {
+		return false;
+	}
+	else {
+		return false;
+	}
 }
 
 void Adjustment_Item::CreateGroup(const std::string& groupName) {
@@ -106,8 +119,8 @@ void Adjustment_Item::SaveFile(const std::string& groupName) {
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z });
 		}
 		std::filesystem::path dir(kDirectoryPath);
-		if (!std::filesystem::exists("Resources/Adjustment_Item")) {
-			std::filesystem::create_directory("Resources/Adjustment_Item");
+		if (!std::filesystem::exists("Resources/Datas/Adjustment_Item")) {
+			std::filesystem::create_directory("Resources/Datas/Adjustment_Item");
 		}
 		// 書き込むjsonファイルのフルパスを合成する
 		std::string filePath = kDirectoryPath + groupName + ".json";
@@ -130,7 +143,7 @@ void Adjustment_Item::SaveFile(const std::string& groupName) {
 }
 
 void Adjustment_Item::LoadFiles() {
-	const std::string kDirectoryPath_ = "Resources/Adjustment_Item/";
+	const std::string kDirectoryPath_ = "Resources/Datas/Adjustment_Item/";
 	if (!std::filesystem::exists(kDirectoryPath_)) {
 		return;
 	}

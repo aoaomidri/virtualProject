@@ -8,35 +8,29 @@ void FollowCamera::ApplyGlobalVariables(){
 	t = adjustment_item->GetfloatValue(groupName, "PositionComplement");
 	distance = adjustment_item->GetfloatValue(groupName, "distance");
 
-
-
 	if (angle_t > 1.0f) {
 		angle_t = 1.0f;
 	}
 	if (t > 1.0f) {
 		t = 1.0f;
 	}
-	/*distance = 30.0f;
-	distance *= -1.0f;*/
 }
 
 
 void FollowCamera::Initialize(){
-	//Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	//const char* groupName = "Camera";
-	////グループを追加
-	//adjustment_item->CreateGroup(groupName);
-	////アイテムの追加
-	//adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
-	//adjustment_item->AddItem(groupName, "PositionComplement", t);
-	//adjustment_item->AddItem(groupName, "distance", distance);
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "Camera";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
+	adjustment_item->AddItem(groupName, "PositionComplement", t);
+	adjustment_item->AddItem(groupName, "distance", distance);
 
 	input_ = Input::GetInstance();
 
 	destinationAngleX_ = 0.0f;
 
-	distance = 25.0f;
-	distance *= -1.0f;
 
 	rootOffset = { 0.0f, height_, distance };
 
@@ -53,7 +47,7 @@ void FollowCamera::Initialize(){
 void FollowCamera::Update(){
 	frontVec_ = postureVec_;
 	
-	//ApplyGlobalVariables();
+	ApplyGlobalVariables();
 
 
 
@@ -163,7 +157,6 @@ void FollowCamera::DrawImgui(){
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
 	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
-	ImGui::DragFloat("オフセットZ", &distance, 0.1f);
 	ImGui::DragFloat("オフセットY", &height_, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);

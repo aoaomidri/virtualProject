@@ -16,6 +16,9 @@ public:
 
 	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap.Get(); }
 
+	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+
 private:
 	//SRV
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;

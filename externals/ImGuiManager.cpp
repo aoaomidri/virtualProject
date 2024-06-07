@@ -61,9 +61,9 @@ void ImGuiManager::ImguiInitialize(){
 		device_,
 		DirectXCommon::GetInstance()->GetSwapChainDesc().BufferCount/*swapChainDesc.BufferCount*/,
 		DirectXCommon::GetInstance()->GetRTVDesc().Format,
-		DirectXCommon::GetInstance()->GetSRVHeap(),
-		DirectXCommon::GetInstance()->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
-		DirectXCommon::GetInstance()->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart()
+		SRVDescriptorHeap::GetInstance()->GetSRVHeap(),
+		SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle(),
+		SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle()
 	);
 
 

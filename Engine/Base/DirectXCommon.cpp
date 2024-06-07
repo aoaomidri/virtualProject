@@ -23,7 +23,8 @@ void DirectXCommon::Initialize(){
 	SwapchainInitialize();
 	RTVInitialize();
 	RenderTextureRTVInitialize();
-	srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 512, true);
+	srvDescriptorHeap_ = SRVDescriptorHeap::GetInstance();
+	srvDescriptorHeap_->Initialize(device.Get());
 	DepthBufferInitialize();
 	FenceInitialize();
 
@@ -250,7 +251,7 @@ void DirectXCommon::PreDrawRenderTexture(){
 
 	//描画用のDescriptorHeapの設定
 
-	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap };
+	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap_->GetSRVHeap() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
 	//描画先のRTVとDSVを設定する
@@ -329,7 +330,7 @@ void DirectXCommon::PreDrawSwapChain(){
 
 	//描画用のDescriptorHeapの設定
 
-	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap };
+	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap_->GetSRVHeap() };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
 	//描画先のRTVとDSVを設定する

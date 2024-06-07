@@ -116,13 +116,13 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	}
 	
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	
 
 	//インスタンシングやimguiで利用するための2
 	// depthで使う3
 	//OffscreenRendering用で3つ使うため合わせて6個使われている
-	textureSrvHandleCPU[i] = GetCPUDescriptorHandle(descriptorSizeSRV, 7 + i);
-	textureSrvHandleGPU[i] = GetGPUDescriptorHandle(descriptorSizeSRV, 7 + i);
+	textureSrvHandleCPU[i] = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	textureSrvHandleGPU[i] = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
 	//SRVの生成
 	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
@@ -141,8 +141,8 @@ void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	instancingSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 1);
-	instancingSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 1);
+	instancingSrvHandleCPU = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	instancingSrvHandleGPU = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
 	//SRVの生成
 	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
@@ -292,8 +292,8 @@ void TextureManager::MakeRenderTexShaderResourceView() {
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	renderTextureSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 3);
-	renderTextureSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 3);
+	renderTextureSrvHandleCPU = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	renderTextureSrvHandleGPU = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
 	//SRVの生成
 	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetRenderTexture(), &recderTextureSrvDesc, renderTextureSrvHandleCPU);
@@ -309,8 +309,8 @@ void TextureManager::MakeDepthShaderResouceView(){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	depthStencilSrvHandleCPU = GetCPUDescriptorHandle(descriptorSizeSRV, 6);
-	depthStencilSrvHandleGPU = GetGPUDescriptorHandle(descriptorSizeSRV, 6);
+	depthStencilSrvHandleCPU = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	depthStencilSrvHandleGPU = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
 	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetDepthStencil(), &depthTextureSrvDesc_, depthStencilSrvHandleCPU);
 }
@@ -447,16 +447,6 @@ void TextureManager::ProjectInverseResource(){
 	cameraData_->matProjectionInverse_.Identity();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(uint32_t descriptorSize, uint32_t index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = DirectXCommon::GetInstance()->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUDescriptorHandle(uint32_t descriptorSize, uint32_t index) {
-	D3D12_GPU_DESCRIPTOR_HANDLE handleCPU = DirectXCommon::GetInstance()->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
 
 

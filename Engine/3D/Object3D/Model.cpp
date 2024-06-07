@@ -365,8 +365,8 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	skinCluster.paletteSrvHandle.first = TextureManager::GetInstance()->GetCPUDescriptorHandle(descriptorSizeSRV, 100);
-	skinCluster.paletteSrvHandle.second = TextureManager::GetInstance()->GetGPUDescriptorHandle(descriptorSizeSRV, 100);
+	skinCluster.paletteSrvHandle.first = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	skinCluster.paletteSrvHandle.second = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 	
 	//palette用のsrvを作成。StructuredBufferでアクセスできるようにする。
 	D3D12_SHADER_RESOURCE_VIEW_DESC paretteSrvDesc{};

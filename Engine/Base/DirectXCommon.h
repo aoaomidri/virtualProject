@@ -3,6 +3,7 @@
 #include<wrl.h>
 #include"WinApp.h"
 #include"math/Vector4.h"
+#include"DescriptorHeap.h"
 #include<vector>
 #include<chrono>
 #include <d3d12.h> 
@@ -81,9 +82,6 @@ public:
 	ID3D12Resource* GetDepthStencil()const { return depthStencilResource.Get(); }
 
 
-	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap.Get(); }
-
-
 private://メンバ関数	
 
 	//デバイスの初期化
@@ -151,11 +149,7 @@ private://メンバ変数
 
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 
-	//SRV
-	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
-
-
-
+	SRVDescriptorHeap* srvDescriptorHeap_ = nullptr;
 
 	//フェンスの生成
 	ComPtr<ID3D12Fence> fence = nullptr;

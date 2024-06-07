@@ -1,18 +1,26 @@
 #include "DescriptorHeap.h"
 #include <cassert>
 
-DescriptorHeap* DescriptorHeap::GetInstance(){
-	static DescriptorHeap instance;
+SRVDescriptorHeap* SRVDescriptorHeap::GetInstance(){
+	static SRVDescriptorHeap instance;
 	return &instance;
 }
 
-Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DescriptorHeap::CreateDescriptorHeap(ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible){
+void SRVDescriptorHeap::Initialize(ID3D12Device* device){
+	device_ = device;
+	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(srvHeapType_);
+
+	srvDescriptorHeap_ = CreateDescriptorHeap(srvHeapType_, kMaxSRVHeapSize_, true);
+
+}
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVDescriptorHeap::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible){
 	ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = heapType;
 	descriptorHeapDesc.NumDescriptors = numDescriptors;
 	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }

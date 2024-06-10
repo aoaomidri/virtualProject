@@ -14,7 +14,6 @@
 #include<span>
 #include<array>
 
-
 class Model{
 public:
 	struct MaterialData {
@@ -178,17 +177,21 @@ public:
 	const std::vector<VertexData> GetVertexData()const { return modelData_.vertices; }
 
 	const std::vector<uint32_t> GetIndexData()const { return modelData_.indices; }
+	
+public:
+	void LoadFromOBJInternalAssimp(const std::string& filename, const std::string& modelName);
+
+	void MakeVertexResource();
 
 private:
+
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
 
 	//OBJファイルから3Dモデルを読み込む(非公開)
 	void LoadFromOBJInternal(const std::string& filename);
 
-	void LoadFromOBJInternalAssimp(const std::string& filename, const std::string& modelName);
-
-	void MakeVertexResource();
 
 	Node ReadNode(aiNode* node);
 

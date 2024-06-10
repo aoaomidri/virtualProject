@@ -103,6 +103,9 @@
     <Filter Include="application\LevelLoader">
       <UniqueIdentifier>{3b8e8723-e044-40a0-92bf-44dd4855f026}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\3D\Object3D\Manager">
+      <UniqueIdentifier>{d579c92b-9359-4241-a3c1-8e3a3356ed4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -236,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="Game\LevelLoader\LevelLoader.cpp">
       <Filter>application\LevelLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp">
+      <Filter>engine\3D\Object3D\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="Game\LevelLoader\LevelLoader.h">
       <Filter>application\LevelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h">
+      <Filter>engine\3D\Object3D\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

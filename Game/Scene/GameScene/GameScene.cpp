@@ -128,7 +128,7 @@ void GameScene::Initialize(){
 	enemies_.push_back(std::move(enemy_));
 
 
-	textureManager_->MakeInstancingShaderResourceView(player_->GetParticle()->GetInstancingResource());
+	
 	textureManager_->MakeRenderTexShaderResourceView();
 	textureManager_->MakeDepthShaderResouceView();
 

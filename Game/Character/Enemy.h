@@ -46,6 +46,8 @@ public:
 
 	const OBB& GetOBB()const { return OBB_; }
 
+	const OBB& GetAttackOBB()const { return attackOBB_; }
+
 	const OBB& GetBodyOBB()const { return bodyOBB_; }
 
 	bool GetIsDead() const { return isDead_; }
@@ -101,6 +103,8 @@ private:
 	Matrix4x4 partsMatrix_{};
 	Matrix4x4 particleMatrix_[particleNum_]{};
 
+	Matrix4x4 dashRotateMatrix_{};
+
 	//スケールを無視したマトリックス
 	Matrix4x4 moveMatrix_{};
 
@@ -115,6 +119,8 @@ private:
 
 	//自機のOBB
 	OBB OBB_{};
+
+	OBB attackOBB_{};
 
 	//自機のOBB
 	OBB bodyOBB_{};

@@ -103,6 +103,7 @@ void Enemy::Initialize(const Vector3& position){
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
+	SetOridentatios(attackOBB_, enemyRotateMatrix);
 
 	behaviorRequest_ = Behavior::kRoot;
 
@@ -135,11 +136,13 @@ void Enemy::Update(){
 
 	OBB_.center = transform_.translate;
 	bodyOBB_.center = transform_.translate;
+	attackOBB_.center = OBB_.center;
 	collisionTransform_.scale = bodyOBB_.size;
 
 	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);
 	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
+	SetOridentatios(attackOBB_, rotateMatrix_);
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection){
@@ -228,6 +231,7 @@ void Enemy::Respawn(const Vector3& position){
 	collisionTransform_.scale = OBB_.size;
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
+	attackOBB_.center = OBB_.center;
 
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
@@ -466,7 +470,7 @@ void Enemy::RootMotion(){
 		behaviorRequest_ = Behavior::kBack;
 	}
 	else if (farTime_ > lengthJudgment_) {
-		int i = RandomMaker::GetInstance()->DistributionInt(0, 1);
+		int i = /*RandomMaker::GetInstance()->DistributionInt(0, 1)*/0;
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kDash;
 		}
@@ -502,24 +506,27 @@ void Enemy::BackStep(){
 }
 
 void Enemy::BehaviorDashInitialize(){
+	dashRotateMatrix_ = rotateMatrix_;
 	dashTimer_ = 0;
 }
 
 void Enemy::Dash(){
-	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
 	move_ = { 0, 0, dashSpeed_ };
 
-	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
+	move_ = Matrix::GetInstance()->TransformNormal(move_, dashRotateMatrix_);
 
 	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 8;
+	const uint32_t behaviorDashTime = 30;
 
-	if (playerLength_ > 15.0f) {
-		transform_.translate += move_;
-	}
+	
+	
+	attackOBB_.size = OBB_.size * 2.8f;
+	transform_.translate += move_;
+	
 
 	//既定の時間経過で通常状態に戻る
 	if (++dashTimer_ >= behaviorDashTime) {
+		attackOBB_.size = { 0,0,0 };
 		behaviorRequest_ = Behavior::kFree;
 	}
 }

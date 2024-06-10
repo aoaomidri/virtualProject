@@ -103,6 +103,11 @@ void Player::Initialize(){
 void Player::Update(){
 	ApplyGlobalVariables();
 
+	if (hitTimer_ != 0) {
+		hitTimer_--;
+	}
+	
+
 	if (behaviorRequest_) {
 		// 振る舞いを変更する
 		behavior_ = behaviorRequest_.value();
@@ -263,6 +268,10 @@ void Player::Respawn(){
 			.translate = {0.0f,0.8f,0.0f}
 	};
 	downVector = { 0.0f,0.0f,0.0f };
+}
+
+void Player::SetHitTimer(){
+	hitTimer_ = 30;
 }
 
 void Player::SetIsDown(bool isDown){

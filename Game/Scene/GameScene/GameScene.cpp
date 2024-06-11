@@ -303,10 +303,10 @@ void GameScene::Update(){
 				enemy->Update();
 			}
 		}
-		if (player_->GetHitTimer() != 0) {
+		if (player_->GetHitTimer() != 0 and textureManager_->GetPostEffect() == TextureManager::PostEffect::None) {
 			textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
 		}
-		else{
+		else if (textureManager_->GetPostEffect() != TextureManager::PostEffect::None) {
 			textureManager_->SetPostEffect(TextureManager::PostEffect::None);
 		}
 		

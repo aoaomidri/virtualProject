@@ -126,7 +126,8 @@ void SkinAnimObject3D::Update(const ViewProjection& viewProjection) {
 
 		if (blendFactor_ >= 1.0f) {
 			blendFactor_ = 0;
-			beforeAnimation_ = (afterAnimation_);
+			beforeAnimation_ = afterAnimation_;
+			afterAnimation_ = Model::Animation();
 		}
 		
 	}
@@ -208,6 +209,7 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 #ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Text("アニメーションの時間 = %.1f", animationTime_);
+	ImGui::Text("アニメーション補完の時間 = %.1f", blendFactor_);
 	ImGui::DragFloat("アニメーション補完の速度", &changeAnimSpeed_, 0.01f, 0.1f, 60.0f);
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Checkbox("ライティングするかどうか", &isUseLight_);

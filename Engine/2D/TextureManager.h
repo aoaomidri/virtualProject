@@ -208,7 +208,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureSrvHandleGPU{};
 
-	//RenderTexture用のSRV作成用
+	//Outline用のSRV作成用
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU{};
 

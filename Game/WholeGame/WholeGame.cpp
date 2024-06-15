@@ -98,9 +98,9 @@ void WholeGame::DrawImgui(){
 	if (ImGui::Button("Inverse")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
 	}
-	/*if (ImGui::Button("OutLine")) {
+	if (ImGui::Button("OutLine")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::OutLine);
-	}*/
+	}
 	if (ImGui::Button("Smoothing3x3")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
 	}

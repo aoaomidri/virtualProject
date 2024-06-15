@@ -262,6 +262,7 @@ void DirectXCommon::PreDrawRenderTexture(){
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	commandList->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle);
 
+
 	//指定した色で画面全体をクリアする
 	float clearColor[] = { 0.0f,0.25f,0.5f,1.0f };//青っぽい色、RGBAの順番
 
@@ -270,6 +271,8 @@ void DirectXCommon::PreDrawRenderTexture(){
 
 	//深度バッファクリア
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	
 
 	//ビューポート
 	
@@ -308,6 +311,22 @@ void DirectXCommon::PreDrawCopy(){
 	renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &renderTexBarrier);
+
+	//今回のバリアはTransition
+	depthBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにしておく
+	depthBarrier_.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	depthBarrier_.Transition.pResource = depthStencilResource.Get();
+	//遷移前(現在)のResouceState
+	depthBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	//遷移後のResouceState
+	depthBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &depthBarrier_);
+
+	
+
 }
 
 void DirectXCommon::PreDrawSwapChain(){
@@ -339,6 +358,19 @@ void DirectXCommon::PreDrawSwapChain(){
 		rtvDescriptorHeap, device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), backBufferIndex);
 
 	commandList->OMSetRenderTargets(1, &rtvHandle_, false, nullptr);
+
+	////今回のバリアはTransition
+	//depthBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	////Noneにしておく
+	//depthBarrier_.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	////バリアを張る対象のリソース。現在のバックバッファに対して行う
+	//depthBarrier_.Transition.pResource = depthStencilResource.Get();
+	////遷移前(現在)のResouceState
+	//depthBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	////遷移後のResouceState
+	//depthBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	////TransitionBarrierを張る
+	//commandList->ResourceBarrier(1, &depthBarrier_);
 
 	float clearColor[] = {
 	0.0f,
@@ -372,6 +404,19 @@ void DirectXCommon::PostDraw(){
 	renderTexBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &renderTexBarrier);
+
+	//今回のバリアはTransition
+	depthBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにしておく
+	depthBarrier_.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	depthBarrier_.Transition.pResource = depthStencilResource.Get();
+	//遷移前(現在)のResouceState
+	depthBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//遷移後のResouceState
+	depthBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &depthBarrier_);
 
 	//今回はRenderTargetからPresentにする
 	swapBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;

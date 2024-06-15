@@ -275,6 +275,8 @@ void TextureManager::DrawCopy(){
 
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
+
+		
 	}
 	if (selectPost_ == PostEffect::NormalVignetting || selectPost_ == PostEffect::GrayVignetting || selectPost_ == PostEffect::SepiaVignetting) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, vignettingResource_->GetGPUVirtualAddress());

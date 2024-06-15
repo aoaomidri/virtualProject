@@ -130,13 +130,13 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	return i;
 }
 
-void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
 	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
 	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = 300;
+	instancingSrvDesc.Buffer.NumElements = 600;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -146,6 +146,8 @@ void TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource){
 
 	//SRVの生成
 	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
+
+	return instancingSrvHandleGPU;
 }
 
 void TextureManager::PreDraw2D(){

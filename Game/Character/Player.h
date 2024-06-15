@@ -313,5 +313,8 @@ private:
 	HitRecord hitRecord_;
 
 	std::unique_ptr<ParticleBase> particle_;
+
+	//手から出す予定のパーティクル
+	std::unique_ptr<ParticleBase> particleHands_;
 };
 

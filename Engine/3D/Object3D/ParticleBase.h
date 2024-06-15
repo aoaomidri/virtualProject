@@ -33,12 +33,17 @@ public:
 
 	void makeResource();
 public:
+	void SetAcceleration(const Vector3& acceleration) { accelerationField_.acceleration = acceleration; }
+
+	void SetPositionRange(const Vector2& positionRamge) { positionRange_ = { positionRamge.x,positionRamge.y }; }
 
 	void SetPosition(const Vector3& position) { position_ = position; }
 
-	void SetScale(const Vector3& scale) { scale_ = scale; }
+	void SetScale(const Vector3& scale) { emitter_.transform.scale = scale; }
 
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+
+	void SetAddParticle(const int32_t number) { emitter_.count = number; }
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
@@ -123,7 +128,7 @@ private:
 	//粒の数
 	int numInstance = 0;
 
-	static const int particleMaxNum_ = 300;
+	static const int particleMaxNum_ = 600;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
 
@@ -134,6 +139,8 @@ private:
 
 	//マテリアルにデータを書き込む
 	DirectionalLight::DirectionalLightData* directionalLightDate = nullptr;
+
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
 

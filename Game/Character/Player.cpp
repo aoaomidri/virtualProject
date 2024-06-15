@@ -52,6 +52,9 @@ void Player::Initialize(){
 
 	playerSkinAnimObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
+	playerSkinAnimObj_->SetIsLighting(true);
+	
+
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
 	debugSphere_.resize(debugJoints_.size());
@@ -74,6 +77,11 @@ void Player::Initialize(){
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize();
+
+	particleHands_ = std::make_unique<ParticleBase>();
+	particleHands_->Initialize();
+	particleHands_->SetPositionRange({ 0.0f,0.0f });
+	particleHands_->SetAddParticle(3);
 
 	playerTransform_ = playerSkinAnimObj_->transform_;
 
@@ -207,11 +215,18 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 	newTrans.translate.y += 3.0f;
 
 	particle_->Update(newTrans, viewProjection);
+	
 
 	if (behavior_ == Behavior::kStrongAttack && chargeEnd_ == false && workAttack_.comboIndex_ == 1) {
 		
 		particle_->Draw();
+
+		
 	}
+
+	particleHands_->Update(newTrans, viewProjection);
+	particleHands_->SetScale({ 0.3f ,0.3f,0.3f });
+	particleHands_->Draw();
 	
 }
 
@@ -318,6 +333,8 @@ void Player::BehaviorRootUpdate(){
 	
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
+
+		particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 20.0f);
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
@@ -325,6 +342,7 @@ void Player::BehaviorRootUpdate(){
 		if (!isDown_) {
 			playerSkinAnimObj_->SetAnimSpeed(1.0f);
 			playerSkinAnimObj_->ChangeAnimation("walk");
+			playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
 		}
 	}
 	else if(lockOn_&&lockOn_->ExistTarget()){
@@ -350,12 +368,14 @@ void Player::BehaviorRootUpdate(){
 		playerSkinAnimObj_->SetAnimSpeed(2.0f);
 	
 		playerSkinAnimObj_->ChangeAnimation("jump");
+		playerSkinAnimObj_->SetChangeAnimSpeed(6.0f);
 		playerSkinAnimObj_->AnimationTimeStop(60.0f);
 
 	}
 	else {
 		if (move_.x == 0.0f && move_.z == 0.0f && playerSkinAnimObj_->ChackAnimationName() != "jump") {
 			playerSkinAnimObj_->ChangeAnimation("stand");
+			playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
 			playerSkinAnimObj_->SetAnimSpeed(1.0f);
 		}
 		playerSkinAnimObj_->AnimationStart();
@@ -740,6 +760,7 @@ void Player::BehaviorDashUpdate(){
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
 
 	playerSkinAnimObj_->ChangeAnimation("Run");
+	playerSkinAnimObj_->SetChangeAnimSpeed(6.0f);
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 15;
 
@@ -752,6 +773,7 @@ void Player::BehaviorDashUpdate(){
 		dashCoolTime = kDashCoolTime;
 		behaviorRequest_ = Behavior::kRoot;
 		playerSkinAnimObj_->ChangeAnimation("stand");
+		playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
 	}
 }
 

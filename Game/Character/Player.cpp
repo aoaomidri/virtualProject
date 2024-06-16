@@ -84,6 +84,8 @@ void Player::Initialize(){
 	particleHands_ = std::make_unique<ParticleBase>();
 	particleHands_->Initialize();
 	particleHands_->SetPositionRange({ 0.0f,0.0f });
+	particleHands_->SetVelocityRange({ -0.5f,0.5f });
+	particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 	particleHands_->SetAddParticle(1);
 
 	playerTransform_ = playerSkinAnimObj_->transform_;
@@ -344,7 +346,7 @@ void Player::BehaviorRootUpdate(){
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 
-		particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 20.0f);
+		particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));

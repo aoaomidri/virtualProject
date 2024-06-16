@@ -37,6 +37,8 @@ public:
 
 	void SetPositionRange(const Vector2& positionRamge) { positionRange_ = { positionRamge.x,positionRamge.y }; }
 
+	void SetVelocityRange(const Vector2& velocityRange) { velocityRange_ = { velocityRange.x,velocityRange.y }; }
+
 	void SetPosition(const Vector3& position) { position_ = position; }
 
 	void SetScale(const Vector3& scale) { emitter_.transform.scale = scale; }

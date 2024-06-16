@@ -124,6 +124,10 @@ public:
 		skyBoxTexNumber_ = texNum;
 	}
 
+	const uint32_t GetPostEffect()const {
+		return selectPost_;
+	}
+
 private:
 	// DirectX12のTextureResourceを作る
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);

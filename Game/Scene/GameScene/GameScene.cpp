@@ -303,6 +303,13 @@ void GameScene::Update(){
 				enemy->Update();
 			}
 		}
+		if (player_->GetHitTimer() != 0 and textureManager_->GetPostEffect() == TextureManager::PostEffect::None) {
+			textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
+		}
+		else if (textureManager_->GetPostEffect() != TextureManager::PostEffect::None) {
+			textureManager_->SetPostEffect(TextureManager::PostEffect::None);
+		}
+		
 
 		if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
 			sceneNum_ = SceneName::CLEAR;
@@ -606,9 +613,7 @@ void GameScene::AllCollision(){
 			//audio_->PauseWave(gameBGM);
 			sceneNum_ = SceneName::CLEAR;
 		}
-	}
 
-	for (const auto& enemy : enemies_) {
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);
 			break;
@@ -616,8 +621,17 @@ void GameScene::AllCollision(){
 		else {
 			player_->SetCollisionEnemy(false);
 		}
+
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
+			player_->SetHitTimer();
+
+			break;
+		}
+		
 	}
-	//}
+
+	
+
 
 }
 

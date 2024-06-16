@@ -62,6 +62,8 @@ public:
 
 	const ParticleBase* GetParticle()const { return particle_.get(); }
 
+	const int GetHitTimer()const { return hitTimer_; }
+
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
@@ -70,6 +72,8 @@ public:
 
 	//Setter
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
+
+	void SetHitTimer();
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
@@ -251,6 +255,8 @@ private:
 	float kDashSpeed = 10.0f;
 	//ダッシュのクールタイム
 	int kDashCoolTime = 20;
+
+	int hitTimer_ = 0;
 
 	int dashCoolTime;
 

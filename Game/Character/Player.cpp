@@ -66,8 +66,12 @@ void Player::Initialize(){
 		debugSphere_[i] = std::make_unique<Object3D>();
 		debugSphere_[i]->Initialize("box");
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeScaleMatrix(trans);
-		if (debugJoints_[i].name == "mixamorig:LeftHandMiddle2"){
+		if (debugJoints_[i].name == "mixamorig:LeftHand" && leftHandNumber_ != i) {
 			leftHandNumber_ = i;
+		}
+
+		if (debugJoints_[i].name == "mixamorig:RightHand" && rightHandNumber_ != i) {
+			rightHandNumber_ = i;
 		}
 	}
 
@@ -92,7 +96,7 @@ void Player::Initialize(){
 	particleTrans_ = playerTransform_;
 
 	weaponTransform_ = {
-		.scale = {0.3f,0.3f,0.3f},
+		.scale = {0.2f,0.2f,0.2f},
 		.rotate = {0.0f,0.0f,0.0f},
 		.translate = {0.0f,0.0f,0.0f}
 	};
@@ -184,7 +188,7 @@ void Player::Update(){
 		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
 	}
 	else {
-		Matrix4x4 scaleinverse = Matrix::GetInstance()->Multiply(debugMatrix_[leftHandNumber_].ScaleInverce(), debugMatrix_[leftHandNumber_]);
+		Matrix4x4 scaleinverse = Matrix::GetInstance()->Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
 		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, Vector3({0.0f,0.0f,0.0f}), weaponTransform_.translate);
 		//weaponMatrix_ = Matrix::GetInstance()->Multiply(weaponMatrix_, debugMatrix_[leftHandNumber_]);
 		weaponMatrix_ = Matrix::GetInstance()->Multiply(weaponMatrix_, scaleinverse);
@@ -209,6 +213,11 @@ void Player::Draw(const ViewProjection& viewProjection){
 		if (debugJoints_[i].name == "mixamorig:LeftHand" && leftHandNumber_ != i) {
 			leftHandNumber_ = i;
 		}
+
+		if (debugJoints_[i].name == "mixamorig:RightHand" && rightHandNumber_ != i) {
+			rightHandNumber_ = i;
+		}
+
 		particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
 		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 

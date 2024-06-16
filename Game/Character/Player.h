@@ -326,6 +326,8 @@ private:
 
 	size_t leftHandNumber_;
 
+	size_t rightHandNumber_;
+
 	EulerTransform particleTrans_;
 };
 

@@ -2,6 +2,7 @@
 #include"Vector2.h"
 #include"Vector3.h"
 #include"Vector4.h"
+#include<array>
 
 
 struct EulerTransform {
@@ -29,7 +30,11 @@ public:
 	//Matrixの掛け算
 	Matrix4x4 Multiply(const Matrix4x4& right) const;
 	//逆行列の作成
-	Matrix4x4 Inverce()const ;
+	Matrix4x4 Inverce();
+
+
+	//Scale成分の逆行列
+	Matrix4x4 ScaleInverce();
 	//転置行列の作成
 	Matrix4x4 Trnaspose();
 
@@ -80,6 +85,9 @@ public:
 		return translate;
 	}
 
+private:
+	//ベクトルの長さと符合を計算する関数
+	float CalculateLengthWithSign(const std::array<float, 3>& v);
 	//オペレーター
 public:
 	Matrix4x4 operator+(const Matrix4x4& mat) const;

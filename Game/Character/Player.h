@@ -218,6 +218,7 @@ private:
 
 	//武器のマトリックス
 	Matrix4x4 weaponMatrix_{};
+	Matrix4x4 weaponScaleMatrix_{};
 	Matrix4x4 weaponCollisionMatrix_{};
 
 	//スケールを無視したマトリックス

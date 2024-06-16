@@ -179,7 +179,16 @@ void Player::Update(){
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
 
 	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
-	weaponMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
+	weaponScaleMatrix_.MakeScaleMatrix(weaponTransform_.scale);
+	if (behavior_ != Behavior::kRoot) {
+		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
+	}
+	else {
+		Matrix4x4 scaleinverse = Matrix::GetInstance()->Multiply(debugMatrix_[leftHandNumber_].ScaleInverce(), debugMatrix_[leftHandNumber_]);
+		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, Vector3({0.0f,0.0f,0.0f}), weaponTransform_.translate);
+		//weaponMatrix_ = Matrix::GetInstance()->Multiply(weaponMatrix_, debugMatrix_[leftHandNumber_]);
+		weaponMatrix_ = Matrix::GetInstance()->Multiply(weaponMatrix_, scaleinverse);
+	}
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
 	
@@ -197,7 +206,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 		
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * playerMatrix_;
 
-		if (debugJoints_[i].name == "mixamorig:LeftHandMiddle2" && leftHandNumber_ != i) {
+		if (debugJoints_[i].name == "mixamorig:LeftHand" && leftHandNumber_ != i) {
 			leftHandNumber_ = i;
 		}
 		particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
@@ -208,7 +217,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 		debugSphere_[i]->Draw();
 	}
 
-	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
+	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
@@ -216,7 +225,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
 		weaponCollisionObj_->Draw();*/
 
-	}
+	//}
 
 	
 }
@@ -314,9 +323,10 @@ void Player::BehaviorRootInitialize(){
 	move_ = { 0.0f,0.0f,0.0f };
 	Weapon_offset_Base = { 0.0f,3.0f,0.0f };
 	workAttack_.comboIndex_ = 0;
-	weaponTransform_.translate.y = 1.0f;
+	weaponTransform_.translate = { 0.0f,0.0f,0.0f };
 	weaponTransform_.scale = { 0.3f,0.3f,0.3f };
 	weaponTransform_.rotate.x = 0;
+	weaponTransform_.rotate.y = 0;
 	weaponTransform_.rotate.z = 0;
 	weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
 	weaponCollisionTransform_.translate.y = 10000.0f;
@@ -406,9 +416,9 @@ void Player::BehaviorRootUpdate(){
 		dashCoolTime -= 1;
 	}
 	playerTransform_.translate.y += downVector.y;
-	weaponTransform_.translate = playerTransform_.translate;
+	//weaponTransform_.translate = playerTransform_.translate;
 	
-	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(playerTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 

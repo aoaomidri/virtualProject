@@ -48,7 +48,7 @@ Matrix4x4 Matrix4x4::Multiply(const Matrix4x4& right) const{
 	return *this * right;
 }
 
-Matrix4x4 Matrix4x4::Inverce() const{
+Matrix4x4 Matrix4x4::Inverce(){
 	float A = 0.0f;
 	Matrix4x4 result = {};
 
@@ -132,6 +132,28 @@ Matrix4x4 Matrix4x4::Inverce() const{
 
 	result.m[3][3] = (m[0][0] * m[1][1] * m[2][2] + m[0][1] * m[1][2] * m[2][0] + m[0][2] * m[1][0] * m[2][1]
 		- m[0][2] * m[1][1] * m[2][0] - m[0][1] * m[1][0] * m[2][2] - m[0][0] * m[1][2] * m[2][1]) / A;
+
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			
+			m[y][x] = result.m[y][x];
+		}
+	}
+	return *this;
+}
+
+Matrix4x4 Matrix4x4::ScaleInverce(){
+	Matrix4x4 result{};
+
+	Vector3 scale{};
+
+	scale.x = CalculateLengthWithSign({ m[0][0], m[1][0], m[2][0] });
+	scale.y = CalculateLengthWithSign({ m[0][1], m[1][1], m[2][1] });
+	scale.z = CalculateLengthWithSign({ m[0][2], m[1][2], m[2][2] });
+
+	result.MakeScaleMatrix(scale);
+
+	result.Inverce();
 
 	return result;
 }
@@ -345,6 +367,12 @@ float Matrix4x4::RotateAngleYFromMatrix(){
 		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
 	}
 	return angle;
+}
+
+float Matrix4x4::CalculateLengthWithSign(const std::array<float, 3>& v){
+	float length = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	float sign = (v[0] + v[1] + v[2] >= 0.0000000f) ? 1.0f : -1.0f; // 任意の基準で符号を決定
+	return length * sign;
 }
 
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& mat) const{

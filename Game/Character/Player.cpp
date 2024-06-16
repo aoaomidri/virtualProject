@@ -66,6 +66,9 @@ void Player::Initialize(){
 		debugSphere_[i] = std::make_unique<Object3D>();
 		debugSphere_[i]->Initialize("box");
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * Matrix::GetInstance()->MakeScaleMatrix(trans);
+		if (debugJoints_[i].name == "mixamorig:LeftHandMiddle2"){
+			leftHandNumber_ = i;
+		}
 	}
 
 	weaponObj_ = std::make_unique<Object3D>();
@@ -81,9 +84,10 @@ void Player::Initialize(){
 	particleHands_ = std::make_unique<ParticleBase>();
 	particleHands_->Initialize();
 	particleHands_->SetPositionRange({ 0.0f,0.0f });
-	particleHands_->SetAddParticle(3);
+	particleHands_->SetAddParticle(1);
 
 	playerTransform_ = playerSkinAnimObj_->transform_;
+	particleTrans_ = playerTransform_;
 
 	weaponTransform_ = {
 		.scale = {0.3f,0.3f,0.3f},
@@ -186,6 +190,12 @@ void Player::Draw(const ViewProjection& viewProjection){
 		
 		debugMatrix_[i] = debugJoints_[i].skeltonSpaceMatrix * playerMatrix_;
 
+		if (debugJoints_[i].name == "mixamorig:LeftHandMiddle2" && leftHandNumber_ != i) {
+			leftHandNumber_ = i;
+		}
+		particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
+		particleTrans_.scale = { 0.3f,0.3f,0.3f };
+
 		debugSphere_[i]->SetMatrix(debugMatrix_[i]);
 		debugSphere_[i]->Update(viewProjection);
 		debugSphere_[i]->Draw();
@@ -224,8 +234,8 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 		
 	}
 
-	particleHands_->Update(newTrans, viewProjection);
-	particleHands_->SetScale({ 0.3f ,0.3f,0.3f });
+	particleHands_->Update(particleTrans_, viewProjection);
+	particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
 	particleHands_->Draw();
 	
 }

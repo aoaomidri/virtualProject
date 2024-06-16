@@ -69,6 +69,17 @@ public:
 
 	float RotateAngleYFromMatrix();
 
+	const Vector3 GetTranslate()const {
+		Vector3 translate{};
+		translate = {
+			m[3][0],
+			m[3][1],
+			m[3][2]
+		};
+
+		return translate;
+	}
+
 	//オペレーター
 public:
 	Matrix4x4 operator+(const Matrix4x4& mat) const;

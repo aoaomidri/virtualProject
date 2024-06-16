@@ -70,7 +70,7 @@ void ParticleBase::Initialize() {
 
 	textureHandle_= TextureManager::GetInstance()->Load("resources/texture/circle.png");//10
 
-	TextureManager::GetInstance()->MakeInstancingShaderResourceView(GetInstancingResource());
+	gpuHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView(GetInstancingResource());
 
 	isWind_ = true;
 	isBillborad_ = true;
@@ -191,7 +191,7 @@ void ParticleBase::Draw() {
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, TextureManager::GetInstance()->SendInstancingGPUDescriptorHandle());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureHandle_));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 

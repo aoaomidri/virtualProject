@@ -65,12 +65,15 @@ public:
 	}
 
 	void ChangeAnimation(const std::string& modelName) {
+		if (nowAnimName_ == modelName) {
+			return;
+		}
+
 		for (size_t i = 0; i < animations_.size(); i++){
 			if (animations_[i].first == modelName) {
-				if (animation_.duration == animations_[i].second.duration) {
-					break;
-				}
-				animation_ = animations_[i].second;
+				blendFactor_ = 0;
+				nowAnimName_ = modelName;
+				afterAnimation_ = animations_[i].second;
 				RestartAnimation();
 				break;
 			}
@@ -93,7 +96,7 @@ public:
 	/// </summary>
 	std::string ChackAnimationName() {
 		for (size_t i = 0; i < animations_.size(); i++) {			
-			if (animation_.duration == animations_[i].second.duration) {
+			if (beforeAnimation_.duration == animations_[i].second.duration) {
 				return animations_[i].first;
 			}
 		}
@@ -111,6 +114,10 @@ public:
 
 	void SetAnimSpeed(const float speed) {
 		animSpeed_ = speed;
+	}
+
+	void SetChangeAnimSpeed(const float speed) {
+		changeAnimSpeed_ = speed;
 	}
 
 	void AnimationStop() {
@@ -148,7 +155,7 @@ private:
 
 	Quaternion CalculateValue(const std::vector<Model::KeyframeQuaternion>& keyframes, float time);
 
-	void ApplyAnimation(Model::Skeleton& skeleton, Model::Animation& animation, float animationTime);
+	void ApplyAnimation(Model::Skeleton& skeleton, Model::Animation& beforeAnimation, Model::Animation& afterAnimation, float animationTime);
 public:
 	Matrix4x4* parent_{};
 
@@ -166,7 +173,15 @@ private:
 
 	std::vector<bool> animationLoopFlug_;
 
-	Model::Animation animation_;
+	std::string nowAnimName_;
+
+	//変更前のアニメーション
+	Model::Animation beforeAnimation_;
+	//変更後のアニメーション
+	Model::Animation afterAnimation_;
+
+	//アニメーションの補完係数
+	float blendFactor_;
 
 	Model::Skeleton skeleton_;
 
@@ -209,6 +224,8 @@ private:
 	float animationTime_ = 0.0f;
 
 	float animSpeed_ = 1.0f;
+
+	float changeAnimSpeed_ = 1.0f;
 
 	bool isAnimation_ = true;
 

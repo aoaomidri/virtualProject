@@ -167,6 +167,9 @@ private://メンバ変数
 	//TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER swapBarrier{};
 
+	//バリア
+	D3D12_RESOURCE_BARRIER depthBarrier_{};
+
 	D3D12_VIEWPORT viewport{};
 
 	//シザー矩形

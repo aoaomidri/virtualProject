@@ -15,10 +15,12 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const bool isLoop)
 
 	model_ = Model::LoadModelFile(fileName);
 
-	animation_ = Model::LoadAnimationFile(fileName);
-	animation_.isAnimLoop = isLoop;
+	nowAnimName_ = fileName;
 
-	animations_.push_back({ fileName, animation_ });
+	beforeAnimation_ = Model::LoadAnimationFile(fileName);
+	beforeAnimation_.isAnimLoop = isLoop;
+
+	animations_.push_back({ fileName, beforeAnimation_ });
 
 	animationName_.reserve(animations_.size()); // ベクトルの領域を事前に確保
 
@@ -59,11 +61,13 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const std::string&
 
 	model_ = Model::LoadModelFile(fileName, modelName);
 
-	animation_ = Model::LoadAnimationFile(fileName, modelName);
-	animation_.isAnimLoop = isLoop;
+	nowAnimName_ = modelName;
+
+	beforeAnimation_ = Model::LoadAnimationFile(fileName, modelName);
+	beforeAnimation_.isAnimLoop = isLoop;
 
 
-	animations_.push_back({ modelName, animation_ });
+	animations_.push_back({ modelName, beforeAnimation_ });
 
 	animationName_.reserve(animations_.size()); // ベクトルの領域を事前に確保
 
@@ -99,27 +103,32 @@ void SkinAnimObject3D::Update(const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
-	if (animation_.duration != 0) {
+	if (beforeAnimation_.duration != 0) {
 
 		if (isAnimation_){
 			animationTime_ += (1.0f / 60.0f) * animSpeed_;
 		}
 		
-		if (animation_.isAnimLoop){
-			animationTime_ = std::fmod(animationTime_, animation_.duration);
+		if (beforeAnimation_.isAnimLoop){
+			animationTime_ = std::fmod(animationTime_, beforeAnimation_.duration);
 		}
-		else {
-			if (animationTime_)
-			{
+		if (afterAnimation_.duration != 0) {
+			blendFactor_ += (1.0f / 60.0f) * changeAnimSpeed_;
+		}
 
-			}
-		}
 		
+				
 
-		ApplyAnimation(skeleton_, animation_, animationTime_);
+		ApplyAnimation(skeleton_, beforeAnimation_,afterAnimation_, animationTime_);
 		SkeletonUpdate(skeleton_);
 
 		SkeletonUpdate(skinCluster_, skeleton_);
+
+		if (blendFactor_ >= 1.0f) {
+			blendFactor_ = 0;
+			beforeAnimation_ = afterAnimation_;
+			afterAnimation_ = Model::Animation();
+		}
 		
 	}
 	else {
@@ -164,30 +173,6 @@ void SkinAnimObject3D::Update(const ViewProjection& viewProjection) {
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
-void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
-	for (Model::Joint& joint : skeleton.joints) {
-		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
-		if (joint.parent) {//親がいれば親の行列を掛ける
-			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
-		}
-		else {//親がいないのでlocalMatrixとskeletonspacematrixは一致する
-			joint.skeltonSpaceMatrix = joint.localMatrix;
-		}
-	}
-}
-
-void SkinAnimObject3D::SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Skeleton& skeleton){
-	//全てのJointを更新。親が若いので通常ループで処理可能になっている
-	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex){
-		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
-
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix =
-			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
-
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
-			Matrix::GetInstance()->Transpose(Matrix::GetInstance()->Inverce(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
-	}	
-}
 
 void SkinAnimObject3D::Draw() {
 
@@ -224,6 +209,8 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 #ifdef _DEBUG
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Text("アニメーションの時間 = %.1f", animationTime_);
+	ImGui::Text("アニメーション補完の時間 = %.1f", blendFactor_);
+	ImGui::DragFloat("アニメーション補完の速度", &changeAnimSpeed_, 0.01f, 0.1f, 60.0f);
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Checkbox("ライティングするかどうか", &isUseLight_);
 	ImGui::DragFloat("反射強度", &shininess_, 0.01f, 0.0f, 100.0f);
@@ -331,6 +318,30 @@ void SkinAnimObject3D::makeResource() {
 
 }
 
+void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
+	for (Model::Joint& joint : skeleton.joints) {
+		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
+		if (joint.parent) {//親がいれば親の行列を掛ける
+			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
+		}
+		else {//親がいないのでlocalMatrixとskeletonspacematrixは一致する
+			joint.skeltonSpaceMatrix = joint.localMatrix;
+		}
+	}
+}
+
+void SkinAnimObject3D::SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Skeleton& skeleton){
+	//全てのJointを更新。親が若いので通常ループで処理可能になっている
+	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex){
+		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
+
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix =
+			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
+
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
+			Matrix::GetInstance()->Transpose(Matrix::GetInstance()->Inverce(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
+	}	
+}
 Vector3 SkinAnimObject3D::CalculateValue(const std::vector<Model::KeyframeVector3>& keyframes, float time){
 	assert(!keyframes.empty());
 	if (keyframes.size() == 1 || time <= keyframes[0].time) {
@@ -369,14 +380,38 @@ Quaternion SkinAnimObject3D::CalculateValue(const std::vector<Model::KeyframeQua
 	return (*keyframes.rbegin()).value;
 }
 
-void SkinAnimObject3D::ApplyAnimation(Model::Skeleton& skeleton, Model::Animation& animation, float animationTime){
+void SkinAnimObject3D::ApplyAnimation(Model::Skeleton& skeleton, Model::Animation& beforeAnimation, Model::Animation& afterAnimation, float animationTime){
 	for (Model::Joint& joint :skeleton.joints){
-		//対象のJointのAnimationがあれば、値の適用を行う。下記のif文はc++17から可能になった初期化付きif文
-		if (auto it = animation.nodeAnimations.find(joint.name); it != animation.nodeAnimations.end()) {
-			const Model::NodeAnimation& rootNodeAnimation = (*it).second;
-			joint.transform.translate = CalculateValue(rootNodeAnimation.translate, animationTime);
-			joint.transform.rotate = CalculateValue(rootNodeAnimation.rotate, animationTime);
-			joint.transform.scale = CalculateValue(rootNodeAnimation.scale, animationTime);
+		////対象のJointのAnimationがあれば、値の適用を行う。下記のif文はc++17から可能になった初期化付きif文
+		//if (auto it = animation.nodeAnimations.find(joint.name); it != animation.nodeAnimations.end()) {
+		//	const Model::NodeAnimation& rootNodeAnimation = (*it).second;
+		//	joint.transform.translate = CalculateValue(rootNodeAnimation.translate, animationTime);
+		//	joint.transform.rotate = CalculateValue(rootNodeAnimation.rotate, animationTime);
+		//	joint.transform.scale = CalculateValue(rootNodeAnimation.scale, animationTime);
+		//}
+		if (auto it1 = beforeAnimation.nodeAnimations.find(joint.name); it1 != beforeAnimation.nodeAnimations.end()) {
+			const Model::NodeAnimation& anim1 = it1->second;
+			Vector3 translate1 = CalculateValue(anim1.translate, animationTime);
+			Quaternion rotate1 = CalculateValue(anim1.rotate, animationTime);
+			Vector3 scale1 = CalculateValue(anim1.scale, animationTime);
+
+			if (auto it2 = afterAnimation.nodeAnimations.find(joint.name); it2 != afterAnimation.nodeAnimations.end()) {
+				const Model::NodeAnimation& anim2 = it2->second;
+				Vector3 translate2 = CalculateValue(anim2.translate, animationTime);
+				Quaternion rotate2 = CalculateValue(anim2.rotate, animationTime);
+				Vector3 scale2 = CalculateValue(anim2.scale, animationTime);
+
+				// 補完
+				joint.transform.translate = Vector3::Lerp(translate1, translate2, blendFactor_);
+				joint.transform.rotate = Quaternion::GetInstance()->Slerp(rotate1, rotate2, blendFactor_);
+				joint.transform.scale = Vector3::Lerp(scale1, scale2, blendFactor_);
+			}
+			else {
+				// animation2に対応するジョイントがない場合
+				joint.transform.translate = translate1;
+				joint.transform.rotate = rotate1;
+				joint.transform.scale = scale1;
+			}
 		}
 	}
 

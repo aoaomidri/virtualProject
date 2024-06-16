@@ -85,6 +85,9 @@ void WholeGame::Draw(){
 }
 
 void WholeGame::DrawImgui(){
+#ifdef _DEBUG
+
+
 	ImGui::Begin("ポストエフェクト");
 	if (ImGui::Button("None")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
@@ -98,9 +101,9 @@ void WholeGame::DrawImgui(){
 	if (ImGui::Button("Inverse")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
 	}
-	/*if (ImGui::Button("OutLine")) {
+	if (ImGui::Button("OutLine")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::OutLine);
-	}*/
+	}
 	if (ImGui::Button("Smoothing3x3")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
 	}
@@ -142,5 +145,8 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat("ライトの輝き", &directionalData_.intensity, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 
+#endif // _DEBUG
+
 	directionalLight_->SetLightData(directionalData_);
+
 }

@@ -85,6 +85,8 @@ public:
 		Smoothing9x9,//スモーシング強
 		Inverse,//色反転
 		OutLine,//アウトライン
+		RadialBlur,//ラジアルブラー
+
 		Over,//これ以上ないことを表す
 	};
 
@@ -186,6 +188,9 @@ private:
 
 	//LuminanceOutLine
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineOutLine_;
+
+	//ラジアンブラー
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineRadialBlur_;
 
 
 	ComPtr<ID3D12Resource> textureResource;

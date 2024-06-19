@@ -58,6 +58,11 @@ void TextureManager::Initialize() {
 	GraphicsPipelineOutLine_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineOutLine_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/DepthBasedOutline.PS.hlsl");
 
+	//ラジアンブラー
+	GraphicsPipelineRadialBlur_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineRadialBlur_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/RadialBlur.PS.hlsl");
+
+
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
 
@@ -266,6 +271,10 @@ void TextureManager::DrawCopy(){
 	else if (selectPost_ == PostEffect::OutLine) {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineOutLine_->GetRootSignature());
 		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineOutLine_->GetPipeLineState());
+	}
+	else if (selectPost_ == PostEffect::RadialBlur) {
+		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineRadialBlur_->GetRootSignature());
+		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineRadialBlur_->GetPipeLineState());
 	}
 	else {
 		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());

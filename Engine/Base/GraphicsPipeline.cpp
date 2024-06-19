@@ -325,9 +325,9 @@ void GraphicsPipeline::makeRootSignatureCopy(ID3D12Device* device){
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[2] = {};
 	staticSampler[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
-	staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0～1の範囲外をリピート
-	staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSampler[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;//0～1の範囲外をリピート
+	staticSampler[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSampler[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
 	staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
 	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う

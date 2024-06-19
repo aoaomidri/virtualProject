@@ -104,6 +104,9 @@ void WholeGame::DrawImgui(){
 	if (ImGui::Button("OutLine")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::OutLine);
 	}
+	if (ImGui::Button("RadialBlur")) {
+		textureManager_->SetPostEffect(TextureManager::PostEffect::RadialBlur);
+	}
 	if (ImGui::Button("Smoothing3x3")) {
 		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
 	}

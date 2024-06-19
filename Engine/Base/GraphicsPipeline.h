@@ -25,6 +25,9 @@ public:
 	static GraphicsPipeline* GetInstance();
 	//通常の初期化
 	void Initialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
+
+	//通常の初期化
+	void Initialize2D(const std::wstring & VSname, const std::wstring & PSname);
 	//パーティクル専用の初期化処理
 	void ParticleExclusiveInitialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend);
 	//コピー用の初期化

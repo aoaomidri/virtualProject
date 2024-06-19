@@ -368,7 +368,7 @@ void Player::BehaviorRootUpdate(){
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_->rotation_);
 	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix);
 	move_.y = 0.0f;
-	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_*3.0f);
+	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_ * 3.0f);
 	move_.y = 0.0f;
 	
 	if (move_.x != 0.0f || move_.z != 0.0f) {

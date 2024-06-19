@@ -12,7 +12,7 @@ TextureManager* TextureManager::GetInstance() {
 
 void TextureManager::Initialize() {
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline2D_->Initialize(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl", false);
+	GraphicsPipeline2D_->Initialize2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
 

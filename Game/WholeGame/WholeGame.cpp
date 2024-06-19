@@ -74,12 +74,12 @@ void WholeGame::Draw(){
 	gameScene_->DrawSkin3D();
 	gameScene_->Draw3D();
 	gameScene_->DrawParticle();
-	//2D描画
-	gameScene_->Draw2D();
 	
 	dxCom_->PreDrawCopy();
 	dxCom_->PreDrawSwapChain();
 	textureManager_->DrawCopy();
+	//2D描画
+	gameScene_->Draw2D();
 	imguiManager_->Draw();
 	dxCom_->PostDraw();
 }

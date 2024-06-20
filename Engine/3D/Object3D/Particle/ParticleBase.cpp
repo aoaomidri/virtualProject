@@ -193,7 +193,6 @@ void ParticleBase::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureHandle_));
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), numInstance, 0, 0);
@@ -316,20 +315,6 @@ void ParticleBase::makeResource() {
 		wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
-	/*平行光源用リソース関連*/
-	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
-	
-
-	//書き込むためのアドレスを取得
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
-	//今回は白を書き込んでみる
-	directionalLightDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	directionalLightDate->direction = { 0.0f,1.0f,0.0f };
-
-	directionalLightDate->intensity = 1.0f;
-	
 }
 
 

@@ -18,7 +18,7 @@ class TextureManager {
 public:
 	TextureManager() = default;
 	~TextureManager() = default;
-	TextureManager(const TextureManager& TextureManager) = delete;
+	TextureManager(const TextureManager& textureManager) = delete;
 	TextureManager& operator=(const TextureManager&) = delete;
 	//TextureManager();
 

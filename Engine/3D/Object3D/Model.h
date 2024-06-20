@@ -18,6 +18,7 @@ class Model{
 public:
 	struct MaterialData {
 		std::string textureFilePath;
+		uint32_t textureHandle;
 	};
 
 	struct Node {

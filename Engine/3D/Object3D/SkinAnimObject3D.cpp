@@ -37,7 +37,7 @@ void SkinAnimObject3D::Initialize(const std::string fileName, const bool isLoop)
 	SkeletonUpdate(skinCluster_, skeleton_);
 
 	if (model_->GetMaterial().textureFilePath != "") {
-		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
+		texHandle_ = (model_->GetMaterial().textureHandle);
 	}
 	else {
 		texHandle_ = 0;

@@ -137,11 +137,6 @@ private:
 	//データを書き込む
 	ParticleForGPU* wvpData = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
-
-	//マテリアルにデータを書き込む
-	DirectionalLight::DirectionalLightData* directionalLightDate = nullptr;
-
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;

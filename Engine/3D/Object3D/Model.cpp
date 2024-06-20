@@ -83,6 +83,8 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 		}
 
 	}
+
+	materialData.textureHandle = TextureManager::GetInstance()->Load(materialData.textureFilePath);
 	//4,MaterialDataを返す
 	return materialData;
 	
@@ -276,6 +278,7 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 			modelData_.material.textureFilePath = filepath.parent_path().string() + "/" + textureFileTemp.filename().string();
 		}
 	}
+	modelData_.material.textureHandle = TextureManager::GetInstance()->Load(modelData_.material.textureFilePath);
 
 	//5,Nodeの解析
 	

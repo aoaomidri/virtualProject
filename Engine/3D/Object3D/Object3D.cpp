@@ -17,7 +17,7 @@ void Object3D::Initialize(const std::string fileName) {
 	animation_ = Model::LoadAnimationFile(fileName);
 
 	if (model_->GetMaterial().textureFilePath != "") {
-		texHandle_ = TextureManager::GetInstance()->Load(model_->GetMaterial().textureFilePath);
+		texHandle_ = (model_->GetMaterial().textureHandle);
 	}
 	else {
 		texHandle_ = 0;

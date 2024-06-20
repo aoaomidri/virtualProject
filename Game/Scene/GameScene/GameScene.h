@@ -17,6 +17,7 @@
 #include"SkyBox.h"
 #include"Audio.h"
 #include"LevelLoader/LevelLoader.h"
+#include"PostEffect.h"
 
 class GameScene : public BaseScene{
 public:
@@ -86,6 +87,9 @@ private:
 	//基本の宣言はユニークポインタで
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
+
+	//テクスチャマネージャー
+	PostEffect* postEffect_ = nullptr;
 
 	std::unique_ptr<FollowCamera> followCamera_;	
 	

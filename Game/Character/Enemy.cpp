@@ -3,6 +3,7 @@
 #include"RandomMaker.h"
 #include"Adjustment_Item.h"
 #include"LevelLoader/LevelLoader.h"
+#include"PostEffect.h"
 
 
 uint32_t Enemy::nextSerialNumber_ = 0;
@@ -391,7 +392,7 @@ void Enemy::MotionUpdate(){
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
-		TextureManager::GetInstance()->SetPostEffect(TextureManager::PostEffect::GrayVignetting);
+		PostEffect::GetInstance()->SetPostEffect(PostEffect::EffectType::GrayVignetting);
 		behaviorRequest_ = Behavior::kDead;
 	}
 }

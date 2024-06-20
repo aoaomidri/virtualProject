@@ -6,6 +6,7 @@
 #include"DirectXCommon.h"
 #include"GameScene/GameScene.h"
 #include"Adjustment_Item.h"
+#include"PostEffect.h"
 #include"TextureManager.h"
 class MAFramework{
 public:
@@ -43,6 +44,8 @@ public:
 	Audio* audio_ = nullptr;
 	//テクスチャ関連
 	TextureManager* texManager_ = nullptr;
+	//ポストエフェクト
+	PostEffect* postEffect_ = nullptr;
 
 private:
 	MSG msg{};

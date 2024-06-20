@@ -20,6 +20,9 @@ void MAFramework::Initialize(){
 
 	texManager_ = TextureManager::GetInstance();
 	texManager_->Initialize();
+
+	postEffect_ = PostEffect::GetInstance();
+	postEffect_->Initialize();
 }
 
 void MAFramework::Finalize(){

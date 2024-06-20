@@ -90,46 +90,46 @@ void WholeGame::DrawImgui(){
 
 	ImGui::Begin("ポストエフェクト");
 	if (ImGui::Button("None")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
+		postEffect_->SetPostEffect(PostEffect::EffectType::None);
 	}
 	if (ImGui::Button("Gray")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Gray);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	}
 	if (ImGui::Button("Sepia")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Sepia);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Sepia);
 	}
 	if (ImGui::Button("Inverse")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Inverse);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Inverse);
 	}
 	if (ImGui::Button("OutLine")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::OutLine);
+		postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
 	}
 	if (ImGui::Button("RadialBlur")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::RadialBlur);
+		postEffect_->SetPostEffect(PostEffect::EffectType::RadialBlur);
 	}
 	if (ImGui::Button("Smoothing3x3")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing3x3);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing3x3);
 	}
 	if (ImGui::Button("Smoothing5x5")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing5x5);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing5x5);
 	}
 	if (ImGui::Button("Smoothing9x9")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
+		postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
 	}
 	if (ImGui::Button("NormalVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::NormalVignetting);
+		postEffect_->SetPostEffect(PostEffect::EffectType::NormalVignetting);
 	}
 	if (ImGui::Button("GrayVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::GrayVignetting);
+		postEffect_->SetPostEffect(PostEffect::EffectType::GrayVignetting);
 	}
 	if (ImGui::Button("SepiaVignetting")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::SepiaVignetting);
+		postEffect_->SetPostEffect(PostEffect::EffectType::SepiaVignetting);
 	}
 	if (ImGui::Button("VignettingGrayScale")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingGrayScale);
+		postEffect_->SetPostEffect(PostEffect::EffectType::VignettingGrayScale);
 	}
 	if (ImGui::Button("VignettingSepiaScale")) {
-		textureManager_->SetPostEffect(TextureManager::PostEffect::VignettingSepiaScale);
+		postEffect_->SetPostEffect(PostEffect::EffectType::VignettingSepiaScale);
 	}
 	ImGui::End();
 	ImGui::Begin("FPS");
@@ -140,7 +140,7 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat("Scale", &vignettingData_.scale, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
 	ImGui::End();
-	textureManager_->SetVignettingData(vignettingData_);
+	postEffect_->SetVignettingData(vignettingData_);
 
 	ImGui::Begin("DirectionalLightの情報");
 	ImGui::ColorEdit4("ライトの色", &directionalData_.color.x);

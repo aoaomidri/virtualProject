@@ -71,50 +71,12 @@ public:
 	
 
 public:
-	enum  PostEffect{
-		None,//なし
-		Gray,//グレースケール
-		Sepia,//セピア調
-		NormalVignetting,//ヴィネッティング
-		GrayVignetting,//グレーヴィネッティング
-		SepiaVignetting,//セピアヴィネッティング
-		VignettingGrayScale,//グレーヴィネッティング
-		VignettingSepiaScale,//セピアヴィネッティング
-		Smoothing3x3,//スモーシング弱
-		Smoothing5x5,//スモーシング中
-		Smoothing9x9,//スモーシング強
-		Inverse,//色反転
-		OutLine,//アウトライン
-		RadialBlur,//ラジアルブラー
-
-		Over,//これ以上ないことを表す
-	};
-
-	struct Vignetting {
-		float scale;//大きさ
-		float pow;//掛ける累乗
-	};
-
-	struct CameraMat {
-		Matrix4x4 matProjectionInverse_;
-	};
-
-	void SetVignettingData(const Vignetting& data) {
-		vignettingData_->scale = data.scale;
-		vignettingData_->pow = data.pow;
-	}
-
-	void SetPostEffect(const PostEffect& name) {
-		selectPost_ = name;
-	}
-
-	void SetMatProjectionInverse(const Matrix4x4& mat) {
-		cameraData_->matProjectionInverse_ = mat;
-	}
 
 	void MakeRenderTexShaderResourceView();
 
 	void MakeDepthShaderResouceView();
+
+	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 public:
 
@@ -126,10 +88,6 @@ public:
 		skyBoxTexNumber_ = texNum;
 	}
 
-	const uint32_t GetPostEffect()const {
-		return selectPost_;
-	}
-
 private:
 	// DirectX12のTextureResourceを作る
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
@@ -139,15 +97,12 @@ private:
 		ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages
 		);
 
-	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+	
 
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
 
 
-	void CreateVignettingResource();
-
-	void ProjectInverseResource();
 
 private:
 	//SRVの最大個数
@@ -166,43 +121,7 @@ private:
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkinning3D_;
 
-	//ポストエフェクト
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineCopy_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGray_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepia_;
 
-	//色反転
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineInverse_;
-
-	/*ヴィネッティング*/
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineNormalVignetting_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineGrayVignetting_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSepiaVignetting_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingGrayScale_;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingSepiaScale_;
-
-	//Smoothing
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing3x3;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing5x5;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing9x9;
-
-	//LuminanceOutLine
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineOutLine_;
-
-	//ラジアンブラー
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineRadialBlur_;
-
-
-	ComPtr<ID3D12Resource> textureResource;
-	ComPtr<ID3D12Resource> intermediateResource;
-
-	ComPtr<ID3D12Resource> vignettingResource_;
-
-	Vignetting* vignettingData_ = nullptr;
-
-	ComPtr<ID3D12Resource> cameraResource_;
-
-	CameraMat* cameraData_ = nullptr;
 
 	////SRVを作成するDescripterHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
@@ -232,9 +151,6 @@ private:
 
 	//SRV
 	ID3D12Device* device_ = nullptr;
-
-	//どのポストエフェクトを選択しているか
-	uint32_t selectPost_ = 0;
 
 	//スカイボックスのテクスチャ番号
 	uint32_t skyBoxTexNumber_;

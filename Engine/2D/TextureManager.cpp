@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include"DirectXCommon.h"
+#include"PostEffect.h"
 #include"Model.h"
 #include <cassert>
 #include<fstream>
@@ -23,51 +24,10 @@ void TextureManager::Initialize() {
 	GraphicsPipelineSkinning3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/object3D/SkinningObject3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
 	
-	//ヴィネッティングなし
-	GraphicsPipelineCopy_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineCopy_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/CopyImage.PS.hlsl");
-	GraphicsPipelineGray_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineGray_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/Grayscale.PS.hlsl");
-	GraphicsPipelineSepia_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSepia_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/Sepiascale.PS.hlsl");
-	GraphicsPipelineInverse_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineInverse_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/InvertedColor.PS.hlsl");
-	//ヴィネッティングあり
-	GraphicsPipelineNormalVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineNormalVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/NormalVignetting.PS.hlsl");
-	GraphicsPipelineGrayVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineGrayVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GrayVignetting.PS.hlsl");
-	GraphicsPipelineSepiaVignetting_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSepiaVignetting_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/SepiaVignetting.PS.hlsl");
-	
-	//順序反転
-	GraphicsPipelineVignettingGrayScale_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineVignettingGrayScale_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/VignettingGrayScale.PS.hlsl");
-	GraphicsPipelineVignettingSepiaScale_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/VignettingSepiaScale.PS.hlsl");
-
-	//smoothing
-	GraphicsPipelineSmoothing3x3 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter3x3.PS.hlsl");
-	GraphicsPipelineSmoothing5x5 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter5x5.PS.hlsl");
-	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter9x9.PS.hlsl");
-
-	//outline
-	GraphicsPipelineOutLine_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineOutLine_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/DepthBasedOutline.PS.hlsl");
-
-	//ラジアンブラー
-	GraphicsPipelineRadialBlur_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineRadialBlur_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/RadialBlur.PS.hlsl");
-
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();
 	Model::SetDevice(device_);
 
-	CreateVignettingResource();
-	ProjectInverseResource();
 	
 }
 
@@ -156,11 +116,13 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::MakeInstancingShaderResourceView(ID3
 }
 
 void TextureManager::PreDraw2D(){
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipeline2D_->GetRootSignature());
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipeline2D_->GetPipeLineState());
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
 
-	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipeline2D_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipeline2D_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void TextureManager::PostDraw2D()
@@ -168,11 +130,13 @@ void TextureManager::PostDraw2D()
 }
 
 void TextureManager::PreDraw3D(){
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipeline3D_->GetRootSignature());
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipeline3D_->GetPipeLineState());
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
 
-	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipeline3D_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipeline3D_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void TextureManager::PostDraw3D(){
@@ -180,11 +144,13 @@ void TextureManager::PostDraw3D(){
 }
 
 void TextureManager::PreDrawSkyBox(){
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSkyBox_->GetRootSignature());
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSkyBox_->GetPipeLineState());
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
 
-	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipelineSkyBox_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipelineSkyBox_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void TextureManager::PostDrawSkyBox(){
@@ -192,12 +158,14 @@ void TextureManager::PostDrawSkyBox(){
 }
 
 void TextureManager::PreDrawSkin3D(){
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSkinning3D_->GetRootSignature());
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSkinning3D_->GetPipeLineState());
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
 
-	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipelineSkinning3D_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipelineSkinning3D_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}	
 
 void TextureManager::PostDrawSkin3D()
 {
@@ -217,83 +185,26 @@ void TextureManager::PreDrawCopy(){
 }
 
 void TextureManager::DrawCopy(){
+
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
+	auto postEffect = PostEffect::GetInstance();
+
+	postEffect->SetPipeLine();
 	
-	//RootSignatureを設定。PSOに設定しているが別途設定が必要
-	if (selectPost_ == 0 || selectPost_ >= PostEffect::Over) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
+	
+	commandList->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
+	if (postEffect->IsSelectOutLine()){
 
-	}
-	else if (selectPost_ == PostEffect::Gray) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineGray_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineGray_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::Sepia) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepia_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepia_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::Inverse) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineInverse_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineInverse_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::NormalVignetting) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineNormalVignetting_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineNormalVignetting_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::GrayVignetting) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineGrayVignetting_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineGrayVignetting_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::SepiaVignetting) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSepiaVignetting_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSepiaVignetting_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::VignettingGrayScale) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineVignettingGrayScale_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineVignettingGrayScale_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::VignettingSepiaScale) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineVignettingSepiaScale_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineVignettingSepiaScale_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::Smoothing3x3) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing3x3->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing3x3->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::Smoothing5x5) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing5x5->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing5x5->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::Smoothing9x9) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineSmoothing9x9->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineSmoothing9x9->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::OutLine) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineOutLine_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineOutLine_->GetPipeLineState());
-	}
-	else if (selectPost_ == PostEffect::RadialBlur) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineRadialBlur_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineRadialBlur_->GetPipeLineState());
-	}
-	else {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
-		DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
-	}
-
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
-	if (selectPost_ == PostEffect::OutLine){
-
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
+		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetCameraMat());
 
 		
 	}
-	if (selectPost_ == PostEffect::NormalVignetting || selectPost_ == PostEffect::GrayVignetting || selectPost_ == PostEffect::SepiaVignetting) {
-		DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, vignettingResource_->GetGPUVirtualAddress());
+	if (postEffect->IsSelectVignetting()) {
+		commandList->SetGraphicsRootConstantBufferView(2, postEffect->GetVignetting());
 	}
 
-	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+	commandList->DrawInstanced(3, 1, 0, 0);
 }
 
 void TextureManager::MakeRenderTexShaderResourceView() {
@@ -427,38 +338,6 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 	return resource;
 }
 
-void TextureManager::CreateVignettingResource(){
-	/*//マテリアル用のリソース
-	 materialResource_ = CreateBufferResource(sizeof(Model::Material));
-
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
-	//今回は赤を書き込んでみる
-	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	materialDate_->enableLighting = false;
-
-	materialDate_->uvTransform.Identity();
-
-	materialDate_->shininess = 1.0f;*/
-
-	vignettingResource_ = CreateBufferResource(sizeof(Vignetting));
-
-	vignettingResource_->Map(0, nullptr, reinterpret_cast<void**>(&vignettingData_));
-
-	vignettingData_->scale = 16.0f;
-
-	vignettingData_->pow = 0.8f;
-
-}
-
-void TextureManager::ProjectInverseResource(){
-	cameraResource_ = CreateBufferResource(sizeof(CameraMat));
-
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
-
-	cameraData_->matProjectionInverse_.Identity();
-}
 
 
 

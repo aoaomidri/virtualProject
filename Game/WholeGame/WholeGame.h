@@ -33,7 +33,7 @@ private:
 
 	TextureManager* textureManager_ = nullptr;
 
-	TextureManager::Vignetting vignettingData_;
+	PostEffect::Vignetting vignettingData_;
 
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;

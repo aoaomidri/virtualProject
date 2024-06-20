@@ -104,6 +104,8 @@ void GameScene::Initialize(){
 	input_ = Input::GetInstance();
 
 	textureManager_ = TextureManager::GetInstance();
+
+	postEffect_ = PostEffect::GetInstance();
 	
 	TextureLoad();
 	SoundLoad();
@@ -218,7 +220,7 @@ void GameScene::Update(){
 	DrawImgui();
 	
 	followCamera_->Update();
-	textureManager_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
+	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 	switch (sceneNum_){
 	case SceneName::TITLE:
 		
@@ -303,8 +305,8 @@ void GameScene::Update(){
 				enemy->Update();
 			}
 		}
-		if (player_->GetHitTimer() != 0 and textureManager_->GetPostEffect() == TextureManager::PostEffect::None) {
-			textureManager_->SetPostEffect(TextureManager::PostEffect::Smoothing9x9);
+		if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
+			postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
 		}
 		/*else if (textureManager_->GetPostEffect() != TextureManager::PostEffect::None) {
 			textureManager_->SetPostEffect(TextureManager::PostEffect::None);
@@ -328,7 +330,7 @@ void GameScene::Update(){
 			enemy->Respawn({ 0, 2.0f, 20.0f });
 		}
 		
-		textureManager_->SetPostEffect(TextureManager::PostEffect::None);
+		postEffect_->SetPostEffect(PostEffect::EffectType::None);
 		
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
 			isFade_ = true;

@@ -243,6 +243,9 @@
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp">
       <Filter>engine\3D\Object3D\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\2D\PostEffect.cpp">
+      <Filter>engine\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\Matrix.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h">
       <Filter>engine\3D\Object3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\PostEffect.h">
+      <Filter>engine\2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

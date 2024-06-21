@@ -36,6 +36,8 @@ bld/
 [Ll]ogs/
 imgui.ini
 Generated/
+Generated/Outputs/
+Generated/Obj/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

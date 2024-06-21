@@ -15,7 +15,40 @@ void ParticleManager::Initialize(){
 
 }
 
-void ParticleManager::CreateParticleGroup(const std::string name, const std::string textureName){
+void ParticleManager::Updata(){
+	backToFrontMatrix_ = Matrix::GetInstance()->MakeRotateMatrix({ 0.0f,0.0f,0.0f });
+	billboardMatrix_ = Matrix::GetInstance()->Multiply(backToFrontMatrix_, viewProjection_->cameraMatrix_);
+	billboardMatrix_.m[3][0] = 0.0f;
+	billboardMatrix_.m[3][1] = 0.0f;
+	billboardMatrix_.m[3][2] = 0.0f;
+
+	for (auto& particleGroup : particleGroups_) {
+		auto& particleList = particleGroup.second.particleList;
+		for (std::list<Particle>::iterator particleIterator = particleList.begin(); particleIterator != particleList.end();) {
+			if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
+				particleIterator = particleList.erase(particleIterator);
+				continue;
+			}
+
+
+			worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(
+				Matrix::GetInstance()->MakeScaleMatrix((*particleIterator).transform.scale),
+				billboardMatrix_,
+				Matrix::GetInstance()->MakeTranslateMatrix((*particleIterator).transform.translate));
+
+
+
+
+
+		}
+	}
+}
+
+void ParticleManager::Draw(){
+
+}
+
+void ParticleManager::CreateParticleGroup(const std::string name, const std::string textureName, const AccelerationField field){
 	bool isCreated = false;
 
 	for (auto& particle : particleGroups_) {
@@ -28,6 +61,10 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 	}
 
 	ParticleGroup newParticleGroup;
+
+	newParticleGroup.particleMaxNum_ = 600;
+
+	newParticleGroup.accelerationField = field;
 
 	newParticleGroup.materialData.textureFilePath = textureName;
 	newParticleGroup.materialData.textureHandle = textureManager_->Load(textureName);
@@ -43,6 +80,8 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 		newParticleGroup.wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
 		newParticleGroup.wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
+
+	newParticleGroup.gpuHandle_ = textureManager_->MakeInstancingShaderResourceView(newParticleGroup.wvpInstancingResource.Get());
 
 }
 
@@ -134,4 +173,22 @@ Model::ModelData ParticleManager::MakePrimitive() {
 		{ 1.0f,-1.0f,0.0f,1.0f }, { 1.0f,1.0f }, { 0.0f,0.0f,1.0f } });//右下
 
 	return modelData;
+}
+
+bool ParticleManager::IsCollision(const AABB& aabb, const Vector3& point) {
+	//最近接点を求める
+	Vector3 closestPoint{
+		std::clamp(point.x,aabb.min.x,aabb.max.x),
+		std::clamp(point.y,aabb.min.y,aabb.max.y),
+		std::clamp(point.z,aabb.min.z,aabb.max.z)
+	};
+
+	float distance = Vector3::Length(closestPoint - point);
+
+	if (distance <= 0.0f) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }

@@ -349,7 +349,7 @@ void Player::BehaviorRootUpdate(){
 
 	}
 	else if (input_->PushDown()) {
-		//move_.z = -moveSpeed_;
+		//move_.z = -moveSpeed_view
 	}
 	else {
 		move_.z = input_->GetPadLStick().y * moveSpeed_;

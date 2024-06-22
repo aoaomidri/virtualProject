@@ -35,9 +35,9 @@ bld/
 [Ll]og/
 [Ll]ogs/
 imgui.ini
-Generated/
-Generated/Outputs/
-Generated/Obj/
+MAEngine/Generated/
+MAEngine/Generated/Outputs/
+MAEngine/Generated/Obj/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -367,4 +367,3 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-virtualProject/externals/DirectXTex/Shaders/Compiled/

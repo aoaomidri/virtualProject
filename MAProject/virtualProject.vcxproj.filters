@@ -106,6 +106,9 @@
     <Filter Include="engine\3D\Object3D\Manager">
       <UniqueIdentifier>{d579c92b-9359-4241-a3c1-8e3a3356ed4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\3D\Object3D\Particle">
+      <UniqueIdentifier>{35676675-9616-4013-b283-04eb083f5a84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -174,9 +177,6 @@
     <ClCompile Include="Game\Item\Adjustment_Item.cpp">
       <Filter>application\Item</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp">
-      <Filter>engine\3D\Object3D</Filter>
-    </ClCompile>
     <ClCompile Include="Game\random\RandomMaker.cpp">
       <Filter>application\random</Filter>
     </ClCompile>
@@ -242,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp">
       <Filter>engine\3D\Object3D\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp">
+      <Filter>engine\3D\Object3D\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +329,6 @@
     <ClInclude Include="Game\Item\Adjustment_Item.h">
       <Filter>application\Item</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\Object3D\ParticleBase.h">
-      <Filter>engine\3D\Object3D</Filter>
-    </ClInclude>
     <ClInclude Include="math\Matrix4x4.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -394,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h">
       <Filter>engine\3D\Object3D\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\ParticleBase.h">
+      <Filter>engine\3D\Object3D\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -363,4 +363,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-MAProject/externals/DirectXTex/Shaders/Compiled/
+MAEngine/MAProject/externals/DirectXTex/Shaders/Compiled
+C:/Users/aoaomidori/source/repos/MAEngine/MAProject/externals/DirectXTex/Shaders/Compiled

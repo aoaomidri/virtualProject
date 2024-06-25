@@ -107,7 +107,11 @@
       <UniqueIdentifier>{d579c92b-9359-4241-a3c1-8e3a3356ed4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\3D\Object3D\Particle">
+<<<<<<< HEAD:virtualProject.vcxproj.filters
       <UniqueIdentifier>{edb64499-d136-4258-8de5-2121583f934d}</UniqueIdentifier>
+=======
+      <UniqueIdentifier>{35676675-9616-4013-b283-04eb083f5a84}</UniqueIdentifier>
+>>>>>>> master:MAProject/virtualProject.vcxproj.filters
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +247,7 @@
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp">
       <Filter>engine\3D\Object3D\Manager</Filter>
     </ClCompile>
+<<<<<<< HEAD:virtualProject.vcxproj.filters
     <ClCompile Include="Engine\2D\PostEffect.cpp">
       <Filter>engine\2D</Filter>
     </ClCompile>
@@ -250,6 +255,9 @@
       <Filter>engine\3D\Object3D\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3D\Object3D\Particle\ParticleBase.cpp">
+=======
+    <ClCompile Include="Engine\3D\Object3D\ParticleBase.cpp">
+>>>>>>> master:MAProject/virtualProject.vcxproj.filters
       <Filter>engine\3D\Object3D\Particle</Filter>
     </ClCompile>
   </ItemGroup>
@@ -401,6 +409,7 @@
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h">
       <Filter>engine\3D\Object3D\Manager</Filter>
     </ClInclude>
+<<<<<<< HEAD:virtualProject.vcxproj.filters
     <ClInclude Include="Engine\2D\PostEffect.h">
       <Filter>engine\2D</Filter>
     </ClInclude>
@@ -408,6 +417,9 @@
       <Filter>engine\3D\Object3D\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Particle\ParticleBase.h">
+=======
+    <ClInclude Include="Engine\3D\Object3D\ParticleBase.h">
+>>>>>>> master:MAProject/virtualProject.vcxproj.filters
       <Filter>engine\3D\Object3D\Particle</Filter>
     </ClInclude>
   </ItemGroup>

@@ -72,15 +72,6 @@
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp">
       <Filter>Engine\3D\Object3D\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2D\TextureManager.cpp">
-      <Filter>Engine\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\2D\Texture.cpp">
-      <Filter>Engine\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\2D\Sprite.cpp">
-      <Filter>Engine\2D</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\2D\PostEffect.cpp">
       <Filter>Engine\2D</Filter>
     </ClCompile>
@@ -144,9 +135,6 @@
     <ClCompile Include="math\Matrix4x4.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="math\Ease\Ease.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="math\Matrix.cpp">
       <Filter>math</Filter>
     </ClCompile>
@@ -173,6 +161,18 @@
     </ClCompile>
     <ClCompile Include="Game\WholeGame\WholeGame.cpp">
       <Filter>Game\WholeGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2D\TextureManager.cpp">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2D\Sprite.cpp">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2D\Texture.cpp">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Ease\Ease.cpp">
+      <Filter>math\Ease</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,15 +217,6 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h">
       <Filter>Engine\3D\Object3D\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2D\TextureManager.h">
-      <Filter>Engine\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2D\Texture.h">
-      <Filter>Engine\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2D\Sprite.h">
-      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2D\PostEffect.h">
       <Filter>Engine\2D</Filter>
@@ -287,9 +278,6 @@
     <ClInclude Include="Game\WholeGame\MAFramework.h">
       <Filter>Game\WholeGame</Filter>
     </ClInclude>
-    <ClInclude Include="math\Ease\Ease.h">
-      <Filter>math</Filter>
-    </ClInclude>
     <ClInclude Include="math\Matrix.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -331,6 +319,18 @@
     </ClInclude>
     <ClInclude Include="Game\WholeGame\WholeGame.h">
       <Filter>Game\WholeGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\Sprite.h">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\Texture.h">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\TextureManager.h">
+      <Filter>Engine\2D\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Ease\Ease.h">
+      <Filter>math\Ease</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +431,12 @@
     </Filter>
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{e9219768-21b2-46f0-9bfa-ea45efd2e443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\2D\Texture">
+      <UniqueIdentifier>{50034218-8b26-4ba5-a95a-44e6e416574a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\Ease">
+      <UniqueIdentifier>{26135b76-caf5-4d1c-963f-e0e2636733ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

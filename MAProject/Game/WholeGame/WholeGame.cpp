@@ -104,6 +104,9 @@ void WholeGame::DrawImgui(){
 	if (ImGui::Button("OutLine")) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
 	}
+	if (ImGui::Button("Dissolve")) {
+		postEffect_->SetPostEffect(PostEffect::EffectType::Dissolve);
+	}
 	if (ImGui::Button("RadialBlur")) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::RadialBlur);
 	}
@@ -136,11 +139,17 @@ void WholeGame::DrawImgui(){
 	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 	ImGui::End();
 
-	ImGui::Begin("Vignettingの情報");
+	ImGui::Begin("ポストエフェクトの情報");
+
+	ImGui::Text("Vignettingの情報");
 	ImGui::DragFloat("Scale", &vignettingData_.scale, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
-	ImGui::End();
 	postEffect_->SetVignettingData(vignettingData_);
+
+	ImGui::Text("閾値の設定");
+	ImGui::DragFloat("閾値", &threshold, 0.001f, 0.0f, 1.0f);
+	postEffect_->SetThreshold(threshold);
+	ImGui::End();
 
 	ImGui::Begin("DirectionalLightの情報");
 	ImGui::ColorEdit4("ライトの色", &directionalData_.color.x);

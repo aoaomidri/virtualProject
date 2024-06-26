@@ -204,6 +204,11 @@ void TextureManager::DrawCopy(){
 		commandList->SetGraphicsRootConstantBufferView(2, postEffect->GetVignetting());
 	}
 
+	if (postEffect->IsSelectDissolve()) {
+		commandList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU[dissolveTexNumber_]);
+		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetThreshold());
+	}
+
 	commandList->DrawInstanced(3, 1, 0, 0);
 }
 

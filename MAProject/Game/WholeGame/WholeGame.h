@@ -34,6 +34,8 @@ private:
 	TextureManager* textureManager_ = nullptr;
 
 	PostEffect::Vignetting vignettingData_;
+	//閾値
+	float threshold = 0.0f;
 
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;

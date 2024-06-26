@@ -38,6 +38,7 @@ public:
 		Inverse,//色反転
 		OutLine,//アウトライン
 		RadialBlur,//ラジアルブラー
+		Dissolve,//ディゾルブ
 
 		Over,//これ以上ないことを表す
 	};
@@ -45,6 +46,10 @@ public:
 	struct Vignetting {
 		float scale;//大きさ
 		float pow;//掛ける累乗
+	};
+
+	struct Threshold {
+		float threshold;//掛ける累乗
 	};
 
 	struct CameraMat {
@@ -63,6 +68,11 @@ public:
 	const D3D12_GPU_VIRTUAL_ADDRESS GetCameraMat()const {
 		return cameraResource_->GetGPUVirtualAddress();
 	}
+
+	//閾値のResourceを送る
+	const D3D12_GPU_VIRTUAL_ADDRESS GetThreshold()const {
+		return thresholdResource_->GetGPUVirtualAddress();
+	}
 public:
 	void SetVignettingData(const Vignetting& data) {
 		vignettingData_->scale = data.scale;
@@ -73,6 +83,10 @@ public:
 		selectPost_ = name;
 	}
 
+	void SetThreshold(const float& data) {
+		thresholdData_->threshold = data;
+	}
+
 	void SetMatProjectionInverse(const Matrix4x4& mat) {
 		cameraData_->matProjectionInverse_ = mat;
 	}
@@ -80,6 +94,13 @@ public:
 public:
 	bool IsSelectOutLine() const {
 		if (selectPost_ == EffectType::OutLine) {
+			return true;
+		}
+		return false;
+	}
+
+	bool IsSelectDissolve() const {
+		if (selectPost_ == EffectType::Dissolve) {
 			return true;
 		}
 		return false;
@@ -96,6 +117,8 @@ private:
 	void CreateVignettingResource();
 
 	void ProjectInverseResource();
+
+	void CreateThresholdResource();
 
 private:
 	//ポストエフェクト
@@ -124,6 +147,9 @@ private:
 	//ラジアンブラー
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineRadialBlur_;
 
+	//ディゾルブ
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineDissolve_;
+
 
 	ComPtr<ID3D12Resource> textureResource;
 	ComPtr<ID3D12Resource> intermediateResource;
@@ -139,6 +165,9 @@ private:
 	//どのポストエフェクトを選択しているか
 	uint32_t selectPost_ = 0;
 
+	ComPtr<ID3D12Resource> thresholdResource_;
+
+	Threshold* thresholdData_ = nullptr;
 
 
 };

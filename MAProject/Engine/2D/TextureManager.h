@@ -88,6 +88,10 @@ public:
 		skyBoxTexNumber_ = texNum;
 	}
 
+	void  SetDissolveTex(const uint32_t texNum) {
+		dissolveTexNumber_ = texNum;
+	}
+
 private:
 	// DirectX12のTextureResourceを作る
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
@@ -138,6 +142,8 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU{};
 
+	
+
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;
 
@@ -154,6 +160,9 @@ private:
 
 	//スカイボックスのテクスチャ番号
 	uint32_t skyBoxTexNumber_;
+
+	//Dissolve用のハンドル
+	uint32_t dissolveTexNumber_{};
 
 
 private:

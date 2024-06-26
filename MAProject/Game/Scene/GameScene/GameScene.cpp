@@ -3,6 +3,7 @@
 #include <cassert>
 void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/rock.png");
+	textureManager_->SetDissolveTex(textureManager_->Load("resources/texture/PostEffect/noise0.png"));
 	textureManager_->Load("resources/texture/uvChecker.png");//0
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
@@ -18,7 +19,6 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/pressA.png");
 	textureManager_->Load("resources/texture/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");//15
-	textureManager_->Load("resources/Model/skyDome/skyDome.png");
 	textureManager_->Load("resources/texture/STAttack.png");
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");

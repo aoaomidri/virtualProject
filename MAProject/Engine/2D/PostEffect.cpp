@@ -44,8 +44,13 @@ void PostEffect::Initialize(){
 	GraphicsPipelineRadialBlur_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineRadialBlur_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/RadialBlur.PS.hlsl");
 
+	//ディゾルブ
+	GraphicsPipelineDissolve_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineDissolve_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/Dissolve.PS.hlsl");
+
 	CreateVignettingResource();
 	ProjectInverseResource();
+	CreateThresholdResource();
 
 }
 
@@ -114,6 +119,10 @@ void PostEffect::SetPipeLine(){
 		commandList->SetGraphicsRootSignature(GraphicsPipelineRadialBlur_->GetRootSignature());
 		commandList->SetPipelineState(GraphicsPipelineRadialBlur_->GetPipeLineState());
 	}
+	else if (selectPost_ == PostEffect::Dissolve) {
+		commandList->SetGraphicsRootSignature(GraphicsPipelineDissolve_->GetRootSignature());
+		commandList->SetPipelineState(GraphicsPipelineDissolve_->GetPipeLineState());
+	}
 	else {
 		commandList->SetGraphicsRootSignature(GraphicsPipelineCopy_->GetRootSignature());
 		commandList->SetPipelineState(GraphicsPipelineCopy_->GetPipeLineState());
@@ -141,4 +150,12 @@ void PostEffect::ProjectInverseResource(){
 	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 
 	cameraData_->matProjectionInverse_.Identity();
+}
+
+void PostEffect::CreateThresholdResource(){
+	thresholdResource_ = TextureManager::GetInstance()->CreateBufferResource(sizeof(Threshold));
+
+	thresholdResource_->Map(0, nullptr, reinterpret_cast<void**>(&thresholdData_));
+
+	thresholdData_->threshold = 0.5f;
 }

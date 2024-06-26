@@ -199,6 +199,9 @@ void SkinAnimObject3D::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, directionalLightResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(7, pointLightResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(8, texManagerIns->SendGPUDescriptorHandle(texManagerIns->GetDissolveTex()));
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(9, dissolveResource_->GetGPUVirtualAddress());
+
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
@@ -217,6 +220,7 @@ void SkinAnimObject3D::DrawImgui(std::string name){
 	ImGui::ColorEdit4("ライトの色", &directionalLightDate_->color.x);
 	ImGui::DragFloat3("ライトの向き", &directionalLightDate_->direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalLightDate_->intensity, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("しきい値", &dissolveData_->threshold, 0.001f, 0.0f, 1.0f);
 	ImGui::End();
 #endif
 }
@@ -314,6 +318,12 @@ void SkinAnimObject3D::makeResource() {
 	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
 
 	cameraForGPU_->worldPosition = { 0.0f,0.0f,0.0f };
+
+	dissolveResource_ = TextureManager::GetInstance()->CreateBufferResource(sizeof(PostEffect::Threshold));
+
+	dissolveResource_->Map(0, nullptr, reinterpret_cast<void**>(&dissolveData_));
+
+	dissolveData_->threshold = 0.0f;
 
 
 }

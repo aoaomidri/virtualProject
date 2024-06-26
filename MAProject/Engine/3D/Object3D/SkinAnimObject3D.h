@@ -8,6 +8,7 @@
 #include"TextureManager.h"
 #include"Model.h"
 #include"ViewProjection.h"
+#include"PostEffect.h"
 #include <DirectionalLight.h>
 #include <PointLight.h>
 
@@ -192,32 +193,37 @@ private:
 	HRESULT hr;
 
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
+	ComPtr<ID3D12Resource> materialResource_;
 	//マテリアルにデータを書き込む
 	Model::Material* materialDate_ = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
+	ComPtr<ID3D12Resource> wvpResource_;
 
 	//データを書き込む
 	TransformationMatrix* wvpData_ = nullptr;
 
 	/*ライト関連*/
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_;
+	ComPtr<ID3D12Resource> directionalLightResource_;
 
 	//マテリアルにデータを書き込む
 	DirectionalLight::DirectionalLightData* directionalLightDate_ = nullptr;
 
 	const DirectionalLight::DirectionalLightData* directionalLight_ = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource_;
+	ComPtr<ID3D12Resource> pointLightResource_;
 
 	PointLight::PointLightData* pointLightData_ = nullptr;
 
 	const PointLight::PointLightData* pointLight_ = nullptr;
 	/*カメラ関連*/
-	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
+	ComPtr<ID3D12Resource> cameraResource_;
 
 	CameraForGPU* cameraForGPU_ = nullptr;
+
+	//ディゾルブ関係
+	ComPtr<ID3D12Resource> dissolveResource_;
+
+	PostEffect::Threshold* dissolveData_ = nullptr;
 
 	//データを書き込む
 	//アニメーションの再生中の時刻

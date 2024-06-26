@@ -25,9 +25,15 @@ struct Camera{
 	float32_t3 worldPosition;
 };
 
+struct Threshold{
+	float32_t threshold;
+};
+
 ConstantBuffer<Material> gMaterial : register(b1);
 
 Texture2D<float32_t4> gTexture : register(t0);
+
+Texture2D<float32_t> gMaskTexture : register(t2);
 
 SamplerState gSampler : register(s0);
 
@@ -36,6 +42,8 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
 ConstantBuffer<Camera> gCamera : register(b3);
 
 ConstantBuffer<PointLight> gPointLight : register(b4);
+
+ConstantBuffer<Threshold> gThreshold : register(b5);
 
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
@@ -90,12 +98,36 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 specularPointLight = 
 		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
 
+		float32_t mask = gMaskTexture.Sample(gSampler, input.texcoord);
+		//maskの値が閾値以下の場合はdiscardして抜く
+		if(mask <= gThreshold.threshold){
+			discard;
+		}
+
+		//Edgeっぽさを算出
+		float32_t edge = 1.0f - smoothstep(gThreshold.threshold, gThreshold.threshold + 0.02f,mask);
+
 		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
+
+		output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
 		
 		output.color.a = gMaterial.color.a * textureColor.a;
 		
 	}else{
+		float32_t mask = gMaskTexture.Sample(gSampler, input.texcoord);
+		//maskの値が閾値以下の場合はdiscardして抜く
+		if(mask <= gThreshold.threshold){
+			discard;
+		}
+
+		//Edgeっぽさを算出
+		float32_t edge = 1.0f - smoothstep(gThreshold.threshold, gThreshold.threshold + 0.02f,mask);
+
 		output.color = gMaterial.color * textureColor;
+		
+		output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
+
+		
 	}
 	if (textureColor.a <= 0.5 || output.color.a ==0.0){
 		discard;

@@ -84,6 +84,10 @@ public:
 		return skyBoxTexNumber_;
 	}
 
+	const uint32_t GetDissolveTex()const {
+		return dissolveTexNumber_;
+	}
+
 	void  SetSkyBoxTex(const uint32_t texNum) {
 		skyBoxTexNumber_ = texNum;
 	}

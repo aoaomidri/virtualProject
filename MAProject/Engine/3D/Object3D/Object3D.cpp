@@ -109,6 +109,8 @@ void Object3D::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(7, texManagerIns->SendGPUDescriptorHandle(texManagerIns->GetDissolveTex()));
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(8, dissolveResource_->GetGPUVirtualAddress());
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
@@ -120,6 +122,7 @@ void Object3D::DrawImgui(std::string name){
 	ImGui::Begin((name + "オブジェの内部設定").c_str());
 	ImGui::Checkbox("描画するかどうか", &isDraw_);
 	ImGui::Checkbox("ライティングするかどうか", &isUseLight_);
+	ImGui::DragFloat("しきい値", &dissolveData_->threshold, 0.001f, 0.0f, 1.0f);
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
 	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
 	ImGui::DragFloat3("モデルに設定されたTransform", &animeTranslate_.x, 0.1f);
@@ -224,6 +227,12 @@ void Object3D::makeResource() {
 	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
 
 	cameraForGPU_->worldPosition = { 0.0f,0.0f,0.0f };
+
+	dissolveResource_ = TextureManager::GetInstance()->CreateBufferResource(sizeof(PostEffect::Threshold));
+
+	dissolveResource_->Map(0, nullptr, reinterpret_cast<void**>(&dissolveData_));
+
+	dissolveData_->threshold = 0.0f;
 
 
 }

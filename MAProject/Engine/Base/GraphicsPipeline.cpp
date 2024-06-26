@@ -85,19 +85,24 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//DescriptorRangeの設定
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
 	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptorRange[0].NumDescriptors = 1;//数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
-	descriptorRange[1].BaseShaderRegister = 1;//0から始まる
+	descriptorRange[1].BaseShaderRegister = 1;//1から始まる
 	descriptorRange[1].NumDescriptors = 1;//数は1つ
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
+	descriptorRange[2].BaseShaderRegister = 2;//2から始まる
+	descriptorRange[2].NumDescriptors = 1;//数は1つ
+	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[7] = {};
+	D3D12_ROOT_PARAMETER rootParameter[9] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 1;
@@ -130,6 +135,15 @@ void GraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[6].Descriptor.ShaderRegister = 4;
+
+	rootParameter[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[7].DescriptorTable.pDescriptorRanges = &descriptorRange[2];
+	rootParameter[7].DescriptorTable.NumDescriptorRanges = 1;
+
+	rootParameter[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[8].Descriptor.ShaderRegister = 5;
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};
@@ -364,19 +378,24 @@ void GraphicsPipeline::makeRootSignatureSkinning(ID3D12Device* device){
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//DescriptorRangeの設定
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
 	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptorRange[0].NumDescriptors = 1;//数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
-	descriptorRange[1].BaseShaderRegister = 1;//0から始まる
+	descriptorRange[1].BaseShaderRegister = 1;//1から始まる
 	descriptorRange[1].NumDescriptors = 1;//数は1つ
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
+	descriptorRange[2].BaseShaderRegister = 2;//2から始まる
+	descriptorRange[2].NumDescriptors = 1;//数は1つ
+	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[8] = {};
+	D3D12_ROOT_PARAMETER rootParameter[10] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 1;
@@ -414,6 +433,15 @@ void GraphicsPipeline::makeRootSignatureSkinning(ID3D12Device* device){
 	rootParameter[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[7].Descriptor.ShaderRegister = 4;
+
+	rootParameter[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[8].DescriptorTable.pDescriptorRanges = &descriptorRange[2];
+	rootParameter[8].DescriptorTable.NumDescriptorRanges = 1;
+
+	rootParameter[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[9].Descriptor.ShaderRegister = 5;
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[1] = {};

@@ -7,6 +7,7 @@
 #include<sstream>
 #include"TextureManager.h"
 #include"Model.h"
+#include"PostEffect.h"
 #include"ViewProjection.h"
 #include"DirectionalLight.h"
 #include"PointLight.h"
@@ -91,6 +92,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_;
 
 	CameraForGPU* cameraForGPU_ = nullptr;
+
+	//ディゾルブ関係
+	ComPtr<ID3D12Resource> dissolveResource_;
+
+	PostEffect::Threshold* dissolveData_ = nullptr;
 
 	//データを書き込む
 	//アニメーションの再生中の時刻

@@ -114,7 +114,6 @@ private:
 
 	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
-
 	
 
 	//RasiterzerStateの設定

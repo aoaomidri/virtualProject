@@ -181,6 +181,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Object3D\SkyBox.cpp" />
     <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
     <ClCompile Include="Engine\3D\ViewProjection.cpp" />
+    <ClCompile Include="Engine\Base\ComputeGraphicsPipeline.cpp" />
     <ClCompile Include="Engine\Base\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipeline.cpp" />
@@ -231,6 +232,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Shape\OBB.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />
+    <ClInclude Include="Engine\Base\ComputeGraphicsPipeline.h" />
     <ClInclude Include="Engine\Base\DescriptorHeap.h" />
     <ClInclude Include="Engine\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\GraphicsPipeline.h" />

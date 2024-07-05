@@ -172,11 +172,20 @@ void Player::Update(){
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
 
-	playerOBB_.center = playerTransform_.translate;
+	if (isDash_){
+		playerOBB_.center.y = 1000;
+		playerOBB_.size = { 0.0f,0.0f,0.0f };
+
+	}
+	else {
+		playerOBB_.center = playerTransform_.translate;
+
+		playerOBB_.size = playerTransform_.scale;
+		playerOBB_.size.y = 0.8f;
+		SetOridentatios(playerOBB_, playerRotateMatrix_);
+	}
+
 	
-	playerOBB_.size = playerTransform_.scale;
-	playerOBB_.size.y = 0.8f;
-	SetOridentatios(playerOBB_, playerRotateMatrix_);
 	
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
@@ -796,6 +805,8 @@ void Player::BehaviorStrongAttackUpdate(Input* input){
 
 void Player::BehaviorDashInitialize(){
 	workDash_.dashParameter_ = 0;
+
+	isDash_ = true;
 }
 
 void Player::BehaviorDashUpdate(){
@@ -816,6 +827,7 @@ void Player::BehaviorDashUpdate(){
 	//既定の時間経過で通常状態に戻る
 	if (++workDash_.dashParameter_ >= behaviorDashTime) {
 		dashCoolTime = kDashCoolTime;
+		isDash_ = false;
 		behaviorRequest_ = Behavior::kRoot;
 		playerSkinAnimObj_->ChangeAnimation("stand");
 		playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);

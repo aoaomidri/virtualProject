@@ -294,6 +294,8 @@ private:
 	//落下するかどうか
 	bool isDown_ = false;
 
+	bool isDash_ = false;
+
 	/*振る舞い系*/
 	enum class Behavior {
 		kRoot,			//通常状態

@@ -79,7 +79,7 @@ void Player::Initialize(){
 	weaponObj_->Initialize("Weapon");
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
-	weaponCollisionObj_->Initialize("BoomBox");
+	weaponCollisionObj_->Initialize("box");
 
 
 	particle_ = std::make_unique<ParticleBase>();
@@ -231,8 +231,9 @@ void Player::Draw(const ViewProjection& viewProjection){
 		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
 
-		/*weaponCollisionObj_->Update(weaponCollisionMatrix_, viewProjection);
-		weaponCollisionObj_->Draw();*/
+		weaponCollisionObj_->SetMatrix(weaponCollisionMatrix_);
+		weaponCollisionObj_->Update(viewProjection);
+		weaponCollisionObj_->Draw();
 
 	//}
 

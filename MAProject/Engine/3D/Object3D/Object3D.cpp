@@ -126,9 +126,7 @@ void Object3D::DrawImgui(std::string name){
 	ImGui::DragFloat3("モデルに設定されたScale", &animeScale_.x, 0.1f);
 	ImGui::DragFloat4("モデルに設定されたRotate", &animeRotate_.quaternion_.x, 0.1f);
 	ImGui::DragFloat3("モデルに設定されたTransform", &animeTranslate_.x, 0.1f);
-	for (int i = 0; i < 4; i++){
-		ImGui::DragFloat4(("LocalMat" + std::to_string(i)).c_str(), localMatrix_.m[i], 0.1f);
-	}
+	ImGui::DragFloat("しきい値", &dissolveData_->threshold, 0.001f, 0.0f, 1.0f);
 	ImGui::End();
 #endif
 }

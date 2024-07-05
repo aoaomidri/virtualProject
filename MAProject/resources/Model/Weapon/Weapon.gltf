@@ -17,10 +17,10 @@
 			"mesh":0,
 			"name":"\u5186\u9310",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
 			]
 		}
 	],
@@ -166,7 +166,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":128,
+			"count":134,
 			"max":[
 				0.20344099402427673,
 				0.1943189948797226,
@@ -182,13 +182,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":128,
+			"count":134,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":128,
+			"count":134,
 			"type":"VEC3"
 		},
 		{
@@ -268,7 +268,7 @@
 		{
 			"bufferView":12,
 			"componentType":5126,
-			"count":192,
+			"count":194,
 			"max":[
 				0.46966099739074707,
 				1.2472330331802368,
@@ -284,13 +284,13 @@
 		{
 			"bufferView":13,
 			"componentType":5126,
-			"count":192,
+			"count":194,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":14,
 			"componentType":5126,
-			"count":192,
+			"count":194,
 			"type":"VEC3"
 		},
 		{
@@ -302,7 +302,7 @@
 		{
 			"bufferView":16,
 			"componentType":5126,
-			"count":268,
+			"count":270,
 			"max":[
 				0.15201200544834137,
 				0.5031790137290955,
@@ -318,13 +318,13 @@
 		{
 			"bufferView":17,
 			"componentType":5126,
-			"count":268,
+			"count":270,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":18,
 			"componentType":5126,
-			"count":268,
+			"count":270,
 			"type":"VEC3"
 		},
 		{
@@ -337,122 +337,122 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1536,
+			"byteLength":1608,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1024,
-			"byteOffset":1536,
+			"byteLength":1072,
+			"byteOffset":1608,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1536,
-			"byteOffset":2560,
+			"byteLength":1608,
+			"byteOffset":2680,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":372,
-			"byteOffset":4096,
+			"byteOffset":4288,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":2304,
-			"byteOffset":4468,
+			"byteOffset":4660,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1536,
-			"byteOffset":6772,
+			"byteOffset":6964,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2304,
-			"byteOffset":8308,
+			"byteOffset":8500,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":744,
-			"byteOffset":10612,
+			"byteOffset":10804,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":2880,
-			"byteOffset":11356,
+			"byteOffset":11548,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1920,
-			"byteOffset":14236,
+			"byteOffset":14428,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2880,
-			"byteOffset":16156,
+			"byteOffset":16348,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":744,
-			"byteOffset":19036,
+			"byteOffset":19228,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":2304,
-			"byteOffset":19780,
+			"byteLength":2328,
+			"byteOffset":19972,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1536,
-			"byteOffset":22084,
+			"byteLength":1552,
+			"byteOffset":22300,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2304,
-			"byteOffset":23620,
+			"byteLength":2328,
+			"byteOffset":23852,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":744,
-			"byteOffset":25924,
+			"byteOffset":26180,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":3216,
-			"byteOffset":26668,
+			"byteLength":3240,
+			"byteOffset":26924,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2144,
-			"byteOffset":29884,
+			"byteLength":2160,
+			"byteOffset":30164,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3216,
-			"byteOffset":32028,
+			"byteLength":3240,
+			"byteOffset":32324,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":624,
-			"byteOffset":35244,
+			"byteOffset":35564,
 			"target":34963
 		}
 	],
@@ -464,7 +464,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":35868,
+			"byteLength":36188,
 			"uri":"Weapon.bin"
 		}
 	]

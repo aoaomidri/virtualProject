@@ -177,6 +177,9 @@
     <ClCompile Include="Engine\Base\ComputeGraphicsPipeline.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp">
+      <Filter>Engine\3D\Object3D\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -338,6 +341,9 @@
     <ClInclude Include="Engine\Base\ComputeGraphicsPipeline.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h">
+      <Filter>Engine\3D\Object3D\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli">
@@ -443,6 +449,9 @@
     </Filter>
     <Filter Include="math\Ease">
       <UniqueIdentifier>{26135b76-caf5-4d1c-963f-e0e2636733ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3D\Object3D\Effect">
+      <UniqueIdentifier>{5079bc1e-c459-4723-ab2b-3684f6565435}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

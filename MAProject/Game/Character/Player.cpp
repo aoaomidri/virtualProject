@@ -204,7 +204,7 @@ void Player::Update(){
 
 void Player::Draw(const ViewProjection& viewProjection){
 
-	
+#ifdef _DEBUG
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
 		
@@ -221,19 +221,21 @@ void Player::Draw(const ViewProjection& viewProjection){
 		particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
 		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
-		debugSphere_[i]->SetMatrix(debugMatrix_[i]);
+		/*debugSphere_[i]->SetMatrix(debugMatrix_[i]);
 		debugSphere_[i]->Update(viewProjection);
-		debugSphere_[i]->Draw();
+		debugSphere_[i]->Draw();*/
 	}
+
+#endif
 
 	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
 
-		weaponCollisionObj_->SetMatrix(weaponCollisionMatrix_);
+		/*weaponCollisionObj_->SetMatrix(weaponCollisionMatrix_);
 		weaponCollisionObj_->Update(viewProjection);
-		weaponCollisionObj_->Draw();
+		weaponCollisionObj_->Draw();*/
 
 	//}
 
@@ -260,9 +262,9 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 		
 	}
 
-	particleHands_->Update(particleTrans_, viewProjection);
+	/*particleHands_->Update(particleTrans_, viewProjection);
 	particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
-	particleHands_->Draw();
+	particleHands_->Draw();*/
 	
 }
 

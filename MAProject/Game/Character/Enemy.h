@@ -244,6 +244,8 @@ private:
 	
 
 private:
+	//ディゾルブ関係
+	float threshold_ = 0.0f;
 	
 	//シリアルナンバー
 	uint32_t serialNumber_ = 0;

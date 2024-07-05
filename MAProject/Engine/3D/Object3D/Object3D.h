@@ -32,6 +32,10 @@ public:
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
 
+	void SetDissolve(const float data) {
+		dissolveData_->threshold = data;
+	}
+
 	void SetMatrix(const Matrix4x4& matrix) {
 		setMatrix_ = matrix;
 	}

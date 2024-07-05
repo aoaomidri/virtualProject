@@ -40,6 +40,10 @@ public:
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
 
+	void SetDissolve(const float data) {
+		dissolveData_->threshold = data;
+	}
+
 
 	/*アニメーション関連の関数*/
 

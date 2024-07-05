@@ -115,6 +115,8 @@ void Enemy::Initialize(const Vector3& position){
 
 void Enemy::Update(){
 	ApplyGlobalVariables();
+	bodyObj_->SetDissolve(threshold_);
+	partsObj_->SetDissolve(threshold_);
 	MotionUpdate();
 
 	for (int i = 0; i < particleNum_; i++) {
@@ -144,6 +146,8 @@ void Enemy::Update(){
 	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
 	SetOridentatios(attackOBB_, rotateMatrix_);
+
+	
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection){
@@ -185,6 +189,7 @@ void Enemy::DrawImgui() {
 	ImGui::Begin("敵の変数");
 
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
+	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
 
 	ImGui::End();
 #endif
@@ -599,5 +604,7 @@ void Enemy::DeadMotion(){
 	else {
 		isDead_ = true;
 	}
+
+	
 }
 

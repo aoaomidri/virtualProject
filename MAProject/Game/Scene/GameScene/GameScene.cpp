@@ -312,9 +312,9 @@ void GameScene::Update(){
 		if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
 			postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
 		}
-		/*else if (textureManager_->GetPostEffect() != TextureManager::PostEffect::None) {
-			textureManager_->SetPostEffect(TextureManager::PostEffect::None);
-		}*/
+		else if (postEffect_->GetEffectType() != PostEffect::EffectType::None) {
+			postEffect_->SetPostEffect(PostEffect::EffectType::None);
+		}
 		
 
 		if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){

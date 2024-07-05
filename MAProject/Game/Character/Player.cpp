@@ -53,6 +53,9 @@ void Player::Initialize(){
 	playerSkinAnimObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
 	playerSkinAnimObj_->SetIsLighting(true);
+
+	weaponObj_ = std::make_unique<Object3D>();
+	weaponObj_->Initialize("Weapon");
 	
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
@@ -75,8 +78,7 @@ void Player::Initialize(){
 		}
 	}
 
-	weaponObj_ = std::make_unique<Object3D>();
-	weaponObj_->Initialize("Weapon");
+	
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("box");

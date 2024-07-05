@@ -282,11 +282,8 @@ void GameScene::Update(){
 		}
 		if (fadeAlpha_ >= 1.0f&&isFade_) {
 			followCamera_->RotateReset();
-			player_->Update();
-			player_->Respawn();
-			for (const auto& enemy : enemies_) {
-				enemy->Respawn({ 0, 2.0f, 20.0f });
-			}
+			
+			
 			audio_->PauseWave(titleBGM);
 			//audio_->RePlayWave(gameBGM);
 			sceneNum_ = SceneName::GAME;
@@ -321,6 +318,7 @@ void GameScene::Update(){
 		
 
 		if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
+			isReset_ = true;
 			sceneNum_ = SceneName::CLEAR;
 		}
 
@@ -333,9 +331,15 @@ void GameScene::Update(){
 		followCamera_->SetIsMove(false);
 		//audio_->PauseWave(gameBGM);
 		
-		for (const auto& enemy : enemies_) {
-			enemy->Respawn({ 0, 2.0f, 20.0f });
+		if (isReset_){
+			player_->Initialize();
+			player_->Update();
+			for (const auto& enemy : enemies_) {
+				enemy->Initialize({ 0, 1.0f, 20.0f });
+			}
+			isReset_ = false;
 		}
+		
 		
 		postEffect_->SetPostEffect(PostEffect::EffectType::None);
 		
@@ -352,7 +356,6 @@ void GameScene::Update(){
 			sceneNum_ = SceneName::TITLE;
 		}
 
-		player_->Respawn();
 		
 		break;
 	default:
@@ -620,6 +623,7 @@ void GameScene::AllCollision(){
 		if (enemy->GetIsDead()) {
 			
 			//audio_->PauseWave(gameBGM);
+			isReset_ = true;
 			sceneNum_ = SceneName::CLEAR;
 		}
 

@@ -147,6 +147,8 @@ private:
 
 	std::unique_ptr<Sprite> selectSprite_;
 
+	bool isReset_ = false;
+
 	bool isStart_ = true;
 
 	std::unique_ptr<Sprite> comboSprite_;

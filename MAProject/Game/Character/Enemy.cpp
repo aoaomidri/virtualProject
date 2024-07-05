@@ -94,6 +94,10 @@ void Enemy::Initialize(const Vector3& position){
 	isNoLife_ = false;
 	isParticle_ = true;
 
+	threshold_ = 0.0f;
+
+	freeTime_ = 0;
+
 	OBB_.center = transform_.translate;
 	OBB_.size = { transform_.scale.x + 1.0f,transform_.scale.y + 4.0f,transform_.scale.z + 1.0f };
 	collisionTransform_.translate = OBB_.center;
@@ -108,10 +112,12 @@ void Enemy::Initialize(const Vector3& position){
 
 	behaviorRequest_ = Behavior::kRoot;
 
+	behavior_ = Behavior::kRoot;
+
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	
-	threshold_ = 0.0f;
+	
 
 }
 

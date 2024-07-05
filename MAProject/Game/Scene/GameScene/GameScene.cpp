@@ -35,7 +35,8 @@ void GameScene::SpriteInitialize(){
 	uint32_t textureHandle = 0;
 
 	titleSprite_ = std::make_unique<Sprite>();
-	titleSprite_->Initialize(12);
+	textureHandle = textureManager_->Load("resources/texture/title.png");
+	titleSprite_->Initialize(textureHandle);
 
 	startSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/start.png");
@@ -54,25 +55,31 @@ void GameScene::SpriteInitialize(){
 	textureHandle = textureManager_->Load("resources/texture/control.png");
 	controlSprite_->Initialize(textureHandle);
 	controlSprite_->isDraw_ = false;
-
+	//////ここから修正
 	backSprite_ = std::make_unique<Sprite>();
-	backSprite_->Initialize(15);
+	textureHandle = textureManager_->Load("resources/texture/Whitex64.png");
+	backSprite_->Initialize(textureHandle);
 	backSprite_->isDraw_ = false;
 
 	pressSprite_ = std::make_unique<Sprite>();
-	pressSprite_->Initialize(13);
+	textureHandle = textureManager_->Load("resources/texture/pressA.png");
+	pressSprite_->Initialize(textureHandle);
 
 	clearSprite_ = std::make_unique<Sprite>();
-	clearSprite_->Initialize(14);
+	textureHandle = textureManager_->Load("resources/texture/Clear.png");
+	clearSprite_->Initialize(textureHandle);
 
 	fadeSprite_ = std::make_unique<Sprite>();
-	fadeSprite_->Initialize(15);
+	textureHandle = textureManager_->Load("resources/texture/Black.png");
+	fadeSprite_->Initialize(textureHandle);
 
 	actionTextSprite_ = std::make_unique<Sprite>();
-	actionTextSprite_->Initialize(20);
+	textureHandle = textureManager_->Load("resources/texture/actionText.png");
+	actionTextSprite_->Initialize(textureHandle);
 
 	attackSprite_ = std::make_unique<Sprite>();
-	attackSprite_->Initialize(17);
+	textureHandle = textureManager_->Load("resources/texture/STAttack.png");
+	attackSprite_->Initialize(textureHandle);
 }
 
 void GameScene::ObjectInitialize() {

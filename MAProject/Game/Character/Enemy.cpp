@@ -110,6 +110,8 @@ void Enemy::Initialize(const Vector3& position){
 
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
+	
+	threshold_ = 0.0f;
 
 }
 
@@ -595,11 +597,9 @@ void Enemy::DeadMotion(){
 	partsTransform_.translate = transform_.translate + parts_offset;
 	
 	//partsTransform_.rotate.x += 0.3f;
-	if (partsTransform_.scale.x > 0.0f) {
-		partsTransform_.scale -= 0.0075f;
-	}
-	if (transform_.scale.x > 0.0f) {
-		transform_.scale -= 0.0075f;
+	
+	if (threshold_ < 1.0f) {
+		threshold_ += 0.0075f;
 	}
 	else {
 		isDead_ = true;

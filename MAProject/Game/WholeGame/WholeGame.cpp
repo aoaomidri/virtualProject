@@ -128,12 +128,7 @@ void WholeGame::DrawImgui(){
 	if (ImGui::Button("SepiaVignetting")) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::SepiaVignetting);
 	}
-	if (ImGui::Button("VignettingGrayScale")) {
-		postEffect_->SetPostEffect(PostEffect::EffectType::VignettingGrayScale);
-	}
-	if (ImGui::Button("VignettingSepiaScale")) {
-		postEffect_->SetPostEffect(PostEffect::EffectType::VignettingSepiaScale);
-	}
+	
 	ImGui::End();
 	ImGui::Begin("FPS");
 	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);

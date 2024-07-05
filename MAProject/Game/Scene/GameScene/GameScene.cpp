@@ -113,6 +113,7 @@ void GameScene::Initialize(){
 	textureManager_ = TextureManager::GetInstance();
 
 	postEffect_ = PostEffect::GetInstance();
+	postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
 	
 	TextureLoad();
 	SoundLoad();
@@ -312,8 +313,8 @@ void GameScene::Update(){
 		if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
 			postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
 		}
-		else if (postEffect_->GetEffectType() != PostEffect::EffectType::None) {
-			postEffect_->SetPostEffect(PostEffect::EffectType::None);
+		else if (postEffect_->GetEffectType() == PostEffect::EffectType::Smoothing9x9 and player_->GetHitTimer() == 0) {
+			postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
 		}
 		
 

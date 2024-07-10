@@ -28,6 +28,8 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetIsGetTop(const bool& isGetTop) { isGetTop_ = isGetTop; }
+
 	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
@@ -45,6 +47,14 @@ public:
 	}
 
 	const bool& GetIsDraw()const { return isDraw_; }
+
+	const Vector3& GetTopVerTex() const{		
+		return vectorTop_;
+	}
+
+	const Matrix4x4& GetTopVerTexMat() const {
+		return matTop_;
+	}
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
@@ -124,8 +134,14 @@ private:
 
 	bool isDraw_ = true;
 
+	bool isGetTop_ = false;
+
 public:
 	//反射強度
 	float shininess_ = 1.0f;
+
+	Vector3 vectorTop_{};
+
+	Matrix4x4 matTop_{};
 };
 

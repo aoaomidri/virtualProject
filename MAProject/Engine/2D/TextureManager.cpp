@@ -196,9 +196,7 @@ void TextureManager::DrawCopy(){
 	if (postEffect->IsSelectOutLine()){
 
 		commandList->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
-		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetCameraMat());
-
-		
+		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetCameraMat());		
 	}
 	if (postEffect->IsSelectVignetting()) {
 		commandList->SetGraphicsRootConstantBufferView(2, postEffect->GetVignetting());
@@ -208,6 +206,11 @@ void TextureManager::DrawCopy(){
 		commandList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU[dissolveTexNumber_]);
 		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetThreshold());
 	}
+	if (postEffect->IsSelectNone()) {
+		commandList->SetGraphicsRootConstantBufferView(4, postEffect->GetHSVMaterial());
+	}
+	
+
 
 	commandList->DrawInstanced(3, 1, 0, 0);
 }

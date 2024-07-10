@@ -200,6 +200,7 @@ private:
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
+	std::unique_ptr<Object3D> weaponTopObj_;
 
 	//自機のSRT
 	EulerTransform playerTransform_{};

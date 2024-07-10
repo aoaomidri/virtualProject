@@ -56,7 +56,10 @@ void Player::Initialize(){
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
-	
+	weaponObj_->SetIsGetTop(true);
+
+	weaponTopObj_ = std::make_unique<Object3D>();
+	weaponTopObj_->Initialize("box");
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
@@ -92,7 +95,8 @@ void Player::Initialize(){
 	particleHands_->SetPositionRange({ 0.0f,0.0f });
 	particleHands_->SetVelocityRange({ -0.5f,0.5f });
 	particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
-	particleHands_->SetAddParticle(1);
+	particleHands_->SetAddParticle(3);
+	particleHands_->SetNotMove();
 
 	playerTransform_ = playerSkinAnimObj_->transform_;
 	particleTrans_ = playerTransform_;
@@ -215,6 +219,14 @@ void Player::Update(){
 
 void Player::Draw(const ViewProjection& viewProjection){
 
+	weaponObj_->SetMatrix(weaponMatrix_);
+	weaponObj_->Update(viewProjection);
+	weaponObj_->Draw();
+
+	weaponTopObj_->SetMatrix(weaponObj_->GetTopVerTexMat());
+	weaponTopObj_->Update(viewProjection);
+	weaponTopObj_->Draw();
+
 #ifdef _DEBUG
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
@@ -229,7 +241,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 			rightHandNumber_ = i;
 		}
 
-		particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
+		//particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
+		particleTrans_.translate = weaponObj_->GetTopVerTex();
 		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
 		/*debugSphere_[i]->SetMatrix(debugMatrix_[i]);
@@ -240,9 +253,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 #endif
 
 	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
-		weaponObj_->SetMatrix(weaponMatrix_);
-		weaponObj_->Update(viewProjection);
-		weaponObj_->Draw();
+		
 
 		/*weaponCollisionObj_->SetMatrix(weaponCollisionMatrix_);
 		weaponCollisionObj_->Update(viewProjection);
@@ -272,10 +283,12 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 
 		
 	}
-
-	/*particleHands_->Update(particleTrans_, viewProjection);
-	particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
-	particleHands_->Draw();*/
+	/*if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
+		particleHands_->Update(particleTrans_, viewProjection);
+		particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
+		particleHands_->Draw();
+	}*/
+	
 	
 }
 

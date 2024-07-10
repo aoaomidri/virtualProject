@@ -55,6 +55,12 @@ public:
 	struct CameraMat {
 		Matrix4x4 matProjectionInverse_;
 	};
+
+	struct HSVMaterial{
+		float hue;//色相
+		float saturation;//彩度
+		float value;//明度
+	};
 public:
 	const uint32_t GetEffectType()const {
 		return selectPost_;
@@ -73,10 +79,21 @@ public:
 	const D3D12_GPU_VIRTUAL_ADDRESS GetThreshold()const {
 		return thresholdResource_->GetGPUVirtualAddress();
 	}
+
+	//HSVのREsourceを送る
+	const D3D12_GPU_VIRTUAL_ADDRESS GetHSVMaterial()const {
+		return HSVResource_->GetGPUVirtualAddress();
+	}
 public:
 	void SetVignettingData(const Vignetting& data) {
 		vignettingData_->scale = data.scale;
 		vignettingData_->pow = data.pow;
+	}
+
+	void SetHSVData(const HSVMaterial& data) {
+		HSVData_->hue = data.hue;
+		HSVData_->saturation = data.saturation;
+		HSVData_->value =data.value ;
 	}
 
 	void SetPostEffect(const EffectType& name) {
@@ -106,6 +123,13 @@ public:
 		return false;
 	}
 
+	bool IsSelectNone() const {
+		if (selectPost_ == EffectType::None) {
+			return true;
+		}
+		return false;
+	}
+
 	bool IsSelectVignetting() const {
 		if (selectPost_ == EffectType::NormalVignetting || selectPost_ == EffectType::GrayVignetting || selectPost_ == EffectType::SepiaVignetting) {
 			return true;
@@ -119,6 +143,8 @@ private:
 	void ProjectInverseResource();
 
 	void CreateThresholdResource();
+
+	void CreateHSVResource();
 
 private:
 	//ポストエフェクト
@@ -169,6 +195,8 @@ private:
 
 	Threshold* thresholdData_ = nullptr;
 
+	ComPtr<ID3D12Resource> HSVResource_;
 
+	HSVMaterial* HSVData_ = nullptr;
 };
 

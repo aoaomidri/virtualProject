@@ -51,6 +51,7 @@ void PostEffect::Initialize(){
 	CreateVignettingResource();
 	ProjectInverseResource();
 	CreateThresholdResource();
+	CreateHSVResource();
 
 }
 
@@ -158,4 +159,17 @@ void PostEffect::CreateThresholdResource(){
 	thresholdResource_->Map(0, nullptr, reinterpret_cast<void**>(&thresholdData_));
 
 	thresholdData_->threshold = 0.5f;
+}
+
+void PostEffect::CreateHSVResource(){
+	HSVResource_ = TextureManager::GetInstance()->CreateBufferResource(sizeof(HSVMaterial));
+
+	HSVResource_->Map(0, nullptr, reinterpret_cast<void**>(&HSVData_));
+
+	HSVData_->hue = 0.0f;
+
+	HSVData_->saturation = 0.0f;
+
+	HSVData_->value = 0.0f;
+
 }

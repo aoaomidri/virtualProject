@@ -2,6 +2,8 @@
 #include"Transform.h"
 #include"Quaternion.h"
 #include<math.h>
+#include<DirectXMath.h>
+
 
 
 struct Matrix3x3{

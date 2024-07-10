@@ -17,9 +17,24 @@
 #include"TextureManager.h"
 #include"DirectionalLight.h"
 
+using namespace DirectX;
 
 class TrailEffect{
 public:
+
+	//剣の位置を保存する構造体
+	struct PosBuffer
+	{
+		XMFLOAT3 head; //剣の先端の位置
+		XMFLOAT3 tail; //剣の末端の位置
+	};
+
+	//頂点バッファ
+	struct SwordTrailVertex
+	{
+		XMFLOAT3 pos = { 0, 0, 0 };
+		XMFLOAT2 uv = { 0, 0 };
+	};
 
 	void Initialize();
 	

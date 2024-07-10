@@ -37,6 +37,8 @@ private:
 	//閾値
 	float threshold = 0.0f;
 
+	PostEffect::HSVMaterial hsv_{};
+
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;
 

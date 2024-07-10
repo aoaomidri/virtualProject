@@ -43,6 +43,8 @@ public:
 
 	void SetScale(const Vector3& scale) { emitter_.transform.scale = scale; }
 
+	void SetNotMove() { isMoveParticle_ = false; }
+
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 
 	void SetAddParticle(const int32_t number) { emitter_.count = number; }
@@ -178,6 +180,8 @@ private:
 	bool isBillborad_ = false;
 
 	bool isWind_ = false;
+
+	bool isMoveParticle_ = false;
 
 	ParticleRange positionRange_ = {
 		.min = -3.0f,

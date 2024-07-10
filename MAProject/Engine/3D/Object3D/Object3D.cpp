@@ -12,7 +12,9 @@ void Object3D::Initialize(const std::string fileName) {
 
 	materialDate->enableLighting = false;
 
-	model_ = Model::LoadModelFile(fileName);
+	model_ = Model::LoadModelFile(fileName); 
+
+	
 
 	animation_ = Model::LoadAnimationFile(fileName);
 
@@ -65,7 +67,23 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 
 	
 	Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
-	
+	if (isGetTop_) {
+
+		Vector3 result{};
+		auto vertexes = model_->GetVertexData();
+
+		for (size_t i = 0; i < vertexes.size(); i++) {
+			auto position = vertexes[i].position;
+			if (result.y < position.y) {
+				result = { position.x,position.y,position.z };
+			}
+
+		}
+		Matrix4x4 transMat;
+		transMat = Matrix::MakeTranslateMatrix(result);
+		matTop_ = Matrix::Multiply(transMat, worldMatrix_);
+		vectorTop_ = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
+	}
 	wvpData->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
 	materialDate->enableLighting = isUseLight_;
 

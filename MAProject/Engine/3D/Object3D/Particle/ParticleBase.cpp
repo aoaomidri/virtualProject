@@ -74,6 +74,7 @@ void ParticleBase::Initialize() {
 
 	isWind_ = true;
 	isBillborad_ = true;
+	isMoveParticle_ = true;
 }
 
 void ParticleBase::Update(const EulerTransform& transform, const ViewProjection& viewProjection) {
@@ -348,7 +349,9 @@ void ParticleBase::MoveChange(){
 	for (std::list<Particle>::iterator particleIterator = particles_.begin(); particleIterator != particles_.end(); ++particleIterator) {
 		color_ = random_->DistributionV3(0.0f, 1.0f);
 		(*particleIterator).transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
-		(*particleIterator).velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+		if (not isMoveParticle_) {
+			(*particleIterator).velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+		}
 		(*particleIterator).color = { color_.x,color_.y,color_.z,1.0f };
 		(*particleIterator).currentTime = 0;
 		(*particleIterator).lifeTime = random_->Distribution(1.0f, 3.0f);
@@ -361,9 +364,9 @@ ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	particle.transform.scale = emitter_.transform.scale;
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
 	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
-	
-	particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
-
+	if (not isMoveParticle_) {
+		particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+	}
 	particle.color = { color_.x,color_.y,color_.z,1.0f };
 	particle.currentTime = 0.0f;
 	particle.lifeTime = random_->Distribution(1.0f, 3.0f);

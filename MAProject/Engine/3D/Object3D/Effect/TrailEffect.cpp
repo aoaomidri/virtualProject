@@ -15,7 +15,8 @@ void TrailEffect::Update(){
     for (size_t i = posArray_.size() - 1; i > 0; --i){
         posArray_[i] = posArray_[i - 1];
     }
-    posArray_.front() = tempPos_;
+    posArray_.front().head = tempPos_.head;
+    posArray_.front().tail = tempPos_.tail;
     tempPos_ = PosBuffer();
 
     ////曲線を作る

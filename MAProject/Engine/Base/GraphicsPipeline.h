@@ -38,6 +38,9 @@ public:
 	//Skinning用の初期化処理
 	void InitializeSkinning(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
 
+	//トレイル用の初期化処理
+	void InitializeTrail(const std::wstring& VSname, const std::wstring& PSname);
+
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
 	ID3D12PipelineState* GetPipeLineState() {
@@ -69,6 +72,8 @@ private:
 	void makeRootSignatureCopy(ID3D12Device* device);
 
 	void makeRootSignatureSkinning(ID3D12Device* device);
+
+	void makeRootSignatureTrail(ID3D12Device* device);
 
 	void makeInputLayout();
 

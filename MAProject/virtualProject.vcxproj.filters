@@ -180,6 +180,9 @@
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp">
       <Filter>Engine\3D\Object3D\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\Effect\TrailRender.cpp">
+      <Filter>Engine\3D\Object3D\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -339,6 +342,9 @@
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h">
+      <Filter>Engine\3D\Object3D\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\Effect\TrailRender.h">
       <Filter>Engine\3D\Object3D\Effect</Filter>
     </ClInclude>
   </ItemGroup>

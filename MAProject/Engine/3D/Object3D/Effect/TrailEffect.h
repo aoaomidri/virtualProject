@@ -50,7 +50,7 @@ public:
 	void DrawImgui(std::string name);
 
 
-	size_t GetBufferSize() {
+	const size_t GetBufferSize() const{
 		return bufferSize_;
 	}
 private:

@@ -134,30 +134,6 @@ void SkyBox::MakeVertexResouce(){
 
 	//インデックスで描画するのでここまで
 
-	////前面、描画インデックスは[8,9,10][10,9,11]で内側を向く
-	//vertexDate_[8].position =  {-1.0f, 1.0f, 1.0f, 1.0f };
-	//vertexDate_[9].position =  { 1.0f, 1.0f, 1.0f, 1.0f };
-	//vertexDate_[10].position = {-1.0f,-1.0f, 1.0f, 1.0f };
-	//vertexDate_[11].position = { 1.0f,-1.0f, 1.0f, 1.0f };
-
-	////後面、描画インデックスは[12,13,14][14,13,15]で内側を向く
-	//vertexDate_[12].position = { 1.0f, 1.0f,-1.0f, 1.0f };
-	//vertexDate_[13].position = {-1.0f, 1.0f,-1.0f, 1.0f };
-	//vertexDate_[14].position = { 1.0f,-1.0f,-1.0f, 1.0f };
-	//vertexDate_[15].position = {-1.0f,-1.0f,-1.0f, 1.0f };
-
-	////上面、描画インデックスは[16,17,18][18,17,19]で内側を向く
-	//vertexDate_[16].position = {-1.0f, 1.0f,-1.0f, 1.0f };
-	//vertexDate_[17].position = { 1.0f, 1.0f,-1.0f, 1.0f };
-	//vertexDate_[18].position = {-1.0f, 1.0f, 1.0f, 1.0f };
-	//vertexDate_[19].position = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	////下面、描画インデックスは[20,21,22][22,21,23]で内側を向く
-	//vertexDate_[20].position = {-1.0f,-1.0f, 1.0f, 1.0f };
-	//vertexDate_[21].position = { 1.0f,-1.0f, 1.0f, 1.0f };
-	//vertexDate_[22].position = {-1.0f,-1.0f,-1.0f, 1.0f };
-	//vertexDate_[23].position = { 1.0f,-1.0f,-1.0f, 1.0f };
-
 	/*インデックスの処理*/
 
 	indexResource_ = CreateBufferResource(sizeof(uint32_t) * kIndexNum_);

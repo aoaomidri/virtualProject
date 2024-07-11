@@ -173,6 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\2D\Texture.cpp" />
     <ClCompile Include="Engine\2D\TextureManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp" />
+    <ClCompile Include="Engine\3D\Object3D\Effect\TrailRender.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Model.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Object3D.cpp" />
@@ -224,6 +225,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\2D\Texture.h" />
     <ClInclude Include="Engine\2D\TextureManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h" />
+    <ClInclude Include="Engine\3D\Object3D\Effect\TrailRender.h" />
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Model.h" />
     <ClInclude Include="Engine\3D\Object3D\Object3D.h" />

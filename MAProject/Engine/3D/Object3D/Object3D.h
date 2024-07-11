@@ -11,6 +11,7 @@
 #include"ViewProjection.h"
 #include"DirectionalLight.h"
 #include"PointLight.h"
+#include"Effect/TrailEffect.h"
 
 class Object3D{
 public:
@@ -48,12 +49,16 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
-	const Vector3& GetTopVerTex() const{		
+	const TrailEffect::PosBuffer& GetTopVerTex() const{		
 		return vectorTop_;
 	}
 
 	const Matrix4x4& GetTopVerTexMat() const {
 		return matTop_;
+	}
+
+	const Matrix4x4& GetTailVerTexMat() const {
+		return matTail_;
 	}
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
@@ -140,8 +145,10 @@ public:
 	//反射強度
 	float shininess_ = 1.0f;
 
-	Vector3 vectorTop_{};
+	TrailEffect::PosBuffer vectorTop_{};
 
 	Matrix4x4 matTop_{};
+
+	Matrix4x4 matTail_{};
 };
 

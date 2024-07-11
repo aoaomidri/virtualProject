@@ -61,6 +61,9 @@ void Player::Initialize(){
 	weaponTopObj_ = std::make_unique<Object3D>();
 	weaponTopObj_->Initialize("box");
 
+	weaponTailObj_ = std::make_unique<Object3D>();
+	weaponTailObj_->Initialize("box");
+
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 
 	debugSphere_.resize(debugJoints_.size());
@@ -122,6 +125,9 @@ void Player::Initialize(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 
 	isDown_ = true;
+
+	trail_ = std::make_unique<TrailEffect>();
+	trail_->Initialize(128);
 }
 
 void Player::Update(){
@@ -210,7 +216,7 @@ void Player::Update(){
 	}
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
-	
+	trail_->Update();
 
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
@@ -223,11 +229,16 @@ void Player::Draw(const ViewProjection& viewProjection){
 	weaponObj_->Update(viewProjection);
 	weaponObj_->Draw();
 
+
+#ifdef _DEBUG
 	weaponTopObj_->SetMatrix(weaponObj_->GetTopVerTexMat());
 	weaponTopObj_->Update(viewProjection);
 	weaponTopObj_->Draw();
 
-#ifdef _DEBUG
+	weaponTailObj_->SetMatrix(weaponObj_->GetTailVerTexMat());
+	weaponTailObj_->Update(viewProjection);
+	weaponTailObj_->Draw();
+
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
 		
@@ -242,7 +253,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 		}
 
 		//particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
-		particleTrans_.translate = weaponObj_->GetTopVerTex();
+		particleTrans_.translate = weaponObj_->GetTopVerTex().head;
 		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
 		/*debugSphere_[i]->SetMatrix(debugMatrix_[i]);
@@ -307,9 +318,9 @@ void Player::DrawImgui(){
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
 	ImGui::End();
+	trail_->DrawImgui("剣のトレイル");
 
-
-	ImGui::Begin("プレイヤーのアニメーション");
+	/*ImGui::Begin("プレイヤーのアニメーション");
 	animetionNames_ = playerSkinAnimObj_->GetAnimations();
 	for (size_t i = 0; i < animetionNames_.size(); i++){
 		if (ImGui::Button(animetionNames_[i].c_str())) {
@@ -317,9 +328,9 @@ void Player::DrawImgui(){
 		}
 	}
 
-	ImGui::End();
+	ImGui::End();*/
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
-	particle_->DrawImgui("プレイヤーパーティクル");
+	//particle_->DrawImgui("プレイヤーパーティクル");
 #endif
 }
 
@@ -692,6 +703,8 @@ void Player::BehaviorAttackUpdate(){
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
+
+	trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 
 	if (workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {

@@ -70,6 +70,7 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 	if (isGetTop_) {
 
 		Vector3 result{};
+		Vector3 resultTail{};
 		auto vertexes = model_->GetVertexData();
 
 		for (size_t i = 0; i < vertexes.size(); i++) {
@@ -80,10 +81,17 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 
 		}
 		result = { result.x,-result.z,-result.y };
+		resultTail = { result.x,result.y / 3.0f,result.z };
 		Matrix4x4 transMat;
+
+		Matrix4x4 transMatTail;
 		transMat = Matrix::MakeTranslateMatrix(result);
+		transMatTail = Matrix::MakeTranslateMatrix(resultTail);
+
 		matTop_ = Matrix::Multiply(transMat, worldMatrix_);
-		vectorTop_ = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
+		matTail_ = Matrix::Multiply(transMatTail, worldMatrix_);
+		vectorTop_.head = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
+		vectorTop_.tail = { worldMatrix_.m[3][0],worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
 	}
 	wvpData->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
 	materialDate->enableLighting = isUseLight_;

@@ -201,6 +201,7 @@ private:
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
 	std::unique_ptr<Object3D> weaponTopObj_;
+	std::unique_ptr<Object3D> weaponTailObj_;
 
 	//自機のSRT
 	EulerTransform playerTransform_{};
@@ -326,6 +327,8 @@ private:
 
 	//手から出す予定のパーティクル
 	std::unique_ptr<ParticleBase> particleHands_;
+
+	std::unique_ptr<TrailEffect> trail_;
 
 	size_t leftHandNumber_;
 

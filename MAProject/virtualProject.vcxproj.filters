@@ -293,9 +293,6 @@
     <ClInclude Include="Game\Character\Player.h">
       <Filter>Game\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="memo.h">
-      <Filter>.h</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Light\PointLight.h">
       <Filter>Game\Light</Filter>
     </ClInclude>

@@ -91,7 +91,7 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 		matTop_ = Matrix::Multiply(transMat, worldMatrix_);
 		matTail_ = Matrix::Multiply(transMatTail, worldMatrix_);
 		vectorTop_.head = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
-		vectorTop_.tail = { worldMatrix_.m[3][0],worldMatrix_.m[3][1], worldMatrix_.m[3][2] };
+		vectorTop_.tail = { matTail_.m[3][0],matTail_.m[3][1], matTail_.m[3][2] };
 	}
 	wvpData->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
 	materialDate->enableLighting = isUseLight_;

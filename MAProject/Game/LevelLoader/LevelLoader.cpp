@@ -76,9 +76,9 @@ void LevelLoader::LoadJson(json jData){
 				objectData.translate.y = (float)transform["translation"][2];
 				objectData.translate.z = (float)transform["translation"][1];
 				//回転角
-				objectData.rotate.x = (float)transform["rotation"][0];
-				objectData.rotate.y = (float)transform["rotation"][2];
-				objectData.rotate.z = (float)transform["rotation"][1];
+				objectData.rotate.x = -(float)transform["rotation"][0];
+				objectData.rotate.y = -(float)transform["rotation"][2];
+				objectData.rotate.z = -(float)transform["rotation"][1];
 
 				//スケーリング
 				objectData.scale.x = (float)transform["scaling"][0];
@@ -107,9 +107,9 @@ void LevelLoader::LoadJson(json jData){
 				objectData.translate.y = (float)transform["translation"][2];
 				objectData.translate.z = (float)transform["translation"][1];
 				//回転角
-				objectData.rotate.x = (float)transform["rotation"][0];
-				objectData.rotate.y = (float)transform["rotation"][2];
-				objectData.rotate.z = (float)transform["rotation"][1];
+				objectData.rotate.x = -(float)transform["rotation"][0];
+				objectData.rotate.y = -(float)transform["rotation"][2];
+				objectData.rotate.z = -(float)transform["rotation"][1];
 
 				//スケーリング
 				objectData.scale.x = (float)transform["scaling"][0];

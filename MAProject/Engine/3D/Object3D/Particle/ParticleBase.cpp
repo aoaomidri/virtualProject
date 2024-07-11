@@ -400,22 +400,3 @@ bool ParticleBase::IsCollision(const AABB& aabb, const Vector3& point){
 	}
 }
 
-//bool IsCollision(const Sphere& sphere, const AABB& aabb) {
-//
-//	//最近接点を求める
-//	Vector3 closestPoint{
-//		std::clamp(sphere.center.x,aabb.min.x,aabb.max.x),
-//		std::clamp(sphere.center.y,aabb.min.y,aabb.max.y),
-//		std::clamp(sphere.center.z,aabb.min.z,aabb.max.z)
-//	};
-//
-//	float distance = Vector3::Length(closestPoint - sphere.center);
-//
-//	if (distance <= sphere.radius) {
-//		return true;
-//	}
-//	else {
-//		return false;
-//	}
-//
-//}

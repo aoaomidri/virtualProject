@@ -141,8 +141,8 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
 	postEffect_->SetVignettingData(vignettingData_);
 
-	ImGui::Text("閾値の設定");
-	ImGui::DragFloat("閾値", &threshold, 0.001f, 0.0f, 1.0f);
+	ImGui::Text("しきい値の設定");
+	ImGui::DragFloat("しきい値", &threshold, 0.001f, 0.0f, 1.0f);
 	postEffect_->SetThreshold(threshold);
 
 	ImGui::Text("HSVの値");

@@ -74,11 +74,12 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 
 		for (size_t i = 0; i < vertexes.size(); i++) {
 			auto position = vertexes[i].position;
-			if (result.y < position.y) {
+			if (result.z > position.z) {
 				result = { position.x,position.y,position.z };
 			}
 
 		}
+		result = { result.x,-result.z,-result.y };
 		Matrix4x4 transMat;
 		transMat = Matrix::MakeTranslateMatrix(result);
 		matTop_ = Matrix::Multiply(transMat, worldMatrix_);

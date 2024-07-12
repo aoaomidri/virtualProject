@@ -114,7 +114,6 @@ private:
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleNone_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleNormal_;
@@ -123,6 +122,7 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleMultily_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleScreen_;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//マテリアルにデータを書き込む
 	Model::Material* materialDate = nullptr;
 

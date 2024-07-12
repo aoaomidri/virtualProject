@@ -35,9 +35,9 @@ void TrailEffect::Update(){
     for (size_t i = 0, j = 0; i < vertex_.size() && j < usedPosArray.size(); i += 2, ++j)
     {
         vertex_[i].position = usedPosArray[j].head;
-        vertex_[i].texcoord = Vector2(1.0f, v);
+        vertex_[i].texcoord = Vector2(0.0f, v);
         vertex_[i + 1].position = usedPosArray[j].tail;
-        vertex_[i + 1].texcoord = Vector2(0.0f, v);
+        vertex_[i + 1].texcoord = Vector2(1.0f, v);
         v += amount;
     }
 }
@@ -52,10 +52,15 @@ void TrailEffect::DrawImgui(std::string name){
 std::vector<TrailEffect::PosBuffer> TrailEffect::GetUsedPosArray(){
     std::vector<PosBuffer> usedPosArray;
 
+    if (posArray_.empty()){
+        return usedPosArray;
+    }
+    usedPosArray.push_back(posArray_.front());
+
     // posArray から有効な位置データを選択
-    for (size_t i = 0; i < posArray_.size(); ++i) {
+    for (size_t i = 1; i < posArray_.size(); ++i) {
         // posArray[i] が有効であり、重複していない場合に選択
-        if (i == 0 || posArray_[i].head != posArray_[i - 1].head) {
+        if (posArray_[i].head != posArray_[i - 1].head) {
             usedPosArray.push_back(posArray_[i]);
         }
     }

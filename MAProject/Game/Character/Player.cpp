@@ -99,6 +99,7 @@ void Player::Initialize(){
 	particleHands_->SetVelocityRange({ -0.5f,0.5f });
 	particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 	particleHands_->SetAddParticle(3);
+	particleHands_->SetLifeTime(0.5f);
 	particleHands_->SetNotMove();
 
 	playerTransform_ = playerSkinAnimObj_->transform_;
@@ -294,10 +295,11 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 
 		
 	}
+	particleHands_->Update(particleTrans_, viewProjection);
 	if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
-		/*particleHands_->Update(particleTrans_, viewProjection);
+		
 		particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
-		particleHands_->Draw();*/
+		particleHands_->Draw();
 	}
 	
 	

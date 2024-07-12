@@ -45,6 +45,8 @@ public:
 
 	void SetNotMove() { isMoveParticle_ = false; }
 
+	void SetLifeTime(const float time) { lifeTime_ = time; }
+
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 
 	void SetAddParticle(const int32_t number) { emitter_.count = number; }
@@ -192,6 +194,8 @@ private:
 		.min = -3.0f,
 		.max = 3.0f
 	};
+
+	float lifeTime_ = 0;
 
 	int blend_;
 

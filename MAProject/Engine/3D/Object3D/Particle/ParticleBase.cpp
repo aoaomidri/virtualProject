@@ -15,7 +15,7 @@ void ParticleBase::Initialize() {
 	random_ = RandomMaker::GetInstance();
 
 	emitter_.count = 3;
-	emitter_.frequency = 0.05f;
+	emitter_.frequency = 0.01f;
 	emitter_.frequencyTime = 0.0f;
 	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
 	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
@@ -119,8 +119,9 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 				(*particleIterator).velocity += accelerationField_.acceleration * kDeltaTime_;
 			}
 		}
-		
-		(*particleIterator).transform.translate += (*particleIterator).velocity * kDeltaTime_;
+		if (isMoveParticle_){
+			(*particleIterator).transform.translate += (*particleIterator).velocity * kDeltaTime_;
+		}
 		(*particleIterator).currentTime += kDeltaTime_;
 		
 		float alpha_ = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
@@ -354,7 +355,12 @@ void ParticleBase::MoveChange(){
 		}
 		(*particleIterator).color = { color_.x,color_.y,color_.z,1.0f };
 		(*particleIterator).currentTime = 0;
-		(*particleIterator).lifeTime = random_->Distribution(1.0f, 3.0f);
+		if (lifeTime_ != 0) {
+			(*particleIterator).lifeTime = lifeTime_;
+		}
+		else {
+			(*particleIterator).lifeTime = random_->Distribution(1.0f, 3.0f);
+		}
 	}
 }
 
@@ -370,7 +376,12 @@ ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	}
 	particle.color = { color_.x,color_.y,color_.z,1.0f };
 	particle.currentTime = 0.0f;
-	particle.lifeTime = random_->Distribution(1.0f, 3.0f);
+	if (lifeTime_ != 0) {
+		particle.lifeTime = lifeTime_;
+	}
+	else {
+		particle.lifeTime = random_->Distribution(1.0f, 3.0f);
+	}
 	return particle;
 }
 

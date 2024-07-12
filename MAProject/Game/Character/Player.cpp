@@ -294,11 +294,11 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 
 		
 	}
-	/*if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
-		particleHands_->Update(particleTrans_, viewProjection);
+	if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
+		/*particleHands_->Update(particleTrans_, viewProjection);
 		particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
-		particleHands_->Draw();
-	}*/
+		particleHands_->Draw();*/
+	}
 	
 	
 }

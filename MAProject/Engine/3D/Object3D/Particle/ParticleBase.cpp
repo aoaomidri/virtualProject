@@ -366,6 +366,7 @@ ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
 	if (not isMoveParticle_) {
 		particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+		particle.transform.translate = transform;
 	}
 	particle.color = { color_.x,color_.y,color_.z,1.0f };
 	particle.currentTime = 0.0f;

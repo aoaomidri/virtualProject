@@ -7,7 +7,7 @@ public:
 
 	void Draw();
 
-	void MakeResource();
+	void MakeResource(std::vector<VertexData> vertexes);
 private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineTrail_;
 

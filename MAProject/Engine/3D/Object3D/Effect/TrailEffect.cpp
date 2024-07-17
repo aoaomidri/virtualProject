@@ -45,6 +45,7 @@ void TrailEffect::Update(){
 void TrailEffect::DrawImgui(std::string name){
     ImGui::Begin(name.c_str());
     ImGui::Text("バッファのサイズ = %d", bufferSize_);
+    ImGui::Text("バッファの最大サイズ = %d", posArray_.size());
     ImGui::End();
 
 }

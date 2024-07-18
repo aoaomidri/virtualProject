@@ -6,8 +6,12 @@
 #include<sstream>
 
 
-void TrailEffect::Initialize(int bufferSize){
+void TrailEffect::Initialize(int bufferSize, const std::string& texturePath){
 	posArray_.resize(bufferSize);
+    max_ = bufferSize * 2;
+    textureHandle_ = TextureManager::GetInstance()->Load(texturePath);
+    vertex_.resize(max_);
+    MakeVertexData();
 }
 
 void TrailEffect::Update(){
@@ -31,7 +35,6 @@ void TrailEffect::Update(){
     float amount = 1.0f / (usedPosArray.size() - 1);
     float v = 0;
     vertex_.clear();
-    vertex_.resize(usedPosArray.size() * 2);
     for (size_t i = 0, j = 0; i < vertex_.size() && j < usedPosArray.size(); i += 2, ++j)
     {
         vertex_[i].position = usedPosArray[j].head;
@@ -67,6 +70,25 @@ std::vector<TrailEffect::PosBuffer> TrailEffect::GetUsedPosArray(){
     }
 
     return usedPosArray;
+}
+
+void TrailEffect::MakeVertexData(){
+    auto* textureManager = TextureManager::GetInstance();
+
+    //頂点リソースの作成
+    vertexResource_ = textureManager->CreateBufferResource(sizeof(VertexData) * max_);
+
+
+    //リソースの先頭のアドレスから使う
+    vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+    //使用するリソースのサイズは頂点三つ分のサイズ
+    vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * max_);
+    //1頂点当たりのサイズ
+    vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+    //書き込むためのアドレスを取得
+    vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
+    std::memcpy(vertexDate_, vertex_.data(), sizeof(VertexData) * max_);
 }
 
 

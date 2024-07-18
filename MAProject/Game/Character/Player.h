@@ -12,6 +12,7 @@
 #include"HitRecord.h"
 #include"ParticleBase.h"
 #include<optional>
+#include"Effect/TrailRender.h"
 
 //前方宣言
 class LockOn;
@@ -33,6 +34,8 @@ public:
 	void SkinningDraw(const ViewProjection& viewProjection);
 
 	void ParticleDraw(const ViewProjection& viewProjection);
+
+	void TrailDraw();
 	//Imgui描画
 	void DrawImgui();
 
@@ -328,7 +331,9 @@ private:
 	//手から出す予定のパーティクル
 	std::unique_ptr<ParticleBase> particleHands_;
 
-	std::unique_ptr<TrailEffect> trail_;
+	/*std::unique_ptr<TrailEffect> trail_;
+
+	std::unique_ptr<TrailRender> trailRender_;*/
 
 	size_t leftHandNumber_;
 

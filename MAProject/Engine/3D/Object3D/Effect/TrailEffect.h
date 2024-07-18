@@ -34,7 +34,8 @@ public:
 	/// 初期化処理
 	/// </summary>
 	/// <param name="bufferSize">vectorコンテナのサイズの設定 </param>
-	void Initialize(const int bufferSize);
+	/// <param name="texturePath">テクスチャの指定 </param>
+	void Initialize(const int bufferSize, const std::string& texturePath);
 	//更新処理
 	void Update();
 	/// <summary>
@@ -49,19 +50,49 @@ public:
 
 	void DrawImgui(std::string name);
 
+	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBuffer() const{
+		return &vertexBufferView_;
+	}
+
+	const uint32_t GetVertexSize() const {
+		return static_cast<uint32_t>(vertex_.size());
+	}
+
+	const uint32_t GetTextureHandle() const {
+		return textureHandle_;
+	}
+
+	const uint32_t GetMax()const {
+		return max_;
+	}
 
 	const size_t GetBufferSize() const{
 		return bufferSize_;
 	}
 private:
 	std::vector<PosBuffer>GetUsedPosArray();
+
+	void MakeVertexData();
 	
 private:
+
+	//頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+
+	//頂点リソースにデータを書き込む
+	VertexData* vertexDate_ = nullptr;
+
 	//トレイルに関する変数
 	//位置を保存するバッファ
 	std::vector<PosBuffer> posArray_;
 	//頂点バッファ
 	std::vector<VertexData> vertex_;
+
+	//最大描画数
+	uint32_t max_;
+
 	//現在の座標
 	PosBuffer tempPos_;
 	//テクスチャハンドル

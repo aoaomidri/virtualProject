@@ -222,6 +222,8 @@ void GameScene::Initialize(){
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
+
+
 }
 
 void GameScene::Update(){

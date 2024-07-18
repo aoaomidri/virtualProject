@@ -127,8 +127,11 @@ void Player::Initialize(){
 
 	isDown_ = true;
 
-	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(128);
+	/*trail_ = std::make_unique<TrailEffect>();
+	trail_->Initialize(128, "resources/texture/TrailEffect/greenTrail.png");
+
+	trailRender_ = std::make_unique<TrailRender>();
+	trailRender_->Initialize();*/
 }
 
 void Player::Update(){
@@ -217,7 +220,7 @@ void Player::Update(){
 	}
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
-	trail_->Update();
+	//trail_->Update();
 
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
@@ -254,8 +257,6 @@ void Player::Draw(const ViewProjection& viewProjection){
 		}
 
 		//particleTrans_.translate = debugMatrix_[leftHandNumber_].GetTranslate();
-		particleTrans_.translate = weaponObj_->GetTopVerTex().head;
-		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
 		/*debugSphere_[i]->SetMatrix(debugMatrix_[i]);
 		debugSphere_[i]->Update(viewProjection);
@@ -263,6 +264,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 	}
 
 #endif
+		particleTrans_.translate = weaponObj_->GetTopVerTex().head;
+		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
 	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		
@@ -305,6 +308,10 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 	
 }
 
+void Player::TrailDraw(){
+
+}
+
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
@@ -320,7 +327,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	
 	ImGui::End();
-	trail_->DrawImgui("剣のトレイル");
+	//trail_->DrawImgui("剣のトレイル");
 
 	/*ImGui::Begin("プレイヤーのアニメーション");
 	animetionNames_ = playerSkinAnimObj_->GetAnimations();
@@ -706,7 +713,7 @@ void Player::BehaviorAttackUpdate(){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+	//trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 
 	if (workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {

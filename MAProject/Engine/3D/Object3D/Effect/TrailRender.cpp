@@ -2,46 +2,33 @@
 #include"DirectXCommon.h"
 
 void TrailRender::Initialize(){
-	
 	GraphicsPipelineTrail_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineTrail_->InitializeTrail(L"resources/shaders/particle/Particle.VS.hlsl", L"resources/shaders/particle/Particle.PS.hlsl");
+	GraphicsPipelineTrail_->InitializeTrail(L"resources/shaders/TrailEffect/TrailEffect.VS.hlsl", L"resources/shaders/TrailEffect/TrailEffect.PS.hlsl");
+
+	MakeResource();
 }
 
-void TrailRender::Draw(){
+void TrailRender::Draw(const TrailEffect* trail){
 	auto command = DirectXCommon::GetInstance()->GetCommandList();
 
 	command->SetGraphicsRootSignature(GraphicsPipelineTrail_->GetRootSignature());
 	command->SetPipelineState(GraphicsPipelineTrail_->GetPipeLineState());
 
-	command->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	command->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。
 	command->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	command->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
-	command->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(0));
 
-	command->DrawInstanced(3, 1, 0, 0);
+	command->IASetVertexBuffers(0, 1, trail->GetVertexBuffer());
+	command->SetGraphicsRootConstantBufferView(0, wvpResource_->GetGPUVirtualAddress());
+	command->SetGraphicsRootConstantBufferView(1, materialResource_->GetGPUVirtualAddress());
+	command->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(trail->GetTextureHandle()));
+
+	command->DrawInstanced(static_cast<uint32_t>(trail->GetVertexSize()), 1, 0, 0);
 }
 
-void TrailRender::MakeResource(std::vector<VertexData> vertexes){
+
+void TrailRender::MakeResource(){
 	auto* textureManager = TextureManager::GetInstance();
-
-	//頂点リソースの作成
-	vertexResource_ = textureManager->CreateBufferResource(sizeof(VertexData) * vertexes.size());
-
-
-	//リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexes.size());
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
-	std::memcpy(vertexDate_, vertexes.data(), sizeof(VertexData) * vertexes.size());
 
 	//マテリアル用のリソース
 	materialResource_ = textureManager->CreateBufferResource(sizeof(Model::Material));

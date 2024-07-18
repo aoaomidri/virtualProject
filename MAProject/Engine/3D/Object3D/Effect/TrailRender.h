@@ -5,9 +5,9 @@ public:
 	//初期化処理
 	void Initialize();
 
-	void Draw();
+	void Draw(const TrailEffect* trail);
 
-	void MakeResource(std::vector<VertexData> vertexes);
+	void MakeResource();
 private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineTrail_;
 
@@ -19,13 +19,11 @@ private:
 
 	HRESULT hr_;
 
-	//頂点バッファービューを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+	//テクスチャハンドル
+	uint32_t textureHandle_ = 0;
 
-	//頂点リソースにデータを書き込む
-	VertexData* vertexDate_ = nullptr;
+	TrailEffect* trail_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
 	//マテリアルにデータを書き込む

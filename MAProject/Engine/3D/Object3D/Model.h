@@ -9,6 +9,7 @@
 #include"assimp/scene.h"
 #include"assimp/postprocess.h"
 #include"Quaternion.h"
+#include<unordered_map>
 #include<map>
 #include<optional>
 #include<span>

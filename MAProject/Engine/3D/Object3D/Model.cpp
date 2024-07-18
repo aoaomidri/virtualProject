@@ -175,13 +175,13 @@ void Model::LoadFromOBJInternal(const std::string& filename){
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
 				VertexData vertex = { position,texcoord,normal };
-				modelData_.vertices.push_back(vertex);
+				modelData_.vertices.emplace_back(vertex);
 				triangle[faceVertex] = { position,texcoord,normal };
 
 			}
-			modelData_.vertices.push_back(triangle[2]);
-			modelData_.vertices.push_back(triangle[1]);
-			modelData_.vertices.push_back(triangle[0]);
+			modelData_.vertices.emplace_back(triangle[2]);
+			modelData_.vertices.emplace_back(triangle[1]);
+			modelData_.vertices.emplace_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
@@ -214,23 +214,23 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 	const aiScene* scene = importer.ReadFile(filepath.string(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes());//メッシュがないのは対応しない
 
+	std::unordered_map<VertexData, size_t>vertices;
+
+	size_t vertexCount = 0llu;
+
+	uint32_t indexCount = 0;
+
 	//3、Meshの解析
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals());//法線がないMeshは今回は非対応
 		assert(mesh->HasTextureCoords(0));//Texcoordがないメッシュは今回は非対応
 		//ここからMeshの中身(face)の解析を行っていく
-		modelData_.vertices.resize(mesh->mNumVertices);//最初に頂点数分のメモリを確保していく
-		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
-			aiVector3D& position = mesh->mVertices[vertexIndex];
-			aiVector3D& normal = mesh->mNormals[vertexIndex];
-			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+		modelData_.vertices.reserve(modelData_.vertices.size() + mesh->mNumVertices);//最初に頂点数分のメモリを確保していく
+		modelData_.indices.reserve(modelData_.indices.size() + mesh->mNumFaces * 3);
 
-			modelData_.vertices[vertexIndex].position = { -position.x,position.y,position.z,1.0f };
-			modelData_.vertices[vertexIndex].normal = { -normal.x,normal.y,normal.z };
-			modelData_.vertices[vertexIndex].texcoord = { texcoord.x,texcoord.y };
+		vertices.reserve(modelData_.vertices.size() + mesh->mNumVertices);
 
-		}
 		//Indexを解析していく
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex){
 			aiFace& face = mesh->mFaces[faceIndex];
@@ -238,7 +238,50 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 
 			for (uint32_t element = 0; element < face.mNumIndices; ++element){
 				uint32_t vertexIndex = face.mIndices[element];
-				modelData_.indices.push_back(vertexIndex);
+
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				VertexData data{};
+
+				data.position = { -position.x,position.y,position.z,1.0f };
+				data.normal = { -normal.x,normal.y,normal.z };
+				data.texcoord = { texcoord.x,texcoord.y };
+				//コンテナが空ならば
+				if (modelData_.vertices.empty()){
+					//追加
+					modelData_.vertices.emplace_back(data);
+					vertices.insert(std::make_pair(data, vertexCount));
+
+					vertexCount++;
+
+					//インデックス追加
+					modelData_.indices.emplace_back(indexCount);
+					indexCount++;
+
+				}
+				//それ以外
+				else {
+					//同一の物かどうか
+					auto isIdentical = vertices.find(data);
+
+					if (isIdentical != vertices.end()) {
+						modelData_.indices.emplace_back(static_cast<uint32_t>(isIdentical->second));
+
+					}
+					else {
+
+						modelData_.vertices.emplace_back(data);
+						vertices.insert(std::make_pair(data, vertexCount));	
+						vertexCount++;
+						//追加
+
+						//インデックス追加
+						modelData_.indices.emplace_back(indexCount);
+						indexCount++;
+					}
+				}
 			}
 
 		}
@@ -301,8 +344,8 @@ void Model::MakeVertexResource(){
 
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
-	std::memcpy(vertexDate_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
-
+	std::copy(modelData_.vertices.begin(), modelData_.vertices.end(), vertexDate_);
+	vertexResource_->Unmap(0, nullptr);
 
 	uint32_t indexSizeInBytes = static_cast<uint32_t>(sizeof(uint32_t) * modelData_.indices.size());
 
@@ -317,7 +360,8 @@ void Model::MakeVertexResource(){
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndex_));
-	std::memcpy(mappedIndex_, modelData_.indices.data(), indexSizeInBytes);
+	std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
+	indexResource_->Unmap(0, nullptr);
 	/*std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
 
 	indexResource_->Unmap(0, nullptr);*/

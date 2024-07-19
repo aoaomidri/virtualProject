@@ -230,21 +230,23 @@ void Player::Update(){
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
+	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
+		weaponObj_->SetMatrix(weaponMatrix_);
+		weaponObj_->SetShininess(shiness_);
+		weaponObj_->Update(viewProjection);
+		weaponObj_->Draw();
+	}
 
-	weaponObj_->SetMatrix(weaponMatrix_);
-	weaponObj_->SetShininess(shiness_);
-	weaponObj_->Update(viewProjection);
-	weaponObj_->Draw();
 
 
 #ifdef _DEBUG
-	weaponTopObj_->SetMatrix(weaponObj_->GetTopVerTexMat());
+	/*weaponTopObj_->SetMatrix(weaponObj_->GetTopVerTexMat());
 	weaponTopObj_->Update(viewProjection);
 	weaponTopObj_->Draw();
 
 	weaponTailObj_->SetMatrix(weaponObj_->GetTailVerTexMat());
 	weaponTailObj_->Update(viewProjection);
-	weaponTailObj_->Draw();
+	weaponTailObj_->Draw();*/
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {

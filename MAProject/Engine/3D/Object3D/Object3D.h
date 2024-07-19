@@ -49,6 +49,8 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
+	const EulerTransform& GetTransform()const { return transform_; }
+
 	const TrailEffect::PosBuffer& GetTopVerTex() const{		
 		return vectorTop_;
 	}

@@ -43,6 +43,11 @@ public:
 	/// </summary>
 	SkinAnimObject3D* GetLevelSkinAnimObject(const std::string tag);
 
+	/// <summary>
+	/// 読み込んだレベルデータを取得する
+	/// </summary>
+	EulerTransform GetLevelObjectTransform(const std::string tag);
+
 private:
 	std::vector < std::pair<std::string, std::unique_ptr<Object3D>>>
 		objects_;

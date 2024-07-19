@@ -102,7 +102,7 @@ void GameScene::ObjectInitialize() {
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("resources/DDS/rostock_laage_airport_4k.dds");
 
-	skyBox_->transform_.scale = { 100.0f,100.0f,100.0f };
+	skyBox_->transform_.scale = { 1000.0f,1000.0f,1000.0f };
 
 }
 
@@ -113,7 +113,7 @@ void GameScene::Initialize(){
 	textureManager_ = TextureManager::GetInstance();
 
 	postEffect_ = PostEffect::GetInstance();
-	postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
+	postEffect_->SetPostEffect(PostEffect::EffectType::None);
 	
 	TextureLoad();
 	SoundLoad();
@@ -126,6 +126,8 @@ void GameScene::Initialize(){
 
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
+
+	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
 
 	floorManager_->AddFloor(firstFloor_, false);
 
@@ -316,7 +318,7 @@ void GameScene::Update(){
 			postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
 		}
 		else if (postEffect_->GetEffectType() == PostEffect::EffectType::Smoothing9x9 and player_->GetHitTimer() == 0) {
-			postEffect_->SetPostEffect(PostEffect::EffectType::OutLine);
+			postEffect_->SetPostEffect(PostEffect::EffectType::None);
 		}
 		
 

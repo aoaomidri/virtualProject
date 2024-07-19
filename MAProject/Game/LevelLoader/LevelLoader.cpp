@@ -155,6 +155,15 @@ SkinAnimObject3D* LevelLoader::GetLevelSkinAnimObject(const std::string tag){
 	return nullptr;
 }
 
+EulerTransform LevelLoader::GetLevelObjectTransform(const std::string tag){
+	for (auto& object : objects_) {
+		if (object.first == tag) {
+			return object.second.get()->GetTransform();
+		}
+	}
+	return EulerTransform();
+}
+
 
 void LevelLoader::ChackFiles(){
 	if (!std::filesystem::exists(kDirectoryName_)) {

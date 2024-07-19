@@ -29,7 +29,11 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetIsLighting(const bool& isLighting) { isUseLight_ = isLighting; }
+
 	void SetIsGetTop(const bool& isGetTop) { isGetTop_ = isGetTop; }
+
+	void SetShininess(const float data) { shininess_ = data; }
 
 	void SetDirectionalLight(const DirectionalLight::DirectionalLightData* light);
 

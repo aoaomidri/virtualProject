@@ -25,6 +25,10 @@ struct Camera{
 	float32_t3 worldPosition;
 };
 
+struct Threshold{
+	float32_t threshold;
+};
+
 ConstantBuffer<Material> gMaterial : register(b1);
 
 Texture2D<float32_t4> gTexture : register(t0);
@@ -102,7 +106,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
 		float32_t4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
 
-		output.color.rgb += environmentColor.rgb;
+		output.color.rgb += environmentColor.rgb * gMaterial.shininess;
 
 		output.color.a = gMaterial.color.a * textureColor.a;
 		

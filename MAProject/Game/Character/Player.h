@@ -294,6 +294,8 @@ private:
 
 	float motionSpeed_ = 1.0f;
 
+	float shiness_ = 0.0f;
+
 	bool isShakeDown = false;
 
 	//落下するかどうか

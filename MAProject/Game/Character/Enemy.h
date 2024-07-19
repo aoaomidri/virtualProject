@@ -183,15 +183,22 @@ private:
 private:
 	/*振る舞い系*/
 	enum class Behavior {
-		kFirst,			//第一形態
-		kSecond,		//第二形態
-		kThird,			//第三形態
+		kAttack,		//攻撃
 		kRoot,			//様子見中
 		kBack,			//後ろにジャンプ
 		kDash,			//ダッシュ
 		kRun,			//走り
 		kFree,			//遊びの時間
 		kDead			//やられた
+	};
+
+	enum class AttackBehavior {
+		kTriple,		//三連撃
+		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
+		kBeam,			//ビーム攻撃
+		kRotateAttack,	//回転して追尾しながらの攻撃
+		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)
+		kXAttack,		//その場でX字を書いて攻撃(斬撃は飛ぶ)
 	};
 
 	Behavior behavior_ = Behavior::kRoot;
@@ -203,21 +210,15 @@ private:
 	void MotionUpdate();
 
 	//攻撃行動初期化
-	void BehaviorFirstInitialize();
-	//攻撃行動初期化
-	void BehaviorSecondInitialize();
-	//攻撃行動
-	void BehaviorThirdInitialize();
+	void BehaviorAttackInitialize();
+	
 	//攻撃行動初期化
 	void BehaviorRootInitialize();
 	//攻撃行動初期化
 	void BehaviorDeadInitialize();
 	//形態ごとにとる行動
-	void FirstMotion();
+	void AttackMotion();
 
-	void SecondMotion();
-
-	void ThirdMotion();
 	//様子見状態の行動
 	void RootMotion();
 	//後退行動初期化

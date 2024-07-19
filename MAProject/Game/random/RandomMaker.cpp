@@ -1,5 +1,8 @@
 #include"RandomMaker.h"
 
+std::random_device RandomMaker::seedGenerator_;
+std::mt19937 RandomMaker::randomEngine_;
+
 RandomMaker* RandomMaker::GetInstance(){
 	static RandomMaker instance;
 
@@ -47,7 +50,7 @@ Vector3 RandomMaker::DistributionV3(const float min, const float max) {
 }
 
 void RandomMaker::MakeRandomEngine(){
-	std::mt19937 randomEngine(this->seedGenerator_());
-	this->randomEngine_ = randomEngine;
+	std::mt19937 randomEngine(seedGenerator_());
+	randomEngine_ = randomEngine;
 }
 

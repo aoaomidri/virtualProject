@@ -257,6 +257,8 @@ void Enemy::Respawn(const Vector3& position){
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 
+	threshold_ = 0.0f;
+
 }
 
 void Enemy::OnCollision(){
@@ -327,15 +329,6 @@ void Enemy::MotionUpdate(){
 		behavior_ = behaviorRequest_.value();
 		// 各振る舞いごとの初期化を実行
 		switch (behavior_) {
-		case Behavior::kFirst:
-			BehaviorFirstInitialize();
-			break;
-		case Behavior::kSecond:
-			BehaviorSecondInitialize();
-			break;
-		case Behavior::kThird:
-			BehaviorThirdInitialize();
-			break;
 		case Behavior::kRoot:
 			BehaviorRootInitialize();
 			break;
@@ -360,16 +353,6 @@ void Enemy::MotionUpdate(){
 	behaviorRequest_ = std::nullopt;
 
 	switch (behavior_) {
-	case Behavior::kFirst:
-	default:
-		FirstMotion();
-		break;
-	case Behavior::kSecond:
-		SecondMotion();
-		break;
-	case Behavior::kThird:
-		ThirdMotion();
-		break;
 	case Behavior::kRoot:
 		RootMotion();
 		break;
@@ -410,17 +393,6 @@ void Enemy::MotionUpdate(){
 	}
 }
 
-void Enemy::BehaviorFirstInitialize(){
-
-}
-
-void Enemy::BehaviorSecondInitialize(){
-
-}
-
-void Enemy::BehaviorThirdInitialize(){
-
-}
 
 void Enemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
@@ -439,17 +411,6 @@ void Enemy::BehaviorDeadInitialize(){
 	transform_.rotate.y = deadYAngle_;
 }
 
-void Enemy::FirstMotion(){
-
-}
-
-void Enemy::SecondMotion(){
-
-}
-
-void Enemy::ThirdMotion(){
-
-}
 
 void Enemy::RootMotion(){
 	frontVec_ = postureVec_;
@@ -481,10 +442,14 @@ void Enemy::RootMotion(){
 		nearTime_++;
 	}
 	if (nearTime_ > lengthJudgment_) {
+		int i = RandomMaker::DistributionInt(0, 2);
+		if (i == 0) {
+			behaviorRequest_ = Behavior::kBack;
+		}
 		behaviorRequest_ = Behavior::kBack;
 	}
 	else if (farTime_ > lengthJudgment_) {
-		int i = /*RandomMaker::GetInstance()->DistributionInt(0, 1)*/0;
+		int i = RandomMaker::DistributionInt(0, 1);
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kDash;
 		}

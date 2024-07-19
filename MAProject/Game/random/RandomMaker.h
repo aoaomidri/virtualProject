@@ -16,7 +16,7 @@ public:
 	/// <param name="min = 最小値"></param>
 	/// <param name="max = 最大値"></param>
 	/// <returns></returns>
-	int DistributionInt(const int min, const int max);
+	static int DistributionInt(const int min, const int max);
 
 	/// <summary>
 	/// 最小値と最大値を入れ範囲を決める
@@ -24,7 +24,7 @@ public:
 	/// <param name="min = 最小値"></param>
 	/// <param name="max = 最大値"></param>
 	/// <returns></returns>
-	float Distribution(const float min, const float max);
+	static float Distribution(const float min, const float max);
 
 	
 	/// <summary>
@@ -33,7 +33,7 @@ public:
 	/// <param name="min = 最小値"></param>
 	/// <param name="max = 最大値"></param>
 	/// <returns></returns>
-	Vector2 DistributionV2(const float min, const float max);
+	static Vector2 DistributionV2(const float min, const float max);
 
 	/// <summary>
 	/// 最小値と最大値を入れ範囲を決める
@@ -41,7 +41,7 @@ public:
 	/// <param name="min = 最小値"></param>
 	/// <param name="max = 最大値"></param>
 	/// <returns></returns>
-	Vector3 DistributionV3(const float min, const float max);
+	static Vector3 DistributionV3(const float min, const float max);
 
 private:
 	//コンストラクタ
@@ -57,8 +57,8 @@ private:
 	void MakeRandomEngine();
 
 private:
-	std::random_device seedGenerator_;
-	std::mt19937 randomEngine_;
+	static std::random_device seedGenerator_;
+	static std::mt19937 randomEngine_;
 
 };
 

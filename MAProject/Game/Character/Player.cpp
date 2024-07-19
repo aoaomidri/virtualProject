@@ -57,6 +57,8 @@ void Player::Initialize(){
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
 	weaponObj_->SetIsGetTop(true);
+	weaponObj_->SetIsLighting(true);
+	
 
 	weaponTopObj_ = std::make_unique<Object3D>();
 	weaponTopObj_->Initialize("box");
@@ -230,6 +232,7 @@ void Player::Update(){
 void Player::Draw(const ViewProjection& viewProjection){
 
 	weaponObj_->SetMatrix(weaponMatrix_);
+	weaponObj_->SetShininess(shiness_);
 	weaponObj_->Update(viewProjection);
 	weaponObj_->Draw();
 
@@ -325,7 +328,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
-	
+	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
 	ImGui::End();
 	//trail_->DrawImgui("剣のトレイル");
 

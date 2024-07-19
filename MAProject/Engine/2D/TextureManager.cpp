@@ -15,14 +15,14 @@ void TextureManager::Initialize() {
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline2D_->Initialize2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
+	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/MappingObject3d.PS.hlsl", true);
 
 	GraphicsPipelineSkyBox_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSkyBox_->InitializeSkyBox(L"resources/shaders/SkyBox/Skybox.VS.hlsl", L"resources/shaders/SkyBox/Skybox.PS.hlsl");
 
 
 	GraphicsPipelineSkinning3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/object3D/SkinningObject3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
+	GraphicsPipelineSkinning3D_->InitializeSkinning(L"resources/shaders/object3D/SkinningObject3d.VS.hlsl", L"resources/shaders/object3D/MappingObject3d.PS.hlsl", true);
 	
 
 	device_ = DirectXCommon::GetInstance()->GetDevice();

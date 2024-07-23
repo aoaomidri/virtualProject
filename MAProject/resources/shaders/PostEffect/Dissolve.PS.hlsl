@@ -12,6 +12,8 @@ SamplerState gSampler : register(s0);
 
 ConstantBuffer<Threshold> gThreshold : register(b0);
 
+ConstantBuffer<HSVMaterial> gMaterial : register(b2);
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -31,5 +33,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	output.color = gTexture.Sample(gSampler,input.texcoord);
 	
 	output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
+
+	output.color.rgb = AdjustHSV(output.color.rgb,gMaterial);
 	return output;
 }

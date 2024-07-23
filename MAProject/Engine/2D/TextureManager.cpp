@@ -206,9 +206,7 @@ void TextureManager::DrawCopy(){
 		commandList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU[dissolveTexNumber_]);
 		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetThreshold());
 	}
-	if (postEffect->IsSelectNone()) {
-		commandList->SetGraphicsRootConstantBufferView(4, postEffect->GetHSVMaterial());
-	}
+	commandList->SetGraphicsRootConstantBufferView(4, postEffect->GetHSVMaterial());
 	
 
 

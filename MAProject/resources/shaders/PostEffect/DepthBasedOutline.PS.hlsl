@@ -14,6 +14,8 @@ SamplerState gSamplerPoint : register(s1);
 
 ConstantBuffer<CameraMat> gCamera : register(b0);
 
+ConstantBuffer<HSVMaterial> gMaterial : register(b2);
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -50,8 +52,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		for(int32_t y = 0; y < 3; ++y){
 			float32_t2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
 			float32_t ndcDepth = gDepthTexture.Sample(gSamplerPoint, texcoord);
-			//NDC->View。p^{-1}においてxとyはzwに影響を与えないので何でも良い。なので、わざわざ行列を渡さなくてもいい
-			//gMaterial.projectionInverceはCbufferを使って渡しておくこと
+			
 			float32_t4 viewSpece = mul(float32_t4(0.0f,0.0f,ndcDepth,1.0f),gCamera.projectInverce);
 			float32_t viewZ = viewSpece.z * rcp(viewSpece.w);
 			difference.x += viewZ * kPrewittHorizontalKernel[x][y];
@@ -65,6 +66,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 	PixelShaderOutput output;
 	output.color.rgb = (1.0f - weight) * gTexture.Sample(gSampler,input.texcoord).rgb;
+	output.color.rgb = AdjustHSV(output.color.rgb,gMaterial);
 	output.color.a = 1.0f;
 	
 	return output;

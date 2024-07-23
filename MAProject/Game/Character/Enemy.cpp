@@ -347,6 +347,9 @@ void Enemy::MotionUpdate(){
 		case Behavior::kDead:
 			BehaviorDeadInitialize();
 			break;
+		case Behavior::kAttack:
+			BehaviorAttackInitialize();
+			break;
 		}
 	}
 	// 振る舞いリクエストをリセット
@@ -371,6 +374,9 @@ void Enemy::MotionUpdate(){
 	case Behavior::kDead:
 		DeadMotion();
 		break;
+	case Behavior::kAttack:
+		AttackMotion();
+		break;
 	}
 
 	Vector3 lockOnPos = target_->translate;
@@ -393,6 +399,14 @@ void Enemy::MotionUpdate(){
 	}
 }
 
+void Enemy::BehaviorAttackInitialize(){
+
+}
+
+
+void Enemy::AttackMotion(){
+
+}
 
 void Enemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();

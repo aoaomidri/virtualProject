@@ -212,12 +212,12 @@ private:
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
 	
+	//形態ごとにとる行動
+	void AttackMotion();
 	//攻撃行動初期化
 	void BehaviorRootInitialize();
 	//攻撃行動初期化
 	void BehaviorDeadInitialize();
-	//形態ごとにとる行動
-	void AttackMotion();
 
 	//様子見状態の行動
 	void RootMotion();

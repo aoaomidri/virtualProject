@@ -64,22 +64,6 @@ float32_t3 RGBToHSV(float32_t3 rgb){
 }
 
 float32_t3 HSVToRGB(float32_t3 hsv){
-	// float32_t h = hsv.r;
-	// float32_t s = hsv.g;
-	// float32_t v = hsv.b;
-	// float32_t r = hsv.b;
-	// float32_t g = hsv.b;
-	// float32_t b = hsv.b;
-
-	// if(s < 0.0f){
-	// 	h *= 6.0f;
-	// 	final int32_t i =(int32_t) h;
-	// 	final float32_t f = h - (float32_t)i;
-	// }
-	
-
-	// float32_t3 rgb = float32_t3(r,g,b);
-	// return rgb;
 	float32_t h = hsv.x;
     float32_t s = hsv.y;
     float32_t v = hsv.z;

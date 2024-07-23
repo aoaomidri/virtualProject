@@ -146,9 +146,9 @@ void WholeGame::DrawImgui(){
 	postEffect_->SetThreshold(threshold);
 
 	ImGui::Text("HSVの値");
-	ImGui::DragFloat("hue", &hsv_.hue, 0.001f, 0.0f, 1.0f);
-	ImGui::DragFloat("saturate", &hsv_.saturation, 0.001f, 0.0f, 1.0f);
-	ImGui::DragFloat("value", &hsv_.value, 0.001f, 0.0f, 1.0f);
+	ImGui::DragFloat("hue", &hsv_.hue, 0.001f, -1.0f, 1.0f);
+	ImGui::DragFloat("saturate", &hsv_.saturation, 0.001f, -1.0f, 1.0f);
+	ImGui::DragFloat("value", &hsv_.value, 0.001f, -1.0f, 1.0f);
 	postEffect_->SetHSVData(hsv_);
 	ImGui::End();
 

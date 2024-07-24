@@ -595,7 +595,7 @@ void Enemy::DeadMotion(){
 }
 
 void Enemy::BehaviorAttackInitialize() {
-	ATBehaviorRequest_ = AttackBehavior::kTriple;
+	ATBehaviorRequest_ = AttackBehavior::kTackle;
 }
 
 void Enemy::BehaviorAttackSelectInitialize()
@@ -612,6 +612,9 @@ void Enemy::AttackMotion() {
 		case AttackBehavior::kTriple:
 			AttackBehaviorTripleInitialize();
 			break;
+		case AttackBehavior::kTackle:
+			AttackBehaviorTackleInitialize();
+			break;
 		case AttackBehavior::kNone:
 			BehaviorRootInitialize();
 			break;
@@ -625,6 +628,9 @@ void Enemy::AttackMotion() {
 	switch (ATBehavior_) {
 	case AttackBehavior::kTriple:
 		TripleAttack();
+		break;
+	case AttackBehavior::kTackle:
+		Tackle();
 		break;
 	case AttackBehavior::kNone:
 		behaviorRequest_ = Behavior::kFree;
@@ -697,4 +703,60 @@ void Enemy::TripleAttack(){
 		behaviorRequest_ = Behavior::kFree;
 	}
 
+}
+
+void Enemy::AttackBehaviorTackleInitialize(){
+	directionTime_ = 90;
+
+	attackTransitionTime_ = 30;
+
+	dashTimer_ = 0;
+}
+
+void Enemy::Tackle(){
+	frontVec_ = postureVec_;
+	if (target_) {
+		Vector3 lockOnPos = target_->translate;
+		Vector3 sub = lockOnPos - transform_.translate;
+		sub.y = 0;
+		sub = Vector3::Normalize(sub);
+		postureVec_ = sub;
+
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+
+	}
+
+	if (directionTime_ <= 0) {
+		if (attackTransitionTime_ <= 0) {
+			move_ = { 0, 0, dashSpeed_ };
+
+			move_ = Matrix::GetInstance()->TransformNormal(move_, dashRotateMatrix_);
+
+			//ダッシュの時間<frame>
+			const uint32_t behaviorDashTime = 30;
+
+
+
+			attackOBB_.size = OBB_.size * 2.8f;
+			transform_.translate += move_;
+
+
+			//既定の時間経過で通常状態に戻る
+			if (++dashTimer_ >= behaviorDashTime) {
+				attackOBB_.size = { 0,0,0 };
+				behaviorRequest_ = Behavior::kFree;
+			}
+		}
+		else {
+			attackTransitionTime_--;
+		}		
+	}
+	else {
+		
+		dashRotateMatrix_ = rotateMatrix_;
+		directionTime_--;
+	}
+	
 }

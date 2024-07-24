@@ -264,7 +264,12 @@ private:
 	void AttackBehaviorTripleInitialize();
 	//三連攻撃の更新処理
 	void TripleAttack();
-	
+
+	//突進攻撃初期化
+	void AttackBehaviorTackleInitialize();
+	//
+	void Tackle();
+
 private:
 	//攻撃関係の変数群
 
@@ -285,6 +290,13 @@ private:
 	uint32_t attackCount_;
 
 	const uint32_t distanceTime_ = 20;
+
+	/*突進攻撃*/
+	//突進の向き決めの時間
+	uint32_t directionTime_;
+
+	//突進への移行時間
+	uint32_t attackTransitionTime_;
 
 
 private:

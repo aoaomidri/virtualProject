@@ -86,6 +86,20 @@ void LevelLoader::LoadJson(json jData){
 				objectData.scale.z = (float)transform["scaling"][1];
 
 				skinAnimObjects_.emplace_back(std::move(animObj));
+				if (Jobject.contains("collider")) {
+					std::pair<std::string, OBB> collider;
+					collider.first = Jobject["name"];
+					//中央
+					collider.second.center.x = (float)Jobject["collider"]["center"][0];
+					collider.second.center.x = (float)Jobject["collider"]["center"][2];
+					collider.second.center.x = (float)Jobject["collider"]["center"][1];
+
+					//スケール
+					collider.second.size.x = (float)Jobject["collider"]["size"][0];
+					collider.second.size.x = (float)Jobject["collider"]["size"][2];
+					collider.second.size.x = (float)Jobject["collider"]["size"][1];
+					colliders_.emplace_back(collider);
+				}
 			}
 			else {
 				std::pair<std::string, std::unique_ptr<Object3D>> obj;
@@ -117,6 +131,21 @@ void LevelLoader::LoadJson(json jData){
 				objectData.scale.z = (float)transform["scaling"][1];
 
 				objects_.emplace_back(std::move(obj));
+
+				if (Jobject.contains("collider")) {
+					std::pair<std::string, OBB> collider;
+					collider.first = Jobject["name"];
+					//中央
+					collider.second.center.x = (float)Jobject["collider"]["center"][0];
+					collider.second.center.y = (float)Jobject["collider"]["center"][2];
+					collider.second.center.z = (float)Jobject["collider"]["center"][1];
+
+					//スケール
+					collider.second.size.x = (float)Jobject["collider"]["size"][0];
+					collider.second.size.y = (float)Jobject["collider"]["size"][2];
+					collider.second.size.z = (float)Jobject["collider"]["size"][1];
+					colliders_.emplace_back(std::move(collider));
+				}
 			}
 
 			
@@ -162,6 +191,15 @@ EulerTransform LevelLoader::GetLevelObjectTransform(const std::string tag){
 		}
 	}
 	return EulerTransform();
+}
+
+OBB LevelLoader::GetLevelObjectOBB(const std::string tag){
+	for (auto& collider : colliders_) {
+		if (collider.first == tag) {
+			return collider.second;
+		}
+	}
+	return OBB();
 }
 
 

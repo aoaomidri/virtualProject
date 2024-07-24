@@ -5,6 +5,7 @@
 #include<iostream>
 #include"Object3D.h"
 #include"SkinAnimObject3D.h"
+#include <OBB.h>
 
 
 class LevelLoader{
@@ -34,19 +35,24 @@ public:
 	//void Draw(const ViewProjection& viewProjection);
 
 	/// <summary>
-	/// 読み込んだレベルデータを取得する
+	/// 読み込んだレベルデータから3Dオブジェを取得する
 	/// </summary>
 	Object3D* GetLevelObject(const std::string tag);
 
 	/// <summary>
-	/// 読み込んだレベルデータを取得する
+	/// 読み込んだレベルデータからスキニングオブジェを取得する
 	/// </summary>
 	SkinAnimObject3D* GetLevelSkinAnimObject(const std::string tag);
 
 	/// <summary>
-	/// 読み込んだレベルデータを取得する
+	/// 読み込んだレベルデータから座標を取得する
 	/// </summary>
 	EulerTransform GetLevelObjectTransform(const std::string tag);
+
+	/// <summary>
+	/// 読み込んだレベルデータからOBBコライダーを取得する
+	/// </summary>
+	OBB GetLevelObjectOBB(const std::string tag);
 
 private:
 	std::vector < std::pair<std::string, std::unique_ptr<Object3D>>>
@@ -54,6 +60,8 @@ private:
 
 	std::vector < std::pair<std::string, std::unique_ptr<SkinAnimObject3D>>>
 		skinAnimObjects_;
+
+	std::vector<std::pair<std::string, OBB>> colliders_;
 
 
 	/*ファイル制御関連*/

@@ -50,7 +50,9 @@ void Enemy::Initialize(const Vector3& position){
 
 	enemyLife_ = enemyLifeMax_;
 
-	bodyObj_ = LevelLoader::GetInstance()->GetLevelObject("Enemy");
+	auto levelLoader = LevelLoader::GetInstance();
+
+	bodyObj_ = levelLoader->GetLevelObject("Enemy");
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
 
@@ -65,7 +67,7 @@ void Enemy::Initialize(const Vector3& position){
 	//boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
 	
 	transform_ = {
-		{0.9f,0.9f,0.9f},
+		levelLoader->GetLevelObjectTransform("Enemy").scale,
 		{0.0f,3.14f,0.0f},
 		position
 	};
@@ -98,8 +100,8 @@ void Enemy::Initialize(const Vector3& position){
 
 	freeTime_ = 0;
 
-	OBB_.center = transform_.translate;
-	OBB_.size = { transform_.scale.x + 1.0f,transform_.scale.y + 4.0f,transform_.scale.z + 1.0f };
+	OBB_ = levelLoader->GetLevelObjectOBB("Enemy");
+
 	collisionTransform_.translate = OBB_.center;
 	collisionTransform_.scale = OBB_.size;
 	bodyOBB_.center = transform_.translate;

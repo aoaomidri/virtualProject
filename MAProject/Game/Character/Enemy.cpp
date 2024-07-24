@@ -399,14 +399,7 @@ void Enemy::MotionUpdate(){
 	}
 }
 
-void Enemy::BehaviorAttackInitialize(){
 
-}
-
-
-void Enemy::AttackMotion(){
-
-}
 
 void Enemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
@@ -463,12 +456,13 @@ void Enemy::RootMotion(){
 		behaviorRequest_ = Behavior::kBack;
 	}
 	else if (farTime_ > lengthJudgment_) {
-		int i = RandomMaker::DistributionInt(0, 1);
+		//int i = RandomMaker::DistributionInt(0, 1);
+		int i = 1;
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kDash;
 		}
 		else {
-			behaviorRequest_ = Behavior::kRun;
+			behaviorRequest_ = Behavior::kAttack;
 		}
 		
 	}
@@ -556,7 +550,14 @@ void Enemy::EnemyRun(){
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {
-		behaviorRequest_ = Behavior::kFree;
+		//int i = RandomMaker::DistributionInt(0, 1);
+		int i = 1;
+		if (i == 0) {
+			behaviorRequest_ = Behavior::kFree;
+		}
+		else {
+			behaviorRequest_ = Behavior::kAttack;
+		}
 	}
 }
 
@@ -593,3 +594,107 @@ void Enemy::DeadMotion(){
 	
 }
 
+void Enemy::BehaviorAttackInitialize() {
+	ATBehaviorRequest_ = AttackBehavior::kTriple;
+}
+
+void Enemy::BehaviorAttackSelectInitialize()
+{
+}
+
+
+void Enemy::AttackMotion() {
+	if (ATBehaviorRequest_) {
+		// 振る舞いを変更する
+		ATBehavior_ = ATBehaviorRequest_.value();
+		// 各振る舞いごとの初期化を実行
+		switch (ATBehavior_) {
+		case AttackBehavior::kTriple:
+			AttackBehaviorTripleInitialize();
+			break;
+		case AttackBehavior::kNone:
+			BehaviorRootInitialize();
+			break;
+
+	
+		}
+	}
+	// 振る舞いリクエストをリセット
+	ATBehaviorRequest_ = std::nullopt;
+
+	switch (ATBehavior_) {
+	case AttackBehavior::kTriple:
+		TripleAttack();
+		break;
+	case AttackBehavior::kNone:
+		behaviorRequest_ = Behavior::kFree;
+		break;
+	}
+}
+
+void Enemy::AttackBehaviorTripleInitialize(){
+	posContainer_.fill(Vector3());
+
+	attackDistance_ = distanceTime_;
+
+	isAttackEnd_ = true;
+
+	isMaxContext_ = false;
+
+	attackCount_ = 0;
+
+}
+
+void Enemy::TripleAttack(){
+	if (isAttackEnd_ and !isMaxContext_) {
+		if (target_) {
+			Vector3 lockOnPos = target_->translate;
+
+			posContainer_[attackCount_] = lockOnPos;
+
+			isMaxContext_ = std::all_of(posContainer_.begin(), posContainer_.end(), [](Vector3 i) { return i.isNotIdentity(); });
+
+			isAttackEnd_ = false;
+		}
+	}
+
+	frontVec_ = postureVec_;
+
+	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ * 5.0f };
+
+	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
+	move.y = 0;
+	
+	Vector3 lockOnPos = posContainer_[attackCount_];
+	Vector3 sub = lockOnPos - transform_.translate;
+	sub.y = 0;
+	float PELength = Vector3::Length(sub);
+	sub = Vector3::Normalize(sub);
+	postureVec_ = sub;
+
+	Matrix4x4 directionTodirection_;
+	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+
+	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+	if (PELength < 15.0f) {
+		move = { 0 };
+		if (attackDistance_ == 0) {
+			attackCount_++;
+			isAttackEnd_ = true;
+			attackDistance_ = distanceTime_;
+		}
+		else {
+			attackDistance_ -= 1;
+		}
+
+	}
+	else {
+		/*敵の移動*/
+		transform_.translate += move;
+	}
+
+	if (isMaxContext_ and isAttackEnd_){
+		behaviorRequest_ = Behavior::kFree;
+	}
+
+}

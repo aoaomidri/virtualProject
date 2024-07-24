@@ -205,6 +205,15 @@ public:
 		return result;
 	}
 
+	//全部が0の場合tureを返す
+	bool isIdentity() const {
+		return x == 0 && y == 0 && z == 0;
+	}
+	//いずれかが0以外の場合tureを返す
+	bool isNotIdentity() const {
+		return x != 0 || y != 0 || z != 0;
+	}
+
 private:
 };
 

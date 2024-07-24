@@ -9,6 +9,7 @@
 #include"Quaternion.h"
 //#include"../../Engine/3D/Object3D/Particle.h"
 #include<optional>
+#include <algorithm>
 
 
 class Enemy {
@@ -184,43 +185,35 @@ private:
 	/*振る舞い系*/
 	enum class Behavior {
 		kAttack,		//攻撃
+		kSelectAttack,	//確定行動攻撃
 		kRoot,			//様子見中
 		kBack,			//後ろにジャンプ
 		kDash,			//ダッシュ
 		kRun,			//走り
 		kFree,			//遊びの時間
-		kDead			//やられた
+		kDead,			//やられた
 	};
 
-	enum class AttackBehavior {
-		kTriple,		//三連撃
-		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
-		kBeam,			//ビーム攻撃
-		kRotateAttack,	//回転して追尾しながらの攻撃
-		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)
-		kXAttack,		//その場でX字を書いて攻撃(斬撃は飛ぶ)
-	};
 
 	Behavior behavior_ = Behavior::kRoot;
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	
 
 private:
 	//行動全体を制御する
 	void MotionUpdate();
 
 	//攻撃行動初期化
-	void BehaviorAttackInitialize();
-	
-	//形態ごとにとる行動
-	void AttackMotion();
-	//攻撃行動初期化
 	void BehaviorRootInitialize();
+	//様子見状態の行動
+	void RootMotion();
 	//攻撃行動初期化
 	void BehaviorDeadInitialize();
 
-	//様子見状態の行動
-	void RootMotion();
+	//死んだときのモーション
+	void DeadMotion();
 	//後退行動初期化
 	void BehaviorBackInitialize();
 	//後ろに下がるモーション
@@ -240,9 +233,59 @@ private:
 	//遊び
 	void Free();
 
-	//死んだときのモーション
-	void DeadMotion();
+
+private:
+	//攻撃関係の関数群
+	enum class AttackBehavior {
+		kTriple,		//三連撃
+		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
+		kBeam,			//ビーム攻撃
+		kTackle,		//突進攻撃
+		kRotateAttack,	//回転して追尾しながらの攻撃
+		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)
+		kXAttack,		//その場でX字を書いて攻撃(斬撃は飛ぶ)
+		kNone,			//何もしない
+	};
+
+	AttackBehavior ATBehavior_ = AttackBehavior::kNone;
+
+	std::optional<AttackBehavior> ATBehaviorRequest_ = std::nullopt;
+
+	//攻撃行動初期化
+	void BehaviorAttackInitialize();
+
+	//攻撃行動初期化
+	void BehaviorAttackSelectInitialize();
 	
+	//形態ごとにとる行動
+	void AttackMotion();
+
+	//三連攻撃初期化
+	void AttackBehaviorTripleInitialize();
+	//三連攻撃の更新処理
+	void TripleAttack();
+	
+private:
+	//攻撃関係の変数群
+
+	/*三連切り*/
+	//三連切りの移動座標用
+	std::array<Vector3, 3> posContainer_;
+
+	//間の待ちの時間
+	uint32_t attackDistance_;
+
+	//待ちに入るための
+	bool isAttackEnd_ = false;
+
+	//移動のコンテナがすべて埋まったかどうか
+	bool isMaxContext_;
+
+	//現在の攻撃回数
+	uint32_t attackCount_;
+
+	const uint32_t distanceTime_ = 20;
+
 
 private:
 	//ディゾルブ関係

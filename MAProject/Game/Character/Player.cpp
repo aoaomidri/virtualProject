@@ -320,6 +320,7 @@ void Player::TrailDraw(){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_);

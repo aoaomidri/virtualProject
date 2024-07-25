@@ -104,6 +104,8 @@ void GameScene::ObjectInitialize() {
 
 	skyBox_->transform_.scale = { 1000.0f,1000.0f,1000.0f };
 
+	stageObject_->Initialize();
+
 }
 
 void GameScene::Initialize(){
@@ -430,6 +432,8 @@ void GameScene::Draw3D(){
 			enemy->Draw(followCamera_->GetViewProjection());
 		}
 
+		
+
 		lockOn_->Draw();
 		break;
 	case SceneName::CLEAR:
@@ -439,6 +443,7 @@ void GameScene::Draw3D(){
 		assert(0);
 	}
 	
+	stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/

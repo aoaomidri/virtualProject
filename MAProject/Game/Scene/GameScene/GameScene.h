@@ -17,6 +17,7 @@
 #include"SkyBox.h"
 #include"Audio.h"
 #include"LevelLoader/LevelLoader.h"
+#include"StageObject.h"
 #include"PostEffect.h"
 
 class GameScene : public BaseScene{
@@ -172,7 +173,7 @@ private:
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;
 
-	
+	std::unique_ptr<StageObject> stageObject_;
 
 	//シーン関連
 	enum SceneName{

@@ -1,0 +1,196 @@
+{
+    "name": "scene",
+    "object": [
+        {
+            "type": "ARMATURE",
+            "name": "Player.001",
+            "transform": {
+                "translation": [
+                    0.0,
+                    6.070000171661377,
+                    1.1599998474121094
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
+                ]
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Player",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            6.103515625e-05,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0000001192092896,
+                            1.0000001192092896
+                        ]
+                    },
+                    "file_name": "human",
+                    "animation_name": "walk"
+                }
+            ]
+        },
+        {
+            "type": "MESH",
+            "name": "Cube",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    100.0,
+                    100.0,
+                    1.0
+                ]
+            },
+            "file_name": "box"
+        },
+        {
+            "type": "MESH",
+            "name": "Enemy",
+            "transform": {
+                "translation": [
+                    0.0,
+                    -30.0,
+                    0.7699999809265137
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "Enemy",
+            "collider": {
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    1.5
+                ],
+                "size": [
+                    2.5,
+                    2.5,
+                    4.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject",
+            "transform": {
+                "translation": [
+                    100.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    10.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "LargeSimpleTower"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.001",
+            "transform": {
+                "translation": [
+                    100.0,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    10.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "LargeSimpleTower"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.002",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    10.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "LargeSimpleTower"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.003",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    10.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "LargeSimpleTower"
+        }
+    ]
+}

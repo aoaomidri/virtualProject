@@ -102,60 +102,114 @@ void LevelLoader::LoadJson(json jData){
 				}
 			}
 			else {
-				std::pair<std::string, std::unique_ptr<Object3D>> obj;
+				if (Jobject.contains("name")){
+					std::string name = Jobject["name"];
+					if (name.find("StageObject") != std::string::npos) {
+						std::unique_ptr<Object3D> staticObj_ = std::make_unique<Object3D>();
 
-				obj.second = std::make_unique<Object3D>();
+						staticObj_->Initialize(Jobject["file_name"]);
 
-				obj.second->Initialize(Jobject["file_name"]);
+						EulerTransform& objectData = staticObj_->transform_;
 
-				if (Jobject.contains("name")) {
-					//ファイル名
-					obj.first = Jobject["name"];
+						json& transform = Jobject["transform"];
+						//平行移動
+						objectData.translate.x = (float)transform["translation"][0];
+						objectData.translate.y = (float)transform["translation"][2];
+						objectData.translate.z = (float)transform["translation"][1];
+						//回転角
+						objectData.rotate.x = -(float)transform["rotation"][0];
+						objectData.rotate.y = -(float)transform["rotation"][2];
+						objectData.rotate.z = -(float)transform["rotation"][1];
+
+						//スケーリング
+						objectData.scale.x = (float)transform["scaling"][0];
+						objectData.scale.y = (float)transform["scaling"][2];
+						objectData.scale.z = (float)transform["scaling"][1];
+
+						stationaryObjects_.emplace_back(std::move(staticObj_));
+
+						if (Jobject.contains("collider")) {
+							std::pair<std::string, OBB> collider;
+							collider.first = Jobject["name"];
+							//中央
+							collider.second.center.x = (float)Jobject["collider"]["center"][0];
+							collider.second.center.y = (float)Jobject["collider"]["center"][2];
+							collider.second.center.z = (float)Jobject["collider"]["center"][1];
+
+							//スケール
+							collider.second.size.x = (float)Jobject["collider"]["size"][0];
+							collider.second.size.y = (float)Jobject["collider"]["size"][2];
+							collider.second.size.z = (float)Jobject["collider"]["size"][1];
+							colliders_.emplace_back(std::move(collider));
+						}
+
+					}
+					else {
+						std::pair<std::string, std::unique_ptr<Object3D>> obj;
+
+						obj.second = std::make_unique<Object3D>();
+
+						obj.second->Initialize(Jobject["file_name"]);
+
+							//ファイル名
+						obj.first = Jobject["name"];
+						
+
+						EulerTransform& objectData = obj.second->transform_;
+
+						json& transform = Jobject["transform"];
+						//平行移動
+						objectData.translate.x = (float)transform["translation"][0];
+						objectData.translate.y = (float)transform["translation"][2];
+						objectData.translate.z = (float)transform["translation"][1];
+						//回転角
+						objectData.rotate.x = -(float)transform["rotation"][0];
+						objectData.rotate.y = -(float)transform["rotation"][2];
+						objectData.rotate.z = -(float)transform["rotation"][1];
+
+						//スケーリング
+						objectData.scale.x = (float)transform["scaling"][0];
+						objectData.scale.y = (float)transform["scaling"][2];
+						objectData.scale.z = (float)transform["scaling"][1];
+
+						objects_.emplace_back(std::move(obj));
+
+						if (Jobject.contains("collider")) {
+							std::pair<std::string, OBB> collider;
+							collider.first = Jobject["name"];
+							//中央
+							collider.second.center.x = (float)Jobject["collider"]["center"][0];
+							collider.second.center.y = (float)Jobject["collider"]["center"][2];
+							collider.second.center.z = (float)Jobject["collider"]["center"][1];
+
+							//スケール
+							collider.second.size.x = (float)Jobject["collider"]["size"][0];
+							collider.second.size.y = (float)Jobject["collider"]["size"][2];
+							collider.second.size.z = (float)Jobject["collider"]["size"][1];
+							colliders_.emplace_back(std::move(collider));
+						}
+					}
+
 				}
-
-				EulerTransform& objectData = obj.second->transform_;
-
-				json& transform = Jobject["transform"];
-				//平行移動
-				objectData.translate.x = (float)transform["translation"][0];
-				objectData.translate.y = (float)transform["translation"][2];
-				objectData.translate.z = (float)transform["translation"][1];
-				//回転角
-				objectData.rotate.x = -(float)transform["rotation"][0];
-				objectData.rotate.y = -(float)transform["rotation"][2];
-				objectData.rotate.z = -(float)transform["rotation"][1];
-
-				//スケーリング
-				objectData.scale.x = (float)transform["scaling"][0];
-				objectData.scale.y = (float)transform["scaling"][2];
-				objectData.scale.z = (float)transform["scaling"][1];
-
-				objects_.emplace_back(std::move(obj));
-
-				if (Jobject.contains("collider")) {
-					std::pair<std::string, OBB> collider;
-					collider.first = Jobject["name"];
-					//中央
-					collider.second.center.x = (float)Jobject["collider"]["center"][0];
-					collider.second.center.y = (float)Jobject["collider"]["center"][2];
-					collider.second.center.z = (float)Jobject["collider"]["center"][1];
-
-					//スケール
-					collider.second.size.x = (float)Jobject["collider"]["size"][0];
-					collider.second.size.y = (float)Jobject["collider"]["size"][2];
-					collider.second.size.z = (float)Jobject["collider"]["size"][1];
-					colliders_.emplace_back(std::move(collider));
-				}
+				
 			}
-
-			
-
 			
 		}
 		if (Jobject.contains("children")) {
 			LoadJson(Jobject["children"]);
 		}
 	}
+}
+
+std::vector<Object3D*> LevelLoader::GetStationaryObject()const{
+	std::vector<Object3D*> objs;
+	objs.reserve(stationaryObjects_.size());
+	for (const auto& stobj : stationaryObjects_){
+		objs.push_back(stobj.get());
+	}
+
+
+	return objs;
 }
 
 //void LevelLoader::Draw(const ViewProjection& viewProjection){

@@ -183,6 +183,9 @@
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailRender.cpp">
       <Filter>Engine\3D\Object3D\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Stage\StageObject\StageObject.cpp">
+      <Filter>Game\Stage\StageObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -347,6 +350,9 @@
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailRender.h">
       <Filter>Engine\3D\Object3D\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Stage\StageObject\StageObject.h">
+      <Filter>Game\Stage\StageObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli">
@@ -455,6 +461,9 @@
     </Filter>
     <Filter Include="Engine\3D\Object3D\Effect">
       <UniqueIdentifier>{5079bc1e-c459-4723-ab2b-3684f6565435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Stage\StageObject">
+      <UniqueIdentifier>{311ff60b-9e9e-4ad6-822f-a300dc7d85ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

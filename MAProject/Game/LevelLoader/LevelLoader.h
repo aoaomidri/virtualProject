@@ -34,6 +34,8 @@ public:
 
 	//void Draw(const ViewProjection& viewProjection);
 
+	std::vector<Object3D*> GetStationaryObject()const;
+
 	/// <summary>
 	/// 読み込んだレベルデータから3Dオブジェを取得する
 	/// </summary>
@@ -63,6 +65,10 @@ private:
 
 	std::vector<std::pair<std::string, OBB>> colliders_;
 
+	//静止しているオブジェ
+	std::vector <std::unique_ptr<Object3D>>
+		stationaryObjects_;
+
 
 	/*ファイル制御関連*/
 private:
@@ -90,7 +96,7 @@ private:
 	//アイテムのファイルパス
 	inline static const std::string kDirectoryName_ = "resources/Datas";
 	//名前
-	inline static const std::string kfileName_ = "SceneData";
+	inline static const std::string kfileName_ = "StageData";
 
 	//名前
 	inline static const std::string kExtexsion_ = ".json";

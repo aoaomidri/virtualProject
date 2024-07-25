@@ -4,7 +4,11 @@
 #include <memory>
 #include<array>
 #include"GraphicsPipeline.h"
-#include"Texture.h"
+#include"../../externals/DirectXTex/DirectXTex.h"
+#include"../../externals/DirectXTex/d3dx12.h"
+#include"Matrix.h"
+#include"Log.h"
+#include<wrl.h>
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 

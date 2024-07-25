@@ -170,7 +170,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Engine\2D\PostEffect.cpp" />
     <ClCompile Include="Engine\2D\Sprite.cpp" />
-    <ClCompile Include="Engine\2D\Texture.cpp" />
     <ClCompile Include="Engine\2D\TextureManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailRender.cpp" />
@@ -223,7 +222,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Engine\2D\PostEffect.h" />
     <ClInclude Include="Engine\2D\Sprite.h" />
-    <ClInclude Include="Engine\2D\Texture.h" />
     <ClInclude Include="Engine\2D\TextureManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h" />
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailRender.h" />

@@ -168,9 +168,6 @@
     <ClCompile Include="Engine\2D\Sprite.cpp">
       <Filter>Engine\2D\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2D\Texture.cpp">
-      <Filter>Engine\2D\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="math\Ease\Ease.cpp">
       <Filter>math\Ease</Filter>
     </ClCompile>
@@ -330,9 +327,6 @@
       <Filter>Game\WholeGame</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2D\Sprite.h">
-      <Filter>Engine\2D\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2D\Texture.h">
       <Filter>Engine\2D\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2D\TextureManager.h">

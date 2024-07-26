@@ -86,7 +86,15 @@ void Player::Initialize(){
 		}
 	}
 
-	
+	shadow_ = std::make_unique<Sprite>();
+	shadow_->Initialize(TextureManager::GetInstance()->Load("resources/texture/shadow.png"));
+	shadow_->position_;
+	shadow_->rotation_.x = 1.57f;
+	shadow_->scale_ = { 0.7f,0.7f };
+	shadow_->anchorPoint_ = { 0.5f,0.5f };
+
+
+
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("box");
@@ -184,20 +192,20 @@ void Player::Update(){
 	
 	}
 	
+	shadow_->position_ = playerTransform_.translate;
+	shadow_->position_.y = 1.01f;
 
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
 
 	if (isDash_){
-		playerOBB_.center.y = 1000;
-		playerOBB_.size = { 0.0f,0.0f,0.0f };
+		playerOBB_.center.y = 10000;
 
 	}
 	else {
-		playerOBB_.center = playerTransform_.translate;
+		playerOBB_.center = playerTransform_.translate + obbPoint_;
 
-		playerOBB_.size = playerTransform_.scale;
-		playerOBB_.size.y = 0.8f;
+		playerOBB_.size = playerTransform_.scale + obbAddScale_;
 		SetOridentatios(playerOBB_, playerRotateMatrix_);
 	}
 
@@ -210,6 +218,11 @@ void Player::Update(){
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
 
 	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
+
+	playerOBBScaleMatrix_.MakeScaleMatrix(playerOBB_.size);
+	playerOBBTransformMatrix_.MakeTranslateMatrix(playerOBB_.center);
+
+	playerOBBMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTransformMatrix_);
 	weaponScaleMatrix_.MakeScaleMatrix(weaponTransform_.scale);
 	if (behavior_ != Behavior::kRoot) {
 		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
@@ -227,6 +240,10 @@ void Player::Update(){
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
 	}
+}
+
+void Player::TexDraw(const Matrix4x4& viewProjection){
+	shadow_->Draw(viewProjection);
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
@@ -275,7 +292,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		
 
-		/*weaponCollisionObj_->SetMatrix(weaponCollisionMatrix_);
+		/*weaponCollisionObj_->SetMatrix(playerOBBMatrix_);
 		weaponCollisionObj_->Update(viewProjection);
 		weaponCollisionObj_->Draw();*/
 
@@ -332,8 +349,13 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
 	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
+	ImGui::Text("丸影のあれこれ");
+	ImGui::DragFloat3("丸影の回転", &shadow_->rotation_.x, 0.01f);
+	ImGui::DragFloat("丸影の大きさ", &shadow_->scale_.x, 0.01f);
+	shadow_->scale_.y = shadow_->scale_.x;
+	ImGui::DragFloat3("obbの座標", &obbPoint_.x, 0.01f);
+	ImGui::DragFloat3("obbのサイズ", &obbAddScale_.x, 0.01f);
 	ImGui::End();
-	//trail_->DrawImgui("剣のトレイル");
 
 	/*ImGui::Begin("プレイヤーのアニメーション");
 	animetionNames_ = playerSkinAnimObj_->GetAnimations();
@@ -350,7 +372,7 @@ void Player::DrawImgui(){
 }
 
 void Player::onFlootCollision(OBB obb){
-	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y - 0.005f;
+	playerTransform_.translate.y = /*playerOBB_.size.y + */obb.size.y;
 	downVector = { 0.0f,0.0f,0.0f };
 }
 

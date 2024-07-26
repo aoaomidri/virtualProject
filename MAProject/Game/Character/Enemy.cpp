@@ -359,7 +359,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -387,7 +387,7 @@ void Enemy::MotionUpdate(){
 	playerLength_ = Vector3::Length(sub);
 
 	/*エネミーのパーツ*/
-	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
+	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
 	parts_offset = Matrix::GetInstance()->TransformNormal(parts_offset, rotateMatrix_);
 
 	partsTransform_.translate = transform_.translate + parts_offset;

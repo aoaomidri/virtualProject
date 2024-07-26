@@ -175,7 +175,7 @@ void GameScene::Initialize(){
 	startSprite_->isDraw_ = true;
 
 	selectSprite_->position_ = { 380.0f,390.0f };
-	selectSprite_->rotation_ = -1.57f;
+	selectSprite_->rotation_.z = -1.57f;
 	selectSprite_->anchorPoint_ = { 0.5f,0.5f };
 	selectSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 	selectSprite_->isDraw_ = true;
@@ -415,6 +415,9 @@ void GameScene::DrawSkin3D(){
 
 void GameScene::Draw3D(){
 
+	
+
+
 	/*描画前処理*/
 	textureManager_->PreDraw3D();
 
@@ -424,7 +427,7 @@ void GameScene::Draw3D(){
 		
 		break;
 	case SceneName::GAME:
-		floorManager_->Draw(followCamera_->GetViewProjection());
+		
 
 		player_->Draw(followCamera_->GetViewProjection());
 
@@ -442,7 +445,7 @@ void GameScene::Draw3D(){
 	default:
 		assert(0);
 	}
-	
+	floorManager_->Draw(followCamera_->GetViewProjection());
 	stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
@@ -453,6 +456,10 @@ void GameScene::Draw3D(){
 
 	skyBox_->Update(followCamera_->GetViewProjection());
 	skyBox_->Draw();
+
+	textureManager_->PreDrawWorld2D();
+
+	player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
 }
 
 void GameScene::Draw2D(){
@@ -582,18 +589,18 @@ void GameScene::DrawImgui(){
 	}
 
 	ImGui::Begin("スプライト");
-	ImGui::DragFloat2("start : ポジション", &startSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("start : 大きさ", &startSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat3("start : ポジション", &startSprite_->position_.x, 1.0f);
+	ImGui::DragFloat3("start : 大きさ", &startSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("start : 色", &startSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("select : ポジション", &selectSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("select : 大きさ", &selectSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat ("select : 回転", &selectSprite_->rotation_, 0.01f);
+	ImGui::DragFloat3("select : ポジション", &selectSprite_->position_.x, 1.0f);
+	ImGui::DragFloat3("select : 大きさ", &selectSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat3("select : 回転", &selectSprite_->rotation_.x, 0.01f);
 	ImGui::DragFloat4("select : 色", &selectSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("combo : ポジション", &comboSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("combo : 大きさ", &comboSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat3("combo : ポジション", &comboSprite_->position_.x, 1.0f);
+	ImGui::DragFloat3("combo : 大きさ", &comboSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("combo : 色", &comboSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat2("back : ポジション", &backSprite_->position_.x, 1.0f);
-	ImGui::DragFloat2("back : 大きさ", &backSprite_->scale_.x, 1.0f);
+	ImGui::DragFloat3("back : ポジション", &backSprite_->position_.x, 1.0f);
+	ImGui::DragFloat3("back : 大きさ", &backSprite_->scale_.x, 1.0f);
 	ImGui::DragFloat4("back : 色", &backSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 	//particle_->DrawImgui("ステージパーティクル");

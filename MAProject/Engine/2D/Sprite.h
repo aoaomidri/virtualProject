@@ -22,16 +22,16 @@ public:
 	Sprite() = default;
 	~Sprite() = default;
 
-	void Initialize(uint32_t TextureNumber = UINT32_MAX);
-	
-	
+	void Initialize(uint32_t TextureNumber = UINT32_MAX);	
 
 	void Draw();
 
-	///*Setter*///
-	void SetPosition(const Vector2& position) { position_ = position; }
+	void Draw(const Matrix4x4& viewPro);
 
-	void SetRotation(float rotation) { rotation_ = rotation; }
+	///*Setter*///
+	void SetPosition(const Vector3& position) { position_ = position; }
+
+	void SetRotation(const Vector3& rotation) { rotation_ = rotation; }
 
 	void SetScale(const Vector2& scale) { scale_ = scale; }
 
@@ -60,9 +60,9 @@ public:
 
 
 	///*Getter*///
-	const Vector2& GetPosition()const { return position_; }
+	const Vector3& GetPosition()const { return position_; }
 
-	float GetRotation() const { return rotation_; }
+	const Vector3& GetRotation() const { return rotation_; }
 
 	const Vector2& GetScale() const { return scale_; }
 
@@ -76,11 +76,11 @@ public:
 
 	const EulerTransform& GetUVTransform()const { return uvTransform_; }
 
-	bool GetIsDraw() { return isDraw_; }
+	bool GetIsDraw() const { return isDraw_; }
 
-	bool GetIsFlipX() {return isFlipX_ ; }
+	bool GetIsFlipX() const {return isFlipX_ ; }
 	
-	bool GetIsFlipY() { return isFlipY_; }
+	bool GetIsFlipY() const { return isFlipY_; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
@@ -92,6 +92,9 @@ public:
 private:
 
 	void Update();
+	
+	//3d空間上に設置するための更新処理
+	void Update(const Matrix4x4& viewPro);
 
 private:
 	HRESULT hr;
@@ -131,9 +134,9 @@ private:
 public:
 	//データを書き込む
 
-	Vector2 position_ = { 0.0f,0.0f };
+	Vector3 position_ = { 0.0f,0.0f };
 
-	float rotation_;
+	Vector3 rotation_;
 
 	Vector2 scale_ = { 100.0f,100.0f };
 

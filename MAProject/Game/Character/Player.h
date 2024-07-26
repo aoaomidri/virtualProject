@@ -7,6 +7,7 @@
 #include"ViewProjection.h"
 #include"Input.h"
 #include"OBB.h"
+#include"Sprite.h"
 #include"Adjustment_Item.h"
 #include"Quaternion.h"
 #include"HitRecord.h"
@@ -27,6 +28,9 @@ public:
 	void Initialize();
 	//更新処理
 	void Update();
+
+	void TexDraw(const Matrix4x4& viewProjection);
+
 	//描画
 	void Draw(const ViewProjection& viewProjection);
 
@@ -208,6 +212,7 @@ private:
 
 	//自機のSRT
 	EulerTransform playerTransform_{};
+	
 	//武器のSRT
 	EulerTransform weaponTransform_{};
 	EulerTransform weaponCollisionTransform_{};
@@ -220,6 +225,10 @@ private:
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};
 	Matrix4x4 playerTransformMatrix_{};
+
+	Matrix4x4 playerOBBTransformMatrix_{};
+	Matrix4x4 playerOBBScaleMatrix_{};
+	Matrix4x4 playerOBBMatrix_{};
 
 	//武器のマトリックス
 	Matrix4x4 weaponMatrix_{};
@@ -342,5 +351,13 @@ private:
 	size_t rightHandNumber_;
 
 	EulerTransform particleTrans_;
+
+	std::unique_ptr<Sprite> shadow_;
+
+	//Obbの補正値
+	Vector3 obbPoint_ = { -0.02f,0.75f,-0.05f };
+
+	//Obbの補正値
+	Vector3 obbAddScale_ = { -0.65f,-0.2f,-0.65f };
 };
 

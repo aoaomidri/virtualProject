@@ -35,6 +35,17 @@ void GraphicsPipeline::Initialize2D(const std::wstring& VSname, const std::wstri
 	makeGraphicsPipeline(DirectXCommon::GetInstance()->GetDevice());
 }
 
+void GraphicsPipeline::InitializeWorld2D(const std::wstring& VSname, const std::wstring& PSname){
+	makeRootSignature(DirectXCommon::GetInstance()->GetDevice());
+	makeInputLayout();
+	makeRasterizerState(false);
+	makeBlendState(kBlendModeNormal);
+	ShaderCompile(VSname, PSname);
+	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
+
+	makeGraphicsPipeline(DirectXCommon::GetInstance()->GetDevice());
+}
+
 void GraphicsPipeline::ParticleExclusiveInitialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling, const BlendMode& blend){
 	makeParticleRootSignature(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayout();

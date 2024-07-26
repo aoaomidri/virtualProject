@@ -14,6 +14,10 @@ TextureManager* TextureManager::GetInstance() {
 void TextureManager::Initialize() {
 	GraphicsPipeline2D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline2D_->Initialize2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
+
+	GraphicsPipelineWorld2D_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineWorld2D_->InitializeWorld2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
+
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/MappingObject3d.PS.hlsl", true);
 
@@ -127,6 +131,16 @@ void TextureManager::PreDraw2D(){
 
 void TextureManager::PostDraw2D()
 {
+}
+
+void TextureManager::PreDrawWorld2D(){
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipelineWorld2D_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipelineWorld2D_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void TextureManager::PreDraw3D(){

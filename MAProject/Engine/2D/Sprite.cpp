@@ -47,7 +47,7 @@ void Sprite::Initialize(uint32_t TextureNumber){
 void Sprite::Update(){
 
 	transformSprite.translate = { position_.x,position_.y,0.0f };
-	transformSprite.rotate = { 0.0f,0.0f,rotation_ };	
+	transformSprite.rotate = { 0.0f,0.0f,rotation_.z };
 	
 	//scale_ = textureSize_;
 
@@ -121,6 +121,81 @@ void Sprite::Update(){
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
+void Sprite::Update(const Matrix4x4& viewPro){
+	transformSprite.translate = position_;
+	transformSprite.rotate = rotation_;
+	transformSprite.scale = { scale_.x,scale_.y,0 };
+
+	//scale_ = textureSize_;
+
+	if (!isDraw_) {
+		return;
+	}
+
+	ID3D12Resource* textureBuffer = textureManager_->GetTextureBuffer(textureNumber_);
+	if (textureBuffer) {
+		//テクスチャ情報取得
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+		float tex_left = textureLeftTop_.x / resDesc.Width;
+		float tex_right = (textureLeftTop_.x + textureSize_.x) / resDesc.Width;
+		float tex_top = textureLeftTop_.y / resDesc.Height;
+		float tex_bottom = (textureLeftTop_.y + textureSize_.y) / resDesc.Height;
+
+		//頂点のUVに反映する
+		vertexDataSprite[0].texcoord = { tex_left,tex_bottom };		//左下
+		vertexDataSprite[1].texcoord = { tex_left,tex_top };		//左上
+		vertexDataSprite[2].texcoord = { tex_right,tex_bottom };	//右下
+		vertexDataSprite[3].texcoord = { tex_right,tex_top };		//右上
+	}
+
+	if (anchorPoint_.x < 0) {
+		anchorPoint_.x = 0.0f;
+	}
+	else if (anchorPoint_.x > 1) {
+		anchorPoint_.x = 1.0f;
+	}
+	if (anchorPoint_.y < 0) {
+		anchorPoint_.y = 0.0f;
+	}
+	else if (anchorPoint_.y > 1) {
+		anchorPoint_.y = 1.0f;
+	}
+
+	float left = (0.0f - anchorPoint_.x) * scale_.x;
+	float right = (1.0f - anchorPoint_.x) * scale_.x;
+	float top = (0.0f - anchorPoint_.y) * scale_.y;
+	float bottom = (1.0f - anchorPoint_.y) * scale_.y;
+
+	//左右反転
+	if (isFlipX_) {
+		left *= -1.0f;
+		right *= -1.0f;
+	}
+	//上下反転
+	if (isFlipY_) {
+		top *= -1.0f;
+		bottom *= -1.0f;
+	}
+
+	//頂点データ
+	vertexDataSprite[0].position = { left,bottom,0.0f,1.0f };//左下
+	vertexDataSprite[1].position = { left,top,0.0f,1.0f };//左上
+	vertexDataSprite[2].position = { right,bottom,0.0f,1.0f };//右下
+	vertexDataSprite[3].position = { right,top,0.0f,1.0f };//右上
+
+	materialDate->color = color_;
+
+	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, viewPro);
+	*wvpDataSprite = worldViewProjectionMatrixSprite;
+
+	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransform_.scale);
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransform_.rotate));
+	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransform_.translate));
+	materialDate->uvTransform = uvTransformMatrixSprite;
+}
+
 void Sprite::Draw(){
 
 	if (!isDraw_){
@@ -140,6 +215,24 @@ void Sprite::Draw(){
 	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 
+}
+
+void Sprite::Draw(const Matrix4x4& viewPro){
+	if (!isDraw_) {
+		return;
+	}
+	Update(viewPro);
+	//2Dの描画
+	//マテリアルにCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable(2, textureManager_->SendGPUDescriptorHandle(textureNumber_));
+	//Spriteの描画。変更が必要なものだけ変更する
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+	commandList_->IASetIndexBuffer(&indexBufferViewSprite);
+	//TransformationMatrixCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResourceSprite->GetGPUVirtualAddress());
+	//描画
+	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Sprite::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {

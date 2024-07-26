@@ -176,6 +176,21 @@ public:
 		return result;
 	}
 
+	//自身を正規化する
+	void myNormalize() {
+		Vector3 result{ 0, 0, 0 };
+		float bulletNorm = static_cast<float>(sqrt((this->x * x) + (y * y) + (z * z)));
+
+		if (bulletNorm != 0.0f) {
+
+			result = { (x / bulletNorm), (y / bulletNorm), (z / bulletNorm) };
+		}
+
+		x = result.x;
+		y = result.y;
+		z = result.z;
+	}
+
 	static float LerpShortAngle(float a, float b, float t) {
 		float diff = b - a;
 
@@ -214,7 +229,11 @@ public:
 		return x != 0.000f || y != 0.000f || z != 0.000f;
 	}
 
+	
+
 private:
+	
+
 };
 
 /// <summary>

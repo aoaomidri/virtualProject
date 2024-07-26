@@ -426,21 +426,21 @@ void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/
 	if (input_->PushUp()) {
-		//move_.z = moveSpeed_;
+		move_.z = moveSpeed_;
 
 	}
 	else if (input_->PushDown()) {
-		//move_.z = -moveSpeed_view
+		move_.z = -moveSpeed_;
 	}
 	else {
 		move_.z = input_->GetPadLStick().y * moveSpeed_;
 	}
 
 	if (input_->PushRight()) {
-		//move_.x = moveSpeed_;
+		move_.x = moveSpeed_;
 	}
 	else if (input_->PushLeft()) {
-		//move_.x = -moveSpeed_;
+		move_.x = -moveSpeed_;
 	}
 	else {
 		move_.x = input_->GetPadLStick().x * moveSpeed_;

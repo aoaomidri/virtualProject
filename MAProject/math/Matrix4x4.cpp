@@ -307,33 +307,57 @@ Matrix4x4 Matrix4x4::MakeRotateAxisAngle(const Vector3& axis, float angle){
 }
 
 Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to){
-	Vector3 normalizeVec{};
-	Vector3 cross = Vector3::Cross(from, to);
+	Identity();
 
-	if (Vector3::Dot(from, to) == -1) {
-		if (from.x != 0.0f || from.z != 0.0f) {
-			normalizeVec = { from.z,0,-from.x };
+	// 正規化されたベクトルを取得
+	Vector3 normFrom = Vector3::Normalize(from);
+	Vector3 normTo = Vector3::Normalize(to);
+
+	float dot = Vector3::Dot(normFrom, normTo);
+
+	Vector3 cross = Vector3::Cross(normFrom, normTo);
+
+	if (dot == -1.0f) {
+		Vector3 orthogonalVec{};
+		if (normFrom.x != 0.0f || normFrom.z != 0.0f) {
+			orthogonalVec = { normFrom.z, 0.0f, -normFrom.x };
 		}
-		else if (from.x != 0.0f || from.y != 0.0f) {
-			normalizeVec = { from.y,-from.x,0.0f };
+		else {
+			orthogonalVec = { normFrom.y, -normFrom.x, 0.0f };
 		}
+		orthogonalVec = Vector3::Normalize(orthogonalVec);
+
+		m[0][0] = -1.0f + 2.0f * orthogonalVec.x * orthogonalVec.x;
+		m[0][1] = 2.0f * orthogonalVec.x * orthogonalVec.y;
+		m[0][2] = 2.0f * orthogonalVec.x * orthogonalVec.z;
+
+		m[1][0] = 2.0f * orthogonalVec.y * orthogonalVec.x;
+		m[1][1] = -1.0f + 2.0f * orthogonalVec.y * orthogonalVec.y;
+		m[1][2] = 2.0f * orthogonalVec.y * orthogonalVec.z;
+
+		m[2][0] = 2.0f * orthogonalVec.z * orthogonalVec.x;
+		m[2][1] = 2.0f * orthogonalVec.z * orthogonalVec.y;
+		m[2][2] = -1.0f + 2.0f * orthogonalVec.z * orthogonalVec.z;
 	}
 	else {
-		normalizeVec = Vector3::Normalize(cross);
-	}
-	float sinTheta = Vector3::Length(cross);
-	float cosTheta = Vector3::Dot(from, to);
-	m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
-	m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
-	m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
-	m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
-	m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
-	m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
-	m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
-	m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
-	m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
+		Vector3 normalizeVec = Vector3::Normalize(cross);
+		float cosTheta = dot;
+		float sinTheta = Vector3::Length(cross);
+		m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
+		m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
+		m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
+		
+		m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
+		m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
+		m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
+		
+		m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
+		m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
+		m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
 
-	m[3][3] = 1.0f;
+		m[3][3] = 1.0f;
+	}
+	
 	return *this;
 }
 

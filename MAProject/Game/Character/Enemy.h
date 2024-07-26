@@ -298,6 +298,10 @@ private:
 	//突進への移行時間
 	uint32_t attackTransitionTime_;
 
+	/*回転ビーム*/
+
+	//回転補完係数
+	float angle_t = 0.8f;
 
 private:
 	//ディゾルブ関係

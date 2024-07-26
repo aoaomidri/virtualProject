@@ -116,8 +116,8 @@ void Enemy::Initialize(const Vector3& position){
 
 	behavior_ = Behavior::kRoot;
 
-	postureVec_ = { 0.0f,0.0f,1.0f };
-	frontVec_ = { 0.0f,0.0f,1.0f };
+	postureVec_ = { 0.0f,0.0f,-1.0f };
+	frontVec_ = { 0.0f,0.0f,-1.0f };
 	
 	
 

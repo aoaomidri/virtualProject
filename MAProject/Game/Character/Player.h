@@ -354,6 +354,8 @@ private:
 
 	std::unique_ptr<Sprite> shadow_;
 
+	float shadowScaleBase_ = 0.9f;
+
 	//Obbの補正値
 	Vector3 obbPoint_ = { -0.02f,0.75f,-0.05f };
 

@@ -92,7 +92,7 @@ void Player::Initialize(){
 	shadow_->rotation_.x = 1.57f;
 	shadow_->scale_ = { 0.7f,0.7f };
 	shadow_->anchorPoint_ = { 0.5f,0.5f };
-
+	shadow_->color_.w = 0.5f;
 
 
 
@@ -194,6 +194,12 @@ void Player::Update(){
 	
 	shadow_->position_ = playerTransform_.translate;
 	shadow_->position_.y = 1.01f;
+
+	shadow_->scale_.x = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
+
+	if (shadow_->scale_.x < 0.0f) {
+		shadow_->scale_.x = 0.0f;
+	}
 
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);

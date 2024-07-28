@@ -103,7 +103,7 @@ private:
 	const float offset_t = 0.1f;
 
 	// 位置補完レート
-	float t = 0.1f;
+	float t_ = 0.1f;
 	//アングル補完レート
 	float angle_t = 0.1f;
 

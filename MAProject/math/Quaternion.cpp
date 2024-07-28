@@ -188,3 +188,65 @@ Quaternion Quaternion::Slerp(Quaternion q0, const Quaternion& q1, float t){
 
 	return result;
 }
+
+Quaternion Quaternion::FromMatrix(const Matrix4x4& mat){
+
+	Quaternion result;
+	float trace = mat.m[0][0] + mat.m[1][1] + mat.m[2][2];
+	if (trace > 0) {
+		float s = 0.5f / sqrtf(trace + 1.0f);
+		result.w = 0.25f / s;
+		result.vector_.x = (mat.m[2][1] - mat.m[1][2]) * s;
+		result.vector_.y = (mat.m[0][2] - mat.m[2][0]) * s;
+		result.vector_.z = (mat.m[1][0] - mat.m[0][1]) * s;
+	}
+	else {
+		if (mat.m[0][0] > mat.m[1][1] && mat.m[0][0] > mat.m[2][2]) {
+			float s = 2.0f * sqrtf(1.0f + mat.m[0][0] - mat.m[1][1] - mat.m[2][2]);
+			result.w = (mat.m[2][1] - mat.m[1][2]) / s;
+			result.vector_.x = 0.25f * s;
+			result.vector_.y = (mat.m[0][1] + mat.m[1][0]) / s;
+			result.vector_.z = (mat.m[0][2] + mat.m[2][0]) / s;
+		}
+		else if (mat.m[1][1] > mat.m[2][2]) {
+			float s = 2.0f * sqrtf(1.0f + mat.m[1][1] - mat.m[0][0] - mat.m[2][2]);
+			result.w = (mat.m[0][2] - mat.m[2][0]) / s;
+			result.vector_.x = (mat.m[0][1] + mat.m[1][0]) / s;
+			result.vector_.y = 0.25f * s;
+			result.vector_.z = (mat.m[1][2] + mat.m[2][1]) / s;
+		}
+		else {
+			float s = 2.0f * sqrtf(1.0f + mat.m[2][2] - mat.m[0][0] - mat.m[1][1]);
+			result.w = (mat.m[1][0] - mat.m[0][1]) / s;
+			result.vector_.x = (mat.m[0][2] + mat.m[2][0]) / s;
+			result.vector_.y = (mat.m[1][2] + mat.m[2][1]) / s;
+			result.vector_.z = 0.25f * s;
+		}
+	}
+	result.quaternion_ = { result.vector_.x,result.vector_.y, result.vector_.z, result.w };
+	return result;
+}
+
+Matrix4x4 Quaternion::Slerp(Matrix4x4 m0, const Matrix4x4& m1, float t){
+	Quaternion fromQuater = FromMatrix(m0);
+
+	Quaternion toQuater = FromMatrix(m1);
+
+	Quaternion interpolateQuater = Slerp(fromQuater, toQuater, t);
+
+	return MakeRotateMatrix((interpolateQuater));
+}
+
+Matrix4x4 Quaternion::Slerp(Vector3 m0, const Vector3& m1, float t){
+	Matrix4x4 fromMatrix; 
+	fromMatrix.DirectionToDirection(Vector3{ 0,0,1.0f }, m0);
+	Matrix4x4 toMatrix;  
+	toMatrix.DirectionToDirection(Vector3{ 0,0,1.0f }, m1);
+
+	Quaternion fromQuat = FromMatrix(fromMatrix);
+	Quaternion toQuat = FromMatrix(toMatrix);
+
+	Quaternion interpolatedQuat = Slerp(fromQuat, toQuat, t);
+
+	return MakeRotateMatrix(interpolatedQuat);
+}

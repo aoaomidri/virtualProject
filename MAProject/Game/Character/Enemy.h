@@ -239,7 +239,7 @@ private:
 	enum class AttackBehavior {
 		kTriple,		//三連撃
 		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
-		kBeam,			//ビーム攻撃
+		kBeam,			//ビーム攻撃(保留)
 		kTackle,		//突進攻撃
 		kRotateAttack,	//回転して追尾しながらの攻撃
 		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)

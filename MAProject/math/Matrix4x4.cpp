@@ -317,6 +317,10 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 
 	Vector3 cross = Vector3::Cross(normFrom, normTo);
 
+	Vector3 normalizeVec = Vector3::Normalize(cross);
+	float cosTheta = dot;
+	float sinTheta = Vector3::Length(cross);
+
 	if (dot == -1.0f) {
 		Vector3 orthogonalVec{};
 		if (normFrom.x != 0.0f || normFrom.z != 0.0f) {
@@ -340,9 +344,7 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 		m[2][2] = -1.0f + 2.0f * orthogonalVec.z * orthogonalVec.z;
 	}
 	else {
-		Vector3 normalizeVec = Vector3::Normalize(cross);
-		float cosTheta = dot;
-		float sinTheta = Vector3::Length(cross);
+		
 		m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
 		m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
 		m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);

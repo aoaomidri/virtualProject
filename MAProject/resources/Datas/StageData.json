@@ -76,7 +76,7 @@
                 "translation": [
                     0.0,
                     -30.0,
-                    0.9699999809265137
+                    0.7699999809265137
                 ],
                 "rotation": [
                     0.0,
@@ -106,11 +106,11 @@
         },
         {
             "type": "MESH",
-            "name": "StageObject",
+            "name": "StageObject.004",
             "transform": {
                 "translation": [
-                    100.0,
                     -100.0,
+                    100.0,
                     0.0
                 ],
                 "rotation": [
@@ -153,8 +153,8 @@
             "name": "StageObject.002",
             "transform": {
                 "translation": [
-                    -100.0,
                     100.0,
+                    -100.0,
                     0.0
                 ],
                 "rotation": [

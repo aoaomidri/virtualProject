@@ -38,6 +38,14 @@ public:
 	//球面線形補間
 	Quaternion Slerp(Quaternion q0, const Quaternion& q1, float t);
 
+	//Matrixをクウォータニオンに変換
+	Quaternion FromMatrix(const Matrix4x4& mat);
+	//球面線形補間(Matrixをクウォータニオンに変換し、補完を掛けた後に戻す)
+	Matrix4x4 Slerp(Matrix4x4 m0, const Matrix4x4& m1, float t);
+
+	//球面線形補間(Matrixをクウォータニオンに変換し、補完を掛けた後に戻す)
+	Matrix4x4 Slerp(Vector3 m0, const Vector3& m1, float t);
+
 public:
 
 	Vector4 quaternion_;

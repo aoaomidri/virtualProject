@@ -244,6 +244,11 @@ EulerTransform LevelLoader::GetLevelObjectTransform(const std::string tag){
 			return object.second.get()->GetTransform();
 		}
 	}
+	for (auto& object : skinAnimObjects_) {
+		if (object.first == tag) {
+			return object.second.get()->GetTransform();
+		}
+	}
 	return EulerTransform();
 }
 

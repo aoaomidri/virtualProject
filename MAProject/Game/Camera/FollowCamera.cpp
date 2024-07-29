@@ -135,6 +135,12 @@ void FollowCamera::RotateReset(){
 	destinationAngleX_ = 0.2f;
 }
 
+void FollowCamera::CameraPosInit(){
+	destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleX_ = 0.2f;
+	cameraMove_ = { 0,0,0 };
+}
+
 Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	Vector3 offset_ = offset;
 	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);

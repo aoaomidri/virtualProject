@@ -88,7 +88,6 @@ void Player::Initialize(){
 
 	shadow_ = std::make_unique<Sprite>();
 	shadow_->Initialize(TextureManager::GetInstance()->Load("resources/texture/shadow.png"));
-	shadow_->position_;
 	shadow_->rotation_.x = 1.57f;
 	shadow_->scale_ = { 0.7f,0.7f };
 	shadow_->anchorPoint_ = { 0.5f,0.5f };
@@ -196,9 +195,11 @@ void Player::Update(){
 	shadow_->position_.y = 1.01f;
 
 	shadow_->scale_.x = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
+	shadow_->scale_.y = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
 
 	if (shadow_->scale_.x < 0.0f) {
 		shadow_->scale_.x = 0.0f;
+		shadow_->scale_.y = 0.0f;
 	}
 
 	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
@@ -388,12 +389,18 @@ void Player::Respawn(){
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 
-	playerTransform_ = {
-			.scale = {1.5f,1.5f,1.5f},
-			.rotate = {0.0f,0.0f,0.0f},
-			.translate = {0.0f,0.8f,0.0f}
-	};
+	playerTransform_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Player");
 	downVector = { 0.0f,0.0f,0.0f };
+
+	playerScaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(playerTransform_.scale);
+	playerTransformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(playerTransform_.translate);
+
+	playerMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
+
+	shadow_->rotation_.x = 1.57f;
+	shadow_->scale_ = { 0.7f,0.7f };
+	shadow_->anchorPoint_ = { 0.5f,0.5f };
+	shadow_->color_.w = 0.5f;
 }
 
 void Player::SetHitTimer(){

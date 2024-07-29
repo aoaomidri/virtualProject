@@ -28,6 +28,8 @@ public:
 
 	void RotateReset();
 
+	void CameraPosInit();
+
 	Vector3 offsetCalculation(const Vector3& offset) const;
 
 	void DrawImgui();

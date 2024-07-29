@@ -149,6 +149,8 @@ public:
 
 	const bool GetIsDraw()const { return isDraw_; }
 
+	const EulerTransform& GetTransform()const { return transform_; }
+
 	const std::vector<Model::Joint>& GetJoint()const { return skeleton_.joints; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);

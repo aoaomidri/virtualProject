@@ -241,6 +241,7 @@ void GameScene::Update(){
 		
 		//audio_->PauseWave(gameBGM);
 		followCamera_->SetIsMove(false);
+		followCamera_->CameraPosInit();
 		for (const auto& enemy : enemies_) {
 			enemy->Update();
 		}
@@ -336,10 +337,11 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
+		followCamera_->CameraPosInit();
 		//audio_->PauseWave(gameBGM);
 		
 		if (isReset_){
-			player_->Initialize();
+			player_->Respawn();
 			player_->Update();
 			for (const auto& enemy : enemies_) {
 				enemy->Initialize({ 0, 1.0f, 20.0f });
@@ -409,7 +411,21 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawSkin3D(){
 	textureManager_->PreDrawSkin3D();
-	player_->SkinningDraw(followCamera_->GetViewProjection());
+	switch (sceneNum_) {
+	case SceneName::TITLE:
+
+		break;
+	case SceneName::GAME:
+		player_->SkinningDraw(followCamera_->GetViewProjection());
+
+
+		break;
+	case SceneName::CLEAR:
+
+		break;
+	default:
+		assert(0);
+	}
 
 }
 
@@ -458,8 +474,15 @@ void GameScene::Draw3D(){
 	skyBox_->Draw();
 
 	textureManager_->PreDrawWorld2D();
+	switch (sceneNum_){
+	case SceneName::GAME:
+		player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
+		break;
+	default:
+		break;
+	}
 
-	player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
+	
 }
 
 void GameScene::Draw2D(){

@@ -359,7 +359,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -458,10 +458,9 @@ void Enemy::RootMotion(){
 		behaviorRequest_ = Behavior::kBack;
 	}
 	else if (farTime_ > lengthJudgment_) {
-		//int i = RandomMaker::DistributionInt(0, 1);
-		int i = 1;
+		int i = RandomMaker::DistributionInt(0, 1);
 		if (i == 0) {
-			behaviorRequest_ = Behavior::kDash;
+			behaviorRequest_ = Behavior::kRun;
 		}
 		else {
 			behaviorRequest_ = Behavior::kAttack;
@@ -552,8 +551,8 @@ void Enemy::EnemyRun(){
 		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {
-		//int i = RandomMaker::DistributionInt(0, 1);
-		int i = 1;
+		int i = RandomMaker::DistributionInt(0, 1);
+		
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kFree;
 		}
@@ -597,7 +596,15 @@ void Enemy::DeadMotion(){
 }
 
 void Enemy::BehaviorAttackInitialize() {
-	ATBehaviorRequest_ = AttackBehavior::kTackle;
+	int i = RandomMaker::DistributionInt(0, 1);
+
+	if (i == 0) {
+		ATBehaviorRequest_ = AttackBehavior::kTriple;
+	}
+	else {
+		ATBehaviorRequest_ = AttackBehavior::kTackle;
+	}
+
 }
 
 void Enemy::BehaviorAttackSelectInitialize()

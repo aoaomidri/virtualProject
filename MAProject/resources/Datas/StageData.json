@@ -28,8 +28,8 @@
                     "transform": {
                         "translation": [
                             0.0,
-                            0.103515625e-05,
-                            1.0
+                            0.0,
+                            -7.62939453125e-06
                         ],
                         "rotation": [
                             0.0,
@@ -191,6 +191,358 @@
                 ]
             },
             "file_name": "LargeSimpleTower"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.005",
+            "transform": {
+                "translation": [
+                    100.0,
+                    -74.11000061035156,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject",
+            "transform": {
+                "translation": [
+                    100.0,
+                    72.33000183105469,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.006",
+            "transform": {
+                "translation": [
+                    100.0,
+                    -25.739999771118164,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.007",
+            "transform": {
+                "translation": [
+                    100.0,
+                    23.270000457763672,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.008",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    -25.739999771118164,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.009",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    -74.11000061035156,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.010",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    23.270000457763672,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.011",
+            "transform": {
+                "translation": [
+                    -100.0,
+                    72.33000183105469,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -90.00000762939453
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.012",
+            "transform": {
+                "translation": [
+                    73.86000061035156,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.013",
+            "transform": {
+                "translation": [
+                    -73.08999633789062,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.014",
+            "transform": {
+                "translation": [
+                    -24.079999923706055,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.015",
+            "transform": {
+                "translation": [
+                    24.90999984741211,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.016",
+            "transform": {
+                "translation": [
+                    73.86000061035156,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.017",
+            "transform": {
+                "translation": [
+                    24.90999984741211,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.018",
+            "transform": {
+                "translation": [
+                    -24.079999923706055,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
+        },
+        {
+            "type": "MESH",
+            "name": "StageObject.019",
+            "transform": {
+                "translation": [
+                    -73.08999633789062,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    32.0,
+                    10.0,
+                    10.0
+                ]
+            },
+            "file_name": "wall"
         }
     ]
 }

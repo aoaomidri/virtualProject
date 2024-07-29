@@ -65,6 +65,8 @@ private:
 
 	std::vector<std::pair<std::string, OBB>> colliders_;
 
+	std::vector<EulerTransform> boneTransforms_;
+
 	//静止しているオブジェ
 	std::vector <std::unique_ptr<Object3D>>
 		stationaryObjects_;

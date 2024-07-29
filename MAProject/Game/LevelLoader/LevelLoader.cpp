@@ -52,6 +52,27 @@ void LevelLoader::LoadJson(json jData){
 		//種類を取得
 		std::string type = Jobject["type"].get< std::string>();
 
+		//ボーンがあるとき
+		if (type.compare("ARMATURE") == 0) {
+			EulerTransform boneTrans{};
+			json& transform = Jobject["transform"];
+			//平行移動
+			boneTrans.translate.x = (float)transform["translation"][0];
+			boneTrans.translate.y = (float)transform["translation"][2];
+			boneTrans.translate.z = (float)transform["translation"][1];
+			//回転角
+			boneTrans.rotate.x = -(float)transform["rotation"][0];
+			boneTrans.rotate.y = -(float)transform["rotation"][2];
+			boneTrans.rotate.z = -(float)transform["rotation"][1];
+
+			//スケーリング
+			boneTrans.scale.x = (float)transform["scaling"][0];
+			boneTrans.scale.y = (float)transform["scaling"][2];
+			boneTrans.scale.z = (float)transform["scaling"][1];
+
+			boneTransforms_.emplace_back(boneTrans);
+		}
+
 		//MESH
 		if (type.compare("MESH") == 0) {
 			
@@ -72,9 +93,7 @@ void LevelLoader::LoadJson(json jData){
 
 				json& transform = Jobject["transform"];
 				//平行移動
-				objectData.translate.x = (float)transform["translation"][0];
-				objectData.translate.y = (float)transform["translation"][2];
-				objectData.translate.z = (float)transform["translation"][1];
+				objectData.translate = boneTransforms_.begin()->translate;
 				//回転角
 				objectData.rotate.x = -(float)transform["rotation"][0];
 				objectData.rotate.y = -(float)transform["rotation"][2];

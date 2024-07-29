@@ -337,12 +337,13 @@ void GameScene::Update(){
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
-		followCamera_->CameraPosInit();
+		
 		//audio_->PauseWave(gameBGM);
 		
 		if (isReset_){
 			player_->Respawn();
 			player_->Update();
+			followCamera_->CameraPosInit();
 			for (const auto& enemy : enemies_) {
 				enemy->Initialize({ 0, 1.0f, 20.0f });
 			}

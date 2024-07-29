@@ -469,10 +469,10 @@ void GameScene::Draw3D(){
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
 
-	textureManager_->PreDrawSkyBox();
+	//textureManager_->PreDrawSkyBox();
 
-	skyBox_->Update(followCamera_->GetViewProjection());
-	skyBox_->Draw();
+	//skyBox_->Update(followCamera_->GetViewProjection());
+	//skyBox_->Draw();
 
 	textureManager_->PreDrawWorld2D();
 	switch (sceneNum_){

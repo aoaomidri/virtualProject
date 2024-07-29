@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include<math.h>
 #include<iostream>
+#include <cmath>
+#include <numbers>
 class Vector3 {
 public:
 	float x, y, z;
@@ -218,6 +220,18 @@ public:
 		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));
 		result = bulletNorm;
 		return result;
+	}
+
+	float DegreesToRadians(float degrees) {
+		return (float)(degrees * (std::numbers::pi / 180.0f));
+	}
+
+	Vector3 DegreesToRadians(){
+		return Vector3(
+			DegreesToRadians(this->x),
+			DegreesToRadians(this->y),
+			DegreesToRadians(this->z)
+		);
 	}
 
 	//全部が0の場合tureを返す

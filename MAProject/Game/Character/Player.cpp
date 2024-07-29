@@ -489,6 +489,15 @@ void Player::BehaviorRootUpdate(){
 		downVector.y += jumpPower;
 		
 	}
+	Vector3 NextPos = playerTransform_.translate + move_;
+
+	if (NextPos.x >= 97.0f or NextPos.x <= -97.0f){
+		move_.x = 0;
+	}
+	if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+		move_.z = 0;
+	}
+
 	playerTransform_.translate += move_;
 	
 	if (isDown_) {
@@ -501,7 +510,7 @@ void Player::BehaviorRootUpdate(){
 
 	}
 	else {
-		if (move_.x == 0.0f && move_.z == 0.0f && playerSkinAnimObj_->ChackAnimationName() != "jump") {
+		if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerSkinAnimObj_->ChackAnimationName() != "jump") {
 			playerSkinAnimObj_->ChangeAnimation("stand");
 			playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
 			playerSkinAnimObj_->SetAnimSpeed(1.0f);
@@ -897,6 +906,14 @@ void Player::BehaviorDashUpdate(){
 	const uint32_t behaviorDashTime = 15;
 
 	if (!isCollisionEnemy_) {
+		Vector3 NextPos = playerTransform_.translate + move_;
+
+		if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			move_.x = 0;
+		}
+		if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			move_.z = 0;
+		}
 		playerTransform_.translate += move_;
 	}
 
@@ -931,6 +948,14 @@ void Player::AttackMotion(){
 			move_ = { 0, 0, moveSpeed_ * 2.5f };
 			move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 			if (!isCollisionEnemy_){
+				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
+
+				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+					move_.x = 0;
+				}
+				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+					move_.z = 0;
+				}
 				playerTransform_.translate += move_ * motionSpeed_;
 			}
 			weaponCollisionTransform_.rotate.z = 3.14f;
@@ -973,6 +998,15 @@ void Player::secondAttackMotion(){
 		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
+			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
+
+			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				move_.z = 0;
+			}
+
 			playerTransform_.translate += move_ * motionSpeed_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
@@ -1019,6 +1053,14 @@ void Player::thirdAttackMotion(){
 			move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 			if (!isCollisionEnemy_) {
+				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
+
+				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+					move_.x = 0;
+				}
+				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+					move_.z = 0;
+				}
 				playerTransform_.translate += move_ * motionSpeed_;
 			}
 			weaponTransform_.translate = playerTransform_.translate;
@@ -1084,6 +1126,15 @@ void Player::fifthAttackMotion(){
 		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
+			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
+
+			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				move_.z = 0;
+			}
+
 			playerTransform_.translate += move_ * motionSpeed_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
@@ -1291,6 +1342,15 @@ void Player::thirdStrongAttackMotion(){
 		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
+			Vector3 NextPos = playerTransform_.translate + move_;
+
+			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				move_.z = 0;
+			}
+
 			playerTransform_.translate += move_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
@@ -1337,6 +1397,15 @@ void Player::fourthStrongAttackMotion(){
 
 			
 			if (!isCollisionEnemy_) {
+				Vector3 NextPos = playerTransform_.translate + move_;
+
+				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+					move_.x = 0;
+				}
+				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+					move_.z = 0;
+				}
+
 				playerTransform_.translate += move_;
 			}
 			weaponTransform_.translate = playerTransform_.translate;
@@ -1364,6 +1433,15 @@ void Player::fifthStrongAttackMotion(){
 		move_ = Matrix::GetInstance()->TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
+			Vector3 NextPos = playerTransform_.translate + move_;
+
+			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				move_.z = 0;
+			}
+
 			playerTransform_.translate += move_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;

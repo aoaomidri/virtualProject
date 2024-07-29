@@ -140,6 +140,8 @@ void LevelLoader::LoadJson(json jData){
 						objectData.rotate.y = -(float)transform["rotation"][2];
 						objectData.rotate.z = -(float)transform["rotation"][1];
 
+						objectData.rotate = objectData.rotate.DegreesToRadians();
+
 						//スケーリング
 						objectData.scale.x = (float)transform["scaling"][0];
 						objectData.scale.y = (float)transform["scaling"][2];

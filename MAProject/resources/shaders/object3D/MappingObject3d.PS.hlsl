@@ -106,12 +106,34 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
 		float32_t4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
 
+		float32_t mask = gMaskTexture.Sample(gSampler, input.texcoord);
+		//maskの値が閾値以下の場合はdiscardして抜く
+		if(mask <= gThreshold.threshold){
+			discard;
+		}
+
+		//Edgeっぽさを算出
+		float32_t edge = 1.0f - smoothstep(gThreshold.threshold, gThreshold.threshold + 0.02f,mask);
+
 		output.color.rgb += environmentColor.rgb * gMaterial.shininess;
+
+		output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
 
 		output.color.a = gMaterial.color.a * textureColor.a;
 		
 	}else{
+		float32_t mask = gMaskTexture.Sample(gSampler, input.texcoord);
+		//maskの値が閾値以下の場合はdiscardして抜く
+		if(mask <= gThreshold.threshold){
+			discard;
+		}
+
+		//Edgeっぽさを算出
+		float32_t edge = 1.0f - smoothstep(gThreshold.threshold, gThreshold.threshold + 0.02f,mask);
+
 		output.color = gMaterial.color * textureColor;
+
+		output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
 	}
 	if (textureColor.a <= 0.5 || output.color.a ==0.0){
 		discard;

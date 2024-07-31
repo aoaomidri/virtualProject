@@ -56,6 +56,8 @@ public:
 
 	void PreDraw3D();
 
+	void PreDrawMapping3D();
+
 	void PostDraw3D();
 
 	void PreDrawSkyBox();
@@ -133,6 +135,8 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineWorld2D_;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline3D_;
+
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineMapping3D_;
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSkyBox_;
 

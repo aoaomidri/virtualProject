@@ -19,7 +19,11 @@ void TextureManager::Initialize() {
 	GraphicsPipelineWorld2D_->InitializeWorld2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
 
 	GraphicsPipeline3D_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/MappingObject3d.PS.hlsl", true);
+	GraphicsPipeline3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/Object3d.PS.hlsl", true);
+
+	GraphicsPipelineMapping3D_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineMapping3D_->Initialize(L"resources/shaders/object3D/Object3d.VS.hlsl", L"resources/shaders/object3D/MappingObject3d.PS.hlsl", true);
+
 
 	GraphicsPipelineSkyBox_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineSkyBox_->InitializeSkyBox(L"resources/shaders/SkyBox/Skybox.VS.hlsl", L"resources/shaders/SkyBox/Skybox.PS.hlsl");
@@ -149,6 +153,16 @@ void TextureManager::PreDraw3D(){
 	//RootSignatureを設定。PSOに設定しているが別途設定が必要
 	commandList->SetGraphicsRootSignature(GraphicsPipeline3D_->GetRootSignature());
 	commandList->SetPipelineState(GraphicsPipeline3D_->GetPipeLineState());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void TextureManager::PreDrawMapping3D(){
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+	//RootSignatureを設定。PSOに設定しているが別途設定が必要
+	commandList->SetGraphicsRootSignature(GraphicsPipelineMapping3D_->GetRootSignature());
+	commandList->SetPipelineState(GraphicsPipelineMapping3D_->GetPipeLineState());
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

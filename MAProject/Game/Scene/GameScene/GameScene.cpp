@@ -220,7 +220,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::GAME;
+	sceneNum_ = SceneName::TITLE;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
@@ -333,7 +333,7 @@ void GameScene::Update(){
 		AllCollision();
 		//particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
 
-		floorManager_->Update();
+		
 		break;
 	case SceneName::CLEAR:
 		followCamera_->SetIsMove(false);
@@ -371,6 +371,8 @@ void GameScene::Update(){
 	default:
 		assert(0);
 	}
+
+	floorManager_->Update();
 	fadeSprite_->color_.w = fadeAlpha_;
 	
 
@@ -436,7 +438,7 @@ void GameScene::Draw3D(){
 
 
 	/*描画前処理*/
-	textureManager_->PreDraw3D();
+	textureManager_->PreDrawMapping3D();
 
 	/*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
@@ -463,6 +465,8 @@ void GameScene::Draw3D(){
 		assert(0);
 	}
 	floorManager_->Draw(followCamera_->GetViewProjection());
+
+	textureManager_->PreDraw3D();
 	stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/

@@ -81,7 +81,7 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 		newParticleGroup.wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
-	newParticleGroup.gpuHandle_ = textureManager_->MakeInstancingShaderResourceView(newParticleGroup.wvpInstancingResource.Get());
+	//newParticleGroup.gpuHandle_ = textureManager_->MakeInstancingShaderResourceView<>(newParticleGroup.wvpInstancingResource.Get());
 
 }
 

@@ -211,6 +211,8 @@ private:
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 
+	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc_{};
+
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate_ = nullptr;
 

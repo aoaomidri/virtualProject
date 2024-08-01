@@ -70,7 +70,7 @@ void ParticleBase::Initialize() {
 
 	textureHandle_= TextureManager::GetInstance()->Load("resources/texture/circle.png");//10
 
-	gpuHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView(GetInstancingResource());
+	gpuHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView<ParticleForGPU>(GetInstancingResource(), 600);
 
 	isWind_ = true;
 	isBillborad_ = true;

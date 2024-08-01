@@ -871,7 +871,7 @@ void ComputeGraphicsPipeline::makeRootSignature(ID3D12Device* device){
 	staticSampler[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
 	staticSampler[0].MaxLOD = D3D12_FLOAT32_MAX;//ありったけのMipmapを使う
 	staticSampler[0].ShaderRegister = 0;//レジスタ番号0を使う
-	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	staticSampler[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;//PixelShaderで使う
 
 
 	descriptionRootSignature_.pStaticSamplers = staticSampler;

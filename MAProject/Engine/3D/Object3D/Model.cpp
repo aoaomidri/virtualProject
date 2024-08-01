@@ -109,6 +109,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device*
 	vertexResourceDesc.MipLevels = 1;
 	vertexResourceDesc.SampleDesc.Count = 1;
 
+	//vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
@@ -365,6 +367,17 @@ void Model::MakeVertexResource(){
 	/*std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
 
 	indexResource_->Unmap(0, nullptr);*/
+
+	uavDesc_.Format = DXGI_FORMAT_UNKNOWN;
+	uavDesc_.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	uavDesc_.Buffer.FirstElement = 0;
+	uavDesc_.Buffer.NumElements = (uint32_t)modelData_.vertices.size();
+	uavDesc_.Buffer.CounterOffsetInBytes = 0;
+	uavDesc_.Buffer.FirstElement = 0;
+	uavDesc_.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+	uavDesc_.Buffer.StructureByteStride = sizeof(VertexData);
+
+
 }
 
 Model::Node Model::ReadNode(aiNode* node){

@@ -8,6 +8,7 @@
 #include"../../externals/DirectXTex/d3dx12.h"
 #include"Matrix.h"
 #include"Log.h"
+#include"DescriptorHeap.h"
 #include<wrl.h>
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -46,7 +47,9 @@ public:
 
 	uint32_t Load(const std::string& filePath);
 
-	D3D12_GPU_DESCRIPTOR_HANDLE MakeInstancingShaderResourceView(ID3D12Resource* resource);
+	template<typename T>
+	D3D12_GPU_DESCRIPTOR_HANDLE MakeInstancingShaderResourceView(ID3D12Resource* resource, uint32_t numElements);
+
 
 	void PreDraw2D();
 	
@@ -159,7 +162,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU{};
 	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU{};
 
-	
+	SRVDescriptorHeap* heap_ = nullptr;
 
 	DirectX::ScratchImage mipImages;
 	DirectX::TexMetadata metadata;
@@ -194,3 +197,24 @@ private:
 	size_t dotPos_;
 
 };
+
+template<typename T>
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource, uint32_t numElements) {
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = numElements;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(T);
+
+	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	instancingSrvHandleCPU = heap_->GetCPUDescriptorHandle();
+	instancingSrvHandleGPU = heap_->GetGPUDescriptorHandle();
+
+	//SRVの生成
+	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
+
+	return instancingSrvHandleGPU;
+}

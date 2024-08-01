@@ -24,3 +24,25 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVDescriptorHeap::CreateDescriptor
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }
+
+UAVDescriptorHeap* UAVDescriptorHeap::GetInstance(){
+	static UAVDescriptorHeap instance;
+	return &instance;
+}
+
+void UAVDescriptorHeap::Initialize(ID3D12Device* device){
+	device_ = device;
+	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(heapType_);
+
+	uavDescriptorHeap_ = CreateDescriptorHeap(heapType_, kMaxHeapSize_, true);
+}
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> UAVDescriptorHeap::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible){
+	ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+}

@@ -226,5 +226,8 @@ private:
 
 	static ID3D12Device* device_;
 
+	D3D12_CPU_DESCRIPTOR_HANDLE uavCPUHandle_;
+	D3D12_GPU_DESCRIPTOR_HANDLE uavGPUHandle_;
+
 };
 

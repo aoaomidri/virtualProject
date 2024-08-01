@@ -109,7 +109,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device*
 	vertexResourceDesc.MipLevels = 1;
 	vertexResourceDesc.SampleDesc.Count = 1;
 
-	//vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
@@ -377,7 +377,10 @@ void Model::MakeVertexResource(){
 	uavDesc_.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 	uavDesc_.Buffer.StructureByteStride = sizeof(VertexData);
 
+	uavCPUHandle_ = UAVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	uavGPUHandle_ = UAVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
+	device_->CreateUnorderedAccessView(vertexResource_.Get(), nullptr, &uavDesc_, uavCPUHandle_);
 }
 
 Model::Node Model::ReadNode(aiNode* node){

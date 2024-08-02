@@ -179,6 +179,9 @@ void SkinAnimObject3D::Draw() {
 	if (!isDraw_) {
 		return;
 	}
+	model_->StartingCompute();
+
+	TextureManager::GetInstance()->PreDrawSkin3D();
 	const auto texManagerIns = TextureManager::GetInstance();
 	model_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
@@ -205,7 +208,7 @@ void SkinAnimObject3D::Draw() {
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
-
+	model_->EndCompute();
 }
 
 void SkinAnimObject3D::DrawImgui(std::string name){

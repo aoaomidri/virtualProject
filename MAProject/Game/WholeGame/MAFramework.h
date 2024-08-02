@@ -8,6 +8,7 @@
 #include"Adjustment_Item.h"
 #include"PostEffect.h"
 #include"TextureManager.h"
+#include"Compute/ComputePipeLineManager.h"
 class MAFramework{
 public:
 	virtual ~MAFramework() = default;
@@ -44,6 +45,8 @@ public:
 	Audio* audio_ = nullptr;
 	//テクスチャ関連
 	TextureManager* texManager_ = nullptr;
+	//テクスチャ関連
+	ComputePipeLineManager* computeManager_ = nullptr;
 	//ポストエフェクト
 	PostEffect* postEffect_ = nullptr;
 

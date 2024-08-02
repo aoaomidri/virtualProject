@@ -50,13 +50,13 @@ Skinned Skinning(VertexShaderInput input){
 
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
-	Skinned skinned = Skinning(input);//まずSkinning計算を行って,Skinning後の頂点情報を手に入れる。ここでの頂点もskeletonSpace
+	// Skinned skinned = Skinning(input);//まずSkinning計算を行って,Skinning後の頂点情報を手に入れる。ここでの頂点もskeletonSpace
 	//Skinning結果を使って変換
-	output.position = mul(skinned.position, gTransformationMatrix.WVP);
-	output.worldPosition = mul(skinned.position, gTransformationMatrix.World).xyz;
+	output.position = mul(input.position, gTransformationMatrix.WVP);
+	output.worldPosition = mul(input.position, gTransformationMatrix.World).xyz;
 	output.texcoord = input.texcoord;
 
-	output.normal = normalize(mul(skinned.normal,(float32_t3x3)gTransformationMatrix.WorldInverseTranspose));
+	output.normal = normalize(mul(input.normal,(float32_t3x3)gTransformationMatrix.WorldInverseTranspose));
 
 	return output;
 }

@@ -151,6 +151,8 @@ private://メンバ変数
 
 	SRVDescriptorHeap* srvDescriptorHeap_ = nullptr;
 
+	UAVDescriptorHeap* uavDescriptorHeap_ = nullptr;
+
 	//フェンスの生成
 	ComPtr<ID3D12Fence> fence = nullptr;
 

@@ -138,6 +138,10 @@ public:
 		std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> paletteSrvHandle;
 	};
 
+	struct SkinningInfoMatiron{
+		uint32_t numVertices;
+	};
+
 	
 public:
 	void Draw(ID3D12GraphicsCommandList* CommandList);
@@ -165,7 +169,7 @@ public:
 	SkinCluster CreateSkinCluster(const Skeleton& skeleton);
 
 public:
-	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
+	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return inputVertexBufferView_; }
 	D3D12_INDEX_BUFFER_VIEW GetIndexBifferView()const { return indexBufferView_; }
 	
 	Matrix4x4 GetLocalMatrix()const { return modelData_.rootNode.localMatrix; }
@@ -185,11 +189,17 @@ public:
 
 	void MakeVertexResource();
 
+	//ComputeShaderで使用するResourceを生成する
+	void MakeComputeResource();
+
+	void StartingCompute();
+
+	void EndCompute();
+
 private:
 
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
-		ID3D12Device* device, size_t sizeInBytes);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes, bool isUseUAV);
 
 	//OBJファイルから3Dモデルを読み込む(非公開)
 	void LoadFromOBJInternal(const std::string& filename);
@@ -199,12 +209,38 @@ private:
 
 	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 
+	//バリア
+	D3D12_RESOURCE_BARRIER computeBarrier_{};
+
+	
 	
 private:
-	//頂点バッファービューを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
+	//computeスキニングとか
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+	//入力用頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> inputVertexResource_;
+
+	D3D12_VERTEX_BUFFER_VIEW inputVertexBufferView_{};
+
+	D3D12_GPU_DESCRIPTOR_HANDLE inputGPUHandle_;
+
+	D3D12_GPU_DESCRIPTOR_HANDLE	wellGPUHandle_;
+
+	D3D12_GPU_DESCRIPTOR_HANDLE influenceGPUHandle_;
+
+	//出力用頂点バッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> outputVertexResource_;
+
+	D3D12_VERTEX_BUFFER_VIEW outputVertexBufferView_{};
+
+	D3D12_GPU_DESCRIPTOR_HANDLE outputGPUHandle_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> skinningInfoResource_;
+
+	//データを書き込む
+	SkinningInfoMatiron* skinningInfoData_ = nullptr;
+
+
 
 	//頂点バッファービューを作成する
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;

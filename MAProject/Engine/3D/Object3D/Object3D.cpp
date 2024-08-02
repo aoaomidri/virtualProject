@@ -121,6 +121,10 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 
 void Object3D::Draw() {
 
+	model_->StartingCompute();
+
+	TextureManager::GetInstance()->PreDraw3D();
+
 	if (!isDraw_) {
 		return;
 	}
@@ -141,7 +145,7 @@ void Object3D::Draw() {
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(static_cast<uint32_t>(model_->GetIndexData().size()), 1, 0, 0, 0);
 
-
+	model_->EndCompute();
 }
 
 void Object3D::DrawImgui(std::string name){

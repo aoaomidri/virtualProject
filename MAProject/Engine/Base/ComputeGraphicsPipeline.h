@@ -8,7 +8,7 @@ class ComputeGraphicsPipeline{
 public:
 	~ComputeGraphicsPipeline();
 	//通常の初期化
-	void Initialize(const std::wstring& VSname, const std::wstring& PSname, bool isCulling);
+	void Initialize(const std::wstring& CSname);
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler);
 
@@ -27,13 +27,7 @@ private:
 
 	void makeRootSignature(ID3D12Device* device);
 
-	void makeInputLayout();
-
-	void makeRasterizerState(bool isCulling);
-
-	void ShaderCompile(const std::wstring& VSname, const std::wstring& PSname);
-
-	void makeDepthStencil(D3D12_DEPTH_WRITE_MASK depthWriteMask);
+	void ShaderCompile(const std::wstring& CSname);
 
 private:
 	HRESULT hr{};

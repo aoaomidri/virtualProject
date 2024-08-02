@@ -1,4 +1,3 @@
-[numthreads(1024, 1, 1)]
 
 struct Well{
 	float32_t4x4 skeletonSpaceMatrix;
@@ -20,12 +19,11 @@ struct Vertex{
 struct VertexInfluence{
     float32_t4 weight;
     int32_t4 index;
-}
+};
 
 struct SkinningInformation{
     uint32_t numVertices;
-}
-
+};
 //SkinningObject3d.VS.hlslと同じPalette
 StructuredBuffer<Well> gMatrixParette : register(t0);
 
@@ -41,6 +39,7 @@ RWStructuredBuffer<Vertex> gOutputVertices : register(u0);
 //Skinningに関するちょっとした情報
 ConstantBuffer<SkinningInformation> gSkinningInformation : register(b0);
 
+[numthreads(1024, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID){
     uint32_t vertexIndex = DTid.x;
     if(vertexIndex < gSkinningInformation.numVertices){

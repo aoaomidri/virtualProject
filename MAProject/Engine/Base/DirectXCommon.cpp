@@ -25,6 +25,8 @@ void DirectXCommon::Initialize(){
 	RenderTextureRTVInitialize();
 	srvDescriptorHeap_ = SRVDescriptorHeap::GetInstance();
 	srvDescriptorHeap_->Initialize(device.Get());
+	uavDescriptorHeap_ = UAVDescriptorHeap::GetInstance();
+	uavDescriptorHeap_->Initialize(device.Get());
 	DepthBufferInitialize();
 	FenceInitialize();
 

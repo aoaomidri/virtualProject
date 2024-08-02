@@ -21,6 +21,9 @@ void MAFramework::Initialize(){
 	texManager_ = TextureManager::GetInstance();
 	texManager_->Initialize();
 
+	computeManager_ = ComputePipeLineManager::GetInstance();
+	computeManager_->Initialize();
+
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Initialize();
 }

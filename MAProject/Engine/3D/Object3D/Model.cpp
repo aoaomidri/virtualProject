@@ -6,13 +6,14 @@
 #include<sstream>
 #include<filesystem>
 #include"Matrix.h"
+#include"Compute/ComputePipeLineManager.h"
 
 //静的メンバ変数の実体
 ID3D12Device* Model::device_ = nullptr;
 
 
 void Model::Draw(ID3D12GraphicsCommandList* CommandList){
-	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	CommandList->IASetVertexBuffers(0, 1, &outputVertexBufferView_);
 	CommandList->IASetIndexBuffer(&indexBufferView_);
 }
 
@@ -29,6 +30,8 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 
 	modelData->MakeVertexResource();
 
+	modelData->MakeComputeResource();
+
 	//4,ModelDataを返す
 	return modelData;
 }
@@ -40,6 +43,8 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename, const s
 	modelData->LoadFromOBJInternalAssimp(filename, modelName);
 
 	modelData->MakeVertexResource();
+
+	modelData->MakeComputeResource();
 
 	//4,ModelDataを返す
 	return modelData;
@@ -94,10 +99,10 @@ void Model::Finalize(){
 	//device_->Release();
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes){
+Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(size_t sizeInBytes, bool isUseUAV){
 	//頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	uploadHeapProperties.Type = isUseUAV ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD;
 	//頂点リソースの設定
 	D3D12_RESOURCE_DESC vertexResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
@@ -108,14 +113,22 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device*
 	vertexResourceDesc.DepthOrArraySize = 1;
 	vertexResourceDesc.MipLevels = 1;
 	vertexResourceDesc.SampleDesc.Count = 1;
-
-	vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	if (isUseUAV){
+		vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	}
+	else {
+		vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	}
+	
 
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
+	// リソースの状態設定
+	D3D12_RESOURCE_STATES initialState = isUseUAV ? D3D12_RESOURCE_STATE_UNORDERED_ACCESS : D3D12_RESOURCE_STATE_GENERIC_READ;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
+	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+		&vertexResourceDesc, initialState, nullptr, IID_PPV_ARGS(&bufferResource));
 	assert(SUCCEEDED(hr));
 
 	return bufferResource;
@@ -333,26 +346,29 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 }
 
 void Model::MakeVertexResource(){
-	//頂点リソースの作成
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * modelData_.vertices.size());
+	uint32_t numVertices = (uint32_t)(modelData_.vertices.size());
 
+	//頂点リソースの作成
+	inputVertexResource_ = CreateBufferResource(sizeof(VertexData) * numVertices, false);
 
 	//リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	inputVertexBufferView_.BufferLocation = inputVertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
+	inputVertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * numVertices);
 	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	inputVertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
+	inputVertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
 	std::copy(modelData_.vertices.begin(), modelData_.vertices.end(), vertexDate_);
-	vertexResource_->Unmap(0, nullptr);
+	inputVertexResource_->Unmap(0, nullptr);
+
+	inputGPUHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView<VertexData>(inputVertexResource_.Get(), numVertices);
 
 	uint32_t indexSizeInBytes = static_cast<uint32_t>(sizeof(uint32_t) * modelData_.indices.size());
 
 	//インデックスリソースの作成
-	indexResource_ = CreateBufferResource(device_, indexSizeInBytes);
+	indexResource_ = CreateBufferResource(indexSizeInBytes, false);
 
 	//リソースの先頭のアドレスから使う
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -364,9 +380,32 @@ void Model::MakeVertexResource(){
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&mappedIndex_));
 	std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
 	indexResource_->Unmap(0, nullptr);
-	/*std::copy(modelData_.indices.begin(), modelData_.indices.end(), mappedIndex_);
 
-	indexResource_->Unmap(0, nullptr);*/
+
+	skinningInfoResource_ = CreateBufferResource(sizeof(SkinningInfoMatiron), false);
+	
+	//書き込むためのアドレスを取得
+	skinningInfoResource_->Map(0, nullptr, reinterpret_cast<void**>(&skinningInfoData_));
+	//今回は赤を書き込んでみる
+	skinningInfoData_->numVertices = numVertices;
+	/*//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
+	wvpInstancingResource = CreateBufferResource(sizeof(ParticleForGPU) * particleMaxNum_);
+	//書き込むためのアドレスを取得
+	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	for (uint32_t i = 0; i < particleMaxNum_; ++i) {
+		
+		//単位行列を書き込んでおく
+		wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
+		wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
+		wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
+	}*/
+
+}
+
+void Model::MakeComputeResource(){
+	uint32_t numVertices = (uint32_t)(modelData_.vertices.size());
+
+	outputVertexResource_ = CreateBufferResource(sizeof(VertexData) * numVertices, true);
 
 	uavDesc_.Format = DXGI_FORMAT_UNKNOWN;
 	uavDesc_.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
@@ -380,7 +419,7 @@ void Model::MakeVertexResource(){
 	uavCPUHandle_ = UAVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
 	uavGPUHandle_ = UAVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
-	device_->CreateUnorderedAccessView(vertexResource_.Get(), nullptr, &uavDesc_, uavCPUHandle_);
+	device_->CreateUnorderedAccessView(outputVertexResource_.Get(), nullptr, &uavDesc_, uavCPUHandle_);
 }
 
 Model::Node Model::ReadNode(aiNode* node){
@@ -421,7 +460,7 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	SkinCluster skinCluster;
 
 	//palette用のResourceを確保
-	skinCluster.paletteResouce = CreateBufferResource(device_, sizeof(WellForGPU) * skeleton.joints.size());
+	skinCluster.paletteResouce = CreateBufferResource(sizeof(WellForGPU) * skeleton.joints.size(), false);
 	WellForGPU* mappedPalette = nullptr;
 	skinCluster.paletteResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	skinCluster.mappedPalette = { mappedPalette,skeleton.joints.size() };//spanを使ってアクセスするようにする
@@ -430,6 +469,8 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	//device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	skinCluster.paletteSrvHandle.first = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
 	skinCluster.paletteSrvHandle.second = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
+
+	wellGPUHandle_ = skinCluster.paletteSrvHandle.second;
 	
 	//palette用のsrvを作成。StructuredBufferでアクセスできるようにする。
 	D3D12_SHADER_RESOURCE_VIEW_DESC paretteSrvDesc{};
@@ -443,7 +484,7 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	device_->CreateShaderResourceView(skinCluster.paletteResouce.Get(), &paretteSrvDesc, skinCluster.paletteSrvHandle.first);
 	
 	//influence用のResourceを確保。頂点ごとにinfluence情報を追加できるようにする
-	skinCluster.influenceResouce = CreateBufferResource(device_, sizeof(VertexInfluence) * modelData_.vertices.size());
+	skinCluster.influenceResouce = CreateBufferResource(sizeof(VertexInfluence) * modelData_.vertices.size(), false);
 	VertexInfluence* mappedInfluence = nullptr;
 	skinCluster.influenceResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluence));
 	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * modelData_.vertices.size());//0埋め、weightを0にしておく
@@ -455,6 +496,8 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	skinCluster.influenceBufferView.StrideInBytes = sizeof(VertexInfluence);
 	//InerseBindPoseMatrixの保存領域を作成
 	skinCluster.inverseBindPoseMatrices.resize(skeleton.joints.size());
+
+	influenceGPUHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView<VertexInfluence>(skinCluster.influenceResouce.Get(), (uint32_t)(modelData_.vertices.size()));
 
 	for (size_t i = 0; i < skinCluster.inverseBindPoseMatrices.size(); ++i){
 		skinCluster.inverseBindPoseMatrices[i].Identity();
@@ -503,6 +546,51 @@ int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& paren
 	}
 
 	return joint.index;
+}
+
+void Model::StartingCompute(){
+	
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+	computeBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	computeBarrier_.Transition.pResource = outputVertexResource_.Get();
+	computeBarrier_.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	computeBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON; // 初期状態
+	computeBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+
+	commandList->ResourceBarrier(1, &computeBarrier_);
+
+	ComputePipeLineManager::GetInstance()->SetPipeLine();
+
+	commandList->SetComputeRootDescriptorTable(0, wellGPUHandle_);
+	commandList->SetComputeRootDescriptorTable(1, inputGPUHandle_);
+	commandList->SetComputeRootDescriptorTable(2, influenceGPUHandle_);
+	commandList->SetComputeRootDescriptorTable(3, outputGPUHandle_);
+	commandList->SetComputeRootConstantBufferView(4, skinningInfoResource_->GetGPUVirtualAddress());
+	
+	commandList->Dispatch(UINT(modelData_.vertices.size() + 1023) / 1024, 1, 1);
+
+	computeBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	computeBarrier_.Transition.pResource = outputVertexResource_.Get();
+	computeBarrier_.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	computeBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS; // 初期状態
+	computeBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+
+	commandList->ResourceBarrier(1, &computeBarrier_);
+
+}
+
+void Model::EndCompute(){
+
+	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+	computeBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	computeBarrier_.Transition.pResource = outputVertexResource_.Get();
+	computeBarrier_.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	computeBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER; // 初期状態
+	computeBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+
+	commandList->ResourceBarrier(1, &computeBarrier_);
 }
 
 Model::Animation Model::LoadAnimationFile(const std::string& filename){

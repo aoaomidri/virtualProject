@@ -210,8 +210,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::MakeInstancingShaderResourceView(ID3
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	instancingSrvHandleCPU = heap_->GetCPUDescriptorHandle();
-	instancingSrvHandleGPU = heap_->GetGPUDescriptorHandle();
+	instancingSrvHandleCPU = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
+	instancingSrvHandleGPU = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 
 	//SRVの生成
 	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);

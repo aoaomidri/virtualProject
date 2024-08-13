@@ -32,6 +32,8 @@ std::unique_ptr<Model> Model::LoadModelFile(const std::string& filename){
 
 	modelData->MakeComputeResource();
 
+	
+
 	//4,ModelDataを返す
 	return modelData;
 }
@@ -101,8 +103,9 @@ void Model::Finalize(){
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(size_t sizeInBytes, bool isUseUAV){
 	//頂点リソース用のヒープの設定
+	isUAV_ = isUseUAV;
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = isUseUAV ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD;
+	uploadHeapProperties.Type = isUAV_ ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD;
 	//頂点リソースの設定
 	D3D12_RESOURCE_DESC vertexResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
@@ -113,7 +116,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(size_t sizeIn
 	vertexResourceDesc.DepthOrArraySize = 1;
 	vertexResourceDesc.MipLevels = 1;
 	vertexResourceDesc.SampleDesc.Count = 1;
-	if (isUseUAV){
+	if (isUAV_){
 		vertexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 	else {
@@ -124,7 +127,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(size_t sizeIn
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// リソースの状態設定
-	D3D12_RESOURCE_STATES initialState = isUseUAV ? D3D12_RESOURCE_STATE_UNORDERED_ACCESS : D3D12_RESOURCE_STATE_GENERIC_READ;
+	D3D12_RESOURCE_STATES initialState = isUAV_ ? D3D12_RESOURCE_STATE_COMMON : D3D12_RESOURCE_STATE_GENERIC_READ;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
@@ -556,8 +559,7 @@ void Model::StartingCompute(){
 	computeBarrier_.Transition.pResource = outputVertexResource_.Get();
 	computeBarrier_.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	computeBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON; // 初期状態
-	computeBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-
+	computeBarrier_.Transition.StateAfter = isUAV_ ? D3D12_RESOURCE_STATE_UNORDERED_ACCESS : D3D12_RESOURCE_STATE_COPY_DEST;
 	commandList->ResourceBarrier(1, &computeBarrier_);
 
 	ComputePipeLineManager::GetInstance()->SetPipeLine();
@@ -573,7 +575,7 @@ void Model::StartingCompute(){
 	computeBarrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	computeBarrier_.Transition.pResource = outputVertexResource_.Get();
 	computeBarrier_.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	computeBarrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS; // 初期状態
+	computeBarrier_.Transition.StateBefore = isUAV_ ? D3D12_RESOURCE_STATE_UNORDERED_ACCESS : D3D12_RESOURCE_STATE_COPY_DEST; // 初期状態
 	computeBarrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 
 	commandList->ResourceBarrier(1, &computeBarrier_);

@@ -265,5 +265,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE uavCPUHandle_;
 	D3D12_GPU_DESCRIPTOR_HANDLE uavGPUHandle_;
 
+	bool isUAV_ = false;
+
 };
 

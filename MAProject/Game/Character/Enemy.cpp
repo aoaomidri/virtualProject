@@ -200,6 +200,7 @@ void Enemy::DrawImgui() {
 
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("回転攻撃の射程補正変数", &attackLength_, 0.1f, 0.0f, 100.0f);
 
 	ImGui::End();
 #endif
@@ -359,7 +360,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -597,13 +598,17 @@ void Enemy::DeadMotion(){
 
 void Enemy::BehaviorAttackInitialize() {
 	int i = RandomMaker::DistributionInt(0, 1);
-
+	i = 0;
 	if (i == 0) {
+		ATBehaviorRequest_ = AttackBehavior::kRotateAttack;
+	}
+
+	/*if (i == 0) {
 		ATBehaviorRequest_ = AttackBehavior::kTriple;
 	}
 	else {
 		ATBehaviorRequest_ = AttackBehavior::kTackle;
-	}
+	}*/
 
 }
 
@@ -624,6 +629,9 @@ void Enemy::AttackMotion() {
 		case AttackBehavior::kTackle:
 			AttackBehaviorTackleInitialize();
 			break;
+		case AttackBehavior::kRotateAttack:
+			AttackBehaviorRotateAttackInitialize();
+			break;
 		case AttackBehavior::kNone:
 			BehaviorRootInitialize();
 			break;
@@ -640,6 +648,9 @@ void Enemy::AttackMotion() {
 		break;
 	case AttackBehavior::kTackle:
 		Tackle();
+		break;
+	case AttackBehavior::kRotateAttack:
+		RotateAttack();
 		break;
 	case AttackBehavior::kNone:
 		behaviorRequest_ = Behavior::kFree;
@@ -768,4 +779,73 @@ void Enemy::Tackle(){
 		directionTime_--;
 	}
 	
+}
+
+void Enemy::AttackBehaviorRotateAttackInitialize(){
+	posContainer_.fill(Vector3());
+
+	attackBasePos_ = Vector3();
+
+	attackDistance_ = distanceTime_;
+
+	isAttackEnd_ = true;
+
+	isMaxContext_ = false;
+
+	attackCount_ = 0;
+
+	easeT_ = 0;
+}
+
+void Enemy::RotateAttack(){
+	if (isAttackEnd_ and !isMaxContext_) {
+		if (target_) {
+			Vector3 lockOnPos = target_->translate;
+
+			Vector3 sub = lockOnPos - transform_.translate;
+			sub.y = 0;
+			sub = Vector3::Normalize(sub);
+
+			sub *= attackLength_;
+
+			posContainer_[attackCount_] = transform_.translate + sub;
+
+			isMaxContext_ = std::all_of(posContainer_.begin(), posContainer_.end(), [](Vector3 i) { return i.isNotIdentity(); });
+
+			attackBasePos_ = transform_.translate;
+
+
+			isAttackEnd_ = false;
+		}
+	}
+
+	frontVec_ = postureVec_;
+
+	Vector3 lockOnPos = posContainer_[attackCount_];
+	Vector3 sub = lockOnPos - attackBasePos_;
+	sub.y = 0;
+	sub = Vector3::Normalize(sub);
+	postureVec_ = sub;
+
+	Matrix4x4 directionTodirection_;
+	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+
+	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+
+	transform_.translate = ease_.Easing(Ease::EaseName::EaseOutQuart, attackBasePos_, posContainer_[attackCount_], easeT_);
+
+	if (easeT_ < 1.0f) {		
+		easeT_ += (1.0f / 60.0f);
+	}
+	else {
+		attackCount_++;
+		isAttackEnd_ = true;
+		attackDistance_ = distanceTime_;
+		easeT_ = 0;
+	}
+	
+
+	if (isMaxContext_ and isAttackEnd_) {
+		behaviorRequest_ = Behavior::kFree;
+	}
 }

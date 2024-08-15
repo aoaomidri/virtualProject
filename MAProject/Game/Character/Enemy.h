@@ -10,6 +10,7 @@
 //#include"../../Engine/3D/Object3D/Particle.h"
 #include<optional>
 #include <algorithm>
+#include"Ease/Ease.h"
 
 
 class Enemy {
@@ -236,11 +237,12 @@ private:
 
 private:
 	//攻撃関係の関数群
+	/*.OK = 実装済み*/
 	enum class AttackBehavior {
-		kTriple,		//三連撃
+		kTriple,		//三連撃.OK
 		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
 		kBeam,			//ビーム攻撃(保留)
-		kTackle,		//突進攻撃
+		kTackle,		//突進攻撃.OK
 		kRotateAttack,	//回転して追尾しながらの攻撃
 		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)
 		kXAttack,		//その場でX字を書いて攻撃(斬撃は飛ぶ)
@@ -267,8 +269,13 @@ private:
 
 	//突進攻撃初期化
 	void AttackBehaviorTackleInitialize();
-	//
+	//突進攻撃
 	void Tackle();
+
+	//回転突進攻撃初期化
+	void AttackBehaviorRotateAttackInitialize();
+	//回転突進攻撃
+	void RotateAttack();
 
 private:
 	//攻撃関係の変数群
@@ -297,6 +304,19 @@ private:
 
 	//突進への移行時間
 	uint32_t attackTransitionTime_;
+
+	/*回転突進攻撃*/
+
+	//攻撃の飛距離
+	float attackLength_ = 20.0f;
+	//攻撃の目標地点
+	Vector3 attackSetPos_{};
+
+	Vector3 attackBasePos_{};
+
+	float easeT_;
+
+	Ease ease_;
 
 	/*回転ビーム*/
 

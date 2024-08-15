@@ -402,9 +402,6 @@
     <Filter Include=".cpp">
       <UniqueIdentifier>{1d5e4960-17d2-4263-99b9-f7f04c82986b}</UniqueIdentifier>
     </Filter>
-    <Filter Include=".h">
-      <UniqueIdentifier>{0af9b615-0f9e-4f3a-a600-840e2af243ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Audio">
       <UniqueIdentifier>{82f0a175-d9d7-4926-90a0-d985968d130f}</UniqueIdentifier>
     </Filter>

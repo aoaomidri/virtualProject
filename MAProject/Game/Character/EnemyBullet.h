@@ -24,6 +24,19 @@ private:
 
     OBB obb_;
 
+	Matrix4x4 transMat_;
+
+	Matrix4x4 rotateYMat_;
+
+	Matrix4x4 rotateZMat_;
+
+	Matrix4x4 rotateZInvMat_;
+
+	Matrix4x4 rotateMat_;
+
+	Matrix4x4 scaleMat_;
+
+	Matrix4x4 numMat_;
 
 	Vector3 velocity_;
 	// 寿命

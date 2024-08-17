@@ -5,7 +5,7 @@
 
 class EnemyBullet{
 public:
-	void Initialize(const Vector3& position, const Vector3& velocity);
+	void Initialize(const EulerTransform& trans, const Vector3& velocity);
 
 	void Update();
 
@@ -24,13 +24,10 @@ private:
 
     OBB obb_;
 
-	float size_ = 3.0f;
-
-	Vector3 scale_ = { size_, size_ * 3.0f, size_ };
 
 	Vector3 velocity_;
 	// 寿命
-	static const int32_t kLifeTime_ = 180;
+	static const int32_t kLifeTime_ = 300;
 	// デスタイマー
 	int32_t deathTimer_ = kLifeTime_;
 	// デスフラグ

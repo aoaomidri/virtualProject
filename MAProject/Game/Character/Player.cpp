@@ -63,6 +63,11 @@ void Player::Initialize(){
 	weaponTopObj_ = std::make_unique<Object3D>();
 	weaponTopObj_->Initialize("box");
 
+	test_ = std::make_unique<Object3D>();
+	test_->Initialize("box");
+
+	testTrans_.scale = { 3.0f,10.0f,3.0f };
+
 	weaponTailObj_ = std::make_unique<Object3D>();
 	weaponTailObj_->Initialize("box");
 
@@ -271,6 +276,9 @@ void Player::Draw(const ViewProjection& viewProjection){
 	weaponTailObj_->SetMatrix(weaponObj_->GetTailVerTexMat());
 	weaponTailObj_->Update(viewProjection);
 	weaponTailObj_->Draw();*/
+	/*test_->transform_ = testTrans_;
+	test_->Update(viewProjection);
+	test_->Draw();*/
 
 	debugJoints_ = playerSkinAnimObj_->GetJoint();
 	for (size_t i = 0; i < debugJoints_.size(); i++) {
@@ -363,7 +371,9 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("obbの座標", &obbPoint_.x, 0.01f);
 	ImGui::DragFloat3("obbのサイズ", &obbAddScale_.x, 0.01f);
 	ImGui::End();
-
+	ImGui::Begin("test");
+	ImGui::DragFloat3("testRotate", &testTrans_.rotate.x, 0.01f, 0.0f, 3.14f);
+	ImGui::End();
 	/*ImGui::Begin("プレイヤーのアニメーション");
 	animetionNames_ = playerSkinAnimObj_->GetAnimations();
 	for (size_t i = 0; i < animetionNames_.size(); i++){

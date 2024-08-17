@@ -73,7 +73,13 @@ public:
 
 	Vector3 TransformNormal(const Vector3& v);
 
-	float RotateAngleYFromMatrix();
+	float RotateAngleXFromMatrix() const;
+
+	float RotateAngleYFromMatrix() const;
+
+	float RotateAngleZFromMatrix() const;
+
+	Vector3 RotateAngleFromMatrix() const;
 
 	const Vector3 GetTranslate()const {
 		Vector3 translate{};

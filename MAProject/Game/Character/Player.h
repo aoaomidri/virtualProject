@@ -361,5 +361,9 @@ private:
 
 	//Obbの補正値
 	Vector3 obbAddScale_ = { -0.65f,-0.2f,-0.65f };
+
+	std::unique_ptr<Object3D> test_;
+
+	EulerTransform testTrans_;
 };
 

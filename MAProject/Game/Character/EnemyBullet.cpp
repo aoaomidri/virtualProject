@@ -1,13 +1,11 @@
 #include "EnemyBullet.h"
 
-void EnemyBullet::Initialize(const Vector3& position, const Vector3& velocity){
+void EnemyBullet::Initialize(const EulerTransform& trans, const Vector3& velocity){
 	obj_ = std::make_unique<Object3D>();
 
 	obj_->Initialize("box");
 
-	obj_->transform_.translate = position;
-
-	obj_->transform_.scale = scale_;
+	obj_->transform_ = trans;
 
 	velocity_ = velocity;
 
@@ -26,8 +24,10 @@ void EnemyBullet::Update(){
 
 	trans += velocity_;
 
+
+
 	obb_.center = trans;
-	obb_.size = scale_;
+	obb_.size = obj_->transform_.scale;
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection){

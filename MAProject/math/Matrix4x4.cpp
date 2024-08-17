@@ -387,12 +387,40 @@ Vector3 Matrix4x4::TransformNormal(const Vector3& v){
 	return result;
 }
 
-float Matrix4x4::RotateAngleYFromMatrix(){
+float Matrix4x4::RotateAngleXFromMatrix() const{
+	float angle = std::asin(m[1][1]);
+	if (m[1][0] < 0) {
+		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
+	}
+	return angle;
+}
+
+float Matrix4x4::RotateAngleYFromMatrix() const{
 	float angle = std::acos(m[0][0]);
 	if (m[2][0] < 0) {
 		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
 	}
 	return angle;
+}
+
+float Matrix4x4::RotateAngleZFromMatrix() const{
+	float angle = std::acos(m[0][0]);
+	if (m[0][2] < 0) {
+		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
+	}
+	return angle;
+}
+
+Vector3 Matrix4x4::RotateAngleFromMatrix() const{
+
+	Vector3 angle{};
+
+	angle.x = RotateAngleXFromMatrix();
+	angle.y = RotateAngleYFromMatrix();
+	angle.z = RotateAngleZFromMatrix();
+
+	return angle;
+	
 }
 
 float Matrix4x4::CalculateLengthWithSign(const std::array<float, 3>& v){

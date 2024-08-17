@@ -216,10 +216,11 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 void Enemy::DrawImgui() {
 #ifdef _DEBUG
 	ImGui::Begin("敵の変数");
-
+	ImGui::Text("%.2f", rotateMatrix_.RotateAngleYFromMatrix());
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("回転攻撃の射程補正変数", &attackLength_, 0.1f, 0.0f, 100.0f);
+	ImGui::DragFloat3("回転", &slashAngle_.x, 0.01f, 0.0f, 3.14f);
 
 	ImGui::End();
 #endif
@@ -479,6 +480,7 @@ void Enemy::RootMotion(){
 	}
 	else if (farTime_ > lengthJudgment_) {
 		int i = RandomMaker::DistributionInt(0, 1);
+		i = 1;
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kRun;
 		}
@@ -882,15 +884,44 @@ void Enemy::AttackBehaviorDoubleSlashInitialize(){
 	sub.y = 0;
 	sub = Vector3::Normalize(sub);
 
-	bulletSpeed_ = 2.0f;
+	bulletSpeed_ = 0.1f;
 
 	sub *= bulletSpeed_;
 
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 
-	newBullet->Initialize(transform_.translate, sub);
+	EulerTransform trans{};
+
+	float y = rotateMatrix_.RotateAngleYFromMatrix();
+
+	
+
+	trans = transform_;
+
+	trans.rotate.z = (3.14f / 4.0f) * std::sin(y);
+
+	trans.rotate.x = (1.57f / 2.0f) - trans.rotate.z;
+
+
+	trans.scale.y *= 5.0f;
+	newBullet->Initialize(trans, sub);
 
 	bullets_.emplace_back(std::move(newBullet));
+
+	std::unique_ptr<EnemyBullet> newBullet2 = std::make_unique<EnemyBullet>();
+
+	EulerTransform trans2{};
+
+	trans2 = transform_;
+
+	trans2.rotate.z = -((3.14f / 4.0f) * std::sin(y));
+
+	trans2.rotate.x = (1.57f / 2.0f) + trans2.rotate.z;
+
+	trans2.scale.y *= 5.0f;
+	newBullet2->Initialize(trans2, sub);
+
+	bullets_.emplace_back(std::move(newBullet2));
 }
 
 void Enemy::DoubleSlash(){

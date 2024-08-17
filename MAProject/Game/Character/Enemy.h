@@ -335,6 +335,8 @@ private:
 
 	float bulletSpeed_;
 
+	Vector3 slashAngle_{};
+
 private:
 
 

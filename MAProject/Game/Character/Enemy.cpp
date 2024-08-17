@@ -127,7 +127,17 @@ void Enemy::Update(){
 	ApplyGlobalVariables();
 	bodyObj_->SetDissolve(threshold_);
 	partsObj_->SetDissolve(threshold_);
+
+	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
+		if (bullet->IsDead()) {
+			return true;
+		}
+		return false;
+	});
+
 	MotionUpdate();
+
+
 
 	for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];
@@ -146,6 +156,9 @@ void Enemy::Update(){
 		
 	}
 
+	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
+		(*it)->Update();
+	}
 
 	OBB_.center = transform_.translate;
 	bodyOBB_.center = transform_.translate;
@@ -161,6 +174,12 @@ void Enemy::Update(){
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection){
+
+	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
+		(*it)->Draw(viewProjection);
+	}
+	
+
 	if (isDead_) {
 		return;
 	}
@@ -600,7 +619,7 @@ void Enemy::BehaviorAttackInitialize() {
 	int i = RandomMaker::DistributionInt(0, 1);
 	i = 0;
 	if (i == 0) {
-		ATBehaviorRequest_ = AttackBehavior::kRotateAttack;
+		ATBehaviorRequest_ = AttackBehavior::kXAttack;
 	}
 
 	/*if (i == 0) {
@@ -632,6 +651,9 @@ void Enemy::AttackMotion() {
 		case AttackBehavior::kRotateAttack:
 			AttackBehaviorRotateAttackInitialize();
 			break;
+		case AttackBehavior::kXAttack:
+			AttackBehaviorDoubleSlashInitialize();
+			break;
 		case AttackBehavior::kNone:
 			BehaviorRootInitialize();
 			break;
@@ -651,6 +673,9 @@ void Enemy::AttackMotion() {
 		break;
 	case AttackBehavior::kRotateAttack:
 		RotateAttack();
+		break;
+	case AttackBehavior::kXAttack:
+		DoubleSlash();
 		break;
 	case AttackBehavior::kNone:
 		behaviorRequest_ = Behavior::kFree;
@@ -848,4 +873,26 @@ void Enemy::RotateAttack(){
 	if (isMaxContext_ and isAttackEnd_) {
 		behaviorRequest_ = Behavior::kFree;
 	}
+}
+
+void Enemy::AttackBehaviorDoubleSlashInitialize(){
+	Vector3 lockOnPos = target_->translate;
+
+	Vector3 sub = lockOnPos - transform_.translate;
+	sub.y = 0;
+	sub = Vector3::Normalize(sub);
+
+	bulletSpeed_ = 2.0f;
+
+	sub *= bulletSpeed_;
+
+	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+
+	newBullet->Initialize(transform_.translate, sub);
+
+	bullets_.emplace_back(std::move(newBullet));
+}
+
+void Enemy::DoubleSlash(){
+	behaviorRequest_ = Behavior::kFree;
 }

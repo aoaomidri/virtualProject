@@ -11,6 +11,7 @@
 #include<optional>
 #include <algorithm>
 #include"Ease/Ease.h"
+#include"EnemyBullet.h"
 
 
 class Enemy {
@@ -277,6 +278,11 @@ private:
 	//回転突進攻撃
 	void RotateAttack();
 
+	//飛ぶ斬撃の初期化
+	void AttackBehaviorDoubleSlashInitialize();
+	//二つの斬撃を飛ばす
+	void DoubleSlash();
+
 private:
 	//攻撃関係の変数群
 
@@ -323,7 +329,15 @@ private:
 	//回転補完係数
 	float angle_t = 0.8f;
 
+	/*飛ぶ斬撃みたいなの*/
+
+	std::list<std::unique_ptr< EnemyBullet>> bullets_;
+
+	float bulletSpeed_;
+
 private:
+
+
 	//ディゾルブ関係
 	float threshold_ = 0.0f;
 	

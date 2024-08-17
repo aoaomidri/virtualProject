@@ -24,9 +24,9 @@ private:
 
     OBB obb_;
 
-	float size_ = 0.8f;
+	float size_ = 3.0f;
 
-	Vector3 scale_ = { size_, size_, size_ };
+	Vector3 scale_ = { size_, size_ * 3.0f, size_ };
 
 	Vector3 velocity_;
 	// 寿命

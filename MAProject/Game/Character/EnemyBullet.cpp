@@ -7,6 +7,8 @@ void EnemyBullet::Initialize(const Vector3& position, const Vector3& velocity){
 
 	obj_->transform_.translate = position;
 
+	obj_->transform_.scale = scale_;
+
 	velocity_ = velocity;
 
 }

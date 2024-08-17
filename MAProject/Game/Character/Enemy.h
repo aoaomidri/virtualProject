@@ -12,6 +12,7 @@
 #include <algorithm>
 #include"Ease/Ease.h"
 #include"EnemyBullet.h"
+#include"Sprite.h"
 
 
 class Enemy {
@@ -28,6 +29,9 @@ public:
 	void Update();
 	//描画
 	void Draw(const ViewProjection& viewProjection);
+
+	void TexDraw(const Matrix4x4& viewProjection);
+
 	//Imgui描画
 	void DrawImgui();
 
@@ -201,7 +205,9 @@ private:
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
-	
+	std::unique_ptr<Sprite> shadow_;
+
+	float shadowScaleBase_ = 0.9f;
 
 private:
 	//行動全体を制御する

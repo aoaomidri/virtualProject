@@ -119,7 +119,12 @@ void Enemy::Initialize(const Vector3& position){
 	postureVec_ = { 0.0f,0.0f,-1.0f };
 	frontVec_ = { 0.0f,0.0f,-1.0f };
 	
-	
+	shadow_ = std::make_unique<Sprite>();
+	shadow_->Initialize(TextureManager::GetInstance()->Load("resources/texture/shadow.png"));
+	shadow_->rotation_.x = 1.57f;
+	shadow_->scale_ = { 1.5f,1.5f };
+	shadow_->anchorPoint_ = { 0.5f,0.5f };
+	shadow_->color_.w = 0.5f;
 
 }
 
@@ -137,7 +142,8 @@ void Enemy::Update(){
 
 	MotionUpdate();
 
-
+	shadow_->position_ = transform_.translate;
+	shadow_->position_.y = 1.01f;
 
 	for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];
@@ -211,6 +217,10 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 			particleObj_[i]->Draw();
 		}
 	}
+}
+
+void Enemy::TexDraw(const Matrix4x4& viewProjection){
+	shadow_->Draw(viewProjection);
 }
 
 void Enemy::DrawImgui() {
@@ -877,7 +887,7 @@ void Enemy::RotateAttack(){
 	
 
 	if (isMaxContext_ and isAttackEnd_) {
-		behaviorRequest_ = Behavior::kFree;
+		behaviorRequest_ = Behavior::kBack;
 	}
 }
 

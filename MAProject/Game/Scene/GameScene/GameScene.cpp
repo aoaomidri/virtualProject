@@ -482,6 +482,10 @@ void GameScene::Draw3D(){
 	switch (sceneNum_){
 	case SceneName::GAME:
 		player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
+
+		for (const auto& enemy : enemies_) {
+			enemy->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
+		}
 		break;
 	default:
 		break;

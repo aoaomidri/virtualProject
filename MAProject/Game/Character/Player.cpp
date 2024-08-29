@@ -221,7 +221,7 @@ void Player::Update(){
 		SetOridentatios(playerOBB_, playerRotateMatrix_);
 	}
 
-	weaponCollisionTransform_.translate.y += 2.0f;
+	weaponCollisionTransform_.translate.y += 1.0f;
 	
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;

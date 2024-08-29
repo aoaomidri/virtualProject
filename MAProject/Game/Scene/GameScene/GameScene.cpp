@@ -220,7 +220,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::TITLE;
+	sceneNum_ = SceneName::GAME;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 

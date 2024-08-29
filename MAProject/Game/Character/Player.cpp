@@ -26,7 +26,7 @@ void Player::ApplyGlobalVariables() {
 	downSpeed = adjustment_item->GetfloatValue(groupName, "DownSpeed");
 	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
-
+	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
 
 }
 
@@ -42,6 +42,7 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed);
 	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
+	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
 	
 	input_ = Input::GetInstance();
 
@@ -362,7 +363,6 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
-	ImGui::DragFloat("モーションスピード", &motionSpeed_, 0.01f, 1.0f, 2.0f);
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
 	ImGui::Text("丸影のあれこれ");
 	ImGui::DragFloat3("丸影の回転", &shadow_->rotation_.x, 0.01f);

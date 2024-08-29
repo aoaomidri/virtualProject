@@ -27,6 +27,7 @@ void Player::ApplyGlobalVariables() {
 	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
 	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
+	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
 
 }
 
@@ -43,6 +44,7 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
 	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
+	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
 	
 	input_ = Input::GetInstance();
 
@@ -670,7 +672,7 @@ void Player::BehaviorFifthAttackInitialize()
 void Player::BehaviorAttackUpdate(){
 	frontVec_ = postureVec_;
 
-	if (++workAttack_.attackParameter_ >= (workAttack_.nextAttackTimer+5 / motionSpeed_)) {
+	if (++workAttack_.attackParameter_ >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 		if (workAttack_.comboNext_) {
 			workAttack_.comboIndex_++;
 

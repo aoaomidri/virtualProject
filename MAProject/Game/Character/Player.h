@@ -299,6 +299,8 @@ private:
 	int WaitTimeBase = 20;
 	int WaitTime = 0;
 
+	float motionDistance_ = 3.0f;
+
 	float easeT_ = 0.0f;
 
 	float motionSpeed_ = 1.0f;
@@ -306,6 +308,8 @@ private:
 	float shiness_ = 0.0f;
 
 	bool isShakeDown = false;
+
+	bool isEndAttack_ = false;
 
 	//落下するかどうか
 	bool isDown_ = false;

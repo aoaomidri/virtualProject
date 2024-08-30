@@ -296,7 +296,7 @@ private:
 	const float MaxRotateY = -1.55f;
 	const float MinRotate = -0.6f;
 
-	int WaitTimeBase = 20;
+	int WaitTimeBase = 10;
 	int WaitTime = 0;
 
 	float motionDistance_ = 3.0f;

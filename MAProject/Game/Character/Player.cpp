@@ -575,6 +575,7 @@ void Player::BehaviorAttackInitialize(){
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorSecondAttackInitialize(){
@@ -598,6 +599,7 @@ void Player::BehaviorSecondAttackInitialize(){
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.0f;
 	isShakeDown = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorThirdAttackInitialize(){
@@ -621,6 +623,7 @@ void Player::BehaviorThirdAttackInitialize(){
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 3.0f;
 	isShakeDown = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorFourthAttackInitialize()
@@ -644,6 +647,7 @@ void Player::BehaviorFourthAttackInitialize()
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 1.5f;
 	isShakeDown = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorFifthAttackInitialize()
@@ -687,12 +691,13 @@ void Player::BehaviorFifthAttackInitialize()
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = -3.0f;
 	isShakeDown = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorAttackUpdate(){
 	frontVec_ = postureVec_;
 
-	if (++workAttack_.attackParameter_ >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
+	if (isEndAttack_) {
 		if (workAttack_.comboNext_) {
 			workAttack_.comboIndex_++;
 
@@ -721,7 +726,7 @@ void Player::BehaviorAttackUpdate(){
 
 
 			}
-			
+
 			if (workAttack_.comboIndex_ == 1) {
 				BehaviorAttackInitialize();
 			}
@@ -736,21 +741,26 @@ void Player::BehaviorAttackUpdate(){
 				BehaviorFourthAttackInitialize();
 			}
 			else if (workAttack_.comboIndex_ == 5) {
-				
+
 				BehaviorFifthAttackInitialize();
 			}
 		}
 		else {
-			workAttack_.attackParameter_ = 0;
+			
 			if (workAttack_.strongComboNext_) {
 				workAttack_.comboIndex_++;
 				behaviorRequest_ = Behavior::kStrongAttack;
 			}
 			else {
-				behaviorRequest_ = Behavior::kRoot;
+				if (++workAttack_.attackParameter_ >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
+
+					behaviorRequest_ = Behavior::kRoot;
+					workAttack_.attackParameter_ = 0;
+				}
 			}
-			
+
 		}
+		
 	}
 	
 
@@ -968,6 +978,10 @@ void Player::AttackMotion(){
 		weapon_Rotate = 1.58f;
 	}
 
+	if (WaitTime <= 0) {
+		isEndAttack_ = true;
+	}
+
 	if (!isShakeDown && weapon_Rotate > MinRotate) {
 		weapon_Rotate -= moveWeapon * motionSpeed_;
 		weaponTransform_.rotate.y = 2.5f + baseRotate_.y;
@@ -1045,6 +1059,10 @@ void Player::secondAttackMotion(){
 		workAttack_.AttackTimer_++;
 	}
 
+	if (WaitTime <= 0) {
+		isEndAttack_ = true;
+	}
+
 	if (!isShakeDown) {
 		weapon_Rotate -= (moveWeapon * motionSpeed_ / 2.0f) ;
 	}
@@ -1068,9 +1086,14 @@ void Player::thirdAttackMotion(){
 	easeT_ += 0.08f * motionSpeed_;
 	if (easeT_>=1.0f){
 		easeT_ = 1.0f;
+		WaitTime -= 1;
 	}
 	else {
 		workAttack_.AttackTimer_++;
+	}
+
+	if (WaitTime <= 0) {
+		isEndAttack_ = true;
 	}
 
 	Weapon_offset_Base.x = Ease::Easing(Ease::EaseName::EaseInBack, 3.0f, 0.0f, easeT_);
@@ -1118,11 +1141,14 @@ void Player::fourthAttackMotion(){
 	
 	if (weapon_Rotate <= -1.2f) {
 		weapon_Rotate = -1.2f;
+		WaitTime -= 1;
 	}
 	else {
 		workAttack_.AttackTimer_++;
 	}
-	
+	if (WaitTime <= 0) {
+		isEndAttack_ = true;
+	}
 	
 	
 
@@ -1170,6 +1196,10 @@ void Player::fifthAttackMotion(){
 	else if (isShakeDown) {
 
 		weapon_Rotate += moveWeaponShakeDown * 1.5f * motionSpeed_;
+	}
+
+	if (WaitTime <= 0) {
+		isEndAttack_ = true;
 	}
 
 	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;

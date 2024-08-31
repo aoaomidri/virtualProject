@@ -37,6 +37,14 @@ public:
 		return *this;
 	}
 
+	Vector3 operator+=(float num) {
+		this->x += num;
+		this->y += num;
+		this->z += num;
+
+		return *this;
+	}
+
 	Vector3 operator-=(float num) {
 		this->x -= num;
 		this->y -= num;
@@ -104,6 +112,14 @@ public:
 		result.z = this->z / num;
 
 		return result;
+	}
+
+	Vector3 operator/=(float num) {
+		this->x /= num;
+		this->y /= num;
+		this->z /= num;
+
+		return *this;
 	}
 
 	Vector3 operator=(const Vector3& num) {

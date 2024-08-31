@@ -97,6 +97,15 @@ public:
 		return result;
 	}
 
+	Vector3 operator/(float num) {
+		Vector3 result{};
+		result.x = this->x / num;
+		result.y = this->y / num;
+		result.z = this->z / num;
+
+		return result;
+	}
+
 	Vector3 operator=(const Vector3& num) {
 		this->x = num.x;
 		this->y = num.y;

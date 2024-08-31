@@ -342,6 +342,7 @@ private:
 	HitRecord hitRecord_;
 
 	std::unique_ptr<ParticleBase> particle_;
+	std::unique_ptr<ParticleBase> particleSword_;
 
 	//手から出す予定のパーティクル
 	std::unique_ptr<ParticleBase> particleHands_;
@@ -355,6 +356,8 @@ private:
 	size_t rightHandNumber_;
 
 	EulerTransform particleTrans_;
+
+	EulerTransform particleTransCenter_;
 
 	std::unique_ptr<Sprite> shadow_;
 

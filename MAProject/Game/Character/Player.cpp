@@ -119,8 +119,18 @@ void Player::Initialize(){
 	particleHands_->SetLifeTime(0.5f);
 	particleHands_->SetNotMove();
 
+	particleSword_ = std::make_unique<ParticleBase>();
+	particleSword_->Initialize();
+	particleSword_->SetPositionRange({ 0.0f,0.0f });
+	particleSword_->SetVelocityRange({ -0.5f,0.5f });
+	particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
+	particleSword_->SetAddParticle(3);
+	particleSword_->SetLifeTime(0.5f);
+	particleSword_->SetNotMove();
+
 	playerTransform_ = playerSkinAnimObj_->transform_;
 	particleTrans_ = playerTransform_;
+	particleTransCenter_ = playerTransform_;
 
 	weaponTransform_ = {
 		.scale = {0.2f,0.2f,0.2f},
@@ -307,6 +317,9 @@ void Player::Draw(const ViewProjection& viewProjection){
 		particleTrans_.translate = weaponObj_->GetTopVerTex().head;
 		particleTrans_.scale = { 0.3f,0.3f,0.3f };
 
+		particleTransCenter_.translate = (weaponObj_->GetTopVerTex().tail + weaponObj_->GetTopVerTex().head) / 2.0f;
+		particleTransCenter_.scale = { 0.3f,0.3f,0.3f };
+
 	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		
 
@@ -339,10 +352,14 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 		
 	}
 	particleHands_->Update(particleTrans_, viewProjection);
+	particleSword_->Update(particleTransCenter_, viewProjection);
 	if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
 		
 		particleHands_->SetScale({ 0.003f ,0.003f,0.003f });
 		particleHands_->Draw();
+
+		particleSword_->SetScale({ 0.003f ,0.003f,0.003f });
+		particleSword_->Draw();
 	}
 	
 	
@@ -376,15 +393,7 @@ void Player::DrawImgui(){
 	ImGui::Begin("test");
 	ImGui::DragFloat3("testRotate", &testTrans_.rotate.x, 0.01f, 0.0f, 3.14f);
 	ImGui::End();
-	/*ImGui::Begin("プレイヤーのアニメーション");
-	animetionNames_ = playerSkinAnimObj_->GetAnimations();
-	for (size_t i = 0; i < animetionNames_.size(); i++){
-		if (ImGui::Button(animetionNames_[i].c_str())) {
-			playerSkinAnimObj_->ChangeAnimation(animetionNames_[i]);
-		}
-	}
-
-	ImGui::End();*/
+	
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
 	//particle_->DrawImgui("プレイヤーパーティクル");
 #endif
@@ -475,6 +484,7 @@ void Player::BehaviorRootUpdate(){
 		postureVec_ = move_;
 
 		particleHands_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
+		particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));

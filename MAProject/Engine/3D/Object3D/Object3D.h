@@ -43,6 +43,10 @@ public:
 		dissolveData_->threshold = data;
 	}
 
+	void SetColor(const Vector4 data) {
+		materialDate->color = data;
+	}
+
 	void SetMatrix(const Matrix4x4& matrix) {
 		setMatrix_ = matrix;
 	}
@@ -68,6 +72,10 @@ public:
 	}
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+
+	void ColorReset() {
+		materialDate->color= { 1.0f, 1.0f, 1.0f, 1.0f };
+	}
 
 	void makeResource();
 

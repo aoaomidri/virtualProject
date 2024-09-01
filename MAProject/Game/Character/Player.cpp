@@ -513,10 +513,10 @@ void Player::BehaviorRootUpdate(){
 	}
 	Vector3 NextPos = playerTransform_.translate + move_;
 
-	if (NextPos.x >= 97.0f or NextPos.x <= -97.0f){
+	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f){
 		move_.x = 0;
 	}
-	if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
 		move_.z = 0;
 	}
 

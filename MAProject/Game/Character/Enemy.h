@@ -190,18 +190,21 @@ private:
 private:
 	/*振る舞い系*/
 	enum class Behavior {
-		kAttack,		//攻撃
-		kSelectAttack,	//確定行動攻撃
-		kRoot,			//様子見中
-		kBack,			//後ろにジャンプ
-		kDash,			//ダッシュ
-		kRun,			//走り
-		kFree,			//遊びの時間
-		kDead,			//やられた
+		kPreliminalyAction, //予備動作
+		kAttack,			//攻撃
+		kSelectAttack,		//確定行動攻撃
+		kRoot,				//様子見中
+		kBack,				//後ろにジャンプ
+		kDash,				//ダッシュ
+		kRun,				//走り
+		kFree,				//遊びの時間
+		kDead,				//やられた
 	};
 
 
 	Behavior behavior_ = Behavior::kRoot;
+
+
 
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
@@ -240,6 +243,12 @@ private:
 	void BehaviorFreeInitialize();
 	//遊び
 	void Free();
+
+
+	//予備動作初期化
+	void BehaviorPreliminalyActionInitialize();
+	//予備動作
+	void PreliminalyAction();
 
 
 private:
@@ -328,6 +337,8 @@ private:
 
 	float easeT_;
 
+	float attackRotate_;
+
 	Ease ease_;
 
 	/*回転ビーム*/
@@ -344,7 +355,7 @@ private:
 	Vector3 slashAngle_{};
 
 private:
-
+	Vector4 enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	//ディゾルブ関係
 	float threshold_ = 0.0f;

@@ -140,6 +140,9 @@ void Enemy::Update(){
 		return false;
 	});
 
+	bodyObj_->SetColor(enemyColor_);
+	partsObj_->SetColor(enemyColor_);
+
 	MotionUpdate();
 
 	shadow_->position_ = transform_.translate;
@@ -231,7 +234,7 @@ void Enemy::DrawImgui() {
 	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("回転攻撃の射程補正変数", &attackLength_, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat3("回転", &slashAngle_.x, 0.01f, 0.0f, 3.14f);
-
+	ImGui::DragFloat4("色", &enemyColor_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
 #endif
 }
@@ -383,6 +386,9 @@ void Enemy::MotionUpdate(){
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kPreliminalyAction:
+			BehaviorPreliminalyActionInitialize();
+			break;
 		}
 	}
 	// 振る舞いリクエストをリセット
@@ -390,7 +396,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -409,6 +415,9 @@ void Enemy::MotionUpdate(){
 		break;
 	case Behavior::kAttack:
 		AttackMotion();
+		break;
+	case Behavior::kPreliminalyAction:
+		PreliminalyAction();
 		break;
 	}
 
@@ -460,6 +469,15 @@ void Enemy::RootMotion(){
 	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	/*敵の移動*/
+	Vector3 NextPos = transform_.translate + move_;
+
+	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+		move_.z = 0;
+	}
+
 	transform_.translate += move;
 
 	
@@ -487,7 +505,7 @@ void Enemy::RootMotion(){
 			behaviorRequest_ = Behavior::kBack;
 		}
 		else {
-			behaviorRequest_ = Behavior::kAttack;
+			behaviorRequest_ = Behavior::kPreliminalyAction;
 		}
 
 	}
@@ -497,7 +515,7 @@ void Enemy::RootMotion(){
 			behaviorRequest_ = Behavior::kRun;
 		}
 		else {
-			behaviorRequest_ = Behavior::kAttack;
+			behaviorRequest_ = Behavior::kPreliminalyAction;
 		}
 		
 	}
@@ -569,6 +587,15 @@ void Enemy::EnemyRun(){
 	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	/*敵の移動*/
+	Vector3 NextPos = transform_.translate + move_;
+
+	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+		move_.z = 0;
+	}
+
 	transform_.translate += move;
 
 
@@ -591,7 +618,7 @@ void Enemy::EnemyRun(){
 			behaviorRequest_ = Behavior::kFree;
 		}
 		else {
-			behaviorRequest_ = Behavior::kAttack;
+			behaviorRequest_ = Behavior::kPreliminalyAction;
 		}
 	}
 }
@@ -603,6 +630,19 @@ void Enemy::BehaviorFreeInitialize(){
 void Enemy::Free(){
 	if (++freeTime_ > freeTimeMax_) {
 		behaviorRequest_ = Behavior::kRoot;
+	}
+}
+
+void Enemy::BehaviorPreliminalyActionInitialize(){
+	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
+}
+
+void Enemy::PreliminalyAction(){
+	enemyColor_.y -= 0.02f;
+	enemyColor_.z = enemyColor_.y;
+
+	if (enemyColor_.y <= 0.2f){
+		behaviorRequest_ = Behavior::kAttack;
 	}
 }
 
@@ -630,6 +670,8 @@ void Enemy::DeadMotion(){
 }
 
 void Enemy::BehaviorAttackInitialize() {
+	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
+
 	int i = RandomMaker::DistributionInt(0, 3);
 	if (i == 0) {
 		ATBehaviorRequest_ = AttackBehavior::kXAttack;
@@ -757,6 +799,14 @@ void Enemy::TripleAttack(){
 	}
 	else {
 		/*敵の移動*/
+		Vector3 NextPos = transform_.translate + move_;
+
+		if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
+			move_.x = 0;
+		}
+		if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+			move_.z = 0;
+		}
 		transform_.translate += move;
 	}
 
@@ -868,12 +918,14 @@ void Enemy::RotateAttack(){
 	sub = Vector3::Normalize(sub);
 	postureVec_ = sub;
 
-	Matrix4x4 directionTodirection_;
-	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+	Matrix4x4 rotateMat;
+	rotateMat.MakeRotateMatrixY({ 0.0f,attackRotate_,0.0f });
 
-	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, rotateMat);
 
 	transform_.translate = ease_.Easing(Ease::EaseName::EaseOutQuart, attackBasePos_, posContainer_[attackCount_], easeT_);
+
+	attackRotate_ = ease_.Easing(Ease::EaseName::EaseOutQuart, 0.0f, (3.14f * 4.0f), easeT_);
 
 	if (easeT_ < 1.0f) {		
 		easeT_ += (1.0f / 60.0f);

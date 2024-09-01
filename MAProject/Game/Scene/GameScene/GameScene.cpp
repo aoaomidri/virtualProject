@@ -27,7 +27,7 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	titleBGM = audio_->LoadAudio("honobono.mp3");
+	titleBGM = audio_->LoadAudio("Game3.mp3");
 	gameBGM = audio_->LoadAudio("Game3.mp3");
 }
 
@@ -220,7 +220,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::GAME;
+	sceneNum_ = SceneName::TITLE;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 

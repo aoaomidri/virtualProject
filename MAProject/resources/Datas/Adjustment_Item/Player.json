@@ -5,8 +5,8 @@
         "DashSpeed": 10.0,
         "DownSpeed": -0.009999999776482582,
         "JumpPower": 0.20000000298023224,
-        "MotionDistance": 3.5,
-        "MotionSpeed": 1.2000000476837158,
+        "MotionDistance": 3.0,
+        "MotionSpeed": 1.399999976158142,
         "MoveSpeed": 0.07000000029802322
     }
 }

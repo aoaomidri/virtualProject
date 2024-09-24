@@ -5,7 +5,7 @@ public:
 	//初期化処理
 	void Initialize();
 
-	void Draw(const TrailEffect* trail);
+	void Draw(const TrailEffect* trail, const Matrix4x4& viewPro);
 
 	void MakeResource();
 private:

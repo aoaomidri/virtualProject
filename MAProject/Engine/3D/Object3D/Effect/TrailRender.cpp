@@ -3,12 +3,18 @@
 
 void TrailRender::Initialize(){
 	GraphicsPipelineTrail_ = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineTrail_->InitializeTrail(L"resources/shaders/TrailEffect/TrailEffect.VS.hlsl", L"resources/shaders/TrailEffect/TrailEffect.PS.hlsl");
+	GraphicsPipelineTrail_->InitializeWorld2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
 
 	MakeResource();
 }
 
-void TrailRender::Draw(const TrailEffect* trail){
+void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
+	materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
+
+	Matrix4x4 worldViewProjectionMatrix = viewPro;
+	wvpData_->WVP = worldViewProjectionMatrix;
+
+
 	auto command = DirectXCommon::GetInstance()->GetCommandList();
 
 	command->SetGraphicsRootSignature(GraphicsPipelineTrail_->GetRootSignature());

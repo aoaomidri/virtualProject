@@ -15,7 +15,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
 
 	//データを書き込む
-	TransformationMatrix* wvpData_ = nullptr;
+	Matrix4x4* wvpData_ = nullptr;
 
 	HRESULT hr_;
 

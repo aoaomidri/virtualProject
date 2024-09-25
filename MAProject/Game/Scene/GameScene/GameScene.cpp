@@ -220,7 +220,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::TITLE;
+	sceneNum_ = SceneName::GAME;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
@@ -396,7 +396,7 @@ void GameScene::Debug(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
-	switch (sceneNum_) {
+	/*switch (sceneNum_) {
 	case SceneName::TITLE:
 		break;
 	case SceneName::GAME:
@@ -407,14 +407,14 @@ void GameScene::DrawParticle(){
 		break;
 	default:
 		assert(0);
-	}
+	}*/
 
 	textureManager_->PostDrawParticle();
 }
 
 void GameScene::DrawSkin3D(){
 	textureManager_->PreDrawSkin3D();
-	switch (sceneNum_) {
+	/*switch (sceneNum_) {
 	case SceneName::TITLE:
 
 		break;
@@ -428,7 +428,7 @@ void GameScene::DrawSkin3D(){
 		break;
 	default:
 		assert(0);
-	}
+	}*/
 
 }
 
@@ -440,7 +440,7 @@ void GameScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDrawMapping3D();
 
-	/*ここから下に描画処理を書き込む*/
+	///*ここから下に描画処理を書き込む*/
 	switch (sceneNum_) {
 	case SceneName::TITLE:
 		
@@ -464,10 +464,10 @@ void GameScene::Draw3D(){
 	default:
 		assert(0);
 	}
-	floorManager_->Draw(followCamera_->GetViewProjection());
+	//floorManager_->Draw(followCamera_->GetViewProjection());
 
 	textureManager_->PreDraw3D();
-	stageObject_->Draw(followCamera_->GetViewProjection());
+	//stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/

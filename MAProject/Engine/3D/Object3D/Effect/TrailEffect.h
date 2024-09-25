@@ -48,14 +48,28 @@ public:
 		tempPos_.tail = tail;
 	};
 
+	void Reset() {
+		//vertex_.clear();
+	}
+
+	void Draw() const;
+
 	void DrawImgui(std::string name);
 
 	const D3D12_VERTEX_BUFFER_VIEW* GetVertexBuffer() const{
 		return &vertexBufferView_;
 	}
 
+	const D3D12_INDEX_BUFFER_VIEW* GetIndexBuffer() const {
+		return &indexBufferView_;
+	}
+
 	const uint32_t GetVertexSize() const {
 		return static_cast<uint32_t>(vertex_.size());
+	}
+
+	const uint32_t GetIndexSize() const {
+		return static_cast<uint32_t>(indices_.size());
 	}
 
 	const uint32_t GetTextureHandle() const {
@@ -84,14 +98,31 @@ private:
 	//頂点リソースにデータを書き込む
 	VertexData* vertexDate_ = nullptr;
 
+	//頂点indexバッファービューを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+
+	//頂点リソースにデータを書き込む
+	uint32_t* indexData_ = nullptr;
+
 	//トレイルに関する変数
 	//位置を保存するバッファ
 	std::vector<PosBuffer> posArray_;
 	//頂点バッファ
 	std::vector<VertexData> vertex_;
 
+	//頂点バッファ
+	std::vector<uint32_t> indices_;
+
+	size_t vertexNum_ = 0;
+
+	size_t indexNum_ = 0;
+
 	//最大描画数
 	uint32_t max_;
+
+	uint32_t indexCount_;
 
 	//現在の座標
 	PosBuffer tempPos_;

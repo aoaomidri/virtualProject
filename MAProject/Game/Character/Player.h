@@ -347,9 +347,9 @@ private:
 	//手から出す予定のパーティクル
 	std::unique_ptr<ParticleBase> particleHands_;
 
-	/*std::unique_ptr<TrailEffect> trail_;
+	std::unique_ptr<TrailEffect> trail_;
 
-	std::unique_ptr<TrailRender> trailRender_;*/
+	std::unique_ptr<TrailRender> trailRender_;
 
 	size_t leftHandNumber_;
 

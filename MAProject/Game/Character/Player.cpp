@@ -60,7 +60,7 @@ void Player::Initialize(){
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
 	weaponObj_->SetIsGetTop(true);
-	weaponObj_->SetIsLighting(true);
+	weaponObj_->SetIsLighting(false);
 	
 
 	weaponTopObj_ = std::make_unique<Object3D>();
@@ -154,11 +154,11 @@ void Player::Initialize(){
 
 	isDown_ = true;
 
-	/*trail_ = std::make_unique<TrailEffect>();
+	trail_ = std::make_unique<TrailEffect>();
 	trail_->Initialize(128, "resources/texture/TrailEffect/greenTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
-	trailRender_->Initialize();*/
+	trailRender_->Initialize();
 }
 
 void Player::Update(){
@@ -260,7 +260,7 @@ void Player::Update(){
 	}
 	weaponCollisionMatrix_= Matrix::GetInstance()->MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
-	//trail_->Update();
+	trail_->Update();
 
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
@@ -269,6 +269,7 @@ void Player::Update(){
 
 void Player::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
+	trailRender_->Draw(trail_.get(), viewProjection);
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
@@ -395,6 +396,8 @@ void Player::DrawImgui(){
 	ImGui::End();
 	
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
+
+	trail_->DrawImgui("トレイル");
 	//particle_->DrawImgui("プレイヤーパーティクル");
 #endif
 }
@@ -448,6 +451,7 @@ void Player::BehaviorRootInitialize(){
 	weaponTransform_.rotate.z = 0;
 	weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
 	weaponCollisionTransform_.translate.y = 10000.0f;
+	trail_->Reset();
 }
 
 void Player::BehaviorRootUpdate(){
@@ -565,7 +569,7 @@ void Player::BehaviorRootUpdate(){
 }
 
 void Player::BehaviorAttackInitialize(){
-	
+	trail_->Reset();
 	workAttack_.comboNext_ = false;
 	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
@@ -589,6 +593,7 @@ void Player::BehaviorAttackInitialize(){
 }
 
 void Player::BehaviorSecondAttackInitialize(){
+	trail_->Reset();
 	workAttack_.comboNext_ = false;
 	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
@@ -613,6 +618,7 @@ void Player::BehaviorSecondAttackInitialize(){
 }
 
 void Player::BehaviorThirdAttackInitialize(){
+	trail_->Reset();
 	workAttack_.comboNext_ = false;
 	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
@@ -638,6 +644,7 @@ void Player::BehaviorThirdAttackInitialize(){
 
 void Player::BehaviorFourthAttackInitialize()
 {
+	trail_->Reset();
 	workAttack_.comboNext_ = false;
 	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
@@ -681,6 +688,7 @@ void Player::BehaviorFifthAttackInitialize()
 	WaitTime = WaitTimeBase;
 	weapon_Rotate = 0.5f;
 	isShakeDown = false;*/
+	trail_->Reset();
 	workAttack_.comboNext_ = false;
 	workAttack_.strongComboNext_ = false;
 	workAttack_.attackParameter_ = 0;
@@ -815,7 +823,7 @@ void Player::BehaviorAttackUpdate(){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	//trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+	trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 
 	if (workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {

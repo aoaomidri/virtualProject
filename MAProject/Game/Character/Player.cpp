@@ -155,7 +155,7 @@ void Player::Initialize(){
 	isDown_ = true;
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(128, "resources/texture/TrailEffect/greenTrail.png");
+	trail_->Initialize(12, "resources/texture/TrailEffect/greenTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
@@ -788,18 +788,23 @@ void Player::BehaviorAttackUpdate(){
 	switch (workAttack_.comboIndex_){
 	case 1:
 		AttackMotion();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 		break;
 	case 2:		
 		secondAttackMotion();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 		break;
 	case 3:	
 		thirdAttackMotion();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 		break;
 	case 4:
 		fourthAttackMotion();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 		break;
 	case 5:
 		fifthAttackMotion();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
 		break;
 	default:
 		break;
@@ -823,7 +828,7 @@ void Player::BehaviorAttackUpdate(){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
-	trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+	
 
 	if (workAttack_.attackParameter_ >= 35) {
 		if (workAttack_.comboNext_) {

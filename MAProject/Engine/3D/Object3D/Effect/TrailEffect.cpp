@@ -43,16 +43,19 @@ void TrailEffect::Update(){
         float v = 0.0f;
         vertex_.resize(usedPosArray.size() * 2);
         for (size_t j = 0; j < usedPosArray.size(); ++j) {
+            if (v >= 0.98f) {
+                v = 0.98f;
+            }
             if (usedPosArray[j].head == Vector3(0.0f, 0.0f, 0.0f)&& usedPosArray[j].tail == Vector3(0.0f, 0.0f, 0.0f)){
                 continue;
             }
             // ヘッドの頂点
             vertex_[2 * j].position = usedPosArray[j].head;
-            vertex_[2 * j].texcoord = Vector2(0.0f, v);
+            vertex_[2 * j].texcoord = Vector2(v, 0.0f);
 
             // テールの頂点
             vertex_[2 * j + 1].position = usedPosArray[j].tail;
-            vertex_[2 * j + 1].texcoord = Vector2(1.0f, v);
+            vertex_[2 * j + 1].texcoord = Vector2(v, 0.98f);
             vertexNum_ = vertex_.size();
             v += amount;
         }

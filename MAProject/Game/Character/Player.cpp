@@ -155,7 +155,7 @@ void Player::Initialize(){
 	isDown_ = true;
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(25, "resources/texture/TrailEffect/greenTrail.png");
+	trail_->Initialize(20, "resources/texture/TrailEffect/greenTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
@@ -1109,7 +1109,7 @@ void Player::secondAttackMotion(){
 void Player::thirdAttackMotion(){
 	
 	
-	easeT_ += 0.08f * motionSpeed_;
+	easeT_ += 0.08f * motionSpeed_ * 0.75f;
 	if (easeT_>=1.0f){
 		easeT_ = 1.0f;
 		WaitTime -= 1;

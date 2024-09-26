@@ -21,8 +21,11 @@ void TrailEffect::Update(){
     for (size_t i = posArray_.size() - 1; i > 0; --i){
         posArray_[i] = posArray_[i - 1];
     }
-    posArray_.front().head = tempPos_.head;
-    posArray_.front().tail = tempPos_.tail;
+    if (tempPos_.head != tempPos_.tail) {
+        posArray_.front().head = tempPos_.head;
+        posArray_.front().tail = tempPos_.tail;
+    }
+    
     tempPos_ = PosBuffer();
 
     ////曲線を作る
@@ -33,13 +36,16 @@ void TrailEffect::Update(){
 
     bufferSize_ = usedPosArray.size();
 
-   /* vertex_.clear();
-    indices_.clear();*/
+    vertex_.clear();
+    indices_.clear();
     if (usedPosArray.size() > 1) {
         float amount = 1.0f / (usedPosArray.size() - 1);
         float v = 0.0f;
         vertex_.resize(usedPosArray.size() * 2);
         for (size_t j = 0; j < usedPosArray.size(); ++j) {
+            if (usedPosArray[j].head == Vector3(0.0f, 0.0f, 0.0f)&& usedPosArray[j].tail == Vector3(0.0f, 0.0f, 0.0f)){
+                continue;
+            }
             // ヘッドの頂点
             vertex_[2 * j].position = usedPosArray[j].head;
             vertex_[2 * j].texcoord = Vector2(0.0f, v);
@@ -115,7 +121,9 @@ std::vector<TrailEffect::PosBuffer> TrailEffect::GetUsedPosArray(){
     for (size_t i = 1; i < posArray_.size(); ++i) {
         // posArray[i] が有効であり、重複していない場合に選択
         if (posArray_[i].head != posArray_[i - 1].head) {
-            usedPosArray.push_back(posArray_[i]);
+            if (posArray_[i].head != posArray_[i].tail) {
+                usedPosArray.push_back(posArray_[i]);
+            }
         }
     }
 

@@ -155,7 +155,7 @@ void Player::Initialize(){
 	isDown_ = true;
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(20, "resources/texture/TrailEffect/greenTrail.png");
+	trail_->Initialize(25, "resources/texture/TrailEffect/greenTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();

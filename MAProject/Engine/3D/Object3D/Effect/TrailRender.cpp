@@ -9,7 +9,7 @@ void TrailRender::Initialize(){
 }
 
 void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
-	if (trail == nullptr || trail->GetVertexSize() < 3) {
+	if (trail == nullptr || trail->GetVertexSize() < 5) {
 		return; // trailがnullptrまたは頂点サイズが不足している場合
 	}
 

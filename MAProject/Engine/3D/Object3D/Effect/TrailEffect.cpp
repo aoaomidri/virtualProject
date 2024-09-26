@@ -36,8 +36,8 @@ void TrailEffect::Update(){
 
     bufferSize_ = usedPosArray.size();
 
-    vertex_.clear();
-    indices_.clear();
+   /* vertex_.clear();
+    indices_.clear();*/
     if (usedPosArray.size() > 1) {
         float amount = 1.0f / (usedPosArray.size() - 1);
         float v = 0.0f;
@@ -137,7 +137,7 @@ void TrailEffect::CreateCurveVertex(std::vector<PosBuffer>& container){
         // 十分なポイントがない場合は、そのまま返す
         return;
     }
-
+    smoothedContainer.push_back(container.front());
     for (size_t i = 1; i < container.size() - 2; ++i) {
         // 4つの制御点を取得
         PosBuffer& p0 = container[i - 1];

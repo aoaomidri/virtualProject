@@ -240,6 +240,17 @@ public:
 		return result;
 	}
 
+	static Vector3 CatmullRom(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Vector3& controlPoint3, const float t) {
+		Vector3 result{};
+		result =
+			((controlPoint0 * -1.0f + controlPoint1 * 3.0f + controlPoint2 * -3.0f + controlPoint3) * std::powf(t, 3.0f) +
+				(controlPoint0 * 2.0f + controlPoint1 * -5.0f + controlPoint2 * 4.0f + controlPoint3 * -1.0f) * std::powf(t, 2.0f) +
+				(controlPoint0 * -1.0f + controlPoint2) * t + controlPoint1 * 2.0f) * 0.5f;
+
+		return result;
+	}
+
+
 	static float Length(const Vector3& v) {
 		float result{ 0.0f };
 		float bulletNorm = static_cast<float>(sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z)));

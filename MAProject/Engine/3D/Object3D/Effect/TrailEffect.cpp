@@ -7,9 +7,10 @@
 
 
 void TrailEffect::Initialize(int bufferSize, const std::string& texturePath){
+    maxSegment_ = bufferSize;
 	posArray_.resize(bufferSize);
-    max_ = bufferSize * 2;
-    indexCount_ = (max_ - 2) * 3;
+    max_ = bufferSize * 2 * (int)(divisionNumber_ * 1.5f);
+    indexCount_ = (max_) * 3;
     textureHandle_ = TextureManager::GetInstance()->Load(texturePath);
     vertex_.resize(max_);
     indices_.resize(indexCount_);
@@ -21,17 +22,17 @@ void TrailEffect::Update(){
     for (size_t i = posArray_.size() - 1; i > 0; --i){
         posArray_[i] = posArray_[i - 1];
     }
-   
+   //配列の一番最初に値の代入
     posArray_.front().head = tempPos_.head;
     posArray_.front().tail = tempPos_.tail;  
     
     tempPos_ = PosBuffer();
 
-    ////曲線を作る
     std::vector<PosBuffer> usedPosArray = GetUsedPosArray();
     
     if (usedPosArray.empty())return;
-    //CreateCurveVertex(usedPosArray);
+    ////曲線を作る
+    CreateCurveVertex(usedPosArray);
 
     bufferSize_ = usedPosArray.size();
 
@@ -127,6 +128,40 @@ std::vector<TrailEffect::PosBuffer> TrailEffect::GetUsedPosArray(){
     }
 
     return usedPosArray;
+}
+
+void TrailEffect::CreateCurveVertex(std::vector<PosBuffer>& container){
+    std::vector<PosBuffer> smoothedContainer;
+
+    if (container.size() < 4) {
+        // 十分なポイントがない場合は、そのまま返す
+        return;
+    }
+
+    for (size_t i = 1; i < container.size() - 2; ++i) {
+        // 4つの制御点を取得
+        PosBuffer& p0 = container[i - 1];
+        PosBuffer& p1 = container[i];
+        PosBuffer& p2 = container[i + 1];
+        PosBuffer& p3 = container[i + 2];
+
+        // スムージングステップ数（間に何個のポイントを挿入するか）
+        const int steps = divisionNumber_;
+
+        for (int j = 0; j <= steps; ++j) {
+            float t = static_cast<float>(j) / static_cast<float>(steps);
+
+            // Catmull-Romスプラインの公式で補間
+            PosBuffer interpolated{};
+            interpolated.head = Vector3::CatmullRom(p0.head, p1.head, p2.head, p3.head, t);
+            interpolated.tail = Vector3::CatmullRom(p0.tail, p1.tail, p2.tail, p3.tail, t);
+
+            smoothedContainer.push_back(interpolated);
+        }
+    }
+
+    // 結果を元のコンテナに反映
+    container = smoothedContainer;
 }
 
 void TrailEffect::MakeVertexData(){

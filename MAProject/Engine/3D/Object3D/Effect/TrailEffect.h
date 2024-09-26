@@ -52,7 +52,7 @@ public:
 		posArray_.clear();
 		vertex_.clear();
 		indices_.clear();
-		posArray_.resize(max_ / 2);
+		posArray_.resize(maxSegment_);
 	}
 
 	void Draw() const;
@@ -88,6 +88,8 @@ public:
 	}
 private:
 	std::vector<PosBuffer>GetUsedPosArray();
+	//曲線で補正を掛けて滑らかにする
+	void CreateCurveVertex(std::vector<PosBuffer>& container);
 
 	void MakeVertexData();
 	
@@ -122,7 +124,12 @@ private:
 
 	size_t indexNum_ = 0;
 
+	//分割数
+	uint32_t divisionNumber_ = 4;
+
 	//最大描画数
+	uint32_t maxSegment_;
+
 	uint32_t max_;
 
 	uint32_t indexCount_;

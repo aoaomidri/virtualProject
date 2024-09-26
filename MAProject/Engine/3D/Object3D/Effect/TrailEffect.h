@@ -49,7 +49,10 @@ public:
 	};
 
 	void Reset() {
-		//vertex_.clear();
+		posArray_.clear();
+		vertex_.clear();
+		indices_.clear();
+		posArray_.resize(max_ / 2);
 	}
 
 	void Draw() const;

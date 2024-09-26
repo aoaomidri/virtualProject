@@ -414,7 +414,7 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawSkin3D(){
 	textureManager_->PreDrawSkin3D();
-	/*switch (sceneNum_) {
+	switch (sceneNum_) {
 	case SceneName::TITLE:
 
 		break;
@@ -428,7 +428,7 @@ void GameScene::DrawSkin3D(){
 		break;
 	default:
 		assert(0);
-	}*/
+	}
 
 }
 
@@ -464,10 +464,10 @@ void GameScene::Draw3D(){
 	default:
 		assert(0);
 	}
-	//floorManager_->Draw(followCamera_->GetViewProjection());
+	floorManager_->Draw(followCamera_->GetViewProjection());
 
 	textureManager_->PreDraw3D();
-	//stageObject_->Draw(followCamera_->GetViewProjection());
+	stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
 	/*描画後処理*/

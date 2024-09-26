@@ -119,6 +119,67 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
 
+void Object3D::UniqueUpdate(){
+	if (!isDraw_) {
+		return;
+	}
+
+	//rotate_.y += 0.01f;
+
+	if (animation_.duration != 0) {
+		animationTime += 1.0f / 60.0f;
+		animationTime = std::fmod(animationTime, animation_.duration);
+		Model::NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[model_->GetNodeName()];
+		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);
+		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime);
+		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime);
+		localMatrix_ = Matrix::MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
+	}
+	else {
+		localMatrix_ = model_->GetLocalMatrix();
+	}
+	if (setMatrix_.m[3][3] != 0) {
+		worldMatrix_ = setMatrix_;
+	}
+	else {
+
+		worldMatrix_ = Matrix::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	}
+
+	if (parent_) {
+		worldMatrix_.Multiply(*parent_);
+	}
+
+
+	if (isGetTop_) {
+
+		Vector3 result{};
+		Vector3 resultTail{};
+		auto vertexes = model_->GetVertexData();
+
+		for (size_t i = 0; i < vertexes.size(); i++) {
+			auto position = vertexes[i].position;
+			if (result.z > position.z) {
+				result = { position.x,position.y,position.z };
+			}
+
+		}
+		result = { result.x,-result.z,-result.y };
+		resultTail = { result.x,result.y / 3.0f,result.z };
+		Matrix4x4 transMat;
+
+		Matrix4x4 transMatTail;
+		transMat = Matrix::MakeTranslateMatrix(result);
+		transMatTail = Matrix::MakeTranslateMatrix(resultTail);
+
+		matTop_ = Matrix::Multiply(transMat, worldMatrix_);
+		matTail_ = Matrix::Multiply(transMatTail, worldMatrix_);
+		vectorTop_.head = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
+		vectorTop_.tail = { matTail_.m[3][0],matTail_.m[3][1], matTail_.m[3][2] };
+	}
+
+}
+
 void Object3D::Draw() {
 
 	if (!isDraw_) {

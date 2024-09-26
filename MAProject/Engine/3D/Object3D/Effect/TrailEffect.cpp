@@ -21,10 +21,9 @@ void TrailEffect::Update(){
     for (size_t i = posArray_.size() - 1; i > 0; --i){
         posArray_[i] = posArray_[i - 1];
     }
-    if (tempPos_.head != tempPos_.tail) {
-        posArray_.front().head = tempPos_.head;
-        posArray_.front().tail = tempPos_.tail;
-    }
+   
+    posArray_.front().head = tempPos_.head;
+    posArray_.front().tail = tempPos_.tail;  
     
     tempPos_ = PosBuffer();
 

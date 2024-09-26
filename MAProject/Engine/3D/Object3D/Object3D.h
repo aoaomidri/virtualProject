@@ -22,6 +22,8 @@ public:
 	void Initialize(const std::string fileName);
 	
 	void Update(const ViewProjection& viewProjection);
+	//オブジェの場所が必要な時などの特殊な時に掛ける更新処理
+	void UniqueUpdate();
 
 	void Draw();
 

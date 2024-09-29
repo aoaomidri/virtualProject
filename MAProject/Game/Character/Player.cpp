@@ -954,6 +954,14 @@ void Player::BehaviorStrongAttackUpdate(Input* input){
 	Weapon_offset = Matrix::GetInstance()->TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
+	if (workAttack_.comboIndex_ != 0) {
+		weaponCollisionTransform_.translate.y += 1.0f;
+		weaponMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
+		weaponObj_->SetMatrix(weaponMatrix_);
+		weaponObj_->UniqueUpdate();
+		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+	}
+
 }
 
 void Player::BehaviorDashInitialize(){

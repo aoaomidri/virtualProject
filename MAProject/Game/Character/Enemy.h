@@ -8,6 +8,7 @@
 #include"Adjustment_Item.h"
 #include"Quaternion.h"
 //#include"../../Engine/3D/Object3D/Particle.h"
+#include"HitRecord.h"
 #include<optional>
 #include <algorithm>
 #include"Ease/Ease.h"
@@ -42,6 +43,11 @@ public:
 	void Respawn(const Vector3& position);
 
 	void OnCollision();
+
+	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
+
+	bool RecordCheck(uint32_t number) { return hitRecord_.RecordCheck(number); }
+
 
 public:
 	//Getter
@@ -86,6 +92,8 @@ private:
 	//自機のモデル
 	//Object3D* boxObj_;
 	
+	HitRecord hitRecord_;
+
 	std::unique_ptr<Object3D> collisionObj_;
 
 	//プレイヤーの座標
@@ -172,6 +180,8 @@ private:
 	int dashTimer_ = 0;
 
 	bool isDead_ = false;
+	//近接攻撃中かどうか
+	bool isNearAttack_ = false;
 
 	bool isNoLife_ = false;
 

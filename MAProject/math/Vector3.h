@@ -70,6 +70,8 @@ public:
 		return result;
 	}
 
+	Vector3 operator-() const { return{ -x,-y,-z }; }
+
 	Vector3 operator-(Vector3 num)const {
 		Vector3 result{};
 		result.x = this->x - num.x;

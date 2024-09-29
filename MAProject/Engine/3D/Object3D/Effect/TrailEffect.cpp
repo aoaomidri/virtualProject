@@ -96,7 +96,7 @@ void TrailEffect::Update(){
   
 }
 
-void TrailEffect::Draw() const{
+void TrailEffect::SetBuffers() const{
     auto command = DirectXCommon::GetInstance()->GetCommandList();
     command->IASetVertexBuffers(0, 1, &vertexBufferView_);
     command->IASetIndexBuffer(&indexBufferView_);

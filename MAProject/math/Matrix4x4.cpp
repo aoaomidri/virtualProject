@@ -309,56 +309,99 @@ Matrix4x4 Matrix4x4::MakeRotateAxisAngle(const Vector3& axis, float angle){
 Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to){
 	Identity();
 
-	// 正規化されたベクトルを取得
-	Vector3 normFrom = Vector3::Normalize(from);
-	Vector3 normTo = Vector3::Normalize(to);
+	Vector3 axis{};
 
-	float dot = Vector3::Dot(normFrom, normTo);
+	Vector3 fn = Vector3::Normalize(from);
+	Vector3 tn = Vector3::Normalize(to);
 
-	Vector3 cross = Vector3::Cross(normFrom, normTo);
-
-	Vector3 normalizeVec = Vector3::Normalize(cross);
-	float cosTheta = dot;
-	float sinTheta = Vector3::Length(cross);
-
-	if (dot == -1.0f) {
-		Vector3 orthogonalVec{};
-		if (normFrom.x != 0.0f || normFrom.z != 0.0f) {
-			orthogonalVec = { normFrom.z, 0.0f, -normFrom.x };
+	if (fn == -tn) {
+		if (fn.x != 0 || fn.z != 0) {
+			axis = { 0.0f,fn.z,-fn.x };
 		}
 		else {
-			orthogonalVec = { normFrom.y, -normFrom.x, 0.0f };
+			axis = Vector3::Normalize(Vector3::Cross(fn, tn));
 		}
-		orthogonalVec = Vector3::Normalize(orthogonalVec);
-
-		m[0][0] = -1.0f + 2.0f * orthogonalVec.x * orthogonalVec.x;
-		m[0][1] = 2.0f * orthogonalVec.x * orthogonalVec.y;
-		m[0][2] = 2.0f * orthogonalVec.x * orthogonalVec.z;
-
-		m[1][0] = 2.0f * orthogonalVec.y * orthogonalVec.x;
-		m[1][1] = -1.0f + 2.0f * orthogonalVec.y * orthogonalVec.y;
-		m[1][2] = 2.0f * orthogonalVec.y * orthogonalVec.z;
-
-		m[2][0] = 2.0f * orthogonalVec.z * orthogonalVec.x;
-		m[2][1] = 2.0f * orthogonalVec.z * orthogonalVec.y;
-		m[2][2] = -1.0f + 2.0f * orthogonalVec.z * orthogonalVec.z;
+	}
+	else if (fn == tn) {
+		return Identity();
 	}
 	else {
-		
-		m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
-		m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
-		m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
-		
-		m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
-		m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
-		m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
-		
-		m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
-		m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
-		m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
-
-		m[3][3] = 1.0f;
+		axis = Vector3::Normalize(Vector3::Cross(fn, tn));
 	}
+
+
+	float cos = Vector3::Dot(fn, tn);
+	float sin = Vector3::Length(Vector3::Cross(fn, tn));
+
+
+	m[0][0] = std::powf(axis.x, 2) * (1.0f - cos) + cos;
+	if (std::isnan(m[0][0])) {
+		return Identity();
+	}
+	m[0][1] = axis.x * axis.y * (1.0f - cos) + axis.z * sin;
+	m[0][2] = axis.x * axis.z * (1.0f - cos) - axis.y * sin;
+
+	m[1][0] = axis.x * axis.y * (1.0f - cos) - axis.z * sin;
+	m[1][1] = std::powf(axis.y, 2) * (1.0f - cos) + cos;
+	m[1][2] = axis.y * axis.z * (1.0f - cos) + axis.x * sin;
+
+	m[2][0] = axis.x * axis.z * (1.0f - cos) + axis.y * sin;
+	m[2][1] = axis.y * axis.z * (1.0f - cos) - axis.x * sin;
+	m[2][2] = std::powf(axis.z, 2) * (1.0f - cos) + cos;
+
+	return *this; 
+	
+
+	//// 正規化されたベクトルを取得
+	//Vector3 normFrom = Vector3::Normalize(from);
+	//Vector3 normTo = Vector3::Normalize(to);
+
+	//float dot = Vector3::Dot(normFrom, normTo);
+
+	//Vector3 cross = Vector3::Cross(normFrom, normTo);
+
+	//Vector3 normalizeVec = Vector3::Normalize(cross);
+	//float cosTheta = dot;
+	//float sinTheta = Vector3::Length(cross);
+
+	//if (dot == -1.0f) {
+	//	Vector3 orthogonalVec{};
+	//	if (normFrom.x != 0.0f || normFrom.z != 0.0f) {
+	//		orthogonalVec = { normFrom.z, 0.0f, -normFrom.x };
+	//	}
+	//	else {
+	//		orthogonalVec = { normFrom.y, -normFrom.x, 0.0f };
+	//	}
+	//	orthogonalVec = Vector3::Normalize(orthogonalVec);
+
+	//	m[0][0] = -1.0f + 2.0f * orthogonalVec.x * orthogonalVec.x;
+	//	m[0][1] = 2.0f * orthogonalVec.x * orthogonalVec.y;
+	//	m[0][2] = 2.0f * orthogonalVec.x * orthogonalVec.z;
+
+	//	m[1][0] = 2.0f * orthogonalVec.y * orthogonalVec.x;
+	//	m[1][1] = -1.0f + 2.0f * orthogonalVec.y * orthogonalVec.y;
+	//	m[1][2] = 2.0f * orthogonalVec.y * orthogonalVec.z;
+
+	//	m[2][0] = 2.0f * orthogonalVec.z * orthogonalVec.x;
+	//	m[2][1] = 2.0f * orthogonalVec.z * orthogonalVec.y;
+	//	m[2][2] = -1.0f + 2.0f * orthogonalVec.z * orthogonalVec.z;
+	//}
+	//else {
+	//	
+	//	m[0][0] = (normalizeVec.x * normalizeVec.x) * (1 - cosTheta) + cosTheta;
+	//	m[0][1] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) + (normalizeVec.z * sinTheta);
+	//	m[0][2] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.y * sinTheta);
+	//	
+	//	m[1][0] = (normalizeVec.x * normalizeVec.y) * (1 - cosTheta) - (normalizeVec.z * sinTheta);
+	//	m[1][1] = (normalizeVec.y * normalizeVec.y) * (1 - cosTheta) + cosTheta;
+	//	m[1][2] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.x * sinTheta);
+	//	
+	//	m[2][0] = (normalizeVec.x * normalizeVec.z) * (1 - cosTheta) + (normalizeVec.y * sinTheta);
+	//	m[2][1] = (normalizeVec.y * normalizeVec.z) * (1 - cosTheta) - (normalizeVec.x * sinTheta);
+	//	m[2][2] = (normalizeVec.z * normalizeVec.z) * (1 - cosTheta) + cosTheta;
+
+	//	m[3][3] = 1.0f;
+	//}
 	
 	return *this;
 }

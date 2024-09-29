@@ -57,7 +57,7 @@ void Enemy::Initialize(const Vector3& position){
 	partsObj_->Initialize("EnemyParts");
 
 	collisionObj_ = std::make_unique<Object3D>();
-	collisionObj_->Initialize("EnemyParts");
+	collisionObj_->Initialize("box");
 
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
@@ -171,10 +171,20 @@ void Enemy::Update(){
 
 	OBB_.center = transform_.translate;
 	bodyOBB_.center = transform_.translate;
-	attackOBB_.center = OBB_.center;
-	collisionTransform_.scale = bodyOBB_.size;
+	if (isNearAttack_){
+		Vector3 attackOffset = { 0.0f, 0.0f, 4.0f };
+		attackOffset = Matrix::GetInstance()->TransformNormal(attackOffset, rotateMatrix_);
 
-	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);
+		attackOBB_.center = OBB_.center + attackOffset;
+	}
+	else{
+		attackOBB_.center = OBB_.center;
+	}
+	/*collisionTransform_.scale = attackOBB_.size;
+	collisionTransform_.translate = attackOBB_.center;
+	collisionTransform_.rotate = { 0.0f,0.0f,0.0f };
+	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);*/
+	
 	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
 	SetOridentatios(attackOBB_, rotateMatrix_);
@@ -200,9 +210,9 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	//boxObj_->Draw();
 
 #ifdef _DEBUG
-
-	/*collisionObj_->Update(collisionMatrix_, viewProjection);
-	collisionObj_->Draw();*/
+	collisionObj_->SetMatrix(collisionMatrix_);
+	collisionObj_->Update(viewProjection);
+	collisionObj_->Draw();
 #endif // _DEBUG
 	partsObj_->SetMatrix(partsMatrix_);
 	partsObj_->Update(viewProjection);
@@ -396,7 +406,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -449,6 +459,7 @@ void Enemy::BehaviorRootInitialize(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
 	nearTime_ = 0;
+	isNearAttack_ = false;
 }
 
 void Enemy::BehaviorDeadInitialize(){
@@ -787,12 +798,15 @@ void Enemy::TripleAttack(){
 	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
 	if (PELength < 15.0f) {
 		move = { 0 };
+		isNearAttack_ = true;
 		if (attackDistance_ == 0) {
+			attackOBB_.size = { 0,0,0 };
 			attackCount_++;
 			isAttackEnd_ = true;
 			attackDistance_ = distanceTime_;
 		}
 		else {
+			attackOBB_.size = OBB_.size * 2.4f;
 			attackDistance_ -= 1;
 		}
 
@@ -850,7 +864,7 @@ void Enemy::Tackle(){
 
 
 
-			attackOBB_.size = OBB_.size * 2.8f;
+			attackOBB_.size = OBB_.size * 2.4f;
 			transform_.translate += move_;
 
 
@@ -929,8 +943,10 @@ void Enemy::RotateAttack(){
 
 	if (easeT_ < 1.0f) {		
 		easeT_ += (1.0f / 60.0f);
+		attackOBB_.size = OBB_.size * 2.4f;
 	}
 	else {
+		attackOBB_.size = { 0.0f,0.0f,0.0f };
 		attackCount_++;
 		isAttackEnd_ = true;
 		attackDistance_ = distanceTime_;

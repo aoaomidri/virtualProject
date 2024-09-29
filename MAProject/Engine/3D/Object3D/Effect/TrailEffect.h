@@ -55,7 +55,7 @@ public:
 		posArray_.resize(maxSegment_);
 	}
 
-	void Draw() const;
+	void SetBuffers() const;
 
 	void DrawImgui(std::string name);
 

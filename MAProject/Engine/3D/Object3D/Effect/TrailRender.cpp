@@ -27,7 +27,7 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 	command->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
-	trail->Draw();
+	trail->SetBuffers();
 	command->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	command->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	command->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(trail->GetTextureHandle()));

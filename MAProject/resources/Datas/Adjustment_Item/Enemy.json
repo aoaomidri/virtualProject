@@ -2,9 +2,9 @@
     "Enemy": {
         "BackSpeed": -2.0,
         "DownSpeed": 2.0,
-        "EnemyLifeMax": 3,
+        "EnemyLifeMax": 20,
         "FarPlayer": 30.0,
-        "FreeTimeMax": 90,
+        "FreeTimeMax": 45,
         "LengthJudgment": 180,
         "MoveSpeed": 0.07000000029802322,
         "NearPlayer": 14.949999809265137

@@ -139,6 +139,7 @@ void GameScene::Initialize(){
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize({ 0,1.0f,20.0f });
 	enemy_->SetTarget(&player_->GetTransform());
+	enemy_->Update();
 	enemies_.push_back(std::move(enemy_));
 
 
@@ -242,9 +243,7 @@ void GameScene::Update(){
 		//audio_->PauseWave(gameBGM);
 		followCamera_->SetIsMove(false);
 		followCamera_->CameraPosInit();
-		for (const auto& enemy : enemies_) {
-			enemy->Update();
-		}
+		
 
 		if (fadeAlpha_ <= 0.0f) {
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_UP)|| input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_DOWN)){
@@ -345,7 +344,8 @@ void GameScene::Update(){
 			player_->Update();
 			followCamera_->CameraPosInit();
 			for (const auto& enemy : enemies_) {
-				enemy->Initialize({ 0, 1.0f, 20.0f });
+				enemy->Respawn({ 0, 1.0f, 20.0f });
+				enemy->Update();
 			}
 			isReset_ = false;
 		}

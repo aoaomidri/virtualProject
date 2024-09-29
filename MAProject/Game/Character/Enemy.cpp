@@ -254,8 +254,10 @@ void Enemy::onFlootCollision(OBB obb){
 }
 
 void Enemy::Respawn(const Vector3& position){
+	auto levelLoader = LevelLoader::GetInstance();
+
 	transform_ = {
-		{0.9f,0.9f,0.9f},
+		levelLoader->GetLevelObjectTransform("Enemy").scale,
 		{0.0f,3.14f,0.0f},
 		position
 	};
@@ -282,28 +284,30 @@ void Enemy::Respawn(const Vector3& position){
 
 	isDead_ = false;
 	isNoLife_ = false;
-	enemyLife_ = 10;
 	isParticle_ = true;
+	enemyLife_ = enemyLifeMax_;
+	threshold_ = 0.0f;
 
-	OBB_.center = transform_.translate;
-	OBB_.size = { transform_.scale.x + 1.0f,transform_.scale.y + 4.0f,transform_.scale.z + 1.0f };
+	freeTime_ = 0;
+
+	OBB_ = levelLoader->GetLevelObjectOBB("Enemy");
+
 	collisionTransform_.translate = OBB_.center;
 	collisionTransform_.scale = OBB_.size;
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
-	attackOBB_.center = OBB_.center;
 
 	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
+	SetOridentatios(attackOBB_, enemyRotateMatrix);
 
 	behaviorRequest_ = Behavior::kRoot;
+
 	behavior_ = Behavior::kRoot;
 
-	postureVec_ = { 0.0f,0.0f,1.0f };
-	frontVec_ = { 0.0f,0.0f,1.0f };
-
-	threshold_ = 0.0f;
+	postureVec_ = { 0.0f,0.0f,-1.0f };
+	frontVec_ = { 0.0f,0.0f,-1.0f };
 
 }
 

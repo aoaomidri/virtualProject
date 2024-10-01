@@ -9,7 +9,13 @@
 void TrailEffect::Initialize(int bufferSize, const std::string& texturePath){
     maxSegment_ = bufferSize;
 	posArray_.resize(bufferSize);
-    max_ = bufferSize * 2 * (int)(divisionNumber_ * 1.5f);
+    if (divisionNumber_>0){
+        max_ = bufferSize * 2 * (int)(divisionNumber_ * 1.5f);
+    }
+    else {
+        max_ = bufferSize * 2;
+    }
+   
     indexCount_ = (max_) * 3;
     textureHandle_ = TextureManager::GetInstance()->Load(texturePath);
     vertex_.resize(max_);
@@ -32,8 +38,9 @@ void TrailEffect::Update(){
     
     if (usedPosArray.empty())return;
     ////曲線を作る
-    CreateCurveVertex(usedPosArray);
-
+    if (divisionNumber_ > 0) {
+        CreateCurveVertex(usedPosArray);
+    }
     bufferSize_ = usedPosArray.size();
 
    /* vertex_.clear();

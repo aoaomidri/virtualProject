@@ -410,7 +410,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();

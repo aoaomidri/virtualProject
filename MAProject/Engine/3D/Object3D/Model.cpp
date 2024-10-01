@@ -11,7 +11,7 @@
 ID3D12Device* Model::device_ = nullptr;
 
 
-void Model::Draw(ID3D12GraphicsCommandList* CommandList){
+void Model::Draw(ID3D12GraphicsCommandList* CommandList) const{
 	CommandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	CommandList->IASetIndexBuffer(&indexBufferView_);
 }

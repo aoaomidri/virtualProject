@@ -19,7 +19,7 @@ class Model{
 public:
 	struct MaterialData {
 		std::string textureFilePath;
-		uint32_t textureHandle;
+		uint32_t textureHandle = 0;
 	};
 
 	struct Node {
@@ -60,16 +60,6 @@ public:
 		Vector3 position;
 		float intensity;
 	};
-
-	//struct KeyframeVector3 {
-	//	Vector3 value;//キーフレームの値
-	//	float time;//キーフレームの時刻(単位は別)
-	//};
-
-	//struct KeyframeQuaternion {
-	//	Quaternion value;//キーフレームの値
-	//	float time;//キーフレームの時刻(単位は別)
-	//};
 
 	template <typename tValue>
 
@@ -140,7 +130,7 @@ public:
 
 	
 public:
-	void Draw(ID3D12GraphicsCommandList* CommandList);
+	void Draw(ID3D12GraphicsCommandList* CommandList) const;
 
 	static Model* GetInstance();
 	//modelの読み込み

@@ -135,6 +135,7 @@ void GameScene::Initialize(){
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
+	player_->Update();
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize({ 0,1.0f,20.0f });
@@ -150,8 +151,8 @@ void GameScene::Initialize(){
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	//自キャラのワールドトランスフォームを追従カメラにセット
-	followCamera_->SetTarget(&player_->GetTransform());
 	followCamera_->SetTargetMatrix(&player_->GetRotateMatrix());
+	followCamera_->SetTarget(&player_->GetTransform());
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
@@ -227,7 +228,7 @@ void GameScene::Initialize(){
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
-
+	//player_->Update();
 
 }
 

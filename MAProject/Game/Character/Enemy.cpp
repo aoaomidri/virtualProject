@@ -56,8 +56,8 @@ void Enemy::Initialize(const Vector3& position){
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
 
-	collisionObj_ = std::make_unique<Object3D>();
-	collisionObj_->Initialize("box");
+	//collisionObj_ = std::make_unique<Object3D>();
+	//collisionObj_->Initialize("box");
 
 	for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
@@ -210,9 +210,9 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	//boxObj_->Draw();
 
 #ifdef _DEBUG
-	collisionObj_->SetMatrix(collisionMatrix_);
+	/*collisionObj_->SetMatrix(collisionMatrix_);
 	collisionObj_->Update(viewProjection);
-	collisionObj_->Draw();
+	collisionObj_->Draw();*/
 #endif // _DEBUG
 	partsObj_->SetMatrix(partsMatrix_);
 	partsObj_->Update(viewProjection);

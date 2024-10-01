@@ -6,7 +6,7 @@
 #include<fstream>
 #include<sstream>
 #include"TextureManager.h"
-#include"Model.h"
+#include"ModelManager.h"
 #include"PostEffect.h"
 #include"ViewProjection.h"
 #include"DirectionalLight.h"
@@ -92,7 +92,7 @@ public:
 
 private:
 	//モデル
-	std::unique_ptr<Model> model_;
+	std::shared_ptr<Model> model_;
 
 	Model::Animation animation_;
 

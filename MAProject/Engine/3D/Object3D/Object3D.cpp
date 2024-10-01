@@ -12,7 +12,7 @@ void Object3D::Initialize(const std::string fileName) {
 
 	materialDate->enableLighting = false;
 
-	model_ = Model::LoadModelFile(fileName); 
+	model_ = ModelManager::GetInstance()->LoadModelFile(fileName);
 
 	
 

@@ -465,6 +465,9 @@ void Player::BehaviorRootUpdate(){
 	}
 	else {
 		move_.z = input_->GetPadLStick().y * moveSpeed_;
+		if (abs(move_.z) < 0.01f) {
+			move_.z = 0;
+		}
 	}
 
 	if (input_->PushRight()) {
@@ -475,11 +478,17 @@ void Player::BehaviorRootUpdate(){
 	}
 	else {
 		move_.x = input_->GetPadLStick().x * moveSpeed_;
+		if (abs(move_.x) < 0.01f) {
+			move_.x = 0;
+		}
+	}
+	if (viewProjection_){
+
+		Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
+		move_ = Matrix::TransformNormal(move_, newRotateMatrix);
+		move_.y = 0.0f;
 	}
 	
-	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
-	move_ = Matrix::TransformNormal(move_, newRotateMatrix);
-	move_.y = 0.0f;
 	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_ * 3.0f);
 	move_.y = 0.0f;
 	

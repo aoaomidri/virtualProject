@@ -59,19 +59,19 @@ void FollowCamera::Update(){
 
 		Matrix4x4 newMatrix;
 		newMatrix.DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
-		destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(newMatrix);
+		destinationAngleY_ = Matrix::RotateAngleYFromMatrix(newMatrix);
 		destinationAngleX_ = 0.15f;
 	}
 	else {
 
 		if (input_->GetConnectPad() && isMove_) {
 			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
-			Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
-			postureVec_ = Matrix::GetInstance()->TransformNormal(Vec, newRotateMatrix);
+			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_.rotation_);
+			postureVec_ = Matrix::TransformNormal(Vec, newRotateMatrix);
 			postureVec_.y = 0.0f;
 			postureVec_ = Vector3::Normalize(postureVec_);
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_THUMB)) {
-				destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+				destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
 				destinationAngleX_ = 0.2f;
 			}
 		}
@@ -131,21 +131,21 @@ void FollowCamera::Reset(){
 }
 
 void FollowCamera::RotateReset(){
-	destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
 	destinationAngleX_ = 0.2f;
 }
 
 void FollowCamera::CameraPosInit(){
-	destinationAngleY_ = Matrix::GetInstance()->RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
 	destinationAngleX_ = 0.2f;
 	cameraMove_ = { 0,0,0 };
 }
 
 Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	Vector3 offset_ = offset;
-	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(viewProjection_.rotation_);
+	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_.rotation_);
 
-	offset_ = Matrix::GetInstance()->TransformNormal(offset_, newRotateMatrix);
+	offset_ = Matrix::TransformNormal(offset_, newRotateMatrix);
 
 	return offset_;
 }

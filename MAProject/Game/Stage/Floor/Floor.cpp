@@ -8,7 +8,7 @@ void Floor::Initialize(EulerTransform transform){
 
 	floorOBB_.center = floorTransform_.translate;
 	floorOBB_.size = floorTransform_.scale;
-	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform_.rotate);
+	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
 	floorObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
@@ -30,7 +30,7 @@ void Floor::Update(){
 	}
 	floorOBB_.center = floorTransform_.translate;
 	floorOBB_.size = floorTransform_.scale;
-	Matrix4x4 floorRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(floorTransform_.rotate);
+	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
 	floorObj_->transform_ = floorTransform_;

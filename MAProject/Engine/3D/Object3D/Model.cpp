@@ -298,7 +298,7 @@ void Model::LoadFromOBJInternalAssimp(const std::string& filename, const std::st
 			aiQuaternion rotate;
 			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
 			Matrix4x4 bindPoseMatrix = 
-				Matrix::GetInstance()->MakeAffineMatrix(
+				Matrix::MakeAffineMatrix(
 					Vector3({ scale.x,scale.y,scale.z }), 
 					Quaternion({ rotate.x,-rotate.y,-rotate.z,rotate.w }), 
 					Vector3({ -translate.x,translate.y,translate.z }));
@@ -389,7 +389,7 @@ Model::Node Model::ReadNode(aiNode* node){
 	result.transform.scale = { scale.x,scale.y,scale.z };
 	result.transform.rotate.quaternion_ = { rotate.x,-rotate.y,-rotate.z,rotate.w };
 	result.transform.translate = { -translate.x,translate.y,translate.z };
-	result.localMatrix =Matrix::GetInstance()->MakeAffineMatrix(result.transform);
+	result.localMatrix =Matrix::MakeAffineMatrix(result.transform);
 	
 	result.name = node->mName.C_Str();//node名を格納
 	result.children.resize(node->mNumChildren);//子供の数だけ確保

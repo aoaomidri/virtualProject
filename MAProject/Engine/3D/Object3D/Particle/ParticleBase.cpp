@@ -125,22 +125,22 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 		(*particleIterator).currentTime += kDeltaTime_;
 		
 		float alpha_ = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
-		worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix((*particleIterator).transform);
+		worldMatrix_ = Matrix::MakeAffineMatrix((*particleIterator).transform);
 		if (isBillborad_){
-			backToFrontMatrix_ = Matrix::GetInstance()->MakeRotateMatrix({ 0.0f,0.0f,0.0f });
-			billboardMatrix_ = Matrix::GetInstance()->Multiply(backToFrontMatrix_, viewProjection.cameraMatrix_);
+			backToFrontMatrix_ = Matrix::MakeRotateMatrix({ 0.0f,0.0f,0.0f });
+			billboardMatrix_ = Matrix::Multiply(backToFrontMatrix_, viewProjection.cameraMatrix_);
 			billboardMatrix_.m[3][0] = 0.0f;
 			billboardMatrix_.m[3][1] = 0.0f;
 			billboardMatrix_.m[3][2] = 0.0f;
-			worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(
-				Matrix::GetInstance()->MakeScaleMatrix((*particleIterator).transform.scale),
+			worldMatrix_ = Matrix::MakeAffineMatrix(
+				Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
 				billboardMatrix_,
-				Matrix::GetInstance()->MakeTranslateMatrix((*particleIterator).transform.translate));
+				Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
 		}
 		
 
 
-		Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
+		Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 		if (numInstance < particleMaxNum_) {
 			wvpData[numInstance].WVP = worldViewProjectionMatrix;
 			wvpData[numInstance].World = worldMatrix_;
@@ -303,7 +303,7 @@ void ParticleBase::makeResource() {
 
 	materialDate->enableLighting = false;
 
-	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate->uvTransform = Matrix::MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
 	wvpInstancingResource = CreateBufferResource(sizeof(ParticleForGPU) * particleMaxNum_);
@@ -312,8 +312,8 @@ void ParticleBase::makeResource() {
 	for (uint32_t i = 0; i < particleMaxNum_; ++i) {
 		
 		//単位行列を書き込んでおく
-		wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
-		wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
+		wvpData[i].WVP = Matrix::MakeIdentity4x4();
+		wvpData[i].World = Matrix::MakeIdentity4x4();
 		wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 

@@ -14,7 +14,6 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 	}
 
 	materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
-	//Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix({ 5.0f,5.0f,5.0f });
 	*wvpData_ = viewPro;
 
 
@@ -58,6 +57,6 @@ void TrailRender::MakeResource(){
 	//書き込むためのアドレスを取得
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	*wvpData_ = Matrix::GetInstance()->MakeIdentity4x4();
+	*wvpData_ = Matrix::MakeIdentity4x4();
 
 }

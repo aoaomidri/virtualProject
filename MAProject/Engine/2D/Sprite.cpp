@@ -33,7 +33,7 @@ void Sprite::Initialize(uint32_t TextureNumber){
 		{0.0f,0.0f,-10.0f}
 	};
 
-	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate->uvTransform = Matrix::MakeIdentity4x4();
 
 	if (TextureNumber != UINT32_MAX) {
 		textureNumber_ = TextureNumber;
@@ -108,16 +108,16 @@ void Sprite::Update(){
 
 	materialDate->color = color_;
 
-	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-	Matrix4x4 cameraMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-	Matrix4x4 viewMatrixSprite = Matrix::GetInstance()->Inverce(cameraMatrixSprite);
-	Matrix4x4 projectionMatrixSprite = Matrix::GetInstance()->MakeOrthographicMatrix(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, Matrix::GetInstance()->Multiply(viewMatrixSprite, projectionMatrixSprite));
+	Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+	Matrix4x4 cameraMatrixSprite = Matrix::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+	Matrix4x4 viewMatrixSprite = Matrix::Inverce(cameraMatrixSprite);
+	Matrix4x4 projectionMatrixSprite = Matrix::MakeOrthographicMatrix(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 100.0f);
+	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
-	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransform_.scale);
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransform_.rotate));
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransform_.translate));
+	Matrix4x4 uvTransformMatrixSprite = Matrix::MakeScaleMatrix(uvTransform_.scale);
+	uvTransformMatrixSprite = Matrix::Multiply(uvTransformMatrixSprite, Matrix::MakeRotateMatrixZ(uvTransform_.rotate));
+	uvTransformMatrixSprite = Matrix::Multiply(uvTransformMatrixSprite, Matrix::MakeTranslateMatrix(uvTransform_.translate));
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
@@ -186,13 +186,13 @@ void Sprite::Update(const Matrix4x4& viewPro){
 
 	materialDate->color = color_;
 
-	Matrix4x4 worldMatrixSprite = Matrix::GetInstance()->MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::GetInstance()->Multiply(worldMatrixSprite, viewPro);
+	Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+	Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, viewPro);
 	*wvpDataSprite = worldViewProjectionMatrixSprite;
 
-	Matrix4x4 uvTransformMatrixSprite = Matrix::GetInstance()->MakeScaleMatrix(uvTransform_.scale);
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeRotateMatrixZ(uvTransform_.rotate));
-	uvTransformMatrixSprite = Matrix::GetInstance()->Multiply(uvTransformMatrixSprite, Matrix::GetInstance()->MakeTranslateMatrix(uvTransform_.translate));
+	Matrix4x4 uvTransformMatrixSprite = Matrix::MakeScaleMatrix(uvTransform_.scale);
+	uvTransformMatrixSprite = Matrix::Multiply(uvTransformMatrixSprite, Matrix::MakeRotateMatrixZ(uvTransform_.rotate));
+	uvTransformMatrixSprite = Matrix::Multiply(uvTransformMatrixSprite, Matrix::MakeTranslateMatrix(uvTransform_.translate));
 	materialDate->uvTransform = uvTransformMatrixSprite;
 }
 
@@ -301,7 +301,7 @@ void Sprite::makeSpriteResource(){
 	//アドレス取得
 	wvpResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&wvpDataSprite));
 	//単位行列を書き込む
-	*wvpDataSprite = Matrix::GetInstance()->MakeIdentity4x4();
+	*wvpDataSprite = Matrix::MakeIdentity4x4();
 
 	//マテリアル用のリソース
 	materialResource = CreateBufferResource(device_, sizeof(Model::Material));
@@ -311,7 +311,7 @@ void Sprite::makeSpriteResource(){
 
 	materialDate->enableLighting = false;
 
-	materialDate->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate->uvTransform = Matrix::MakeIdentity4x4();
 	//今回は赤を書き込んでみる
 	
 }

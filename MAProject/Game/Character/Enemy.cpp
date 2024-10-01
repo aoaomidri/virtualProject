@@ -107,7 +107,7 @@ void Enemy::Initialize(const Vector3& position){
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
 
-	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
 	SetOridentatios(attackOBB_, enemyRotateMatrix);
@@ -153,15 +153,15 @@ void Enemy::Update(){
 	}
 	collisionTransform_ = transform_;
 
-	scaleMatrix_ = Matrix::GetInstance()->MakeScaleMatrix(transform_.scale);
-	transformMatrix_ = Matrix::GetInstance()->MakeTranslateMatrix(transform_.translate);
+	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
+	transformMatrix_ = Matrix::MakeTranslateMatrix(transform_.translate);
 
 
-	matrix_ = Matrix::GetInstance()->MakeAffineMatrix(scaleMatrix_, rotateMatrix_, transformMatrix_);
-	partsMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
+	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, rotateMatrix_, transformMatrix_);
+	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
 	
 	for (int i = 0; i < particleNum_; i++) {
-		particleMatrix_[i] = Matrix::GetInstance()->MakeAffineMatrix(particleTransform_[i].scale, particleTransform_[i].rotate, particleTransform_[i].translate);
+		particleMatrix_[i] = Matrix::MakeAffineMatrix(particleTransform_[i].scale, particleTransform_[i].rotate, particleTransform_[i].translate);
 		
 	}
 
@@ -173,7 +173,7 @@ void Enemy::Update(){
 	bodyOBB_.center = transform_.translate;
 	if (isNearAttack_){
 		Vector3 attackOffset = { 0.0f, 0.0f, 4.0f };
-		attackOffset = Matrix::GetInstance()->TransformNormal(attackOffset, rotateMatrix_);
+		attackOffset = Matrix::TransformNormal(attackOffset, rotateMatrix_);
 
 		attackOBB_.center = OBB_.center + attackOffset;
 	}
@@ -183,7 +183,7 @@ void Enemy::Update(){
 	/*collisionTransform_.scale = attackOBB_.size;
 	collisionTransform_.translate = attackOBB_.center;
 	collisionTransform_.rotate = { 0.0f,0.0f,0.0f };
-	collisionMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(collisionTransform_);*/
+	collisionMatrix_ = Matrix::MakeAffineMatrix(collisionTransform_);*/
 	
 	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
@@ -297,7 +297,7 @@ void Enemy::Respawn(const Vector3& position){
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
 
-	Matrix4x4 enemyRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
 	SetOridentatios(attackOBB_, enemyRotateMatrix);
@@ -321,7 +321,7 @@ const Vector3 Enemy::GetCenterPos()const{
 	const Vector3 offset = { 0.0f,5.0f,0.0f };
 	//ワールドに変換
 	
-	Vector3 world = Matrix::GetInstance()->TransformVec(offset, matrix_);
+	Vector3 world = Matrix::TransformVec(offset, matrix_);
 
 	return world;
 
@@ -442,7 +442,7 @@ void Enemy::MotionUpdate(){
 
 	/*エネミーのパーツ*/
 	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
-	parts_offset = Matrix::GetInstance()->TransformNormal(parts_offset, rotateMatrix_);
+	parts_offset = Matrix::TransformNormal(parts_offset, rotateMatrix_);
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 
@@ -458,7 +458,7 @@ void Enemy::MotionUpdate(){
 
 
 void Enemy::BehaviorRootInitialize(){
-	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+	rotateMatrix_ = Matrix::MakeIdentity4x4();
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
@@ -468,10 +468,10 @@ void Enemy::BehaviorRootInitialize(){
 
 void Enemy::BehaviorDeadInitialize(){
 	Vector3 deadMoveBase = { 0,0.02f,0.1f };
-	deadMove_ = Matrix::GetInstance()->TransformNormal(deadMoveBase, rotateMatrix_);
+	deadMove_ = Matrix::TransformNormal(deadMoveBase, rotateMatrix_);
 	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), 0.5f);
 	deadMove_.y *= -1.00f;
-	deadYAngle_ = Matrix::GetInstance()->RotateAngleYFromMatrix(rotateMatrix_);
+	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
 	transform_.rotate.y = deadYAngle_;
 }
 
@@ -481,7 +481,7 @@ void Enemy::RootMotion(){
 
 	Vector3 move = { moveSpeed_ * magnification ,0,0 };
 
-	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
+	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
@@ -505,7 +505,7 @@ void Enemy::RootMotion(){
 
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
 
 	if (playerLength_ > farPlayer_) {
@@ -545,7 +545,7 @@ void Enemy::BackStep(){
 	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
 	move_ = { 0, 0, backSpeed_ };
 
-	move_ = Matrix::GetInstance()->TransformNormal(move_, newRotateMatrix_);
+	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
 
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 8;
@@ -568,7 +568,7 @@ void Enemy::BehaviorDashInitialize(){
 void Enemy::Dash(){
 	move_ = { 0, 0, dashSpeed_ };
 
-	move_ = Matrix::GetInstance()->TransformNormal(move_, dashRotateMatrix_);
+	move_ = Matrix::TransformNormal(move_, dashRotateMatrix_);
 
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 30;
@@ -587,7 +587,7 @@ void Enemy::Dash(){
 }
 
 void Enemy::BehaviorRunInitialize(){
-	rotateMatrix_ = Matrix::GetInstance()->MakeIdentity4x4();
+	rotateMatrix_ = Matrix::MakeIdentity4x4();
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
@@ -599,7 +599,7 @@ void Enemy::EnemyRun(){
 
 	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ };
 
-	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
+	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
@@ -624,7 +624,7 @@ void Enemy::EnemyRun(){
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 
-		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {
 		int i = RandomMaker::DistributionInt(0, 1);
@@ -664,11 +664,11 @@ void Enemy::PreliminalyAction(){
 void Enemy::DeadMotion(){
 	transform_.translate -= deadMove_;
 	transform_.rotate.x += 0.3f;	
-	Matrix4x4 newRotateMatrix = Matrix::GetInstance()->MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
 	rotateMatrix_ = newRotateMatrix;
 	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
 	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
-	parts_offset = Matrix::GetInstance()->TransformNormal(parts_offset, rotateMatrix_);
+	parts_offset = Matrix::TransformNormal(parts_offset, rotateMatrix_);
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 	
@@ -786,7 +786,7 @@ void Enemy::TripleAttack(){
 
 	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ * 5.0f };
 
-	move = Matrix::GetInstance()->TransformNormal(move, rotateMatrix_);
+	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	
 	Vector3 lockOnPos = posContainer_[attackCount_];
@@ -799,7 +799,7 @@ void Enemy::TripleAttack(){
 	Matrix4x4 directionTodirection_;
 	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 
-	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+	rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	if (PELength < 15.0f) {
 		move = { 0 };
 		isNearAttack_ = true;
@@ -853,7 +853,7 @@ void Enemy::Tackle(){
 
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-		rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, directionTodirection_);
+		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 
 	}
 
@@ -861,7 +861,7 @@ void Enemy::Tackle(){
 		if (attackTransitionTime_ <= 0) {
 			move_ = { 0, 0, dashSpeed_ };
 
-			move_ = Matrix::GetInstance()->TransformNormal(move_, dashRotateMatrix_);
+			move_ = Matrix::TransformNormal(move_, dashRotateMatrix_);
 
 			//ダッシュの時間<frame>
 			const uint32_t behaviorDashTime = 30;
@@ -939,7 +939,7 @@ void Enemy::RotateAttack(){
 	Matrix4x4 rotateMat;
 	rotateMat.MakeRotateMatrixY({ 0.0f,attackRotate_,0.0f });
 
-	rotateMatrix_ = Matrix::GetInstance()->Multiply(rotateMatrix_, rotateMat);
+	rotateMatrix_ = Matrix::Multiply(rotateMatrix_, rotateMat);
 
 	transform_.translate = ease_.Easing(Ease::EaseName::EaseOutQuart, attackBasePos_, posContainer_[attackCount_], easeT_);
 

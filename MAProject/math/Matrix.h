@@ -41,9 +41,9 @@ public:
 public:
 	void Update();
 
-	Vector3 Cross(const Vector3& vA, const Vector3& vB);
+	static Vector3 Cross(const Vector3& vA, const Vector3& vB);
 
-	Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
+	static Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
 
 	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
 	//Quaternionを用いたアフィン行列
@@ -71,31 +71,31 @@ public:
 	static Matrix4x4 Multiply(const Matrix4x4& mat1, const Matrix4x4& mat2);
 
 	//正規化
-	Vector3 Normalize(const Vector3& v);
+	static Vector3 Normalize(const Vector3& v);
 
 	//透視投影行列
-	Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
+	static Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 	//正射影行列(平行投影行列)
-	Matrix4x4 MakeOrthographicMatrix(float left,float top ,float right, float bottom, float nearClip, float farClip);
+	static Matrix4x4 MakeOrthographicMatrix(float left,float top ,float right, float bottom, float nearClip, float farClip);
 	//ビューポート行列
-	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+	static Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
-	Matrix4x4 MakeIdentity4x4();
+	static Matrix4x4 MakeIdentity4x4();
 
 	//任意軸回転行列
-	Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+	static Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
 
 	////逆行列
-	Matrix4x4 Inverce(const Matrix4x4& mat);
+	static Matrix4x4 Inverce(const Matrix4x4& mat);
 
-	Matrix4x4 Transpose(const Matrix4x4& mat);
+	static Matrix4x4 Transpose(const Matrix4x4& mat);
 
 	//ベクトル変換
-	Vector3 TransformVec(const Vector3& v, const Matrix4x4& m);
+	static Vector3 TransformVec(const Vector3& v, const Matrix4x4& m);
 
-	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
-	float RotateAngleYFromMatrix(const Matrix4x4& m);
+	static float RotateAngleYFromMatrix(const Matrix4x4& m);
 
 
 };

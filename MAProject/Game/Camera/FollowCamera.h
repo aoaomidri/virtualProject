@@ -50,7 +50,7 @@ public:
 	const ViewProjection& GetViewProjection()const { return viewProjection_; }
 
 	const Matrix4x4 GetProjectionInverse()const{
-		Matrix4x4 mat = Matrix::GetInstance()->Inverce(viewProjection_.matProjection_);
+		Matrix4x4 mat = Matrix::Inverce(viewProjection_.matProjection_);
 		return mat;
 	}
 private:

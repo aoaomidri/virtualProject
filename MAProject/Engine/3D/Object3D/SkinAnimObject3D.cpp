@@ -146,14 +146,14 @@ void SkinAnimObject3D::Update(const ViewProjection& viewProjection) {
 	}
 
 	
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
+	Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 	
 
 	wvpData_->WVP = worldViewProjectionMatrix;
 	materialDate_->enableLighting = isUseLight_;
 
 	wvpData_->World = worldMatrix_;
-	wvpData_->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
+	wvpData_->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
 			
 	if (directionalLight_){
 		directionalLightDate_->color = directionalLight_->color;
@@ -278,9 +278,9 @@ void SkinAnimObject3D::makeResource() {
 	//書き込むためのアドレスを取得
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData_->WVP = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData_->World = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData_->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData_->WVP = Matrix::MakeIdentity4x4();
+	wvpData_->World = Matrix::MakeIdentity4x4();
+	wvpData_->WorldInverseTranspose = Matrix::MakeIdentity4x4();
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
@@ -330,7 +330,7 @@ void SkinAnimObject3D::makeResource() {
 
 void SkinAnimObject3D::SkeletonUpdate(Model::Skeleton& skeleton){
 	for (Model::Joint& joint : skeleton.joints) {
-		joint.localMatrix = Matrix::GetInstance()->MakeAffineMatrix(joint.transform);
+		joint.localMatrix = Matrix::MakeAffineMatrix(joint.transform);
 		if (joint.parent) {//親がいれば親の行列を掛ける
 			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
 		}
@@ -349,7 +349,7 @@ void SkinAnimObject3D::SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Sk
 			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
 
 		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
-			Matrix::GetInstance()->Transpose(Matrix::GetInstance()->Inverce(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
+			Matrix::Transpose(Matrix::Inverce(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
 	}	
 }
 Vector3 SkinAnimObject3D::CalculateValue(const std::vector<Model::KeyframeVector3>& keyframes, float time){

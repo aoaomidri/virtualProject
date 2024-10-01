@@ -82,14 +82,14 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		
 		//// ビューポート行列
 		//Matrix4x4 matViewport =
-		//	Matrix::GetInstance()->MakeViewportMatrix(0, 0, 1280, 720, 0, 1);
+		//	Matrix::MakeViewportMatrix(0, 0, 1280, 720, 0, 1);
 
 		//// ビュー行列とプロジェクション行列、ビューポート行列を合成する
 		//Matrix4x4 matViewProjectionViewport =
-		//	Matrix::GetInstance()->Multiply(viewprojection.matViewProjection_, matViewport);
+		//	Matrix::Multiply(viewprojection.matViewProjection_, matViewport);
 
 		//// ワールド->スクリーン座標変換(ここで3Dから2Dになる)
-		//Vector3 screenPos3 = Matrix::GetInstance()->TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
+		//Vector3 screenPos3 = Matrix::TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
 
 		//screenPos_ = { screenPos3.x,screenPos3.y };
 
@@ -134,7 +134,7 @@ void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}
 		Vector3 positionWorld = enemy->GetCenterPos();
 		//ワールドビュー座標変換
-		Vector3 positionView = Matrix::GetInstance()->TransformVec(positionWorld, viewprojection.matView_);
+		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 
 		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)){
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -165,7 +165,7 @@ void LockOn::TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		}
 		Vector3 positionWorld = enemy->GetCenterPos();
 		//ワールドビュー座標変換
-		Vector3 positionView = Matrix::GetInstance()->TransformVec(positionWorld, viewprojection.matView_);
+		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 
 		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)) {
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -201,7 +201,7 @@ bool LockOn::IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewin
 	Vector3 nearPlanePoints_[4] = { 0 };
 	Vector3 farPlanePoints_[4] = { 0 };
 	// 視錐台の行列
-	Matrix4x4 FrustumMatWorld = Matrix::GetInstance()->MakeAffineMatrix(
+	Matrix4x4 FrustumMatWorld = Matrix::MakeAffineMatrix(
 		{ 1.0f, 1.0f, 1.0f }, { viewingFrustum.rotate_ }, { viewingFrustum.translation_ });
 
 	// 向きベクトルnear
@@ -270,15 +270,15 @@ bool LockOn::IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewin
 	obbPoints[7] = obb.size;
 
 	for (int i = 0; i < OBBVertex; i++) {
-		obbPoints[i] = Matrix::GetInstance()->TransformNormal(obbPoints[i], worldMatrix);
+		obbPoints[i] = Matrix::TransformNormal(obbPoints[i], worldMatrix);
 		obbPoints[i] = obb.center + obbPoints[i];
 	}
 
 	/*ステップ3 OBBを視錐台のローカル座標に変換*/
 	// 視錐台の逆行列
-	Matrix4x4 FrustumInverceMat = Matrix::GetInstance()->Inverce(FrustumMatWorld);
+	Matrix4x4 FrustumInverceMat = Matrix::Inverce(FrustumMatWorld);
 	for (int i = 0; i < OBBVertex; i++) {
-		obbPoints[i] = Matrix::GetInstance()->TransformVec(obbPoints[i], FrustumInverceMat);
+		obbPoints[i] = Matrix::TransformVec(obbPoints[i], FrustumInverceMat);
 	}
 
 	/*ステップ4 当たり判定*/
@@ -363,7 +363,7 @@ bool LockOn::IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum
 	Vector3 nearPlanePoints_[4] = { 0 };
 	Vector3 farPlanePoints_[4] = { 0 };
 	// 視錐台の行列
-	Matrix4x4 FrustumMatWorld = Matrix::GetInstance()->MakeAffineMatrix(
+	Matrix4x4 FrustumMatWorld = Matrix::MakeAffineMatrix(
 		{ 1.0f, 1.0f, 1.0f }, { viewingFrustum.rotate_ }, { viewingFrustum.translation_ });
 
 	// 向きベクトルnear
@@ -399,8 +399,8 @@ bool LockOn::IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum
 		directionFar.x + farPlane.x, directionFar.y + -farPlane.y, directionFar.z }; // 右下
 
 	for (int i = 0; i < 4; i++) {
-		nearPlanePoints_[i] = Matrix::GetInstance()->TransformNormal(nearPlanePoints_[i], FrustumMatWorld);
-		farPlanePoints_[i] = Matrix::GetInstance()->TransformNormal(farPlanePoints_[i], FrustumMatWorld);
+		nearPlanePoints_[i] = Matrix::TransformNormal(nearPlanePoints_[i], FrustumMatWorld);
+		farPlanePoints_[i] = Matrix::TransformNormal(farPlanePoints_[i], FrustumMatWorld);
 	}
 
 	// 頂点
@@ -440,9 +440,9 @@ bool LockOn::IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum
 
 	/*ステップ3 視錐台をOBBのローカル座標に変換*/
 	// OBBの逆行列
-	Matrix4x4 OBBInverceMat = Matrix::GetInstance()->Inverce(worldMatrix);
+	Matrix4x4 OBBInverceMat = Matrix::Inverce(worldMatrix);
 	for (int i = 0; i < OBBVertex; i++) {
-		FrustumPoints[i] = Matrix::GetInstance()->TransformVec(FrustumPoints[i], OBBInverceMat);
+		FrustumPoints[i] = Matrix::TransformVec(FrustumPoints[i], OBBInverceMat);
 	}
 
 	/*ステップ4 当たり判定*/

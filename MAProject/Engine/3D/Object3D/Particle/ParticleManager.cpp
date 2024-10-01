@@ -16,8 +16,8 @@ void ParticleManager::Initialize(){
 }
 
 void ParticleManager::Updata(){
-	backToFrontMatrix_ = Matrix::GetInstance()->MakeRotateMatrix({ 0.0f,0.0f,0.0f });
-	billboardMatrix_ = Matrix::GetInstance()->Multiply(backToFrontMatrix_, viewProjection_->cameraMatrix_);
+	backToFrontMatrix_ = Matrix::MakeRotateMatrix({ 0.0f,0.0f,0.0f });
+	billboardMatrix_ = Matrix::Multiply(backToFrontMatrix_, viewProjection_->cameraMatrix_);
 	billboardMatrix_.m[3][0] = 0.0f;
 	billboardMatrix_.m[3][1] = 0.0f;
 	billboardMatrix_.m[3][2] = 0.0f;
@@ -31,10 +31,10 @@ void ParticleManager::Updata(){
 			}
 
 
-			worldMatrix_ = Matrix::GetInstance()->MakeAffineMatrix(
-				Matrix::GetInstance()->MakeScaleMatrix((*particleIterator).transform.scale),
+			worldMatrix_ = Matrix::MakeAffineMatrix(
+				Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
 				billboardMatrix_,
-				Matrix::GetInstance()->MakeTranslateMatrix((*particleIterator).transform.translate));
+				Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
 
 
 
@@ -76,8 +76,8 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 	for (int32_t i = 0; i < newParticleGroup.particleMaxNum_; ++i) {
 
 		//単位行列を書き込んでおく
-		newParticleGroup.wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
-		newParticleGroup.wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
+		newParticleGroup.wvpData[i].WVP = Matrix::MakeIdentity4x4();
+		newParticleGroup.wvpData[i].World = Matrix::MakeIdentity4x4();
 		newParticleGroup.wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
@@ -112,7 +112,7 @@ void ParticleManager::MakeResource(){
 
 	materialDate_->enableLighting = false;
 
-	materialDate_->uvTransform = Matrix::GetInstance()->MakeIdentity4x4();
+	materialDate_->uvTransform = Matrix::MakeIdentity4x4();
 
 	for (auto& particle : particleGroups_){
 		//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
@@ -122,8 +122,8 @@ void ParticleManager::MakeResource(){
 		for (int32_t i = 0; i < particle.second.particleMaxNum_; ++i) {
 
 			//単位行列を書き込んでおく
-			particle.second.wvpData[i].WVP = Matrix::GetInstance()->MakeIdentity4x4();
-			particle.second.wvpData[i].World = Matrix::GetInstance()->MakeIdentity4x4();
+			particle.second.wvpData[i].WVP = Matrix::MakeIdentity4x4();
+			particle.second.wvpData[i].World = Matrix::MakeIdentity4x4();
 			particle.second.wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
 		}
 	}

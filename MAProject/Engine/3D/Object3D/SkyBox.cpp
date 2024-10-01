@@ -38,13 +38,13 @@ void SkyBox::Update(const ViewProjection& viewProjection) {
 	}
 
 
-	Matrix4x4 worldViewProjectionMatrix = Matrix::GetInstance()->Multiply(worldMatrix_, viewProjection.matViewProjection_);
+	Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 
 	wvpData->WVP = worldViewProjectionMatrix;
 	materialDate->enableLighting = isUseLight_;
 
 	wvpData->World = worldMatrix_;
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->Inverce(Matrix::GetInstance()->Transpose(worldMatrix_));
+	wvpData->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
 
 
 	materialDate->shininess = shininess_;
@@ -194,9 +194,9 @@ void SkyBox::makeResource() {
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	//単位行列を書き込んでおく
-	wvpData->WVP = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData->World = Matrix::GetInstance()->MakeIdentity4x4();
-	wvpData->WorldInverseTranspose = Matrix::GetInstance()->MakeIdentity4x4();
+	wvpData->WVP = Matrix::MakeIdentity4x4();
+	wvpData->World = Matrix::MakeIdentity4x4();
+	wvpData->WorldInverseTranspose = Matrix::MakeIdentity4x4();
 
 
 

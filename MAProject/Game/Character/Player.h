@@ -292,12 +292,14 @@ private:
 
 	const float moveWeapon = 0.1f;
 	const float moveWeaponShakeDown = 0.2f;
-	const float MaxRotate = 1.55f;
+	const float MaxRotate = 2.0f;
 	const float MaxRotateY = -1.55f;
 	const float MinRotate = -0.6f;
 
 	int WaitTimeBase = 7;
 	int WaitTime = 0;
+	//武器の高さ補正
+	float addHeight_ = 0.0f;
 
 	float motionDistance_ = 3.0f;
 

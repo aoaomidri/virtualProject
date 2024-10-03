@@ -350,7 +350,21 @@ Vector3 Matrix::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 }
 
 float Matrix::RotateAngleYFromMatrix(const Matrix4x4& m){
-	float angle = std::acos(m.m[0][0]);
+	float angle;
+	if (std::abs(m.m[0][0]) > 1.000000000f) {
+		if (m.m[0][0] > 0) {
+			angle = std::acos(1.0f);
+		}
+		else {
+			angle = std::acos(-1.0f);
+		}
+		
+	}
+	else {
+		angle = std::acos(m.m[0][0]);
+	}
+
+	
 	if (m.m[2][0] < 0) {
 		angle = -angle;  // acosの結果だけでは回転の向きがわからないので符号を調整
 	}

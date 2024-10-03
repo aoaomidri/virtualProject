@@ -253,9 +253,11 @@ void Player::Update(){
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponTransform_.rotate, weaponCollisionTransform_.translate);
 	}
 	else {
-		Matrix4x4 scaleinverse = Matrix::Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
-		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, Vector3({0.0f,0.0f,0.0f}), weaponTransform_.translate);
-		weaponMatrix_ = Matrix::Multiply(weaponMatrix_, scaleinverse);
+		//Matrix4x4 scaleinverse = Matrix::Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
+		Vector3 weaponRotateVec = weaponTransform_.rotate;
+		weaponRotateVec.y += Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
+		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
+		//weaponMatrix_ = Matrix::Multiply(weaponMatrix_, playerRotateMatrix_);
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
@@ -272,12 +274,12 @@ void Player::TexDraw(const Matrix4x4& viewProjection){
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
-	if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
+	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->SetShininess(shiness_);
 		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
-	}
+	//}
 
 
 
@@ -319,15 +321,6 @@ void Player::Draw(const ViewProjection& viewProjection){
 
 		particleTransCenter_.translate = (weaponObj_->GetTopVerTex().tail + weaponObj_->GetTopVerTex().head) / 2.0f;
 		particleTransCenter_.scale = { 0.3f,0.3f,0.3f };
-
-	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
-		
-
-		/*weaponCollisionObj_->SetMatrix(playerOBBMatrix_);
-		weaponCollisionObj_->Update(viewProjection);
-		weaponCollisionObj_->Draw();*/
-
-	//}
 
 	
 }
@@ -377,12 +370,14 @@ void Player::DrawImgui(){
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer_);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex_);
 	ImGui::Text("敵に当たっているか = %d", isCollisionEnemy_);
-	ImGui::DragFloat("武器判定の回転", &weapon_Rotate, 0.1f);
-	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.1f);
+	ImGui::DragFloat("武器判定の回転", &weapon_Rotate, 0.01f);
+	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
 	ImGui::DragFloat3("オフセットのベース", &Weapon_offset_Base.x, 0.1f);
 	ImGui::DragFloat3("オフセット", &Weapon_offset.x, 0.1f);
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
+	ImGui::DragFloat("武器の高さ補正", &addHeight_, 0.01f);
+
 	ImGui::Text("丸影のあれこれ");
 	ImGui::DragFloat3("丸影の回転", &shadow_->rotation_.x, 0.01f);
 	ImGui::DragFloat("丸影の大きさ", &shadow_->scale_.x, 0.01f);
@@ -455,33 +450,16 @@ void Player::BehaviorRootInitialize(){
 
 void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
-	/*自機の移動*/
-	if (input_->PushUp()) {
-		move_.z = moveSpeed_;
-
+	/*自機の移動*/	
+	move_.z = input_->GetPadLStick().y * moveSpeed_;
+	if (abs(move_.z) < 0.01f) {
+		move_.z = 0;
+	}	
+	move_.x = input_->GetPadLStick().x * moveSpeed_;
+	if (abs(move_.x) < 0.01f) {
+		move_.x = 0;
 	}
-	else if (input_->PushDown()) {
-		move_.z = -moveSpeed_;
-	}
-	else {
-		move_.z = input_->GetPadLStick().y * moveSpeed_;
-		if (abs(move_.z) < 0.01f) {
-			move_.z = 0;
-		}
-	}
-
-	if (input_->PushRight()) {
-		move_.x = moveSpeed_;
-	}
-	else if (input_->PushLeft()) {
-		move_.x = -moveSpeed_;
-	}
-	else {
-		move_.x = input_->GetPadLStick().x * moveSpeed_;
-		if (abs(move_.x) < 0.01f) {
-			move_.x = 0;
-		}
-	}
+	
 	if (viewProjection_){
 
 		Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
@@ -556,10 +534,12 @@ void Player::BehaviorRootUpdate(){
 		dashCoolTime -= 1;
 	}
 	playerTransform_.translate.y += downVector.y;
-	//weaponTransform_.translate = playerTransform_.translate;
-	
-	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(playerTransform_.rotate);
+	Vector3 weaponRotateVec = weaponTransform_.rotate;
+	weaponRotateVec.y += Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponRotateVec);
 	Weapon_offset = Matrix::TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
+	weaponTransform_.translate = playerTransform_.translate + Weapon_offset;
+	weaponTransform_.translate.y += addHeight_;
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime <= 0) {
@@ -994,7 +974,7 @@ void Player::AttackMotion(){
 	}
 	else if (weapon_Rotate >= MaxRotate) {
 		WaitTime -= 1;
-		weapon_Rotate = 1.58f;
+		weapon_Rotate = 2.0f;
 	}
 
 	if (WaitTime <= 0) {
@@ -1008,9 +988,9 @@ void Player::AttackMotion(){
 	}
 	else if (isShakeDown && weapon_Rotate < MaxRotate) {
 		weapon_Rotate += moveWeaponShakeDown * motionSpeed_;
-		if (weapon_Rotate>0.0f){
+		if (weapon_Rotate > 0.0f) {
 			weaponTransform_.rotate.y -= 0.3f * motionSpeed_;
-			move_ = { 0, 0, moveSpeed_ * 2.5f };
+			move_ = { 0, 0, moveSpeed_ * 1.5f };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 			if (!isCollisionEnemy_){
 				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;

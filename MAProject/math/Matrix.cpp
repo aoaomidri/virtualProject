@@ -351,18 +351,17 @@ Vector3 Matrix::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 
 float Matrix::RotateAngleYFromMatrix(const Matrix4x4& m){
 	float angle;
-	if (std::abs(m.m[0][0]) > 1.000000000f) {
-		if (m.m[0][0] > 0) {
-			angle = std::acos(1.0f);
-		}
-		else {
-			angle = std::acos(-1.0f);
-		}
-		
+	float value = m.m[0][0];
+
+	// 値が範囲外にならないようにクランプする
+	if (value > 1.0f) {
+		value = 1.0f;
 	}
-	else {
-		angle = std::acos(m.m[0][0]);
+	else if (value < -1.0f) {
+		value = -1.0f;
 	}
+
+	angle = std::acos(value);
 
 	
 	if (m.m[2][0] < 0) {

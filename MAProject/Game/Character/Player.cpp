@@ -565,8 +565,10 @@ void Player::BehaviorAttackInitialize(){
 	baseRotate_.y = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = 0.0f;
 	weaponTransform_.rotate.y = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.rotate.z = -0.0f;
 	weaponTransform_.translate = playerTransform_.translate;
+	Weapon_offset_Base.y = 2.0f;
+	addHeight_ = 1.5f;
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
@@ -784,6 +786,7 @@ void Player::BehaviorAttackUpdate(){
 	downVector.y += downSpeed;
 	playerTransform_.translate.y += downVector.y;
 	weaponTransform_.translate = playerTransform_.translate;
+	weaponTransform_.translate.y += addHeight_;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	Weapon_offset = Matrix::TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
@@ -974,7 +977,7 @@ void Player::AttackMotion(){
 	}
 	else if (weapon_Rotate >= MaxRotate) {
 		WaitTime -= 1;
-		weapon_Rotate = 2.0f;
+		weapon_Rotate = 2.4f;
 	}
 
 	if (WaitTime <= 0) {
@@ -983,13 +986,13 @@ void Player::AttackMotion(){
 
 	if (!isShakeDown && weapon_Rotate > MinRotate) {
 		weapon_Rotate -= moveWeapon * motionSpeed_;
-		weaponTransform_.rotate.y = 2.5f + baseRotate_.y;
+		weaponTransform_.rotate.y = 1.0f + baseRotate_.y;
 		workAttack_.AttackTimer_++;
 	}
 	else if (isShakeDown && weapon_Rotate < MaxRotate) {
 		weapon_Rotate += moveWeaponShakeDown * motionSpeed_;
 		if (weapon_Rotate > 0.0f) {
-			weaponTransform_.rotate.y -= 0.3f * motionSpeed_;
+			weaponTransform_.rotate.y -= 0.12f * motionSpeed_;
 			move_ = { 0, 0, moveSpeed_ * 1.5f };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 			if (!isCollisionEnemy_){
@@ -1009,7 +1012,7 @@ void Player::AttackMotion(){
 		}
 		else {
 			weaponTransform_.rotate.y -= 0.1f;
-			
+		
 		}
 		
 	}

@@ -4,25 +4,25 @@
 void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/rock.png");
 	textureManager_->SetDissolveTex(textureManager_->Load("resources/texture/PostEffect/noise0.png"));
-	textureManager_->Load("resources/texture/uvChecker.png");//0
+	textureManager_->Load("resources/texture/uvChecker.png");
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
 	//textureManager_->Load("resources/texture/Sky.png");
-	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");//5
+	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");
 	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Model/Weapon/Sword.png");
 	textureManager_->Load("resources/texture/Magic.png");
 	textureManager_->Load("resources/texture/Black.png");
-	textureManager_->Load("resources/texture/circle.png");//10
+	textureManager_->Load("resources/texture/circle.png");
 	textureManager_->Load("resources/texture/monsterBall.png");
 	textureManager_->Load("resources/texture/title.png");
 	textureManager_->Load("resources/texture/pressA.png");
 	textureManager_->Load("resources/texture/Clear.png");
-	textureManager_->Load("resources/texture/Whitex64.png");//15
+	textureManager_->Load("resources/texture/Whitex64.png");
 	textureManager_->Load("resources/texture/STAttack.png");
 	textureManager_->Load("resources/texture/dash.png");
 	textureManager_->Load("resources/texture/RB.png");
-	textureManager_->Load("resources/texture/actionText.png");//20
+	textureManager_->Load("resources/texture/actionText.png");
 	textureManager_->Load("resources/DDS/rostock_laage_airport_4k.dds");
 }
 

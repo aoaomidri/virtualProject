@@ -254,10 +254,10 @@ void Player::Update(){
 	}
 	else {
 		//Matrix4x4 scaleinverse = Matrix::Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
-		Vector3 weaponRotateVec = weaponTransform_.rotate;
-		weaponRotateVec.y += Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
+		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+		weaponRotateVec *= (playerRotateMatrix_);
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
-		//weaponMatrix_ = Matrix::Multiply(weaponMatrix_, playerRotateMatrix_);
+		//weaponMatrix_ = Matrix::Multiply(weaponMatrix_,playerRotateMatrix_);
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
@@ -452,11 +452,11 @@ void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/	
 	move_.z = input_->GetPadLStick().y * moveSpeed_;
-	if (abs(move_.z) < 0.01f) {
+	if (abs(move_.z) < 0.005f) {
 		move_.z = 0;
 	}	
 	move_.x = input_->GetPadLStick().x * moveSpeed_;
-	if (abs(move_.x) < 0.01f) {
+	if (abs(move_.x) < 0.005f) {
 		move_.x = 0;
 	}
 	
@@ -535,8 +535,8 @@ void Player::BehaviorRootUpdate(){
 	}
 	playerTransform_.translate.y += downVector.y;
 	Vector3 weaponRotateVec = weaponTransform_.rotate;
-	weaponRotateVec.y += Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponRotateVec);
+	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
 	Weapon_offset = Matrix::TransformNormal(Weapon_offset_Base, weaponCollisionRotateMatrix);
 	weaponTransform_.translate = playerTransform_.translate + Weapon_offset;
 	weaponTransform_.translate.y += addHeight_;
@@ -590,7 +590,7 @@ void Player::BehaviorSecondAttackInitialize(){
 	workAttack_.nextAttackTimer = 28;
 	baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.y = 0;
+	weaponTransform_.rotate.y = 0.2f;
 	weaponTransform_.rotate.z = 1.57f;
 	weaponTransform_.translate = playerTransform_.translate;
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
@@ -601,7 +601,7 @@ void Player::BehaviorSecondAttackInitialize(){
 	workAttack_.AttackTimer_ = 0;
 	hitRecord_.Clear();
 	WaitTime = WaitTimeBase;
-	weapon_Rotate = 1.0f;
+	weapon_Rotate = 0.4f;
 	isShakeDown = false;
 	isEndAttack_ = false;
 }
@@ -1038,7 +1038,7 @@ void Player::secondAttackMotion(){
 		WaitTime -= 1;
 		weapon_Rotate = 2.5f;
 	}
-	else if (weapon_Rotate <= 0.3f) {
+	else if (weapon_Rotate <= -0.3f) {
 		isShakeDown = true;
 	}
 	else {
@@ -1072,6 +1072,7 @@ void Player::secondAttackMotion(){
 		
 		weapon_Rotate += moveWeaponShakeDown * 1.5f * motionSpeed_;
 	}
+	
 
 	weaponTransform_.rotate.x = weapon_Rotate + baseRotate_.x;
 	weaponCollisionTransform_.rotate.x = weapon_Rotate + baseRotate_.x;

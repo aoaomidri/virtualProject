@@ -262,6 +262,19 @@ Matrix4x4
 
 }
 
+Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& scale_, const Matrix4x4& rot, const Vector3& translate_){
+	Matrix4x4 result{};
+
+	//スケーリング行列の作成
+	Matrix4x4 ScaleMatrix = MakeScaleMatrix(scale_);
+	//平行移動行列の作成
+	Matrix4x4 TranslateMatrix = MakeTranslateMatrix(translate_);
+
+	result = Multiply(ScaleMatrix, Multiply(rot, TranslateMatrix));
+
+	return result;
+}
+
 Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot, const Vector3& translate_){
 	Matrix4x4 result{};
 

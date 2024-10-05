@@ -46,6 +46,8 @@ public:
 	static Matrix4x4 Minus(const Matrix4x4& m1, const Matrix4x4& m2);
 
 	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Vector3& rot, const Vector3& translate_);
+
+	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Matrix4x4& rot, const Vector3& translate_);
 	//Quaternionを用いたアフィン行列
 	static Matrix4x4 MakeAffineMatrix(const Vector3& scale_, const Quaternion& rot, const Vector3& translate_);
 	//マトリックスから作るアフィン行列

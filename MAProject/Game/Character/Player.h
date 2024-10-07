@@ -145,7 +145,7 @@ public:
 	Vector3 baseRotate_ = { 0 };
 
 	//コンボの数
-	static const int ConboNum = 5;
+	static const int ConboNum = 6;
 
 	static const std::array<ConstAttack, ConboNum>kConstAttacks_;
 private:
@@ -159,16 +159,20 @@ private:
 	void BehaviorFourthAttackInitialize();
 	//攻撃行動初期化
 	void BehaviorFifthAttackInitialize();
+	//攻撃行動初期化
+	void BehaviorSixthAttackInitialize();
 	//攻撃のモーション
 	void AttackMotion();
 
-	void secondAttackMotion();
+	void SecondAttackMotion();
 
-	void thirdAttackMotion();
+	void ThirdAttackMotion();
 
-	void fourthAttackMotion();
+	void FourthAttackMotion();
 
-	void fifthAttackMotion();
+	void FifthAttackMotion();
+
+	void SixthAttackMotion();
 
 private:
 	//強攻撃関連

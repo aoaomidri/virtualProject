@@ -127,12 +127,12 @@ public:
 		float swingSpeed;
 	};
 	struct  WorkAttack{
-		uint32_t attackParameter_ = 0;
-		int32_t comboIndex_ = 0;
-		int32_t inComboPhase_ = 0;
-		bool comboNext_ = false;
-		bool strongComboNext_ = false;
-		uint32_t AttackTimer_ = 0;
+		uint32_t attackParameter = 0;
+		int32_t comboIndex = 0;
+		int32_t inComboPhase = 0;
+		bool comboNext = false;
+		bool strongComboNext = false;
+		uint32_t AttackTimer = 0;
 		uint32_t nextAttackTimer = 0;
 	};
 
@@ -244,11 +244,11 @@ private:
 	Vector3 move_{};
 
 	//ジャンプ
-	float jumpPower = 0.2f;
+	float jumpPower_ = 0.2f;
 
 	//落下関連
-	float downSpeed = -0.01f;
-	Vector3 downVector = { 0 };
+	float downSpeed_ = -0.01f;
+	Vector3 downVector_ = { 0 };
 
 	//姿勢ベクトル
 	Vector3 postureVec_{};
@@ -269,13 +269,13 @@ private:
 	float moveSpeed_ = 0.1f;
 
 	//ダッシュ時のスピード倍率
-	float kDashSpeed = 10.0f;
+	float dashSpeed_ = 10.0f;
 	//ダッシュのクールタイム
-	int kDashCoolTime = 20;
+	int dashCoolTimeBase_ = 20;
 
 	int hitTimer_ = 0;
 
-	int dashCoolTime;
+	int dashCoolTime_;
 
 	struct WorkDash {
 		//ダッシュ用の媒介変数
@@ -286,20 +286,20 @@ private:
 
 	/*武器に関連するもの*/
 	//武器の回転
-	float weapon_Rotate = 0.0f;
-	float arm_Rotate = -3.15f;
+	float weapon_Rotate_ = 0.0f;
+	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数
-	Vector3 Weapon_offset;
-	Vector3 Weapon_offset_Base = { 0.0f,4.0f, 0.0f };
+	Vector3 Weapon_offset_;
+	Vector3 Weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
 
-	const float moveWeapon = 0.1f;
-	const float moveWeaponShakeDown = 0.2f;
-	const float MaxRotate = 2.0f;
-	const float MaxRotateY = -1.55f;
-	const float MinRotate = -0.6f;
+	const float kMoveWeapon_ = 0.1f;
+	const float kMoveWeaponShakeDown_ = 0.2f;
+	const float kMaxRotate_ = 2.0f;
+	const float kMaxRotateY_ = -1.55f;
+	const float kMinRotate_ = -0.6f;
 
-	int WaitTimeBase = 7;
-	int WaitTime = 0;
+	int waitTimeBase_ = 7;
+	int waitTime_ = 0;
 	//武器の高さ補正
 	float addHeight_ = 0.0f;
 
@@ -311,7 +311,10 @@ private:
 
 	float shiness_ = 0.0f;
 
-	bool isShakeDown = false;
+	//ディゾルブ関係
+	float weaponThreshold_ = 0.0f;
+
+	bool isShakeDown_ = false;
 
 	bool isEndAttack_ = false;
 	//トレイルを描画するかどうか

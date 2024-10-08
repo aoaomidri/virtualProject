@@ -202,17 +202,15 @@ private:
 	//自機のモデル
 	SkinAnimObject3D* playerSkinAnimObj_ = nullptr;
 
-	std::vector<std::unique_ptr<Object3D>> debugSphere_;
+	//std::vector<std::unique_ptr<Object3D>> debugSphere_;
 
 	std::vector<std::string> animetionNames_;
 
-	std::vector<Model::Joint> debugJoints_;
+	//std::vector<Model::Joint> debugJoints_;
 
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
-	std::unique_ptr<Object3D> weaponTopObj_;
-	std::unique_ptr<Object3D> weaponTailObj_;
 
 	//自機のSRT
 	EulerTransform playerTransform_{};
@@ -224,7 +222,7 @@ private:
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
 
-	std::vector<Matrix4x4> debugMatrix_;
+	//std::vector<Matrix4x4> debugMatrix_;
 
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};
@@ -316,6 +314,8 @@ private:
 	bool isShakeDown = false;
 
 	bool isEndAttack_ = false;
+	//トレイルを描画するかどうか
+	bool isTrail_ = false;
 
 	//落下するかどうか
 	bool isDown_ = false;
@@ -350,9 +350,6 @@ private:
 	std::unique_ptr<ParticleBase> particle_;
 	std::unique_ptr<ParticleBase> particleSword_;
 
-	//手から出す予定のパーティクル
-	std::unique_ptr<ParticleBase> particleHands_;
-
 	std::unique_ptr<TrailEffect> trail_;
 
 	std::unique_ptr<TrailRender> trailRender_;
@@ -374,9 +371,5 @@ private:
 
 	//Obbの補正値
 	Vector3 obbAddScale_ = { -0.65f,-0.2f,-0.65f };
-
-	std::unique_ptr<Object3D> test_;
-
-	EulerTransform testTrans_;
 };
 

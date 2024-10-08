@@ -4,7 +4,7 @@
 void TrailRender::Initialize(){
 	GraphicsPipelineTrail_ = std::make_unique<GraphicsPipeline>();
 	GraphicsPipelineTrail_->InitializeWorld2D(L"resources/shaders/object2D/Object2d.VS.hlsl", L"resources/shaders/object2D/Object2d.PS.hlsl");
-
+	selectTrail_ = EffectType::Glound;
 	MakeResource();
 }
 
@@ -12,8 +12,17 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 	if (trail == nullptr || trail->GetVertexSize() < 5) {
 		return; // trailがnullptrまたは頂点サイズが不足している場合
 	}
+	if (selectTrail_ == EffectType::Glound){
+		materialDate_->color = groundColor_;
+	}
+	else if (selectTrail_ == EffectType::Water) {
+		materialDate_->color = waterColor_;
+	}
+	else {
+		materialDate_->color = { 1.0f,1.0f,1.0f,0.7f };
+	}
 
-	materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
+	
 	*wvpData_ = viewPro;
 
 

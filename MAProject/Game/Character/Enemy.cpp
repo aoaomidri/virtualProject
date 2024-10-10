@@ -94,7 +94,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	isDead_ = false;
 	isNoLife_ = false;
-	isParticle_ = true;
+	isParticle_ = false;
 
 	threshold_ = 0.0f;
 

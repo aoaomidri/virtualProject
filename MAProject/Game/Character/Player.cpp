@@ -114,7 +114,7 @@ void Player::Initialize(){
 	isDown_ = true;
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(15, "resources/texture/TrailEffect/Trail.png");
+	trail_->Initialize(15, "resources/texture/TrailEffect/whiteTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
@@ -123,7 +123,24 @@ void Player::Initialize(){
 void Player::Update(){
 	ApplyGlobalVariables();
 
+	//武器のディゾルブ関連
 	weaponObj_->SetDissolve(weaponThreshold_);
+
+	if (isDissolve_){
+		weaponThreshold_ += 0.03f;
+		if (weaponThreshold_ > 1.0f) {
+			weaponThreshold_ = 1.0f;
+			isDissolve_ = false;
+		}
+	}
+	else {
+		weaponThreshold_ -= 0.01f;
+		if (weaponThreshold_ < 0.0f) {
+
+			weaponThreshold_ = 0.0f;
+		}
+		
+	}
 
 	if (hitTimer_ != 0) {
 		hitTimer_--;
@@ -196,8 +213,6 @@ void Player::Update(){
 	}
 
 	
-	
-	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
 	weaponOBB_.size = weaponCollisionTransform_.scale;
 	Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponCollisionTransform_.rotate);
@@ -211,14 +226,21 @@ void Player::Update(){
 	playerOBBMatrix_ = Matrix::MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTransformMatrix_);
 	if (behavior_ != Behavior::kRoot) {
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		weaponRotateVec *= (playerRotateMatrix_);
-		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
+		if (!isDissolve_){
+			weaponRotateVec *= (playerRotateMatrix_);
+			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
+		}
+		
+		
 	}
 	else {
 		//Matrix4x4 scaleinverse = Matrix::Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		weaponRotateVec *= (playerRotateMatrix_);
-		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
+		if (!isDissolve_) {
+			weaponRotateVec *= (playerRotateMatrix_);
+			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
+		}
+		
 		//weaponMatrix_ = Matrix::Multiply(weaponMatrix_,playerRotateMatrix_);
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
@@ -236,14 +258,10 @@ void Player::TexDraw(const Matrix4x4& viewProjection){
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
-	//if ((behavior_ == Behavior::kAttack) || (behavior_ == Behavior::kStrongAttack)) {
-		weaponObj_->SetMatrix(weaponMatrix_);
-		weaponObj_->SetShininess(shiness_);
-		weaponObj_->Update(viewProjection);
-		weaponObj_->Draw();
-	//}
-
-
+	weaponObj_->SetMatrix(weaponMatrix_);
+	weaponObj_->SetShininess(shiness_);
+	weaponObj_->Update(viewProjection);
+	weaponObj_->Draw();
 
 #ifdef _DEBUG
 	
@@ -254,8 +272,6 @@ void Player::Draw(const ViewProjection& viewProjection){
 
 		particleTransCenter_.translate = (weaponObj_->GetTopVerTex().tail + weaponObj_->GetTopVerTex().head) / 2.0f;
 		particleTransCenter_.scale = { 0.3f,0.3f,0.3f };*/
-
-	
 }
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
@@ -306,7 +322,9 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("オフセット", &Weapon_offset_.x, 0.1f);
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
 	ImGui::DragFloat("武器の高さ補正", &addHeight_, 0.01f);
-	
+	ImGui::Checkbox("武器のしきい値", &isDissolve_);
+	ImGui::End();
+
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
 
 	trail_->DrawImgui("トレイル");
@@ -354,13 +372,8 @@ void Player::SetIsDown(bool isDown){
 
 void Player::BehaviorRootInitialize(){
 	move_ = { 0.0f,0.0f,0.0f };
-	Weapon_offset_Base_ = { 0.0f,3.0f,0.0f };
 	workAttack_.comboIndex = 0;
-	weaponTransform_.translate = { 0.0f,0.0f,0.0f };
-	weaponTransform_.rotate.x = 0;
-	weaponTransform_.rotate.y = 0;
-	weaponTransform_.rotate.z = 0;
-	weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
+	
 	weaponCollisionTransform_.translate.y = 10000.0f;
 	trail_->Reset();
 }
@@ -450,12 +463,23 @@ void Player::BehaviorRootUpdate(){
 		dashCoolTime_ -= 1;
 	}
 	playerTransform_.translate.y += downVector_.y;
-	Vector3 weaponRotateVec = weaponTransform_.rotate;
-	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponRotateVec);
-	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
-	Weapon_offset_ = Matrix::TransformNormal(Weapon_offset_Base_, weaponCollisionRotateMatrix);
-	weaponTransform_.translate = playerTransform_.translate + Weapon_offset_;
-	weaponTransform_.translate.y += addHeight_;
+	if (!isDissolve_) {
+		addHeight_ = 0.0f;
+		Weapon_offset_Base_ = { 0.4f,-1.8f,1.0f };
+
+		weaponTransform_.rotate.x = 3.14f;
+		weaponTransform_.rotate.y = 0;
+		weaponTransform_.rotate.z = 0;
+		weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
+
+		Vector3 weaponRotateVec = weaponTransform_.rotate;
+		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponRotateVec);
+		weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
+		Weapon_offset_ = Matrix::TransformNormal(Weapon_offset_Base_, weaponCollisionRotateMatrix);
+		weaponTransform_.translate = playerTransform_.translate + Weapon_offset_;
+		weaponTransform_.translate.y += addHeight_;
+	}
+	
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
@@ -464,10 +488,14 @@ void Player::BehaviorRootUpdate(){
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kAttack;
+		isDissolve_ = false;
+		weaponThreshold_ = 0.0f;
 	}
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !isDown_) {
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
+		isDissolve_ = false;
+		weaponThreshold_ = 0.0f;
 	}
 	
 }
@@ -703,6 +731,7 @@ void Player::BehaviorAttackUpdate(){
 				if (++workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 
 					behaviorRequest_ = Behavior::kRoot;
+					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
 				}
 			}
@@ -754,17 +783,16 @@ void Player::BehaviorAttackUpdate(){
 
 	playerTransform_.translate.y += downVector_.y;
 	
-	weaponTransform_.translate = playerTransform_.translate;
-	weaponTransform_.translate.y += addHeight_;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
 	Weapon_offset_ = Matrix::TransformNormal(Weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset_;
-	weaponCollisionTransform_.translate.y += addHeight_;
+	weaponCollisionTransform_.translate.y += addHeight_ + 1.0f;
+
+	weaponTransform_.translate = weaponCollisionTransform_.translate;
 
 	if (workAttack_.comboIndex != 0) {
-		weaponCollisionTransform_.translate.y += 1.0f;
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
@@ -775,10 +803,7 @@ void Player::BehaviorAttackUpdate(){
 		behaviorRequest_ = Behavior::kDash;
 	}
 
-	/*if (WaitTime <= 0) {
-		behaviorRequest_ = Behavior::kRoot;
-	}*/
-	//weapon_Rotate==0.0fの時arm_Rotate-3.15f
+	
 }
 
 void Player::BehaviorAllStrongAttackInitialize(){
@@ -835,7 +860,7 @@ void Player::BehaviorStrongAttackUpdate(Input* input){
 	if (isEndAttack_) {
 			 
 		if (++workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
-
+			isDissolve_ = true;
 			behaviorRequest_ = Behavior::kRoot;
 			workAttack_.attackParameter = 0;
 		}	

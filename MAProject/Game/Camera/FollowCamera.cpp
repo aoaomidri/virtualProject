@@ -108,8 +108,6 @@ void FollowCamera::Update(){
 
 	}
 
-	
-
 
 	viewingFrustum_.translation_ = viewProjection_.translation_;
 	viewingFrustum_.rotate_ = viewProjection_.rotation_;

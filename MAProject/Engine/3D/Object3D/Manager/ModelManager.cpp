@@ -11,7 +11,7 @@ std::shared_ptr<Model> ModelManager::LoadModelFile(const std::string& filename){
 
 	size_t size = 0;
 	bool isLoad = false;
-
+	//既に読み込んでいるかどうかの検索
 	for (size_t i = 0; i < modelNameContainer_.first.size(); i++) {
 		if (modelNameContainer_.first[i] == filename and modelNameContainer_.second[i] == filename) {
 			isLoad = true;
@@ -22,7 +22,7 @@ std::shared_ptr<Model> ModelManager::LoadModelFile(const std::string& filename){
 
 	// 既に読み込まれている場合
 	if (isLoad) {
-		// コンテナ内のモデルデータを返す（所有権の移動ではなく参照）
+		// コンテナ内のモデルデータを返す
 		return (modelContainer_[size]);
 	}
 

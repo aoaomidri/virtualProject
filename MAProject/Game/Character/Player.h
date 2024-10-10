@@ -314,6 +314,8 @@ private:
 	//ディゾルブ関係
 	float weaponThreshold_ = 0.0f;
 
+	bool isDissolve_ = false;
+
 	bool isShakeDown_ = false;
 
 	bool isEndAttack_ = false;
@@ -336,7 +338,7 @@ private:
 
 	Behavior behavior_ = Behavior::kRoot;
 
-	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
 
 private:
 	bool isCollisionEnemy_ = false;

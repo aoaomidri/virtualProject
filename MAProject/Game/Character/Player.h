@@ -75,12 +75,10 @@ public:
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
 
-	bool OnCollisionEnemy() { return isCollisionEnemy_; }
+	void OnCollisionEnemyAttack();
 
 	//Setter
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
-
-	void SetHitTimer();
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
@@ -284,7 +282,7 @@ private:
 
 	WorkDash workDash_;
 
-	/*武器に関連するもの*/
+	//////*攻撃に関連するもの*///////
 	//武器の回転
 	float weapon_Rotate_ = 0.0f;
 	float arm_Rotate_ = -3.15f;
@@ -298,8 +296,13 @@ private:
 	const float kMaxRotateY_ = -1.55f;
 	const float kMinRotate_ = -0.6f;
 
-	int waitTimeBase_ = 7;
-	int waitTime_ = 0;
+	int32_t waitTimeBase_ = 7;
+	int32_t waitTime_ = 0;
+
+	//強攻撃強化時間
+	int32_t counterTimeBase_ = 30;
+	int32_t counterTime_ = 0;
+
 	//武器の高さ補正
 	float addHeight_ = 0.0f;
 
@@ -315,9 +318,9 @@ private:
 	float weaponThreshold_ = 0.0f;
 
 	bool isDissolve_ = false;
-
+	//武器を振り下ろしかどうか
 	bool isShakeDown_ = false;
-
+	//
 	bool isEndAttack_ = false;
 	//トレイルを描画するかどうか
 	bool isTrail_ = false;
@@ -326,6 +329,10 @@ private:
 	bool isDown_ = false;
 
 	bool isDash_ = false;
+	//強攻撃一段目で守っているかどうか
+	bool isGuard_ = false;
+	//強攻撃中に攻撃を受けたかどうか
+	bool isGuardHit_ = false;
 
 	/*振る舞い系*/
 	enum class Behavior {

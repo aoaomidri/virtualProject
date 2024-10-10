@@ -138,8 +138,15 @@ void Player::Update(){
 		if (weaponThreshold_ < 0.0f) {
 
 			weaponThreshold_ = 0.0f;
-		}
-		
+		}		
+	}
+
+	if (counterTime_ < counterTimeBase_){
+		isGuardHit_ = false;
+	}
+
+	if (isGuardHit_){
+		counterTime_++;
 	}
 
 	if (hitTimer_ != 0) {
@@ -323,6 +330,8 @@ void Player::DrawImgui(){
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
 	ImGui::DragFloat("武器の高さ補正", &addHeight_, 0.01f);
 	ImGui::Checkbox("武器のしきい値", &isDissolve_);
+	ImGui::Checkbox("ガード中かどうか", &isGuard_);
+	ImGui::Checkbox("ガード中に攻撃受けたかどうか", &isGuardHit_);
 	ImGui::End();
 
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
@@ -357,8 +366,15 @@ void Player::Respawn(){
 	shadow_->color_.w = 0.5f;
 }
 
-void Player::SetHitTimer(){
-	hitTimer_ = 30;
+void Player::OnCollisionEnemyAttack(){
+	if (isGuard_){
+		isGuardHit_ = true;
+		counterTime_ = 0;
+	}
+	else {
+		hitTimer_ = 30;
+	}
+	
 }
 
 void Player::SetIsDown(bool isDown){
@@ -1354,9 +1370,10 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 void Player::StrongAttackMotion(Input* input){
 	if (!chargeEnd_){
 		if (input->GetPadButton(XINPUT_GAMEPAD_Y)){
-			
+			isGuard_ = true;
 		}
 		if (input->GetPadButtonRelease(XINPUT_GAMEPAD_Y)){
+			isGuard_ = false;
 			chargeEnd_ = true;
 			Weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
 			weaponTransform_.rotate.z = 1.57f;

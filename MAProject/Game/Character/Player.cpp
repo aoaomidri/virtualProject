@@ -113,6 +113,8 @@ void Player::Initialize(){
 
 	isDown_ = true;
 
+	addHeight_ = 0.0f;
+
 	trail_ = std::make_unique<TrailEffect>();
 	trail_->Initialize(15, "resources/texture/TrailEffect/whiteTrail.png");
 
@@ -126,10 +128,13 @@ void Player::Update(){
 	//武器のディゾルブ関連
 	weaponObj_->SetDissolve(weaponThreshold_);
 
+
+
 	if (isDissolve_){
 		weaponThreshold_ += 0.03f;
 		if (weaponThreshold_ > 1.0f) {
 			weaponThreshold_ = 1.0f;
+			addHeight_ = 0.0f;
 			isDissolve_ = false;
 		}
 	}
@@ -310,9 +315,6 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 	
 }
 
-void Player::TrailDraw(){
-
-}
 
 void Player::DrawImgui(){
 #ifdef _DEBUG
@@ -478,9 +480,15 @@ void Player::BehaviorRootUpdate(){
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_ -= 1;
 	}
+	floatSin_ += floatSpeed_;
+	if (floatSin_ >= (std::numbers::pi * 2.0f)) {
+		floatSin_ = 0.0f;
+	}
 	playerTransform_.translate.y += downVector_.y;
 	if (!isDissolve_) {
-		addHeight_ = 0.0f;
+
+		
+		addHeight_ = kFloatHeight_ * std::sinf(floatSin_);
 		Weapon_offset_Base_ = { 0.4f,-1.8f,1.0f };
 
 		weaponTransform_.rotate.x = 3.14f;

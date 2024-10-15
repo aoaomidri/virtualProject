@@ -84,11 +84,11 @@ private: // メンバ変数
 	// Window関連
 	HWND hwnd_ = nullptr;   // ウィンドウハンドル
 	WNDCLASS wndClass_{}; // ウィンドウクラス
-	//UINT windowStyle_;
+	
 	bool isFullscreen_ = false;
 	
 	SizeChangeMode sizeChangeMode_ = SizeChangeMode::kNormal;
-	//float aspectRatio_;
+	
 
 };
 

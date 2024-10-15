@@ -686,7 +686,7 @@ void GameScene::AllCollision(){
 		}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-			player_->SetHitTimer();
+			player_->OnCollisionEnemyAttack();
 
 			break;
 		}

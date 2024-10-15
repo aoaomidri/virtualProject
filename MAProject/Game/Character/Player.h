@@ -39,7 +39,6 @@ public:
 
 	void ParticleDraw(const ViewProjection& viewProjection);
 
-	void TrailDraw();
 	//Imgui描画
 	void DrawImgui();
 
@@ -295,6 +294,8 @@ private:
 	const float kMaxRotate_ = 2.0f;
 	const float kMaxRotateY_ = -1.55f;
 	const float kMinRotate_ = -0.6f;
+	const float kFloatHeight_ = 0.1f;
+	
 
 	int32_t waitTimeBase_ = 7;
 	int32_t waitTime_ = 0;
@@ -305,6 +306,10 @@ private:
 
 	//武器の高さ補正
 	float addHeight_ = 0.0f;
+
+	float floatSin_ = 0.0f;
+
+	float floatSpeed_ = (float)(std::numbers::pi / 45.0f);
 
 	float motionDistance_ = 3.0f;
 

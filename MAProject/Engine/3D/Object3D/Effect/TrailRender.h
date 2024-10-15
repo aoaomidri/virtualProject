@@ -50,9 +50,9 @@ private:
 	uint32_t selectTrail_ = 0;
 
 	/*型ごとの色を指定*/
-	const Vector4 groundColor_ = { 0.8039f, 0.3608f, 0.0f,0.7f };
+	const Vector4 groundColor_ = { 0.8039f, 0.3608f, 0.0f,1.0f };
 
-	const Vector4 waterColor_ = { 0.678f, 0.847f, 0.902f,0.7f };
+	const Vector4 waterColor_ = { 0.678f, 0.847f, 0.902f,1.0f };
 	
 };
 

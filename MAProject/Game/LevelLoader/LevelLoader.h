@@ -32,7 +32,6 @@ public:
 	/// </summary>
 	void LoadJson(json jData);
 
-	//void Draw(const ViewProjection& viewProjection);
 
 	std::vector<Object3D*> GetStationaryObject()const;
 

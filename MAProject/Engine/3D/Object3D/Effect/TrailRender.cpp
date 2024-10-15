@@ -19,7 +19,7 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 		materialDate_->color = waterColor_;
 	}
 	else {
-		materialDate_->color = { 1.0f,1.0f,1.0f,0.7f };
+		materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
 	

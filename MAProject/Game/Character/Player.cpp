@@ -19,6 +19,7 @@ void Player::ApplyGlobalVariables() {
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
 	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
 	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
+	trailPosData_ = adjustment_item->GetVector2Value(groupName, "TrailPosData");
 
 }
 
@@ -36,6 +37,7 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
 	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
 	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
+	adjustment_item->AddItem(groupName, "TrailPosData", trailPosData_);
 	
 	input_ = Input::GetInstance();
 
@@ -51,6 +53,7 @@ void Player::Initialize(){
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
 	weaponObj_->SetIsGetTop(true);
+	
 	weaponObj_->SetIsLighting(false);
 
 	shadow_ = std::make_unique<Sprite>();
@@ -118,7 +121,7 @@ void Player::Update(){
 
 	//武器のディゾルブ関連
 	weaponObj_->SetDissolve(weaponThreshold_);
-
+	weaponObj_->SetTrailPos(trailPosData_);
 
 
 	if (isDissolve_){
@@ -326,6 +329,7 @@ void Player::DrawImgui(){
 	ImGui::Checkbox("ガード中かどうか", &isGuard_);
 	ImGui::Checkbox("ガード中に攻撃受けたかどうか", &isGuardHit_);
 	ImGui::Checkbox("武器の振りの調整", &isWeaponDebugFlug_);
+	ImGui::DragFloat2("武器のトレイル表示座標", &trailPosData_.x, 0.01f);
 	ImGui::End();
 
 	playerSkinAnimObj_->DrawImgui("プレイヤー");
@@ -813,7 +817,7 @@ void Player::BehaviorAttackUpdate(){
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
-		trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+		trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
 	}
 	
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
@@ -922,10 +926,10 @@ void Player::BehaviorStrongAttackUpdate(Input* input){
 		weaponObj_->UniqueUpdate();
 		if (isTrail_) {
 			if (workAttack_.comboIndex == 1) {
-				trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+				trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
 			}
 			else {
-				trail_->SetPos(weaponObj_->GetTopVerTex().head, weaponObj_->GetTopVerTex().tail);
+				trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
 			}
 		}
 		

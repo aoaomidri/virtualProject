@@ -80,8 +80,8 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 			}
 
 		}
-		result = { result.x,-result.z,-result.y };
-		resultTail = { result.x,result.y / 3.0f,result.z };
+		result = { result.x,(-result.z) * trailData_.x,-result.y };
+		resultTail = { result.x,result.y * trailData_.y,result.z };
 		Matrix4x4 transMat;
 
 		Matrix4x4 transMatTail;
@@ -164,8 +164,8 @@ void Object3D::UniqueUpdate(){
 			}
 
 		}
-		result = { result.x,-result.z,-result.y };
-		resultTail = { result.x,result.y / 3.0f,result.z };
+		result = { result.x,(-result.z) * trailData_.x,-result.y };
+		resultTail = { result.x,result.y * trailData_.y,result.z };
 		Matrix4x4 transMat;
 
 		Matrix4x4 transMatTail;

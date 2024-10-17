@@ -49,6 +49,10 @@ public:
 		materialDate->color = data;
 	}
 
+	void SetTrailPos(const Vector2 trailData) {
+		trailData_ = trailData;
+	}
+
 	void SetMatrix(const Matrix4x4& matrix) {
 		setMatrix_ = matrix;
 	}
@@ -61,7 +65,11 @@ public:
 
 	const EulerTransform& GetTransform()const { return transform_; }
 
-	const TrailEffect::PosBuffer& GetTopVerTex() const{		
+	/// <summary>
+	/// 最も上の頂点の座標を取得する。またそれに付随してその頂点より下側に位置する座標も取得する
+	/// </summary>
+	/// <returns></returns>
+	const TrailEffect::PosBuffer& GetTopAndTailVerTex() const {
 		return vectorTop_;
 	}
 
@@ -136,6 +144,8 @@ private:
 	//データを書き込む
 	//アニメーションの再生中の時刻
 	float animationTime = 0.0f;
+
+	Vector2 trailData_;
 
 	Vector3 animeTranslate_;
 

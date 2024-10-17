@@ -7,6 +7,10 @@
         "JumpPower": 0.20000000298023224,
         "MotionDistance": 3.0,
         "MotionSpeed": 1.399999976158142,
-        "MoveSpeed": 0.07000000029802322
+        "MoveSpeed": 0.07000000029802322,
+        "TrailPosData": [
+            2.5,
+            0.4000000059604645
+        ]
     }
 }

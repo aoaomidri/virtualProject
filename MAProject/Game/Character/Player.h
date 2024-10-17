@@ -312,6 +312,8 @@ private:
 
 	//ディゾルブ関係
 	float weaponThreshold_ = 0.0f;
+	//取得する頂点座標を調整する
+	Vector2 trailPosData_ = { 0.0f,3.0f };
 
 	bool isDissolve_ = false;
 	//武器を振り下ろしかどうか

@@ -45,10 +45,22 @@ void Adjustment_Item::Update() {
 				float* ptr = std::get_if<float>(&item);
 				ImGui::DragFloat(itemName.c_str(), ptr, 0.01f, -100.0f, 100.0f);
 			}
+			//Vector2型の値を保持していれば
+			else if (std::holds_alternative<Vector2>(item)) {
+				Vector2* ptr = std::get_if<Vector2>(&item);
+				ImGui::DragFloat2(
+					itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f, -100.0f, 100.0f);
+			}
 			//Vector3型の値を保持していれば
 			else if (std::holds_alternative<Vector3>(item)) {
 				Vector3* ptr = std::get_if<Vector3>(&item);
 				ImGui::DragFloat3(
+					itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f, -100.0f, 100.0f);
+			}
+			//Vector4型の値を保持していれば
+			else if (std::holds_alternative<Vector4>(item)) {
+				Vector4* ptr = std::get_if<Vector4>(&item);
+				ImGui::DragFloat4(
 					itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f, -100.0f, 100.0f);
 			}
 		}
@@ -113,10 +125,20 @@ void Adjustment_Item::SaveFile(const std::string& groupName) {
 			// float型の値を登録
 			root[groupName][itemName] = std::get<float>(item);
 		}
+		else if (std::holds_alternative<Vector2>(item)) {
+			// Vector2型の値を登録
+			Vector2 value = std::get<Vector2>(item);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y});
+		}
 		else if (std::holds_alternative<Vector3>(item)) {
 			// Vector3型の値を登録
 			Vector3 value = std::get<Vector3>(item);
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z });
+		}
+		else if (std::holds_alternative<Vector4>(item)) {
+			// Vector4型の値を登録
+			Vector4 value = std::get<Vector4>(item);
+			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z ,value.w });
 		}
 		std::filesystem::path dir(kDirectoryPath);
 		if (!std::filesystem::exists("Resources/Datas/Adjustment_Item")) {
@@ -206,9 +228,19 @@ void Adjustment_Item::LoadFile(const std::string& groupName) {
 			double value = itItem->get<double>();
 			SetValue(groupName, itemName, static_cast<float>(value));
 		}
+		else if (itItem->is_array() && itItem->size() == 2) {
+			//float型のjson配列登録
+			Vector2 value = { itItem->at(0), itItem->at(1)};
+			SetValue(groupName, itemName, value);
+		}
 		else if (itItem->is_array() && itItem->size() == 3) {
 			//float型のjson配列登録
 			Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
+			SetValue(groupName, itemName, value);
+		}
+		else if (itItem->is_array() && itItem->size() == 4) {
+			//float型のjson配列登録
+			Vector4 value = { itItem->at(0), itItem->at(1), itItem->at(2),itItem->at(3) };
 			SetValue(groupName, itemName, value);
 		}
 
@@ -239,9 +271,29 @@ void Adjustment_Item::SetValue(
 	group[key] = newItem;
 }
 
+void Adjustment_Item::SetValue(const std::string& groupName, const std::string& key, const Vector2& value){
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem = value;
+	// 設定した項目をstd::mapに追加
+	group[key] = newItem;
+}
+
 void Adjustment_Item::SetValue(
 	const std::string& groupName,
 	const std::string& key, const Vector3& value) {
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem = value;
+	// 設定した項目をstd::mapに追加
+	group[key] = newItem;
+}
+
+void Adjustment_Item::SetValue(const std::string& groupName, const std::string& key, const Vector4& value){
 	// グループの参照を取得
 	Group& group = datas_[groupName];
 	// 新しい項目のデータを設定
@@ -274,6 +326,17 @@ float Adjustment_Item::GetfloatValue(const std::string& groupName, const std::st
 	return std::get<float>(group[key]);
 }
 
+Vector2 Adjustment_Item::GetVector2Value(const std::string& groupName, const std::string& key){
+	// 未登録チェック
+	assert(datas_.find(groupName) != datas_.end());
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+
+	assert(group.find(key) != group.end());
+
+	return std::get<Vector2>(group[key]);
+}
+
 Vector3 Adjustment_Item::GetVector3Value(const std::string& groupName, const std::string& key) {
 	// 未登録チェック
 	assert(datas_.find(groupName) != datas_.end());
@@ -283,6 +346,17 @@ Vector3 Adjustment_Item::GetVector3Value(const std::string& groupName, const std
 	assert(group.find(key) != group.end());
 
 	return std::get<Vector3>(group[key]);
+}
+
+Vector4 Adjustment_Item::GetVector4Value(const std::string& groupName, const std::string& key){
+	// 未登録チェック
+	assert(datas_.find(groupName) != datas_.end());
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+
+	assert(group.find(key) != group.end());
+
+	return std::get<Vector4>(group[key]);
 }
 
 void Adjustment_Item::AddItem(
@@ -307,7 +381,8 @@ void Adjustment_Item::AddItem(
 
 }
 
-void Adjustment_Item::AddItem(const std::string& groupName, const std::string& key, float value) {
+void Adjustment_Item::AddItem(
+	const std::string& groupName, const std::string& key, float value) {
 	// 各グループについて
 	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();
 		++itGroup) {
@@ -326,8 +401,45 @@ void Adjustment_Item::AddItem(const std::string& groupName, const std::string& k
 }
 
 void Adjustment_Item::AddItem(
+	const std::string& groupName, const std::string& key, const Vector2& value) {
+
+	// 各グループについて
+	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();
+		++itGroup) {
+		// グループ名を取得
+		const std::string& groupName_ = itGroup->first;
+		// グループの参照を取得
+		Group& group = itGroup->second;
+		// Vector3型の値を保持していれば
+		if (groupName_ == groupName) {
+			if ((group.find(key) == group.end())) {
+				SetValue(groupName, key, value);
+			}
+		}
+	}
+}
+
+void Adjustment_Item::AddItem(
 	const std::string& groupName, const std::string& key, const Vector3& value) {
 
+	// 各グループについて
+	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();
+		++itGroup) {
+		// グループ名を取得
+		const std::string& groupName_ = itGroup->first;
+		// グループの参照を取得
+		Group& group = itGroup->second;
+		// Vector3型の値を保持していれば
+		if (groupName_ == groupName) {
+			if ((group.find(key) == group.end())) {
+				SetValue(groupName, key, value);
+			}
+		}
+	}
+}
+
+void Adjustment_Item::AddItem(
+	const std::string& groupName, const std::string& key, const Vector4& value){
 	// 各グループについて
 	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();
 		++itGroup) {

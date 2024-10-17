@@ -9,7 +9,7 @@
 void TrailEffect::Initialize(int bufferSize, const std::string& texturePath){
     maxSegment_ = bufferSize;
 	posArray_.resize(bufferSize);
-    if (divisionNumber_>0){
+    if (divisionNumber_ > 0) {
         max_ = bufferSize * 2 * (int)(divisionNumber_ * 1.5f);
     }
     else {

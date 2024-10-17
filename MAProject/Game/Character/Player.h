@@ -60,7 +60,7 @@ public:
 
 	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
 
-	bool GetIsDown() { return isDown_; }
+	const bool GetIsDown() const { return isDown_; }
 
 	const OBB& GetOBB()const { return playerOBB_; }
 
@@ -97,32 +97,15 @@ private:
 	void BehaviorRootUpdate();
 	//攻撃行動更新
 	void BehaviorAttackUpdate();
-
+	//強攻撃全体の初期化
 	void BehaviorAllStrongAttackInitialize();
-
+	//強攻撃全体の更新
 	void BehaviorStrongAttackUpdate(Input* input);
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
 
 public:
-	/*攻撃に関連する項目*/
-	//攻撃用定数
-	struct ConstAttack {
-		//振りかぶりの時間<frame>
-		uint32_t anticipatationTime;
-		//ための時間
-		uint32_t chargeTime;
-		//攻撃ふりの時間
-		uint32_t swingTime;
-		//硬直時間
-		uint32_t recoveryTime;
-		//振りかぶりの移動の速さ
-		float anticipatationSpeed;
-		//ための移動速度
-		float chargeSpeed;
-		//攻撃振りの移動速度
-		float swingSpeed;
-	};
+	
 	struct  WorkAttack{
 		uint32_t attackParameter = 0;
 		int32_t comboIndex = 0;
@@ -144,56 +127,59 @@ public:
 	//コンボの数
 	static const int ConboNum = 6;
 
-	static const std::array<ConstAttack, ConboNum>kConstAttacks_;
 private:
-	//攻撃行動初期化
+	//弱1攻撃行動初期化
 	void BehaviorAttackInitialize();
-	//攻撃行動初期化
+	//弱2攻撃行動初期化
 	void BehaviorSecondAttackInitialize();
-	//攻撃行動
+	//弱3攻撃行動初期化
 	void BehaviorThirdAttackInitialize();
-	//攻撃行動初期化
+	//弱4攻撃行動初期化
 	void BehaviorFourthAttackInitialize();
-	//攻撃行動初期化
+	//弱5攻撃行動初期化
 	void BehaviorFifthAttackInitialize();
-	//攻撃行動初期化
+	//弱6攻撃行動初期化
 	void BehaviorSixthAttackInitialize();
-	//攻撃のモーション
+	//弱1攻撃のモーション
 	void AttackMotion();
-
+	//弱2攻撃のモーション
 	void SecondAttackMotion();
-
+	//弱3攻撃のモーション
 	void ThirdAttackMotion();
-
+	//弱4攻撃のモーション
 	void FourthAttackMotion();
-
+	//弱5攻撃のモーション
 	void FifthAttackMotion();
-
+	//弱6攻撃のモーション
 	void SixthAttackMotion();
 
 private:
 	//強攻撃関連
 
-	//攻撃行動初期化
+	//強1攻撃行動初期化
 	void BehaviorStrongAttackInitialize();
-	//攻撃行動初期化
+	//強2攻撃行動初期化
 	void BehaviorSecondStrongAttackInitialize();
-	//攻撃行動
+	//強3攻撃行動初期化
 	void BehaviorThirdStrongAttackInitialize();
-	//攻撃行動初期化
+	//強4攻撃行動初期化
 	void BehaviorFourthStrongAttackInitialize();
-	//攻撃行動初期化
+	//強5攻撃行動初期化
 	void BehaviorFifthStrongAttackInitialize();
-	//攻撃のモーション
+	//強6攻撃行動初期化
+	void BehaviorSixthStrongAttackInitialize();
+	//強1攻撃のモーション
 	void StrongAttackMotion(Input* input);
-
+	//強2攻撃のモーション
 	void secondStrongAttackMotion();
-
+	//強3攻撃のモーション
 	void thirdStrongAttackMotion();
-
+	//強4攻撃のモーション
 	void fourthStrongAttackMotion();
-
+	//強5攻撃のモーション
 	void fifthStrongAttackMotion();
+	//強6攻撃のモーション
+	void sixthStrongAttackMotion();
 
 private:
 	//自機のモデル
@@ -286,8 +272,8 @@ private:
 	float weapon_Rotate_ = 0.0f;
 	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数
-	Vector3 Weapon_offset_;
-	Vector3 Weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
+	Vector3 weapon_offset_;
+	Vector3 weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
 
 	const float kMoveWeapon_ = 0.1f;
 	const float kMoveWeaponShakeDown_ = 0.2f;
@@ -295,7 +281,10 @@ private:
 	const float kMaxRotateY_ = -1.55f;
 	const float kMinRotate_ = -0.6f;
 	const float kFloatHeight_ = 0.1f;
-	
+	//強2攻撃での追撃回数の最大値
+	const int32_t kStrongSecondAttackCountMax_ = 3;
+	//強2攻撃での追撃回数カウント
+	int32_t strongSecondAttackCount_ = 0;
 
 	int32_t waitTimeBase_ = 7;
 	int32_t waitTime_ = 0;
@@ -315,6 +304,8 @@ private:
 
 	float easeT_ = 0.0f;
 
+	float addEaseT_ = 0.0f;
+
 	float motionSpeed_ = 1.0f;
 
 	float shiness_ = 0.0f;
@@ -329,10 +320,14 @@ private:
 	bool isEndAttack_ = false;
 	//トレイルを描画するかどうか
 	bool isTrail_ = false;
+	//追撃を出すかどうか
+	bool isNextAttack_ = false;
 
 	//落下するかどうか
 	bool isDown_ = false;
-
+	//武器の振りに対して調整をしたいかどうか
+	bool isWeaponDebugFlug_ = false;
+	//ダッシュしてるかどうか
 	bool isDash_ = false;
 	//強攻撃一段目で守っているかどうか
 	bool isGuard_ = false;

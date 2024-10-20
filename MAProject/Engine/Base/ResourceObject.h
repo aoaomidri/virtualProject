@@ -4,10 +4,7 @@
 class ResourceObject
 {
 public:
-	ResourceObject();
 	~ResourceObject();
-private:
-	
 	
 };
 

@@ -1,7 +1,4 @@
 #include "ResourceObject.h"
-ResourceObject::ResourceObject(){
-
-}
 
 ResourceObject::~ResourceObject() {
 	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;

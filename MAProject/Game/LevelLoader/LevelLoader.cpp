@@ -233,13 +233,6 @@ std::vector<Object3D*> LevelLoader::GetStationaryObject()const{
 	return objs;
 }
 
-//void LevelLoader::Draw(const ViewProjection& viewProjection){
-//	for (auto& object : objects_) {
-//		object.second->Update(viewProjection);
-//		object.second->Draw();		
-//	}
-//}
-
 Object3D* LevelLoader::GetLevelObject(const std::string tag){
 	for (auto& object :objects_){
 		if (object.first == tag) {
@@ -327,10 +320,4 @@ bool LevelLoader::OperationConfirmation(){
 	return false;
 }
 
-void LevelLoader::from_json(const json& j, Vector2& v){
 
-}
-
-void LevelLoader::from_json(const json& j, Vector3& v){
-
-}

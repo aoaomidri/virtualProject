@@ -8,7 +8,6 @@ void ImGuiManager::Initialize(){
 
 #endif // _DEBUG
 
-
 	
 }
 
@@ -20,7 +19,6 @@ void ImGuiManager::Finalize(){
 
 #endif // _DEBUG
 
-	//device_->Release();
 }
 
 void ImGuiManager::Begin(){
@@ -59,15 +57,13 @@ void ImGuiManager::ImguiInitialize(){
 	ImGui_ImplWin32_Init(WinApp::GetInstance()->GetHwnd());
 	ImGui_ImplDX12_Init(
 		device_,
-		DirectXCommon::GetInstance()->GetSwapChainDesc().BufferCount/*swapChainDesc.BufferCount*/,
+		DirectXCommon::GetInstance()->GetSwapChainDesc().BufferCount,
 		DirectXCommon::GetInstance()->GetRTVDesc().Format,
 		SRVDescriptorHeap::GetInstance()->GetSRVHeap(),
 		SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle(),
 		SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle()
 	);
 
-
-	//型"ImGuiIO&"の参照(constで修飾されていない)は型"ImGuiIO"の値では初期化できません
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls

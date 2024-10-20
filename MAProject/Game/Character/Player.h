@@ -294,7 +294,7 @@ private:
 	int32_t counterTime_ = 0;
 
 	//武器の高さ補正
-	float addHeight_ = 0.0f;
+	Vector3 addPosition_ = {};
 
 	float floatSin_ = 0.0f;
 

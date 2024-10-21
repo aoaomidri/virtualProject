@@ -648,7 +648,7 @@ void GameScene::AllCollision(){
 	for (const auto& floor : floorManager_->GetFloors()) {
 		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
 			chackCollision = 1;
-			player_->onFlootCollision(floor->GetOBB());
+			player_->OnFlootCollision(floor->GetOBB());
 			player_->SetIsDown(false);
 			break;
 		}

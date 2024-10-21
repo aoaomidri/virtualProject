@@ -43,7 +43,7 @@ public:
 	void DrawImgui();
 
 	//床と当たった時のonCollision
-	void onFlootCollision(OBB obb);
+	void OnFlootCollision(OBB obb);
 
 	//リスポーン
 	void Respawn();
@@ -100,7 +100,7 @@ private:
 	//強攻撃全体の初期化
 	void BehaviorAllStrongAttackInitialize();
 	//強攻撃全体の更新
-	void BehaviorStrongAttackUpdate(Input* input);
+	void BehaviorStrongAttackUpdate();
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
 
@@ -169,17 +169,17 @@ private:
 	//強6攻撃行動初期化
 	void BehaviorSixthStrongAttackInitialize();
 	//強1攻撃のモーション
-	void StrongAttackMotion(Input* input);
+	void StrongAttackMotion();
 	//強2攻撃のモーション
-	void secondStrongAttackMotion();
+	void SecondStrongAttackMotion();
 	//強3攻撃のモーション
-	void thirdStrongAttackMotion();
+	void ThirdStrongAttackMotion();
 	//強4攻撃のモーション
-	void fourthStrongAttackMotion();
+	void FourthStrongAttackMotion();
 	//強5攻撃のモーション
-	void fifthStrongAttackMotion();
+	void FifthStrongAttackMotion();
 	//強6攻撃のモーション
-	void sixthStrongAttackMotion();
+	void SixthStrongAttackMotion();
 
 private:
 	//自機のモデル

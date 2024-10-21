@@ -146,7 +146,7 @@ void Enemy::Update(){
 	MotionUpdate();
 
 	shadow_->position_ = transform_.translate;
-	shadow_->position_.y = 1.01f;
+	shadow_->position_.y = 1.11f;
 
 	for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];

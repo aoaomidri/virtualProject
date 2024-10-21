@@ -87,7 +87,9 @@ void Player::Initialize(){
 	particleSword_->SetNotMove();
 
 	playerTransform_ = playerObj_->transform_;
+	playerTransform_.translate.y = 5.0f;
 	playerTransform_.scale.z = 0.7f;
+	playerTransform_.scale.y = 0.5f;
 	particleTrans_ = playerTransform_;
 	particleTransCenter_ = playerTransform_;
 
@@ -201,10 +203,10 @@ void Player::Update(){
 	}
 	
 	shadow_->position_ = playerTransform_.translate;
-	shadow_->position_.y = 1.01f;
+	shadow_->position_.y = 1.11f;
 
-	shadow_->scale_.x = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
-	shadow_->scale_.y = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
+	shadow_->scale_.x = shadowScaleBase_ + (2.5f - playerTransform_.translate.y);
+	shadow_->scale_.y = shadowScaleBase_ + (2.5f - playerTransform_.translate.y);
 
 
 	if (isStopCrush_){
@@ -218,6 +220,7 @@ void Player::Update(){
 		groundCrush_->color_.w = 0.0f;
 
 		groundCrush_->position_ = playerTransform_.translate + Matrix::TransformNormal(groundOffsetBase_, playerRotateMatrix_);
+		groundCrush_->position_.y = 1.10f;
 	}
 
 	if (shadow_->scale_.x < 0.0f) {
@@ -281,9 +284,9 @@ void Player::Update(){
 
 void Player::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
-
-	groundCrush_->Draw(viewProjection);
-
+	if (isStopCrush_) {
+		groundCrush_->Draw(viewProjection);
+	}
 	trailRender_->Draw(trail_.get(), viewProjection);
 }
 
@@ -339,6 +342,8 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
+	ImGui::DragFloat3("OBB大きさ", &obbAddScale_.x, 0.01f);
 	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime_);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer);
@@ -359,8 +364,8 @@ void Player::DrawImgui(){
 	ImGui::End();
 
 	ImGui::Begin("ひび割れテクスチャ");
-	ImGui::DragFloat3("座標", &groundOffsetBase_.x, 0.01f);
-	ImGui::DragFloat2("大きさ", &groundCrush_->scale_.x, 0.01f, 0.0f, 10.0f);
+	ImGui::DragFloat3("座標", &shadow_->position_.x, 0.01f);
+	ImGui::DragFloat2("大きさ", &shadow_->scale_.x, 0.01f, 0.0f, 10.0f);
 	ImGui::End();
 
 	playerObj_->DrawImgui("プレイヤー");
@@ -371,7 +376,7 @@ void Player::DrawImgui(){
 }
 
 void Player::OnFlootCollision(OBB obb){
-	playerTransform_.translate.y = /*playerOBB_.size.y + */obb.size.y;
+	playerTransform_.translate.y = playerTransform_.scale.y + obbAddScale_.y + obb.size.y;
 	downVector_ = { 0.0f,0.0f,0.0f };
 }
 
@@ -485,24 +490,24 @@ void Player::BehaviorRootUpdate(){
 
 	playerTransform_.translate += move_;
 	
-	/*if (isDown_) {
+	if (isDown_) {
 		downVector_.y += downSpeed_;
-		playerObj_->SetAnimSpeed(2.0f);
+		/*playerObj_->SetAnimSpeed(2.0f);
 	
 		playerObj_->ChangeAnimation("jump");
 		playerObj_->SetChangeAnimSpeed(6.0f);
-		playerObj_->AnimationTimeStop(60.0f);
+		playerObj_->AnimationTimeStop(60.0f);*/
 
 	}
 	else {
-		if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerObj_->ChackAnimationName() != "jump") {
+		/*if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerObj_->ChackAnimationName() != "jump") {
 			playerObj_->ChangeAnimation("stand");
 			playerObj_->SetChangeAnimSpeed(3.0f);
 			playerObj_->SetAnimSpeed(1.0f);
 		}
-		playerObj_->AnimationStart();
+		playerObj_->AnimationStart();*/
 		
-	}*/
+	}
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_ -= 1;
 	}
@@ -568,7 +573,7 @@ void Player::BehaviorAttackInitialize(){
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 1.0f;
+	//addPosition_.y = 1.0f;
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
@@ -594,7 +599,7 @@ void Player::BehaviorSecondAttackInitialize(){
 	weaponTransform_.rotate.z = 2.0f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -622,7 +627,7 @@ void Player::BehaviorThirdAttackInitialize(){
 	weaponTransform_.rotate.z = -1.7f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -648,7 +653,7 @@ void Player::BehaviorFourthAttackInitialize()
 	weaponTransform_.rotate.z = -2.2f;
 	//weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	workAttack_.AttackTimer = 0;
 	hitRecord_.Clear();
@@ -671,7 +676,7 @@ void Player::BehaviorFifthAttackInitialize()
 	weaponTransform_.rotate.z = 2.5f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -699,7 +704,7 @@ void Player::BehaviorSixthAttackInitialize(){
 	weaponTransform_.rotate.z = 0.0f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 2.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -1309,7 +1314,7 @@ void Player::BehaviorStrongAttackInitialize(){
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 0.0f;
 	weapon_offset_Base_.z = 1.0f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -1367,7 +1372,7 @@ void Player::BehaviorThirdStrongAttackInitialize(){
 	weaponTransform_.rotate.z = 0.0f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -1396,7 +1401,7 @@ void Player::BehaviorFourthStrongAttackInitialize(){
 	weaponTransform_.rotate.z = 1.85f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_.y = 1.5f;
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -1428,7 +1433,7 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	weaponTransform_.rotate.z = -1.5f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
-	addPosition_.y = 0.5f;
+	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -1494,7 +1499,7 @@ void Player::StrongAttackMotion(){
 			chargeEnd_ = true;
 			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
 			weaponTransform_.rotate.z = 1.57f;
-			addPosition_.y = 0.5f;
+			//addPosition_.y = 0.5f;
 		}
 
 	}
@@ -1787,7 +1792,7 @@ void Player::SixthStrongAttackMotion(){
 			isTrail_ = true;
 			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
 			weaponTransform_.rotate.z = 1.57f;
-			addPosition_.y = 0.5f;
+			//addPosition_.y = 0.5f;
 		}
 
 	}

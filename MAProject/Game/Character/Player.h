@@ -399,9 +399,9 @@ private:
 	float crushScaleBase_ = 0.9f;
 
 	//Obbの補正値
-	Vector3 obbPoint_ = { -0.02f,0.75f,-0.05f };
+	Vector3 obbPoint_ = { -0.02f,0.0f,-0.05f };
 
 	//Obbの補正値
-	Vector3 obbAddScale_ = { -0.65f,-0.2f,-0.65f };
+	Vector3 obbAddScale_ = { -0.65f,0.5f,-0.65f };
 };
 

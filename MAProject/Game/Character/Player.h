@@ -325,6 +325,13 @@ private:
 	//追撃を出すかどうか
 	bool isNextAttack_ = false;
 
+
+	/*強5攻撃のみ*/
+	//初回の攻撃かどうか
+	bool isFirstAttack_ = false;
+	//最後のきめ技を行うかどうか
+	bool isFinishAttack_ = false;
+	////////
 	//落下するかどうか
 	bool isDown_ = false;
 	//武器の振りに対して調整をしたいかどうか

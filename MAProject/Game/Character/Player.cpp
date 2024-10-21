@@ -1315,6 +1315,7 @@ void Player::BehaviorSecondStrongAttackInitialize(){
 }
 
 void Player::BehaviorThirdStrongAttackInitialize(){
+
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -1373,6 +1374,9 @@ void Player::BehaviorFourthStrongAttackInitialize(){
 }
 
 void Player::BehaviorFifthStrongAttackInitialize(){
+	
+
+	///
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -1381,7 +1385,7 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = -0.3f;
 	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.rotate.z = -1.5f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
 	addPosition_.y = 0.5f;
@@ -1395,10 +1399,12 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	workAttack_.AttackTimer = 0;
 
 	waitTime_ = waitTimeBase_;
-	addPosition_.y = 0.0f;
+	weapon_Rotate_ = 0.5f;
 	trail_->Reset();
 	strongSecondAttackCount_ = 0;
+	isFirstAttack_ = true;
 	isNextAttack_ = false;
+	isFinishAttack_ = false;
 	isTrail_ = false;
 	isShakeDown_ = false;
 	isEndAttack_ = false;
@@ -1637,37 +1643,103 @@ void Player::fourthStrongAttackMotion(){
 }
 
 void Player::fifthStrongAttackMotion(){
-	easeT_ += addEaseT_;
-	if (easeT_ >= 1.0f) {
-		easeT_ = 1.0f;
-		waitTime_ -= 1;
+	if (!isFinishAttack_){	
+		if (isFirstAttack_){
+			if (weapon_Rotate_ >= 3.0f) {
+				waitTime_ -= 1;
+				weapon_Rotate_ = 3.0f;
+			}
+			else if (weapon_Rotate_ <= -0.5f) {
+				isShakeDown_ = true;
+				isTrail_ = true;
+			}
 
 
-	}
-	if (easeT_ >= 0.7f) {		
+			if (waitTime_ <= 0) {
+				isFirstAttack_ = false;
+				waitTime_ = waitTimeBase_;
+				weaponTransform_.rotate.z = -0.5f;
+				hitRecord_.Clear();
+			}
 
-		if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
-			isNextAttack_ = true;
-		}		
-	}
+			if (!isShakeDown_) {
+				weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+			}
+			else if (isShakeDown_) {
 
-	if (waitTime_ <= 0) {
-		if (isNextAttack_ && !isEndAttack_) {
-			waitTime_ = waitTimeBase_;
-			easeT_ = 0;
-			addEaseT_ = 0.04f;
-			strongSecondAttackCount_++;
-			isNextAttack_ = false;
+				weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+			}
 		}
 		else {
+		
+			if (weapon_Rotate_ <= -0.3f) {
+				waitTime_ -= 1;
+				weapon_Rotate_ = -0.3f;
+			}
+			else if (weapon_Rotate_ >= 3.3f) {
+				isShakeDown_ = true;
+			}
+
+			if (!isNextAttack_) {			
+				if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
+					isNextAttack_ = true;
+				}			
+			}
+			if (waitTime_ <= 0) {
+				if (isNextAttack_){
+					isNextAttack_ = false;
+					isFirstAttack_ = true;
+					waitTime_ = waitTimeBase_;
+					weaponTransform_.rotate.z = -1.5f;
+					hitRecord_.Clear();
+				}
+				else {
+					waitTime_ = waitTimeBase_;
+					weaponTransform_.rotate.z = 0.5f;
+					weapon_Rotate_ = -0.0f;
+					isShakeDown_ = false;
+					isTrail_ = false;
+					isFinishAttack_ = true;
+					hitRecord_.Clear();
+				}
+			}
+			else if (!isShakeDown_) {
+				weapon_Rotate_ += (kMoveWeapon_ * motionSpeed_ / 2.0f);
+			}
+			else if (isShakeDown_) {
+
+				weapon_Rotate_ -= kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+			}
+		}
+	}
+	else {
+		if (weapon_Rotate_ >= 3.0f) {
+			waitTime_ -= 1;
+			weapon_Rotate_ = 3.16f;
+		}
+		else if (weapon_Rotate_ <= -0.5f) {
+			isTrail_ = true;
+			isShakeDown_ = true;
+		}
+		
+
+		if (waitTime_ <= 0) {
 			isEndAttack_ = true;
 		}
 
-	}
-	weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInBack, -0.5f, 0.0f, easeT_);
-	weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 4.0f, easeT_);
+		if (!isShakeDown_) {
+			weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		}
+		else if (isShakeDown_) {
 
+			weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		}
+	}
 	
+
+
+	weaponTransform_.rotate.x = weapon_Rotate_ + baseRotate_.x;
+	weaponCollisionTransform_.rotate.x = weapon_Rotate_ + baseRotate_.x;
 
 }
 

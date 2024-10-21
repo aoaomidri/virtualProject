@@ -181,9 +181,12 @@ private:
 	//強6攻撃のモーション
 	void SixthStrongAttackMotion();
 
+	/*地面破壊のテクスチャの配置*/
+	void SettingGroundCrushTex();
+
 private:
 	//自機のモデル
-	SkinAnimObject3D* playerSkinAnimObj_ = nullptr;
+	std::unique_ptr<Object3D> playerObj_;
 
 	//std::vector<std::unique_ptr<Object3D>> debugSphere_;
 
@@ -282,7 +285,7 @@ private:
 	const float kMinRotate_ = -0.6f;
 	const float kFloatHeight_ = 0.1f;
 	//強2攻撃での追撃回数の最大値
-	const int32_t kStrongSecondAttackCountMax_ = 3;
+	const int32_t kStrongSecondAttackCountMax_ = 2;
 	//強2攻撃での追撃回数カウント
 	int32_t strongSecondAttackCount_ = 0;
 
@@ -386,6 +389,14 @@ private:
 	std::unique_ptr<Sprite> shadow_;
 
 	float shadowScaleBase_ = 0.9f;
+
+	std::unique_ptr<Sprite> groundCrush_;
+
+	Vector3 groundOffsetBase_;
+	//破壊跡を固定するかどうか
+	bool isStopCrush_;
+
+	float crushScaleBase_ = 0.9f;
 
 	//Obbの補正値
 	Vector3 obbPoint_ = { -0.02f,0.75f,-0.05f };

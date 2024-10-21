@@ -41,14 +41,9 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
-	playerSkinAnimObj_ = LevelLoader::GetInstance()->GetLevelSkinAnimObject("Player");
-	playerSkinAnimObj_->SetAnimation("human", "stand", true);
-	playerSkinAnimObj_->SetAnimation("human", "Run", true);
-	playerSkinAnimObj_->SetAnimation("human", "jump", false);
+	playerObj_ = std::make_unique<Object3D>();
+	playerObj_->Initialize("PlayerFace");
 
-	playerSkinAnimObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
-
-	playerSkinAnimObj_->SetIsLighting(true);
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
@@ -63,7 +58,17 @@ void Player::Initialize(){
 	shadow_->anchorPoint_ = { 0.5f,0.5f };
 	shadow_->color_.w = 0.5f;
 
+	groundCrush_ = std::make_unique<Sprite>();
+	groundCrush_->Initialize(TextureManager::GetInstance()->Load("resources/texture/groundCrush.png"));
+	groundCrush_->position_ = { 20.0f ,1.04f,0.0f };
+	groundCrush_->rotation_.x = 1.57f;
+	groundCrush_->scale_ = { 3.0f,3.0f };
+	groundCrush_->anchorPoint_ = { 0.5f,0.5f };
+	groundCrush_->color_.w = 1.0f;
 
+	groundOffsetBase_ = { 0.0f,0.1f,6.0f };
+
+	isStopCrush_ = false;
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("box");
@@ -81,7 +86,8 @@ void Player::Initialize(){
 	particleSword_->SetLifeTime(0.5f);
 	particleSword_->SetNotMove();
 
-	playerTransform_ = playerSkinAnimObj_->transform_;
+	playerTransform_ = playerObj_->transform_;
+	playerTransform_.scale.z = 0.7f;
 	particleTrans_ = playerTransform_;
 	particleTransCenter_ = playerTransform_;
 
@@ -200,6 +206,20 @@ void Player::Update(){
 	shadow_->scale_.x = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
 	shadow_->scale_.y = shadowScaleBase_ + (1.0f - playerTransform_.translate.y);
 
+
+	if (isStopCrush_){
+		groundCrush_->color_.w -= 0.02f;
+
+		if (groundCrush_->color_.w <= 0.0f) {
+			isStopCrush_ = false;
+		}
+	}
+	else {
+		groundCrush_->color_.w = 0.0f;
+
+		groundCrush_->position_ = playerTransform_.translate + Matrix::TransformNormal(groundOffsetBase_, playerRotateMatrix_);
+	}
+
 	if (shadow_->scale_.x < 0.0f) {
 		shadow_->scale_.x = 0.0f;
 		shadow_->scale_.y = 0.0f;
@@ -261,10 +281,17 @@ void Player::Update(){
 
 void Player::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
+
+	groundCrush_->Draw(viewProjection);
+
 	trailRender_->Draw(trail_.get(), viewProjection);
 }
 
 void Player::Draw(const ViewProjection& viewProjection){
+	playerObj_->SetMatrix(playerMatrix_);
+	playerObj_->Update(viewProjection);
+	playerObj_->Draw();
+
 	weaponObj_->SetMatrix(weaponMatrix_);
 	weaponObj_->SetShininess(shiness_);
 	weaponObj_->Update(viewProjection);
@@ -282,9 +309,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 }
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
-	playerSkinAnimObj_->SetMatrix(playerMatrix_);
-	playerSkinAnimObj_->Update(viewProjection);
-	playerSkinAnimObj_->Draw();
+	
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
@@ -333,7 +358,12 @@ void Player::DrawImgui(){
 	ImGui::DragFloat2("武器のトレイル表示座標", &trailPosData_.x, 0.01f);
 	ImGui::End();
 
-	playerSkinAnimObj_->DrawImgui("プレイヤー");
+	ImGui::Begin("ひび割れテクスチャ");
+	ImGui::DragFloat3("座標", &groundOffsetBase_.x, 0.01f);
+	ImGui::DragFloat2("大きさ", &groundCrush_->scale_.x, 0.01f, 0.0f, 10.0f);
+	ImGui::End();
+
+	playerObj_->DrawImgui("プレイヤー");
 
 	trail_->DrawImgui("トレイル");
 	//particle_->DrawImgui("プレイヤーパーティクル");
@@ -422,11 +452,11 @@ void Player::BehaviorRootUpdate(){
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
-		if (!isDown_) {
-			playerSkinAnimObj_->SetAnimSpeed(1.0f);
-			playerSkinAnimObj_->ChangeAnimation("walk");
-			playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
-		}
+		/*if (!isDown_) {
+			playerObj_->SetAnimSpeed(1.0f);
+			playerObj_->ChangeAnimation("walk");
+			playerObj_->SetChangeAnimSpeed(3.0f);
+		}*/
 	}
 	else if(lockOn_&&lockOn_->ExistTarget()){
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -455,24 +485,24 @@ void Player::BehaviorRootUpdate(){
 
 	playerTransform_.translate += move_;
 	
-	if (isDown_) {
+	/*if (isDown_) {
 		downVector_.y += downSpeed_;
-		playerSkinAnimObj_->SetAnimSpeed(2.0f);
+		playerObj_->SetAnimSpeed(2.0f);
 	
-		playerSkinAnimObj_->ChangeAnimation("jump");
-		playerSkinAnimObj_->SetChangeAnimSpeed(6.0f);
-		playerSkinAnimObj_->AnimationTimeStop(60.0f);
+		playerObj_->ChangeAnimation("jump");
+		playerObj_->SetChangeAnimSpeed(6.0f);
+		playerObj_->AnimationTimeStop(60.0f);
 
 	}
 	else {
-		if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerSkinAnimObj_->ChackAnimationName() != "jump") {
-			playerSkinAnimObj_->ChangeAnimation("stand");
-			playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
-			playerSkinAnimObj_->SetAnimSpeed(1.0f);
+		if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerObj_->ChackAnimationName() != "jump") {
+			playerObj_->ChangeAnimation("stand");
+			playerObj_->SetChangeAnimSpeed(3.0f);
+			playerObj_->SetAnimSpeed(1.0f);
 		}
-		playerSkinAnimObj_->AnimationStart();
+		playerObj_->AnimationStart();
 		
-	}
+	}*/
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_ -= 1;
 	}
@@ -961,8 +991,8 @@ void Player::BehaviorDashUpdate(){
 
 	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
 
-	playerSkinAnimObj_->ChangeAnimation("Run");
-	playerSkinAnimObj_->SetChangeAnimSpeed(6.0f);
+	/*playerObj_->ChangeAnimation("Run");
+	playerObj_->SetChangeAnimSpeed(6.0f);*/
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 15;
 
@@ -983,8 +1013,8 @@ void Player::BehaviorDashUpdate(){
 		dashCoolTime_ =dashCoolTimeBase_;
 		isDash_ = false;
 		behaviorRequest_ = Behavior::kRoot;
-		playerSkinAnimObj_->ChangeAnimation("stand");
-		playerSkinAnimObj_->SetChangeAnimSpeed(3.0f);
+		/*playerObj_->ChangeAnimation("stand");
+		playerObj_->SetChangeAnimSpeed(3.0f);*/
 	}
 }
 
@@ -1224,6 +1254,7 @@ void Player::SixthAttackMotion(){
 	if (weapon_Rotate_ >= 1.65f) {
 		waitTime_ -= 1;
 		weapon_Rotate_ = 1.65f;
+		SettingGroundCrushTex();
 	}
 	else if (weapon_Rotate_ <= -0.6f) {
 		isShakeDown_ = true;
@@ -1554,62 +1585,19 @@ void Player::SecondStrongAttackMotion(){
 		addEaseT_ = 0.08f;
 	}
 	
-
-	if (easeT_ < 1.0f) {
-		if (weapon_offset_Base_.y > 0.2f) {
-			move_ = { 0.0f,0.0f,moveSpeed_ * 5.0f };
-			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
-
-
-			if (!isCollisionEnemy_) {
-				Vector3 NextPos = playerTransform_.translate + move_;
-
-				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
-					move_.x = 0;
-				}
-				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
-					move_.z = 0;
-				}
-
-				playerTransform_.translate += move_;
-			}
-			weaponTransform_.translate = playerTransform_.translate;
-		}
-	}
-	/*Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
-
-	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;*/
 }
 
 void Player::ThirdStrongAttackMotion(){
 	if (weapon_Rotate_ >= 1.35f) {
 		waitTime_ -= 1;
 		weapon_Rotate_ = 1.35f;
+		SettingGroundCrushTex();
 	}
 	else if (weapon_Rotate_ <= -0.9f) {
 		isShakeDown_ = true;
 		isTrail_ = true;
 	}
-	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
-		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
-
-		if (!isCollisionEnemy_) {
-			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
-
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
-				move_.x = 0;
-			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
-				move_.z = 0;
-			}
-
-			playerTransform_.translate += move_ * motionSpeed_;
-		}
-		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
-	}
+	
 
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
@@ -1756,6 +1744,7 @@ void Player::FifthStrongAttackMotion(){
 		if (weapon_Rotate_ >= 3.0f) {
 			waitTime_ -= 1;
 			weapon_Rotate_ = 3.16f;
+			SettingGroundCrushTex();
 		}
 		else if (weapon_Rotate_ <= -0.5f) {
 			isTrail_ = true;
@@ -1808,7 +1797,7 @@ void Player::SixthStrongAttackMotion(){
 			easeT_ = 1.0f;
 			waitTime_ -= 1;
 
-
+			SettingGroundCrushTex();
 		}
 		
 
@@ -1863,4 +1852,9 @@ void Player::SixthStrongAttackMotion(){
 		weaponTransform_.rotate.x = weapon_Rotate_;
 		weaponCollisionTransform_.rotate.x = weapon_Rotate_;
 	}
+}
+
+void Player::SettingGroundCrushTex(){
+	isStopCrush_ = true;
+	groundCrush_->color_.w = 1.0f;
 }

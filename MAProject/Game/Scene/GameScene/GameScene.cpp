@@ -83,21 +83,7 @@ void GameScene::SpriteInitialize(){
 }
 
 void GameScene::ObjectInitialize() {
-	//particle_ = std::make_unique<ParticleBase>();
-	//particle_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());
-	/*obj_ = std::make_unique<Object3D>();
-	obj_->Initialize(dxCommon_->GetDevice(), dxCommon_->GetCommandList());*/
-	//model_ = Model::LoadObjFile("skyDome");
-	//boxModel_ = Model::LoadObjFile("box");
-
-	/*skyDomeObj_ = std::make_unique<Object3D>();
-	skyDomeObj_->Initialize("skyDome");
-
-	skyDomeTrnasform_ = {
-		{100.0f,100.0f,100.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};*/
+	
 
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("resources/DDS/rostock_laage_airport_4k.dds");
@@ -137,13 +123,27 @@ void GameScene::Initialize(){
 	player_->Initialize();
 	player_->Update();
 
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize({ 0,1.0f,20.0f });
-	enemy_->SetTarget(&player_->GetTransform());
-	enemy_->Update();
-	enemies_.push_back(std::move(enemy_));
+	enemysPos_ = {
+		Vector3(0.0f,1.0f,20.0f),
+		Vector3(-5.0f,1.0f,25.0f),
+		Vector3(5.0f,1.0f,25.0f),
+		Vector3(-10.0f,1.0f,30.0f),
+		Vector3(0.0f,1.0f,30.0f),
+		Vector3(10.0f,1.0f,30.0f),
+		Vector3(-15.0f,1.0f,35.0f),
+		Vector3(-5.0f,1.0f,35.0f),
+		Vector3(5.0f,1.0f,35.0f),
+		Vector3(15.0f,1.0f,35.0f)
+	};
 
+	for (size_t i = 0; i < enemyNum_; i++) {
+		enemy_ = std::make_unique<Enemy>();
+		enemy_->Initialize(enemysPos_[i]);
+		enemy_->SetTarget(&player_->GetTransform());
+		enemy_->Update();
+		enemies_.push_back(std::move(enemy_));
 
+	}
 	
 	textureManager_->MakeRenderTexShaderResourceView();
 	textureManager_->MakeDepthShaderResouceView();

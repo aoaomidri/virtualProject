@@ -111,6 +111,10 @@ private:
 	std::unique_ptr<Enemy> enemy_;
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	static const size_t enemyNum_ = 10;
+
+	std::array<Vector3, enemyNum_> enemysPos_;
+
 	int chackCollision = 0;
 
 

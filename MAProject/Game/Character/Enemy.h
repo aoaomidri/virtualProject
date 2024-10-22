@@ -85,7 +85,7 @@ private:
 	static const int particleNum_ = 20;
 
 	//自機のモデル
-	Object3D* bodyObj_;
+	std::unique_ptr<Object3D> bodyObj_;
 	std::unique_ptr<Object3D> partsObj_;
 	std::unique_ptr<Object3D>particleObj_[particleNum_];
 

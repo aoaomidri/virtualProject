@@ -52,7 +52,9 @@ void Enemy::Initialize(const Vector3& position){
 
 	auto levelLoader = LevelLoader::GetInstance();
 
-	bodyObj_ = levelLoader->GetLevelObject("Enemy");
+	bodyObj_ = std::make_unique<Object3D>();
+	bodyObj_->Initialize("Enemy");
+
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
 

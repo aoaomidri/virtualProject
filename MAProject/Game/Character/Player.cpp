@@ -160,6 +160,9 @@ void Player::Update(){
 	if (hitTimer_ != 0) {
 		hitTimer_--;
 	}
+	else if (hitTimer_ <= 0) {
+		isHitEnemyAttack_ = false;
+	}
 	
 
 	if (behaviorRequest_) {
@@ -401,11 +404,16 @@ void Player::Respawn(){
 }
 
 void Player::OnCollisionEnemyAttack(){
+	//既に被弾していたら処理を飛ばす
+	if (isHitEnemyAttack_)
+		return;
+
 	if (isGuard_){
 		isGuardHit_ = true;
 		counterTime_ = 0;
 	}
 	else {
+		isHitEnemyAttack_ = true;
 		hitTimer_ = 30;
 	}
 	

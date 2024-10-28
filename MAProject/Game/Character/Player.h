@@ -62,6 +62,8 @@ public:
 
 	const bool GetIsDown() const { return isDown_; }
 
+	const bool GetIsHitEnemyAttack() const { return isHitEnemyAttack_; }
+
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
@@ -360,7 +362,10 @@ private:
 	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
 
 private:
+	//敵と衝突しているか
 	bool isCollisionEnemy_ = false;
+	//敵の攻撃に当たったかどうか
+	bool isHitEnemyAttack_ = false;
 
 private:
 	//ロックオン

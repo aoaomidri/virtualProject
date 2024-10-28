@@ -298,9 +298,7 @@ void GameScene::Update(){
 		}
 		break;
 	case SceneName::GAME:
-		/*if (input_->Trigerkey(DIK_1)){
-			sceneNum_ = SceneName::CLEAR;
-		}*/
+		
 		followCamera_->SetIsMove(true);
 		
 		
@@ -670,12 +668,12 @@ void GameScene::AllCollision(){
 			enemy->OnCollision();
 		}
 
-		if (enemy->GetIsDead()) {
-			
-			//audio_->PauseWave(gameBGM);
-			isReset_ = true;
-			sceneNum_ = SceneName::CLEAR;
-		}
+		//if (enemy->GetIsDead()) {
+		//	
+		//	//audio_->PauseWave(gameBGM);
+		//	isReset_ = true;
+		//	sceneNum_ = SceneName::CLEAR;
+		//}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);
@@ -685,7 +683,7 @@ void GameScene::AllCollision(){
 			player_->SetCollisionEnemy(false);
 		}
 
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())&& !player_->GetIsHitEnemyAttack()) {
 			player_->OnCollisionEnemyAttack();
 
 			break;

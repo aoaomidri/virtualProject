@@ -77,6 +77,10 @@ public:
 
 	void SetTarget(const EulerTransform* target) { target_ = target; }
 
+	static uint32_t GetEnemyDestroyingNum() {
+		return enemyDestroyingNumber_;
+	}
+
 private:
 	//クラス内関数
 	void ParticleMove();
@@ -374,5 +378,8 @@ private:
 	uint32_t serialNumber_ = 0;
 	//次のシリアルナンバー
 	static uint32_t nextSerialNumber_;
+
+	//敵全体での撃破数
+	static uint32_t enemyDestroyingNumber_;
 };
 

@@ -8,6 +8,8 @@
 
 uint32_t Enemy::nextSerialNumber_ = 0;
 
+uint32_t Enemy::enemyDestroyingNumber_ = 0;
+
 Enemy::Enemy(){
 	serialNumber_ = nextSerialNumber_;
 	++nextSerialNumber_;
@@ -127,6 +129,14 @@ void Enemy::Initialize(const Vector3& position){
 	shadow_->scale_ = { 1.5f,1.5f };
 	shadow_->anchorPoint_ = { 0.5f,0.5f };
 	shadow_->color_.w = 0.5f;
+
+	if (serialNumber_ % 2 == 0) {
+		magnification = 1.0f;
+	}
+	else {
+		magnification = -1.0f;
+	}
+	
 
 }
 
@@ -412,7 +422,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -690,7 +700,9 @@ void Enemy::BehaviorAttackInitialize() {
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	int i = RandomMaker::DistributionInt(0, 3);
-	if (i == 0) {
+	//一旦雑魚想定なので突進攻撃だけにする
+
+	/*if (i == 0) {
 		ATBehaviorRequest_ = AttackBehavior::kXAttack;
 	}
 
@@ -700,7 +712,7 @@ void Enemy::BehaviorAttackInitialize() {
 	else if (i == 2) {
 		ATBehaviorRequest_ = AttackBehavior::kTriple;
 	}
-	else {
+	else */{
 		ATBehaviorRequest_ = AttackBehavior::kTackle;
 	}
 

@@ -98,7 +98,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	isDead_ = false;
 	isNoLife_ = false;
-	isParticle_ = false;
+	isParticle_ = true;
 
 	threshold_ = 0.0f;
 
@@ -462,7 +462,7 @@ void Enemy::MotionUpdate(){
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
-		PostEffect::GetInstance()->SetPostEffect(PostEffect::EffectType::GrayVignetting);
+		//PostEffect::GetInstance()->SetPostEffect(PostEffect::EffectType::GrayVignetting);
 		behaviorRequest_ = Behavior::kDead;
 	}
 }

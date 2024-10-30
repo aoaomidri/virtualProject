@@ -189,7 +189,7 @@ private:
 
 	bool isNoLife_ = false;
 
-	int32_t enemyLifeMax_ = 10;
+	int32_t enemyLifeMax_ = 3;
 
 	int enemyLife_ = 10;
 

@@ -26,6 +26,7 @@
    - [TrailRender](https://github.com/aoaomidri/virtualProject/blob/master/MAProject/Engine/3D/Object3D/Effect/TrailRender.cpp) トレイルを描画するクラス    
  - トレイルを滑らかに描画するために取得した頂点情報を基に、TrailEffecr内でcatmull-Romを用いて分割を施しています。
 
+                      分割なし                                              分割あり
 <p align="center">
 <img src = "./MAProject/resources/ReadMeOnly/ReadMeTrailNoCut.png" alt="実際のゲームの画面" width="400" height="240">
 <img src = "./MAProject/resources/ReadMeOnly/ReadMeTrailCut.png" alt="実際のゲームの画面" width="400" height="240">
@@ -60,7 +61,7 @@
 無双型の操作なので弱攻撃と強攻撃があり、弱攻撃の合間に強攻撃ボタンを入力することで強攻撃に派生することができます。  
 現状は弱攻撃、強攻撃ともに六段ほど攻撃があります。
 
-## このゲームでこだわろうとしている部分
+## こだわろうとしている部分
 - 状況に応じて弱攻撃と強攻撃を使い分けて戦う**プレイヤーの操作**  
   - ボタン連打で出せる弱攻撃と派生で出せる強攻撃でメリハリをつけて制作しており、攻撃途中にも回避を出せるようにしたり動作を原作に近づけられるようにしています。
 

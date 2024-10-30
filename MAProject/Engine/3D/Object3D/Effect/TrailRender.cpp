@@ -12,16 +12,20 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 	if (trail == nullptr || trail->GetVertexSize() < 5) {
 		return; // trailがnullptrまたは頂点サイズが不足している場合
 	}
-	if (selectTrail_ == EffectType::Glound){
-		materialDate_->color = groundColor_;
-	}
-	else if (selectTrail_ == EffectType::Water) {
-		materialDate_->color = waterColor_;
-	}
-	else {
-		materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
-	}
 
+
+	switch (selectTrail_) {
+	case EffectType::Water:
+		materialDate_->color = waterColor_;
+		break;
+	case EffectType::Glound:
+		materialDate_->color = groundColor_;
+		break;
+	default:
+		materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
+		break;
+
+	}
 	
 	*wvpData_ = viewPro;
 

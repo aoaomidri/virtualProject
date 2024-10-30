@@ -43,8 +43,7 @@ void TrailEffect::Update(){
     }
     bufferSize_ = usedPosArray.size();
 
-   /* vertex_.clear();
-    indices_.clear();*/
+ 
     if (usedPosArray.size() > 1) {
         float amount = 1.0f / (usedPosArray.size() - 1);
         float v = 0.0f;
@@ -73,13 +72,13 @@ void TrailEffect::Update(){
             uint32_t tailIndex = headIndex + 1;
 
             // 三角形のインデックスを追加
-            indices_[6 * i] = headIndex;     // head[j]
-            indices_[6 * i + 1] = tailIndex;     // tail[j]
-            indices_[6 * i + 2] = headIndex + 2; // head[j + 1]
+            indices_[6 * i] = headIndex;
+            indices_[6 * i + 1] = tailIndex; 
+            indices_[6 * i + 2] = headIndex + 2;
 
-            indices_[6 * i + 3] = tailIndex;     // tail[j]
-            indices_[6 * i + 4] = tailIndex + 2; // tail[j + 1]
-            indices_[6 * i + 5] = headIndex + 2; // head[j + 1]
+            indices_[6 * i + 3] = tailIndex;   
+            indices_[6 * i + 4] = tailIndex + 2;
+            indices_[6 * i + 5] = headIndex + 2;
         }
 
         indexNum_ = indices_.size(); // インデックス数の更新

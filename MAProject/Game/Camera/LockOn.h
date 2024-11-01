@@ -3,9 +3,7 @@
 #include"Sprite.h"
 #include"OBB.h"
 #include"Enemy.h"
-/// <summary>
-/// ロックオン
-/// </summary>
+/*ロックオンの更新*/
 class LockOn{
 public:
 	/// <summary>

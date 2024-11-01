@@ -1,6 +1,6 @@
 #pragma once
 #include"Matrix4x4.h"
-
+/*スポットライトの設定*/
 class SpotLight{
 public:
 	struct SpotLightData {

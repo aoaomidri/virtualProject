@@ -10,6 +10,8 @@
 #include"Log.h"
 #include"DescriptorHeap.h"
 #include<wrl.h>
+/*テクスチャ情報を管理*/
+
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 

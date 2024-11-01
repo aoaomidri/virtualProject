@@ -4,6 +4,7 @@
 #include<string>
 #include<map>
 #include"Matrix.h"
+/*ゲーム内の情報をJson形式で保存読み込みを行う*/
 
 class Adjustment_Item final {
 public:

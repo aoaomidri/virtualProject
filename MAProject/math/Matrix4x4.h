@@ -4,7 +4,7 @@
 #include"Vector4.h"
 #include<DirectXMath.h>
 #include<array>
-
+/*行列の計算をする*/
 
 struct EulerTransform {
 	Vector3 scale;

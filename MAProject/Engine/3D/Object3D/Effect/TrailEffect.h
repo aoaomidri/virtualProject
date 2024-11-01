@@ -12,6 +12,7 @@
 #include"RandomMaker.h"
 #include"GraphicsPipeline.h"
 #include"TextureManager.h"
+/*トレイルを描画するための頂点情報を管理、更新*/
 
 class TrailEffect{
 public:

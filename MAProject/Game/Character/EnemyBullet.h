@@ -2,6 +2,7 @@
 #include"Object3D/Object3D.h"
 #include"Transform.h"
 #include"OBB.h"
+/*敵キャラクターが使用する弾の更新描画*/
 
 class EnemyBullet{
 public:

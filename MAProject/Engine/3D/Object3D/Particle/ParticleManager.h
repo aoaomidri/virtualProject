@@ -7,6 +7,7 @@
 #include"TextureManager.h"
 #include"ViewProjection.h"
 #include"Model.h"
+/*ゲーム内で生成されたパーティクルを管理する「未完成」*/
 
 class ParticleManager{
 public:

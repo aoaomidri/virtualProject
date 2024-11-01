@@ -10,6 +10,8 @@
 #include"../../externals/Imgui/imgui_impl_dx12.h"
 #include"../../externals/Imgui/imgui_impl_win32.h"
 
+/*ウィンドウの生成、動作を行う*/
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class WinApp

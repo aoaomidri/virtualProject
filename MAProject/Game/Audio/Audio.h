@@ -20,7 +20,7 @@
 #pragma comment(lib, "mfplat.lib")
 #pragma comment(lib, "Mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
-
+/*音源の読み込み再生を行う「マネージャーを作り、音源の再生のみにする予定」*/
 
 class Audio{
 public:

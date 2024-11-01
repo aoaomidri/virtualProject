@@ -1,6 +1,6 @@
 #pragma once
 #include"Matrix4x4.h"
-
+/*点光源の設定*/
 class PointLight{
 public:
 	struct PointLightData {

@@ -1,7 +1,7 @@
 #pragma once
 #include"WinApp.h"
 #include"DirectXCommon.h"
-
+/*imguiの初期化や設定を行う*/
 class ImGuiManager{
 public:
 	///<summary>

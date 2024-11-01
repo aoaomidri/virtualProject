@@ -6,7 +6,7 @@
 #include"OBB.h"
 #include"Adjustment_Item.h"
 #include"TextureManager.h"
-
+/*ゲームに配置する床*/
 
 class Floor{
 public:

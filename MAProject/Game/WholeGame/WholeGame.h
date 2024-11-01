@@ -3,7 +3,7 @@
 #include"MAFramework.h"
 #include"LevelLoader/LevelLoader.h"
 #include"DirectionalLight.h"
-//ゲーム全体を管理するクラス
+/*ゲーム全体を管理するクラス*/
 class WholeGame : public MAFramework{
 public:
 	//メンバ関数

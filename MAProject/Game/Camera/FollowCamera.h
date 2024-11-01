@@ -4,7 +4,7 @@
 #include"Adjustment_Item.h"
 #include"ViewProjection.h"
 #include"Matrix.h"
-
+/*プレイヤーの後ろについて回るカメラ*/
 //前方宣言
 class LockOn;
 

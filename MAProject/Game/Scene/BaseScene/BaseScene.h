@@ -1,4 +1,5 @@
 #pragma once
+/*シーンの基本設定*/
 class BaseScene{
 public:
 	/// <summary>

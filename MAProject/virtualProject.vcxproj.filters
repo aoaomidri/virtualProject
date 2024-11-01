@@ -111,9 +111,6 @@
     <ClCompile Include="Game\Scene\GameScene\GameScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Stage\Goal\Goal.cpp">
-      <Filter>Game\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="Game\HitRecord\HitRecord.cpp">
       <Filter>Game\HitRecord</Filter>
     </ClCompile>
@@ -271,9 +268,6 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\GameScene\GameScene.h">
       <Filter>Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Stage\Goal\Goal.h">
-      <Filter>Game\Stage</Filter>
     </ClInclude>
     <ClInclude Include="Game\HitRecord\HitRecord.h">
       <Filter>Game\HitRecord</Filter>

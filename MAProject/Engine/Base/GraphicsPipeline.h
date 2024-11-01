@@ -2,6 +2,7 @@
 #include"Log.h"
 #include<array>
 #include<wrl.h>
+/*パイプラインの設定、生成を行う*/
 
 enum BlendMode {
 	//ブレンド無し

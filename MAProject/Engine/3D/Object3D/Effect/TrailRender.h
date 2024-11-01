@@ -1,5 +1,7 @@
 #pragma once
 #include"TrailEffect.h"
+/*TrailEffectでの情報を基にトレイルを描画*/
+
 class TrailRender{
 public:
 	enum  EffectType {

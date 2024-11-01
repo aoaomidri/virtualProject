@@ -4,7 +4,7 @@
 #include<list>
 #include<fstream>
 #include<iostream>
-
+/*床を管理する*/
 class FloorManager{
 public:
 	/// <summary>

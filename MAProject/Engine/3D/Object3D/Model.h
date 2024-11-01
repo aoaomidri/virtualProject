@@ -14,6 +14,7 @@
 #include<optional>
 #include<span>
 #include<array>
+/*モデルの情報を格納*/
 
 class Model{
 public:

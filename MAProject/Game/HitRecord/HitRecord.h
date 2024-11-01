@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include <algorithm>
+/*当たりを記録して重複を防ぐ*/
 class HitRecord{
 public:
 	//履歴追加

@@ -2,6 +2,7 @@
 #pragma once
 #include "Matrix.h"
 #include <stdint.h>
+/*OBBの設定*/
 struct OBB
 {
 	Vector3 center;

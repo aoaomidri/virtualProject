@@ -1,5 +1,8 @@
 #pragma once
 #include"BaseScene/BaseScene.h"
+/*タイトル部分の初期化、更新、描画*/
+
+
 class TitleScene : public BaseScene {
 	//初期化
 	void Initialize()override;

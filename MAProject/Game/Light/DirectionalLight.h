@@ -1,6 +1,6 @@
 #pragma once
 #include"Matrix4x4.h"
-
+/*直接光源の設定*/
 class DirectionalLight{
 public:
 	struct DirectionalLightData {

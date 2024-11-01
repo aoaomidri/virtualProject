@@ -1,6 +1,7 @@
 #pragma once
 #include"GraphicsPipeline.h"
 #include"math/Matrix.h"
+/*ポストエフェクトに必要なパイプラインやリソースの生成*/
 
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;

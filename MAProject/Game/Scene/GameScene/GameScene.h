@@ -19,6 +19,7 @@
 #include"LevelLoader/LevelLoader.h"
 #include"StageObject.h"
 #include"PostEffect.h"
+/*インゲーム部分の初期化、更新、描画*/
 
 class GameScene : public BaseScene{
 public:

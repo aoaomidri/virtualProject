@@ -1,5 +1,8 @@
 #pragma once
 #include"Matrix.h"
+/*view,mat行列の計算「不要なものなので適正な箇所へ記述をして後日削除する予定」*/
+
+
 class ViewProjection{
 public:
 	void UpdateMatrix();

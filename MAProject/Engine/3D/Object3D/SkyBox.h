@@ -9,6 +9,7 @@
 #include"Model.h"
 #include"DirectionalLight.h"
 #include"ViewProjection.h"
+/*SkyBoxの更新、描画*/
 
 class SkyBox{
 public:

@@ -8,6 +8,7 @@
 #include"Adjustment_Item.h"
 #include"PostEffect.h"
 #include"TextureManager.h"
+/*ゲーム外のシステムを管理*/
 class MAFramework{
 public:
 	virtual ~MAFramework() = default;

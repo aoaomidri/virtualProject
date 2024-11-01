@@ -1,6 +1,8 @@
 #include"ResourceObject.h"
 #include"WholeGame.h"
+/*メインアプリケーションの起動*/
 
+//解放漏れのチェック
 static ResourceObject leakCheck;
 
 //Windowsアプリでのエントリーポイント(main関数)

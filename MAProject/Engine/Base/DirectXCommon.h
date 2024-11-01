@@ -10,7 +10,7 @@
 #pragma comment(lib,"d3d12.lib")
 #include <dxgi1_6.h>
 #pragma comment(lib,"dxgi.lib")
-
+/*DirectX関係の処理*/
 
 class DirectXCommon{
 private:

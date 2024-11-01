@@ -1,5 +1,6 @@
 #pragma once
 #include"Model.h"
+/*モデル情報を管理*/
 
 class ModelManager{
 public:

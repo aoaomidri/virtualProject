@@ -1,5 +1,6 @@
 #pragma once
 #include"Matrix.h"
+/*デバック用のカメラ*/
 class DebugCamera {
 public:
 	/// <summary>

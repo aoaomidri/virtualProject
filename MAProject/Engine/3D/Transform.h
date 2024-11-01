@@ -2,6 +2,7 @@
 #include"Matrix4x4.h"
 #include"Quaternion.h"
 #include<cstdint>
+/*トランスフォームの構造体をまとめている「不要なものなので適正な箇所へ記述をして後日削除する予定」*/
 
 struct QuaternionTransform {
 	Vector3 scale;

@@ -52,7 +52,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	enemyLife_ = enemyLifeMax_;
 
-	auto levelLoader = LevelLoader::GetInstance();
+	auto levelLoader = LevelLoader::GetInstance(); 
 
 	bodyObj_ = std::make_unique<Object3D>();
 	bodyObj_->Initialize("Enemy");
@@ -63,10 +63,10 @@ void Enemy::Initialize(const Vector3& position){
 	//collisionObj_ = std::make_unique<Object3D>();
 	//collisionObj_->Initialize("box");
 
-	for (int i = 0; i < 20; i++){
+	/*for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
 		particleObj_[i]->Initialize("box");
-	}
+	}*/
 
 	//boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
 	
@@ -83,7 +83,7 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	for (int i = 0; i < 20; i++) {
+	/*for (int i = 0; i < 20; i++) {
 		particleTransform_[i] = {
 			{0.1f,0.1f,0.1f},
 			{0.0f,0.0f,0.0f},
@@ -94,7 +94,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	for (int i = 0; i < 20; i++) {
 		particleVec_[i] = {0.0f,0.0f,0.0f};
-	}
+	}*/
 
 	isDead_ = false;
 	isNoLife_ = false;
@@ -160,22 +160,26 @@ void Enemy::Update(){
 	shadow_->position_ = transform_.translate;
 	shadow_->position_.y = 1.11f;
 
-	for (int i = 0; i < particleNum_; i++) {
+	/*for (int i = 0; i < particleNum_; i++) {
 		particleTransform_[i].translate += particleVec_[i];
-	}
+	}*/
 	collisionTransform_ = transform_;
 
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
 	transformMatrix_ = Matrix::MakeTranslateMatrix(transform_.translate);
 
+	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrixX(transform_.rotate);
 
-	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, rotateMatrix_, transformMatrix_);
-	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, partsTransform_.rotate, partsTransform_.translate);
+	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, resultRotateMat, transformMatrix_);
+
+	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * Matrix::MakeRotateMatrixX(transform_.rotate);
+
+	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
 	
-	for (int i = 0; i < particleNum_; i++) {
+	/*for (int i = 0; i < particleNum_; i++) {
 		particleMatrix_[i] = Matrix::MakeAffineMatrix(particleTransform_[i].scale, particleTransform_[i].rotate, particleTransform_[i].translate);
 		
-	}
+	}*/
 
 	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
 		(*it)->Update();
@@ -192,10 +196,7 @@ void Enemy::Update(){
 	else{
 		attackOBB_.center = OBB_.center;
 	}
-	/*collisionTransform_.scale = attackOBB_.size;
-	collisionTransform_.translate = attackOBB_.center;
-	collisionTransform_.rotate = { 0.0f,0.0f,0.0f };
-	collisionMatrix_ = Matrix::MakeAffineMatrix(collisionTransform_);*/
+
 	
 	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
@@ -230,7 +231,7 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	partsObj_->Update(viewProjection);
 	partsObj_->Draw();
 
-	if (isParticle_){
+	/*if (isParticle_){
 		for (int i = 0; i < 10; i++) {
 			particleObj_[i]->SetMatrix(particleMatrix_[i]);
 			particleObj_[i]->Update(viewProjection);
@@ -241,7 +242,7 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 			particleObj_[i]->Update(viewProjection);
 			particleObj_[i]->Draw();
 		}
-	}
+	}*/
 }
 
 void Enemy::TexDraw(const Matrix4x4& viewProjection){
@@ -251,6 +252,7 @@ void Enemy::TexDraw(const Matrix4x4& viewProjection){
 void Enemy::DrawImgui() {
 #ifdef _DEBUG
 	ImGui::Begin("敵の変数");
+	ImGui::DragFloat3("敵の回転", &transform_.rotate.x, 0.01f);
 	ImGui::Text("%.2f", rotateMatrix_.RotateAngleYFromMatrix());
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
@@ -281,7 +283,7 @@ void Enemy::Respawn(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	for (int i = 0; i < 20; i++) {
+	/*for (int i = 0; i < 20; i++) {
 		particleTransform_[i] = {
 			{0.1f,0.1f,0.1f},
 			{0.0f,0.0f,0.0f},
@@ -292,7 +294,7 @@ void Enemy::Respawn(const Vector3& position){
 
 	for (int i = 0; i < 20; i++) {
 		particleVec_[i] = { 0.0f,0.0f,0.0f };
-	}
+	}*/
 
 	isDead_ = false;
 	isNoLife_ = false;
@@ -339,7 +341,7 @@ const Vector3 Enemy::GetCenterPos()const{
 
 }
 
-void Enemy::ParticleMove(){
+void Enemy::ParticleMove(){/*
 
 	if (enemyLife_ <= 1) {
 		for (int i = 0; i < 10; i++) {
@@ -382,7 +384,7 @@ void Enemy::ParticleMove(){
 		}
 	}
 	
-	
+	*/
 }
 
 void Enemy::MotionUpdate(){
@@ -415,6 +417,9 @@ void Enemy::MotionUpdate(){
 		case Behavior::kPreliminalyAction:
 			BehaviorPreliminalyActionInitialize();
 			break;
+		case Behavior::kLeaningBack:
+			BehaviorLeaningBackInitialize();
+			break;
 		}
 	}
 	// 振る舞いリクエストをリセット
@@ -422,7 +427,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -445,6 +450,9 @@ void Enemy::MotionUpdate(){
 	case Behavior::kPreliminalyAction:
 		PreliminalyAction();
 		break;
+	case Behavior::kLeaningBack:
+		LeaningBack();
+		break;
 	}
 
 	Vector3 lockOnPos = target_->translate;
@@ -452,9 +460,11 @@ void Enemy::MotionUpdate(){
 
 	playerLength_ = Vector3::Length(sub);
 
+	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrixX(transform_.rotate);
+
 	/*エネミーのパーツ*/
 	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
-	parts_offset = Matrix::TransformNormal(parts_offset, rotateMatrix_);
+	parts_offset = Matrix::TransformNormal(parts_offset, resultRotateMat);
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 
@@ -673,6 +683,14 @@ void Enemy::PreliminalyAction(){
 	}
 }
 
+void Enemy::BehaviorLeaningBackInitialize(){
+
+}
+
+void Enemy::LeaningBack(){
+
+}
+
 void Enemy::DeadMotion(){
 	transform_.translate -= deadMove_;
 	transform_.rotate.x += 0.3f;	
@@ -718,8 +736,8 @@ void Enemy::BehaviorAttackInitialize() {
 
 }
 
-void Enemy::BehaviorAttackSelectInitialize()
-{
+void Enemy::BehaviorAttackSelectInitialize(){
+
 }
 
 
@@ -1007,22 +1025,7 @@ void Enemy::AttackBehaviorDoubleSlashInitialize(){
 
 	bullets_.emplace_back(std::move(newBullet));
 
-	//std::unique_ptr<EnemyBullet> newBullet2 = std::make_unique<EnemyBullet>();
-
-	//EulerTransform trans2{};
-
-	//trans2 = transform_;
-
-	//trans2.rotate.x = 0;
-
-	//trans2.rotate.y = y;
-
-	////trans2.rotate.z = -((3.14f / 4.0f));
-
-	//trans2.scale.y *= 5.0f;
-	//newBullet2->Initialize(trans2, sub);
-
-	//bullets_.emplace_back(std::move(newBullet2));
+	
 }
 
 void Enemy::DoubleSlash(){

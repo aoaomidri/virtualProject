@@ -9,6 +9,7 @@
 #pragma comment(lib,"dxguid.lib")
 #include<dxcapi.h>
 #pragma comment(lib,"dxcompiler.lib")
+/*テキストの変換を行ったり、メッセージを出したり*/
 
 static std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {

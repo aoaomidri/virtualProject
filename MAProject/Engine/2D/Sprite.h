@@ -5,6 +5,7 @@
 #include <memory>
 #include"Model.h"
 #include"TextureManager.h"
+/*2Dテクスチャの描画*/
 
 /// <summary>
 /// スプライト

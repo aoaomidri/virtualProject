@@ -6,7 +6,7 @@
 #include"Object3D.h"
 #include"SkinAnimObject3D.h"
 #include <OBB.h>
-
+/*Blenderで生成したjsonを読み込む*/
 
 class LevelLoader{
 public:

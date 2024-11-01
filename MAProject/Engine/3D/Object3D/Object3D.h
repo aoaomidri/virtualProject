@@ -12,6 +12,7 @@
 #include"DirectionalLight.h"
 #include"PointLight.h"
 #include"Effect/TrailEffect.h"
+/*3Dオブジェクトの描画*/
 
 class Object3D{
 public:

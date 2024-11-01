@@ -3,7 +3,7 @@
 #include"Quaternion.h"
 #include<math.h>
 #include<DirectXMath.h>
-
+/*行列の計算をする「matrix4x4と同義で本来必要がないので削除予定」*/
 
 
 struct Matrix3x3{

@@ -210,7 +210,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
     <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
-    <ClCompile Include="Game\Stage\Goal\Goal.cpp" />
     <ClCompile Include="Game\Stage\StageObject\StageObject.cpp" />
     <ClCompile Include="Game\WholeGame\MAFramework.cpp" />
     <ClCompile Include="Game\WholeGame\WholeGame.cpp" />
@@ -265,7 +264,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Game\Stage\Floor\Floor.h" />
     <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
-    <ClInclude Include="Game\Stage\Goal\Goal.h" />
     <ClInclude Include="Game\Stage\StageObject\StageObject.h" />
     <ClInclude Include="Game\WholeGame\MAFramework.h" />
     <ClInclude Include="Game\WholeGame\WholeGame.h" />

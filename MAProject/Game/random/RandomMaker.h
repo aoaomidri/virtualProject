@@ -1,7 +1,7 @@
 #pragma once
 #include<random>
 #include"Matrix.h"
-
+/*乱数を生成する*/
 class RandomMaker
 {
 public:

@@ -16,7 +16,7 @@
 #include"OBB.h"
 #include"TextureManager.h"
 #include"DirectionalLight.h"
-
+/*パーティクルを生成する*/
 
 class ParticleBase{
 public:

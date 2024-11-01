@@ -11,6 +11,7 @@
 #include"PostEffect.h"
 #include <DirectionalLight.h>
 #include <PointLight.h>
+/*スキニングアニメーションのついた3Dオブジェクトの描画*/
 
 class SkinAnimObject3D{
 public:

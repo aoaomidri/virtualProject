@@ -1,5 +1,6 @@
 #pragma once
 #include"GraphicsPipeline.h"
+/*heapの管理*/
 
 class SRVDescriptorHeap{
 public:

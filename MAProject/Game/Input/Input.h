@@ -9,7 +9,7 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"xinput.lib")
-
+/*キーボード、マウス、コントローラーの入力を取得する*/
 
 
 class Input

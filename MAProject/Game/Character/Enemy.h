@@ -14,7 +14,7 @@
 #include"Ease/Ease.h"
 #include"EnemyBullet.h"
 #include"Sprite.h"
-
+/*敵キャラクターの更新描画*/
 
 class Enemy {
 public:
@@ -91,7 +91,7 @@ private:
 	//自機のモデル
 	std::unique_ptr<Object3D> bodyObj_;
 	std::unique_ptr<Object3D> partsObj_;
-	std::unique_ptr<Object3D>particleObj_[particleNum_];
+	
 
 	//自機のモデル
 	//Object3D* boxObj_;
@@ -107,7 +107,6 @@ private:
 	//自機のSRT
 	EulerTransform transform_{};
 	EulerTransform partsTransform_{};
-	EulerTransform particleTransform_[particleNum_]{};
 	EulerTransform collisionTransform_{};
 
 	//プレイヤーのマトリックス
@@ -120,7 +119,6 @@ private:
 	Matrix4x4 collisionMatrix_{};
 
 	Matrix4x4 partsMatrix_{};
-	Matrix4x4 particleMatrix_[particleNum_]{};
 
 	Matrix4x4 dashRotateMatrix_{};
 
@@ -193,8 +191,6 @@ private:
 
 	int enemyLife_ = 10;
 
-	Vector3 particleVec_[particleNum_];
-
 	bool isParticle_ = false;
 
 	float particleSpeed_;
@@ -213,6 +209,7 @@ private:
 		kRun,				//走り
 		kFree,				//遊びの時間
 		kDead,				//やられた
+		kLeaningBack		//のけぞり
 	};
 
 
@@ -263,6 +260,11 @@ private:
 	void BehaviorPreliminalyActionInitialize();
 	//予備動作
 	void PreliminalyAction();
+
+	//のけぞり動作初期化
+	void BehaviorLeaningBackInitialize();
+	//のけぞり動作
+	void LeaningBack();
 
 
 private:
@@ -355,10 +357,6 @@ private:
 
 	Ease ease_;
 
-	/*回転ビーム*/
-
-	//回転補完係数
-	float angle_t = 0.8f;
 
 	/*飛ぶ斬撃みたいなの*/
 

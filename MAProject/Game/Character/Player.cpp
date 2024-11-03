@@ -74,17 +74,17 @@ void Player::Initialize(){
 	weaponCollisionObj_->Initialize("box");
 
 
-	particle_ = std::make_unique<ParticleBase>();
-	particle_->Initialize();
+	//particle_ = std::make_unique<ParticleBase>();
+	//particle_->Initialize();
 
-	particleSword_ = std::make_unique<ParticleBase>();
+	/*particleSword_ = std::make_unique<ParticleBase>();
 	particleSword_->Initialize();
 	particleSword_->SetPositionRange({ 0.0f,0.0f });
 	particleSword_->SetVelocityRange({ -0.5f,0.5f });
 	particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 	particleSword_->SetAddParticle(3);
 	particleSword_->SetLifeTime(0.5f);
-	particleSword_->SetNotMove();
+	particleSword_->SetNotMove();*/
 
 	playerTransform_ = playerObj_->transform_;
 	playerTransform_.translate.y = 5.0f;
@@ -460,7 +460,7 @@ void Player::BehaviorRootUpdate(){
 	if (move_.x != 0.0f || move_.z != 0.0f) {
 		postureVec_ = move_;
 
-		particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
+		//particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
 		
 		Matrix4x4 directionTodirection_;
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));

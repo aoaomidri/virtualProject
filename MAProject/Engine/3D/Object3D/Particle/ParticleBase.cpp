@@ -8,27 +8,20 @@
 //#include<algorithm>
 
 
-void ParticleBase::Initialize() {
+void ParticleBase::Initialize(const ParticleBase::Emitter& emitter, const bool isLoop) {
 
 	modelData_ = MakePrimitive();
 
 	random_ = RandomMaker::GetInstance();
 
-	emitter_.count = 3;
-	emitter_.frequency = 0.01f;
-	emitter_.frequencyTime = 0.0f;
-	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
+	emitter_ = emitter;
 
 	accelerationField_.acceleration = { 0.0f,30.0f,0.0f };
 	accelerationField_.area.min = { -100.0f,-100.0f,-100.0f };
 	accelerationField_.area.max = { 100.0f,100.0f,100.0f };
 
 	//パーティクルの初期設定
-	for (int i = 0; i < 3; i++) {
-		particles_.push_back(MakeNewParticle(emitter_.transform.translate));
-	}
+	particles_ = Emission(emitter_);
 	
 	makeResource();
 
@@ -72,8 +65,9 @@ void ParticleBase::Initialize() {
 
 	gpuHandle_ = TextureManager::GetInstance()->MakeInstancingShaderResourceView<ParticleForGPU>(GetInstancingResource(), 600);
 
-	isWind_ = true;
+	isWind_ = false;
 	isBillborad_ = true;
+	isLoop_ = isLoop;
 	isMoveParticle_ = true;
 }
 
@@ -98,14 +92,15 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 		return;
 	}
 	emitter_.frequencyTime += kDeltaTime_;//時刻を進める
-	if (emitter_.frequency <= emitter_.frequencyTime) {//頻度より大きいなら発生
-		if (particles_.size()+emitter_.count < particleMaxNum_){
-			particles_.splice(particles_.end(), Emission(emitter_));//発生処理
-			emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度計算する
+	if (isLoop_) {
+		if (emitter_.frequency <= emitter_.frequencyTime) {//頻度より大きいなら発生
+			if (particles_.size() + emitter_.count < particleMaxNum_) {
+				particles_.splice(particles_.end(), Emission(emitter_));//発生処理
+				emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度計算する
 
+			}
 		}
 	}
-
 	assert(particles_.size() < particleMaxNum_);
 	
 	numInstance = 0;
@@ -320,6 +315,15 @@ void ParticleBase::makeResource() {
 }
 
 
+void ParticleBase::AddParticle(const ParticleBase::Emitter& emitter){
+	emitter_.count = emitter.count;
+	if (!isLoop_){
+		if (particles_.size() + emitter_.count < particleMaxNum_) {
+			particles_.splice(particles_.end(), Emission(emitter_));//発生処理
+		}
+	}
+}
+
 Model::ModelData ParticleBase::MakePrimitive() {
 	Model::ModelData modelData;//構築するModelData
 	modelData.vertices.push_back({ 
@@ -350,7 +354,7 @@ void ParticleBase::MoveChange(){
 	for (std::list<Particle>::iterator particleIterator = particles_.begin(); particleIterator != particles_.end(); ++particleIterator) {
 		color_ = random_->DistributionV3(0.0f, 1.0f);
 		(*particleIterator).transform.translate = random_->DistributionV3(positionRange_.min, positionRange_.max);
-		if (not isMoveParticle_) {
+		if (isMoveParticle_) {
 			(*particleIterator).velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
 		}
 		(*particleIterator).color = { color_.x,color_.y,color_.z,1.0f };
@@ -366,11 +370,13 @@ void ParticleBase::MoveChange(){
 
 ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	Particle particle{};
-	color_ = random_->DistributionV3(0.0f, 1.0f);
+	if (!isOneColor_) {
+		color_ = random_->DistributionV3(0.0f, 1.0f);
+	}
 	particle.transform.scale = emitter_.transform.scale;
 	particle.transform.rotate = { 0.0f,0.0f,0.0f };
 	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
-	if (not isMoveParticle_) {
+	if (isMoveParticle_) {
 		particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
 		particle.transform.translate = transform;
 	}

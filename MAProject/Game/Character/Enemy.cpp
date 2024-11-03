@@ -72,7 +72,7 @@ void Enemy::Initialize(const Vector3& position){
 	
 	transform_ = {
 		levelLoader->GetLevelObjectTransform("Enemy").scale,
-		{0.0f,3.14f,0.0f},
+		{0.0f,0.0f,0.0f},
 		position
 	};
 	collisionTransform_ = transform_;
@@ -83,18 +83,13 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	/*for (int i = 0; i < 20; i++) {
-		particleTransform_[i] = {
-			{0.1f,0.1f,0.1f},
-			{0.0f,0.0f,0.0f},
-			{0.0f,0.0f,0.0f}
-		};
-	}
+	emitter_.count = 20;
 
-
-	for (int i = 0; i < 20; i++) {
-		particleVec_[i] = {0.0f,0.0f,0.0f};
-	}*/
+	particle_ = std::make_unique<ParticleBase>();
+	particle_->Initialize(emitter_, false);
+	particle_->SetIsDraw(false);
+	particle_->SetLifeTime(0.5f);
+	particle_->SetVelocityRange(Vector2(-30.0f, 30.0f));
 
 	isDead_ = false;
 	isNoLife_ = false;
@@ -168,11 +163,11 @@ void Enemy::Update(){
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
 	transformMatrix_ = Matrix::MakeTranslateMatrix(transform_.translate);
 
-	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrixX(transform_.rotate);
+	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrix(transform_.rotate);
 
 	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, resultRotateMat, transformMatrix_);
 
-	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * Matrix::MakeRotateMatrixX(transform_.rotate);
+	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * Matrix::MakeRotateMatrix(transform_.rotate);
 
 	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
 	
@@ -249,6 +244,12 @@ void Enemy::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
 }
 
+void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& color){
+	particle_->SetOneColor(color);
+	particle_->Update(transform_, viewProjection);
+	particle_->Draw();
+}
+
 void Enemy::DrawImgui() {
 #ifdef _DEBUG
 	ImGui::Begin("敵の変数");
@@ -259,6 +260,9 @@ void Enemy::DrawImgui() {
 	ImGui::DragFloat("回転攻撃の射程補正変数", &attackLength_, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat3("回転", &slashAngle_.x, 0.01f, 0.0f, 3.14f);
 	ImGui::DragFloat4("色", &enemyColor_.x, 0.01f, 0.0f, 1.0f);
+	if (ImGui::Button("敵被弾ボタン")){
+		OnCollision();
+	}
 	ImGui::End();
 #endif
 }
@@ -326,9 +330,11 @@ void Enemy::Respawn(const Vector3& position){
 }
 
 void Enemy::OnCollision(){
+	particle_->SetIsDraw(true);
 	enemyLife_--;
 	ParticleMove();
-	
+	particle_->AddParticle(emitter_);
+	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
 const Vector3 Enemy::GetCenterPos()const{
@@ -460,7 +466,7 @@ void Enemy::MotionUpdate(){
 
 	playerLength_ = Vector3::Length(sub);
 
-	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrixX(transform_.rotate);
+	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrix(transform_.rotate);
 
 	/*エネミーのパーツ*/
 	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
@@ -536,7 +542,7 @@ void Enemy::RootMotion(){
 	else if (playerLength_ < nearPlayer_) {
 		nearTime_++;
 	}
-	if (nearTime_ > lengthJudgment_) {
+	/*if (nearTime_ > lengthJudgment_) {
 		int i = RandomMaker::DistributionInt(0, 2);
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kBack;
@@ -555,7 +561,7 @@ void Enemy::RootMotion(){
 			behaviorRequest_ = Behavior::kPreliminalyAction;
 		}
 		
-	}
+	}*/
 	
 }
 
@@ -684,10 +690,24 @@ void Enemy::PreliminalyAction(){
 }
 
 void Enemy::BehaviorLeaningBackInitialize(){
-
+	
+	transform_.rotate = hitEaseStart_;
+	rotateEaseT_ = 0.0f;
 }
 
 void Enemy::LeaningBack(){
+	rotateEaseT_ += addRotateEaseT_;
+
+	if (rotateEaseT_ >= 1.0f) {
+		rotateEaseT_ = 1.0f;
+	}
+
+	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, hitEaseStart_.x, 0.0f, rotateEaseT_);
+	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, hitEaseStart_.z, 0.0f, rotateEaseT_);
+
+	if (rotateEaseT_ >= 1.0f) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 
 }
 
@@ -735,11 +755,6 @@ void Enemy::BehaviorAttackInitialize() {
 	}
 
 }
-
-void Enemy::BehaviorAttackSelectInitialize(){
-
-}
-
 
 void Enemy::AttackMotion() {
 	if (ATBehaviorRequest_) {

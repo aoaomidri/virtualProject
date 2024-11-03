@@ -20,8 +20,15 @@
 
 class ParticleBase{
 public:
+	struct Emitter {
+		EulerTransform transform;//エミッターのTransform
+		int count;		//発生数
+		float frequency;	//発生頻度
+		float frequencyTime;//頻度用時刻
+	};
+public:
 
-	void Initialize();
+	void Initialize(const ParticleBase::Emitter& emitter, const bool isLoop);
 	
 	void Update(const EulerTransform& transform,const ViewProjection& viewProjection);
 
@@ -53,11 +60,18 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetOneColor(const Vector3& color) { isOneColor_ = true; color_ = color; }
+
 	const Vector3& GetPosition()const { return position_; }
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
 	ID3D12Resource* GetInstancingResource()const { return wvpInstancingResource.Get(); }
+	/// <summary>
+	/// ループしないものに限り追加でパーティクルを発生させる
+	/// </summary>
+	/// <param name="emitter">設定するエミッター</param>
+	void AddParticle(const ParticleBase::Emitter& emitter);
 	
 public:
 	Matrix4x4* parent_{};
@@ -74,13 +88,6 @@ private:
 	struct ParticleRange {
 		float min;
 		float max;
-	};
-
-	struct Emitter {
-		EulerTransform transform;//エミッターのTransform
-		int count;		//発生数
-		float frequency;	//発生頻度
-		float frequencyTime;//頻度用時刻
 	};
 
 	struct AccelerationField {
@@ -180,6 +187,10 @@ private:
 	bool isMove_ = false;
 
 	bool isBillborad_ = false;
+
+	bool isLoop_ = true;
+
+	bool isOneColor_ = false;
 
 	bool isWind_ = false;
 

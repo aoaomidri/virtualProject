@@ -16,17 +16,17 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 
 	switch (selectTrail_) {
 	case EffectType::Water:
-		materialDate_->color = waterColor_;
+		trailColor_.SetVector4(waterColor_);
 		break;
 	case EffectType::Glound:
-		materialDate_->color = groundColor_;
+		trailColor_.SetVector4(groundColor_);
 		break;
 	default:
-		materialDate_->color = { 1.0f,1.0f,1.0f,1.0f };
+		trailColor_.SetVector4({ 1.0f,1.0f,1.0f,1.0f });
 		break;
 
 	}
-	
+	materialDate_->color = trailColor_;
 	*wvpData_ = viewPro;
 
 

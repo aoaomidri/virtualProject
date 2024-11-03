@@ -14,6 +14,7 @@
 #include"Ease/Ease.h"
 #include"EnemyBullet.h"
 #include"Sprite.h"
+#include "ParticleBase.h"
 /*敵キャラクターの更新描画*/
 
 class Enemy {
@@ -32,6 +33,8 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	void TexDraw(const Matrix4x4& viewProjection);
+
+	void ParticleDraw(const ViewProjection& viewProjection, const Vector3& color);
 
 	//Imgui描画
 	void DrawImgui();
@@ -97,6 +100,10 @@ private:
 	//Object3D* boxObj_;
 	
 	HitRecord hitRecord_;
+
+	std::unique_ptr<ParticleBase> particle_;
+
+	ParticleBase::Emitter emitter_;
 
 	std::unique_ptr<Object3D> collisionObj_;
 
@@ -178,6 +185,12 @@ private:
 	float dashSpeed_ = 3.0f;
 
 	float backSpeed_ = -2.0f;
+
+	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.15f };
+
+	float rotateEaseT_ = 0.0f;
+
+	const float addRotateEaseT_ = (1.0f / 30.0f);
 
 	int dashTimer_ = 0;
 
@@ -288,9 +301,6 @@ private:
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
 
-	//攻撃行動初期化
-	void BehaviorAttackSelectInitialize();
-	
 	//形態ごとにとる行動
 	void AttackMotion();
 

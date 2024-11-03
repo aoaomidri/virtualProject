@@ -9,13 +9,6 @@ void LockOn::Initialize(){
 		{0.0f,0.0f,0.0f},
 		{1.0f,1.0f,1.0f}
 	};
-	/*lockOnMark_ = std::make_unique<Sprite>();
-	lockOnMark_->Initialize(21);
-	
-	lockOnMark_->SetLeftTop({ 0,0 });
-	lockOnMark_->SetAnchorPoint({ 0.5f,0.5f });
-	lockOnMark_->SetSize({ 64.0f,64.0f });
-	lockOnMark_->SetScale({ 48.0f,48.0f });*/
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum){
@@ -32,13 +25,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}		
 	}
 	if (autoLockOn_) {
-		//lockOnMark_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
 			isLockOn_ = true;
 		}
-	}
-	else {
-		//lockOnMark_->SetColor({ 0.0f,1.0f,1.0f,1.0f });
 	}
 
 	if (target_){
@@ -79,23 +68,6 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}
 
 	if (target_){
-		
-		//// ビューポート行列
-		//Matrix4x4 matViewport =
-		//	Matrix::MakeViewportMatrix(0, 0, 1280, 720, 0, 1);
-
-		//// ビュー行列とプロジェクション行列、ビューポート行列を合成する
-		//Matrix4x4 matViewProjectionViewport =
-		//	Matrix::Multiply(viewprojection.matViewProjection_, matViewport);
-
-		//// ワールド->スクリーン座標変換(ここで3Dから2Dになる)
-		//Vector3 screenPos3 = Matrix::TransformVec(target_->GetCenterPos(), matViewProjectionViewport);
-
-		//screenPos_ = { screenPos3.x,screenPos3.y };
-
-		//// スプライトのレティクルに座標設定
-		////sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
-		//lockOnMark_->SetPosition(screenPos_);
 		lockOnTransfrom_.translate = target_->GetCenterPos();
 
 		LockOnObj_->transform_ = lockOnTransfrom_;
@@ -103,10 +75,6 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		LockOnObj_->Update(viewprojection);
 	}
 
-	
-	/*ImGui::Begin("距離");
-	ImGui::DragFloat("最短距離", &length, 0.1f);
-	ImGui::End();*/
 }
 
 void LockOn::Draw(){

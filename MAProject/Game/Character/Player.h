@@ -58,6 +58,8 @@ public:
 
 	const Vector3& GetScale() const { return playerTransform_.scale; }
 
+	const Vector3& GetTrailColor() const { return trailRender_->GetTrailColor(); }
+
 	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
 
 	const bool GetIsDown() const { return isDown_; }

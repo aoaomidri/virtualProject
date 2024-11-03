@@ -133,7 +133,17 @@ void GameScene::Initialize(){
 		Vector3(-15.0f,1.0f,35.0f),
 		Vector3(-5.0f,1.0f,35.0f),
 		Vector3(5.0f,1.0f,35.0f),
-		Vector3(15.0f,1.0f,35.0f)
+		Vector3(15.0f,1.0f,-35.0f),
+		Vector3(0.0f,1.0f,-20.0f),
+		Vector3(-5.0f,1.0f,-25.0f),
+		Vector3(5.0f,1.0f,-25.0f),
+		Vector3(-10.0f,1.0f,-30.0f),
+		Vector3(0.0f,1.0f,-30.0f),
+		Vector3(10.0f,1.0f,-30.0f),
+		Vector3(-15.0f,1.0f,-35.0f),
+		Vector3(-5.0f,1.0f,-35.0f),
+		Vector3(5.0f,1.0f,-35.0f),
+		Vector3(15.0f,1.0f,-35.0f)
 	};
 
 	for (size_t i = 0; i < enemyNum_; i++) {
@@ -394,6 +404,10 @@ void GameScene::Debug(){
 
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
+
+	for (const auto& enemy : enemies_) {
+		enemy->ParticleDraw(followCamera_->GetViewProjection(), player_->GetTrailColor());
+	}
 
 	/*switch (sceneNum_) {
 	case SceneName::TITLE:

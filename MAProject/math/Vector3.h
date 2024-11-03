@@ -7,6 +7,9 @@
 #include<iostream>
 #include <cmath>
 #include <numbers>
+
+class Vector4;
+
 class Vector3 {
 public:
 	float x, y, z;
@@ -130,6 +133,8 @@ public:
 		this->z = num.z;
 		return *this;
 	}
+
+	Vector3 SetVector4(const Vector4& num);
 
 	bool operator==(const Vector3& num) const {
 		return this->x == num.x && this->y == num.y && this->z == num.z;

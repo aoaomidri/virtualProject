@@ -22,6 +22,13 @@ public:
 
 	void MakeResource();
 
+public:
+	const Vector3& GetTrailColor()const {
+		return trailColor_;
+	}
+
+public:
+
 	void SetTrailColor(const EffectType& name) {
 		selectTrail_ = name;
 	}
@@ -50,6 +57,8 @@ private:
 
 	//どの型を選択しているか
 	uint32_t selectTrail_ = 0;
+
+	Vector3 trailColor_ = {};
 
 	/*型ごとの色を指定*/
 	const Vector4 groundColor_ = { 0.8039f, 0.3608f, 0.0f,1.0f };

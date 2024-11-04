@@ -192,7 +192,7 @@ private:
 
 	float hitBackSpeed_ = 1.0f;
 
-	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.15f };
+	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.3f };
 
 	float rotateEaseT_ = 0.0f;
 

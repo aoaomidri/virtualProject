@@ -60,6 +60,8 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetIsUpper(const bool& isUpper) { isUpper_ = isUpper; }
+
 	void SetIsMove(const bool& isMove) { isMove_ = isMove; }
 
 	void SetIsBillborad(const bool& isBillborad) { isBillborad_ = isBillborad; }
@@ -206,6 +208,8 @@ private:
 	bool isOneColor_ = false;
 
 	bool isWind_ = false;
+
+	bool isUpper_ = false;
 
 	bool isMoveParticle_ = false;
 

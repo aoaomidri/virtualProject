@@ -85,7 +85,7 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	emitter_.count = 10;
+	emitter_.count = 7;
 	emitter_.transform = {
 		levelLoader->GetLevelObjectTransform("Enemy").scale,
 		{0.0f,0.0f,0.0f},
@@ -97,6 +97,7 @@ void Enemy::Initialize(const Vector3& position){
 	particle_->Initialize(emitter_, false);
 	particle_->SetIsDraw(false);
 	particle_->SetIsBillborad(true);
+	particle_->SetIsUpper(true);
 	particle_->SetIsAlignedToMovement(true);
 	particle_->SetLifeTime(0.3f);
 	particle_->SetVelocityRange(Vector2(-50.0f, 50.0f));
@@ -173,11 +174,11 @@ void Enemy::Update(){
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
 	transformMatrix_ = Matrix::MakeTranslateMatrix(transform_.translate);
 
-	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 
 	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, resultRotateMat, transformMatrix_);
 
-	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * Matrix::MakeRotateMatrix(transform_.rotate);
+	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * resultRotateMat;
 
 	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
 	
@@ -436,7 +437,7 @@ void Enemy::MotionUpdate(){
 
 	playerLength_ = Vector3::Length(sub);
 
-	Matrix4x4 resultRotateMat = rotateMatrix_ * Matrix::MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 
 	/*エネミーのパーツ*/
 	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
@@ -478,7 +479,6 @@ void Enemy::BehaviorDeadInitialize(){
 	deadMove_.y *= -1.00f;
 	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
 	transform_.rotate.Clear();
-	transform_.rotate.y = deadYAngle_;
 }
 
 
@@ -697,7 +697,7 @@ void Enemy::LeaningBack(){
 void Enemy::DeadMotion(){
 	transform_.translate -= deadMove_;
 	transform_.rotate.x += 0.3f;	
-	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
+	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
 	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
 	parts_offset = Matrix::TransformNormal(parts_offset, newRotateMatrix);

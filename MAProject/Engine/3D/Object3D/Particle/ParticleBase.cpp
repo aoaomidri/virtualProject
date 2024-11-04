@@ -448,6 +448,11 @@ ParticleBase::Particle ParticleBase::MakeNewParticle(const Vector3& transform){
 	particle.transform.translate = random_->DistributionV3(positionRange_.min / 2.0f, positionRange_.max / 2.0f) + transform;
 	if (isMoveParticle_) {
 		particle.velocity = random_->DistributionV3(velocityRange_.min, velocityRange_.max);
+		if (isUpper_){
+			if (particle.velocity.y <= 0.0f) {
+				particle.velocity.y *= -1.0f;
+			}
+		}
 		particle.transform.translate = transform;
 	}
 	particle.color = { color_.x,color_.y,color_.z,1.0f };

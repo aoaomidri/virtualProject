@@ -20,8 +20,8 @@ void ParticleBase::Initialize(const ParticleBase::Emitter& emitter, const bool i
 	accelerationField_.area.min = { -100.0f,-100.0f,-100.0f };
 	accelerationField_.area.max = { 100.0f,100.0f,100.0f };
 
-	//パーティクルの初期設定
-	particles_ = Emission(emitter_);
+	////パーティクルの初期設定
+	//particles_ = Emission(emitter_);
 	
 	makeResource();
 
@@ -69,6 +69,7 @@ void ParticleBase::Initialize(const ParticleBase::Emitter& emitter, const bool i
 	isBillborad_ = true;
 	isLoop_ = isLoop;
 	isMoveParticle_ = true;
+	isAlignedToMovement_ = false;
 }
 
 void ParticleBase::Update(const EulerTransform& transform, const ViewProjection& viewProjection) {
@@ -86,7 +87,7 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 		velocityRange_.max = velocityRange_.min + 0.1f;
 	}
 
-	emitter_.transform = transform;
+	emitter_.transform.translate = transform.translate;
 
 	if (!isDraw_) {
 		return;
@@ -103,6 +104,8 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 	}
 	assert(particles_.size() < particleMaxNum_);
 	
+	Vector3 previewTrans{};
+
 	numInstance = 0;
 	for (std::list<Particle>::iterator particleIterator = particles_.begin(); particleIterator != particles_.end();) {
 		if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
@@ -115,11 +118,12 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 			}
 		}
 		if (isMoveParticle_){
+			previewTrans = (*particleIterator).transform.translate;
 			(*particleIterator).transform.translate += (*particleIterator).velocity * kDeltaTime_;
 		}
 		(*particleIterator).currentTime += kDeltaTime_;
 		
-		float alpha_ = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+		float alpha_ = 1.3f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 		worldMatrix_ = Matrix::MakeAffineMatrix((*particleIterator).transform);
 		if (isBillborad_){
 			backToFrontMatrix_ = Matrix::MakeRotateMatrix({ 0.0f,0.0f,0.0f });
@@ -127,10 +131,75 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 			billboardMatrix_.m[3][0] = 0.0f;
 			billboardMatrix_.m[3][1] = 0.0f;
 			billboardMatrix_.m[3][2] = 0.0f;
-			worldMatrix_ = Matrix::MakeAffineMatrix(
-				Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
-				billboardMatrix_,
-				Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
+			//移動ベクトルに合わせてz軸回転
+			if (isAlignedToMovement_){
+				// 移動ベクトルを正規化
+				Vector3 direction = (*particleIterator).transform.translate - previewTrans; // 移動ベクトル
+				float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+				if (length > std::numeric_limits<float>::epsilon()) {
+					direction.x /= length;
+					direction.y /= length;
+				}
+				else {
+					direction.x = 1.0f; // デフォルト方向
+					direction.y = 0.0f;
+				}
+
+				// Z軸回転行列を手動で構築
+				Matrix4x4 zRotationMatrix;
+				zRotationMatrix.m[0][0] = direction.x;
+				zRotationMatrix.m[0][1] = -direction.y;
+				zRotationMatrix.m[1][0] = direction.y;
+				zRotationMatrix.m[1][1] = direction.x;
+				zRotationMatrix.m[2][2] = 1.0f;
+				zRotationMatrix.m[3][3] = 1.0f;
+
+				// ビルボード行列にZ軸回転を適用
+				Matrix4x4 finalBillboardMatrix = Matrix::Multiply(billboardMatrix_, zRotationMatrix);
+
+				worldMatrix_ = Matrix::MakeAffineMatrix(
+					Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
+					finalBillboardMatrix,
+					Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
+			}
+			else {
+
+				worldMatrix_ = Matrix::MakeAffineMatrix(
+					Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
+					billboardMatrix_,
+					Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
+
+			}
+		}
+		else {
+			if (isAlignedToMovement_) {
+				// 移動ベクトルを正規化
+				Vector3 direction = (*particleIterator).transform.translate - previewTrans; // 移動ベクトル
+				float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+				if (length > std::numeric_limits<float>::epsilon()) {
+					direction.x /= length;
+					direction.y /= length;
+				}
+				else {
+					direction.x = 1.0f; // デフォルト方向
+					direction.y = 0.0f;
+				}
+
+				// Z軸回転行列を手動で構築
+				Matrix4x4 zRotationMatrix;
+				zRotationMatrix.m[0][0] = direction.x;
+				zRotationMatrix.m[0][1] = -direction.y;
+				zRotationMatrix.m[1][0] = direction.y;
+				zRotationMatrix.m[1][1] = direction.x;
+				zRotationMatrix.m[2][2] = 1.0f;
+				zRotationMatrix.m[3][3] = 1.0f;
+
+
+				worldMatrix_ = Matrix::MakeAffineMatrix(
+					Matrix::MakeScaleMatrix((*particleIterator).transform.scale),
+					zRotationMatrix,
+					Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
+			}
 		}
 		
 
@@ -317,6 +386,7 @@ void ParticleBase::makeResource() {
 
 void ParticleBase::AddParticle(const ParticleBase::Emitter& emitter){
 	emitter_.count = emitter.count;
+	emitter_.transform.scale = emitter.transform.scale;
 	if (!isLoop_){
 		if (particles_.size() + emitter_.count < particleMaxNum_) {
 			particles_.splice(particles_.end(), Emission(emitter_));//発生処理

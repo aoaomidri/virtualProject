@@ -60,6 +60,17 @@ public:
 	
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
+	void SetIsMove(const bool& isMove) { isMove_ = isMove; }
+
+	void SetIsBillborad(const bool& isBillborad) { isBillborad_ = isBillborad; }
+
+	void SetIsAlignedToMovement(const bool& isAlignedToMovement) { isAlignedToMovement_ = isAlignedToMovement; }
+
+	void SetTexture(const std::string& fileName) {
+		textureHandle_ = TextureManager::GetInstance()->Load(fileName);
+
+	}
+
 	void SetOneColor(const Vector3& color) { isOneColor_ = true; color_ = color; }
 
 	const Vector3& GetPosition()const { return position_; }
@@ -187,6 +198,8 @@ private:
 	bool isMove_ = false;
 
 	bool isBillborad_ = false;
+
+	bool isAlignedToMovement_ = false;
 
 	bool isLoop_ = true;
 

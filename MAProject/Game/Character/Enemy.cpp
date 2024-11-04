@@ -85,13 +85,21 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	emitter_.count = 20;
+	emitter_.count = 10;
+	emitter_.transform = {
+		levelLoader->GetLevelObjectTransform("Enemy").scale,
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+	emitter_.transform.scale.x /= 6.0f;
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(emitter_, false);
 	particle_->SetIsDraw(false);
-	particle_->SetLifeTime(0.5f);
-	particle_->SetVelocityRange(Vector2(-30.0f, 30.0f));
+	particle_->SetIsBillborad(true);
+	particle_->SetIsAlignedToMovement(true);
+	particle_->SetLifeTime(0.3f);
+	particle_->SetVelocityRange(Vector2(-50.0f, 50.0f));
 
 	isDead_ = false;
 	isNoLife_ = false;
@@ -247,6 +255,7 @@ void Enemy::TexDraw(const Matrix4x4& viewProjection){
 }
 
 void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& color){
+
 	particle_->SetOneColor(color);
 	particle_->Update(transform_, viewProjection);
 	particle_->Draw();

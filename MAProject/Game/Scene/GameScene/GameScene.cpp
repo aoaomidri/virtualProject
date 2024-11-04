@@ -150,6 +150,7 @@ void GameScene::Initialize(){
 		enemy_ = std::make_unique<Enemy>();
 		enemy_->Initialize(enemysPos_[i]);
 		enemy_->SetTarget(&player_->GetTransform());
+		enemy_->SetTargetMat(&player_->GetRotateMatrix());
 		enemy_->Update();
 		enemies_.push_back(std::move(enemy_));
 

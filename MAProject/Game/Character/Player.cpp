@@ -500,22 +500,8 @@ void Player::BehaviorRootUpdate(){
 	
 	if (isDown_) {
 		downVector_.y += downSpeed_;
-		/*playerObj_->SetAnimSpeed(2.0f);
+	}
 	
-		playerObj_->ChangeAnimation("jump");
-		playerObj_->SetChangeAnimSpeed(6.0f);
-		playerObj_->AnimationTimeStop(60.0f);*/
-
-	}
-	else {
-		/*if (input_->GetPadLStick().x == 0.0f && input_->GetPadLStick().y == 0.0f && playerObj_->ChackAnimationName() != "jump") {
-			playerObj_->ChangeAnimation("stand");
-			playerObj_->SetChangeAnimSpeed(3.0f);
-			playerObj_->SetAnimSpeed(1.0f);
-		}
-		playerObj_->AnimationStart();*/
-		
-	}
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_ -= 1;
 	}

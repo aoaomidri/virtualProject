@@ -80,6 +80,8 @@ public:
 
 	void SetTarget(const EulerTransform* target) { target_ = target; }
 
+	void SetTargetMat(const Matrix4x4* target) { targetRotateMat_ = target; }
+
 	static uint32_t GetEnemyDestroyingNum() {
 		return enemyDestroyingNumber_;
 	}
@@ -110,6 +112,8 @@ private:
 	//プレイヤーの座標
 	// 追従対象
 	const EulerTransform* target_ = nullptr;
+	//プレイヤーの回転
+	const Matrix4x4* targetRotateMat_ = nullptr;
 
 	//自機のSRT
 	EulerTransform transform_{};
@@ -185,6 +189,8 @@ private:
 	float dashSpeed_ = 3.0f;
 
 	float backSpeed_ = -2.0f;
+
+	float hitBackSpeed_ = 1.0f;
 
 	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.15f };
 

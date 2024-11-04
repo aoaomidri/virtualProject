@@ -30,6 +30,7 @@ void Enemy::ApplyGlobalVariables(){
 	backSpeed_ = adjustment_item->GetfloatValue(groupName, "BackSpeed");
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 	freeTimeMax_ = adjustment_item->GetIntValue(groupName, "FreeTimeMax");
+	hitBackSpeed_ = adjustment_item->GetfloatValue(groupName, "HitBackSpeed");
 
 }
 
@@ -47,6 +48,7 @@ void Enemy::Initialize(const Vector3& position){
 	adjustment_item->AddItem(groupName, "BackSpeed", backSpeed_);
 	adjustment_item->AddItem(groupName, "EnemyLifeMax", enemyLifeMax_);
 	adjustment_item->AddItem(groupName, "FreeTimeMax", freeTimeMax_);
+	adjustment_item->AddItem(groupName, "HitBackSpeed", hitBackSpeed_);
 
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 
@@ -347,50 +349,9 @@ const Vector3 Enemy::GetCenterPos()const{
 
 }
 
-void Enemy::ParticleMove(){/*
+void Enemy::ParticleMove(){
 
-	if (enemyLife_ <= 1) {
-		for (int i = 0; i < 10; i++) {
-			particleTransform_[i].translate = transform_.translate;
-			Vector3 velocity = { 0, 0, 0 };
-			float numberX = (rand() % 11 - 5) / 2.0f;
-			float numberY = static_cast<float>((rand() % 11) / 2.0f);
-			float numberZ = (rand() % 11 - 5) / 2.0f;
-
-			velocity = { numberX, numberY / 10.0f, numberZ };
-
-			particleVec_[i] = velocity;
-		}
-
-	}else if (enemyLife_ == 0) {
-		for (int i = 10; i < particleNum_; i++) {
-			particleTransform_[i].translate = transform_.translate;
-			Vector3 velocity = { 0, 0, 0 };
-			float numberX = (rand() % 11 - 5) / 2.0f;
-			float numberY = static_cast<float>((rand() % 11) / 2.0f);
-			float numberZ = (rand() % 11 - 5) / 2.0f;
-
-			velocity = { numberX, numberY / 10.0f, numberZ };
-
-			particleVec_[i] = velocity;
-		}
-
-	}
-	else {
-		for (int i = 10; i < particleNum_; i++) {
-			particleTransform_[i].translate = transform_.translate;
-			Vector3 velocity = { 0, 0, 0 };
-			float numberX = (rand() % 11 - 5) / 2.0f;
-			float numberY = static_cast<float>((rand() % 11) / 2.0f);
-			float numberZ = (rand() % 11 - 5) / 2.0f;
-
-			velocity = { numberX, numberY / 10.0f, numberZ };
-
-			particleVec_[i] = velocity;
-		}
-	}
 	
-	*/
 }
 
 void Enemy::MotionUpdate(){
@@ -433,7 +394,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -491,6 +452,13 @@ void Enemy::BehaviorRootInitialize(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
 	nearTime_ = 0;
+	if (serialNumber_ % 2 == 0) {
+		magnification = 1.0f;
+	}
+	else {
+		magnification = -1.0f;
+	}
+
 	isNearAttack_ = false;
 }
 
@@ -500,6 +468,7 @@ void Enemy::BehaviorDeadInitialize(){
 	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), 0.5f);
 	deadMove_.y *= -1.00f;
 	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
+	transform_.rotate.Clear();
 	transform_.rotate.y = deadYAngle_;
 }
 
@@ -542,18 +511,16 @@ void Enemy::RootMotion(){
 	else if (playerLength_ < nearPlayer_) {
 		nearTime_++;
 	}
-	/*if (nearTime_ > lengthJudgment_) {
+	if (nearTime_ > lengthJudgment_) {
 		int i = RandomMaker::DistributionInt(0, 2);
-		if (i == 0) {
+		/*if (i == 0) {
 			behaviorRequest_ = Behavior::kBack;
-		}
-		else {
-			behaviorRequest_ = Behavior::kPreliminalyAction;
-		}
+		}*/
+		
 
 	}
 	else if (farTime_ > lengthJudgment_) {
-		int i = RandomMaker::DistributionInt(0, 1);
+		int i = 0;
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kRun;
 		}
@@ -561,7 +528,7 @@ void Enemy::RootMotion(){
 			behaviorRequest_ = Behavior::kPreliminalyAction;
 		}
 		
-	}*/
+	}
 	
 }
 
@@ -620,12 +587,13 @@ void Enemy::BehaviorRunInitialize(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
 	nearTime_ = 0;
+	magnification = 1.0f;
 }
 
 void Enemy::EnemyRun(){
 	frontVec_ = postureVec_;
 
-	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ };
+	Vector3 move = { 0,0,(magnification * dashSpeed_) / 6.0f };
 
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
@@ -655,7 +623,7 @@ void Enemy::EnemyRun(){
 		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
 	if (playerLength_ < 15.0f) {
-		int i = RandomMaker::DistributionInt(0, 1);
+		int i = 0;
 		
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kFree;
@@ -696,6 +664,12 @@ void Enemy::BehaviorLeaningBackInitialize(){
 }
 
 void Enemy::LeaningBack(){
+	move_ = { 0, 0, backSpeed_ * hitBackSpeed_ };
+
+	move_ = Matrix::TransformNormal(move_, *targetRotateMat_);
+	move_.y = 0;
+	transform_.translate += move_;
+
 	rotateEaseT_ += addRotateEaseT_;
 
 	if (rotateEaseT_ >= 1.0f) {
@@ -715,10 +689,9 @@ void Enemy::DeadMotion(){
 	transform_.translate -= deadMove_;
 	transform_.rotate.x += 0.3f;	
 	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
-	rotateMatrix_ = newRotateMatrix;
 	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
 	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
-	parts_offset = Matrix::TransformNormal(parts_offset, rotateMatrix_);
+	parts_offset = Matrix::TransformNormal(parts_offset, newRotateMatrix);
 
 	partsTransform_.translate = transform_.translate + parts_offset;
 	

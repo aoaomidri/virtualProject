@@ -165,6 +165,12 @@ public:
 		result.z = vA.z + vB.z;
 		return result;
 	}
+	//値をすべて0に戻す
+	void Clear() {
+		this->x = 0.0f;
+		this->y = 0.0f;
+		this->z = 0.0f;
+	}
 
 	static Vector3 Mutiply(const Vector3& vec, const float speed) {
 		Vector3 result{ 0 };

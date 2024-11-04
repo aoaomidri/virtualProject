@@ -75,6 +75,8 @@ public:
 
 	void SetOneColor(const Vector3& color) { isOneColor_ = true; color_ = color; }
 
+	void SetBlend(const BlendMode blend) { blend_ = blend; }
+
 	const Vector3& GetPosition()const { return position_; }
 
 	const bool& GetIsDraw()const { return isDraw_; }

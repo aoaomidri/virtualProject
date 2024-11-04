@@ -379,7 +379,8 @@ private:
 	HitRecord hitRecord_;
 
 	std::unique_ptr<ParticleBase> particle_;
-	std::unique_ptr<ParticleBase> particleSword_;
+
+	ParticleBase::Emitter emitter_;
 
 	std::unique_ptr<TrailEffect> trail_;
 

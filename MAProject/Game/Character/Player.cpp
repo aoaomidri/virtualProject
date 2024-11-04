@@ -74,17 +74,22 @@ void Player::Initialize(){
 	weaponCollisionObj_->Initialize("box");
 
 
-	//particle_ = std::make_unique<ParticleBase>();
-	//particle_->Initialize();
+	emitter_.count = 27;
+	emitter_.transform = {
+		playerObj_->transform_.scale,
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f}
+	};
+	emitter_.transform.scale /= 5.0f;
 
-	/*particleSword_ = std::make_unique<ParticleBase>();
-	particleSword_->Initialize();
-	particleSword_->SetPositionRange({ 0.0f,0.0f });
-	particleSword_->SetVelocityRange({ -0.5f,0.5f });
-	particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
-	particleSword_->SetAddParticle(3);
-	particleSword_->SetLifeTime(0.5f);
-	particleSword_->SetNotMove();*/
+	particle_ = std::make_unique<ParticleBase>();
+	particle_->Initialize(emitter_, false);
+	particle_->SetIsDraw(false);
+	particle_->SetBlend(BlendMode::kBlendModeNormal);
+	particle_->SetIsBillborad(true);
+	particle_->SetIsUpper(true);
+	particle_->SetLifeTime(0.4f);
+	particle_->SetVelocityRange(Vector2(-10.0f, 10.0f));
 
 	playerTransform_ = playerObj_->transform_;
 	playerTransform_.translate.y = 5.0f;
@@ -319,26 +324,12 @@ void Player::SkinningDraw(const ViewProjection& viewProjection){
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
-	/*EulerTransform newTrans = playerTransform_;
-	newTrans.translate.y += 3.0f;
+	EulerTransform newTrans = playerTransform_;
 
-	particle_->Update(newTrans, viewProjection);
-	
+	particle_->SetOneColor(trailRender_->GetTrailColor());
+	particle_->Update(newTrans, viewProjection);	
+	particle_->Draw();
 
-	if (behavior_ == Behavior::kStrongAttack && chargeEnd_ == false && workAttack_.comboIndex_ == 1) {
-		
-		particle_->Draw();
-
-		
-	}
-	particleSword_->Update(particleTransCenter_, viewProjection);
-	if (behavior_ != Behavior::kRoot && workAttack_.comboIndex_ > 0) {
-		
-		particleSword_->SetScale({ 0.003f ,0.003f,0.003f });
-		particleSword_->Draw();
-	}
-	*/
-	
 }
 
 
@@ -904,6 +895,9 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		BehaviorSixthStrongAttackInitialize();
 
 	}
+
+	particle_->SetIsDraw(true);
+	particle_->AddParticle(emitter_);
 }
 
 void Player::BehaviorStrongAttackUpdate(){

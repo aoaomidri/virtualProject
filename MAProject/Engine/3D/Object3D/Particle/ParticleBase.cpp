@@ -123,7 +123,7 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 		}
 		(*particleIterator).currentTime += kDeltaTime_;
 		
-		float alpha_ = 1.3f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+		float alpha_ = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 		worldMatrix_ = Matrix::MakeAffineMatrix((*particleIterator).transform);
 		if (isBillborad_){
 			backToFrontMatrix_ = Matrix::MakeRotateMatrix({ 0.0f,0.0f,0.0f });

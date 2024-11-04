@@ -406,6 +406,8 @@ void GameScene::Debug(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
+
+	player_->ParticleDraw(followCamera_->GetViewProjection());
 	for (const auto& enemy : enemies_) {
 		enemy->ParticleDraw(followCamera_->GetViewProjection(), player_->GetTrailColor());
 	}
@@ -414,7 +416,7 @@ void GameScene::DrawParticle(){
 	case SceneName::TITLE:
 		break;
 	case SceneName::GAME:
-		player_->ParticleDraw(followCamera_->GetViewProjection());
+		
 		break;
 	case SceneName::CLEAR:
 

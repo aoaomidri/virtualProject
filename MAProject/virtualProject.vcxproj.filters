@@ -185,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="math\Vector4.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
+    <ClCompile Include="Game\Scene\SceneManager\SceneManager.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -348,6 +351,9 @@
     </ClInclude>
     <ClInclude Include="Game\Character\EnemyBullet.h">
       <Filter>Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneManager\SceneManager.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

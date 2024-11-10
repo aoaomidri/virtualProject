@@ -4,9 +4,10 @@
 #include"Input.h"
 #include"WinApp.h"
 #include"DirectXCommon.h"
-#include"GameScene/GameScene.h"
+#include"Audio.h"
 #include"Adjustment_Item.h"
 #include"PostEffect.h"
+#include"Model.h"
 #include"TextureManager.h"
 /*ゲーム外のシステムを管理*/
 class MAFramework{

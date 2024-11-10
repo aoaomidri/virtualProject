@@ -1,4 +1,5 @@
 #include "WholeGame.h"
+#include"TitleScene/TitleScene.h"
 
 void WholeGame::Initialize(){
 	MAFramework::Initialize();
@@ -21,9 +22,10 @@ void WholeGame::Initialize(){
 	levelLoader_ = LevelLoader::GetInstance();
 	levelLoader_->LoadLevelData();
 
-	gameScene_ = new GameScene();
-	gameScene_->Initialize();
+	scene_ = new TitleScene();
 
+	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->SetNextScene(scene_);
 
 	vignettingData_ = {
 		.scale = 16.0f,
@@ -35,11 +37,7 @@ void WholeGame::Initialize(){
 void WholeGame::Finalize(){	
 	imguiManager_->Finalize();
 
-	gameScene_->AudioDataUnLoad();
-
-	gameScene_->Finalize();
-
-	delete gameScene_;
+	sceneManager_->Finalize();	
 	
 	MAFramework::Finalize();
 }
@@ -52,7 +50,7 @@ void WholeGame::Update(){
 
 	adjustment_item->Update();
 
-	gameScene_->Update();
+	sceneManager_->Update();
 	DrawImgui();
 
 	imguiManager_->End();
@@ -71,15 +69,13 @@ void WholeGame::Update(){
 void WholeGame::Draw(){
 	dxCom_->PreDrawRenderTexture();
 	//3D描画
-	gameScene_->DrawSkin3D();
-	gameScene_->Draw3D();
-	gameScene_->DrawParticle();
+	sceneManager_->Draw3D();
 	
 	dxCom_->PreDrawCopy();
 	dxCom_->PreDrawSwapChain();
 	textureManager_->DrawCopy();
 	//2D描画
-	gameScene_->Draw2D();
+	sceneManager_->Draw2D();
 	imguiManager_->Draw();
 	dxCom_->PostDraw();
 }

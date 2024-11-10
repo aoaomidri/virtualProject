@@ -2,6 +2,7 @@
 
 #include"MAFramework.h"
 #include"LevelLoader/LevelLoader.h"
+#include"SceneManager/SceneManager.h"
 #include"DirectionalLight.h"
 /*ゲーム全体を管理するクラス*/
 class WholeGame : public MAFramework{
@@ -27,7 +28,10 @@ private:
 	//Imgui関連
 	std::unique_ptr<ImGuiManager> imguiManager_;	
 	//ゲームシーン
-	GameScene* gameScene_;
+	BaseScene* scene_;
+	//シーンマネージャー
+	SceneManager* sceneManager_;
+
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item = nullptr;
 

@@ -39,6 +39,8 @@ void FollowCamera::Initialize(){
 
 	baseOffset = rootOffset;
 
+	destinationAngleX_ = 0.2f;
+
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
 
@@ -48,7 +50,6 @@ void FollowCamera::Update(){
 	frontVec_ = postureVec_;
 	
 	ApplyGlobalVariables();
-
 
 
 	if (lockOn_ && lockOn_->target_) {

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include"Matrix.h"
+
 #include <cassert>
 void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/rock.png");
@@ -105,7 +106,7 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	audio_->PlayAudio(titleBGM, 0.1f, true);
+	audio_->ResumeWave(titleBGM);
 	/*audio_->PlayAudio(gameBGM, 0.1f, true);
 	audio_->PauseWave(gameBGM);*/
 
@@ -156,8 +157,6 @@ void GameScene::Initialize(){
 
 	}
 	
-	textureManager_->MakeRenderTexShaderResourceView();
-	textureManager_->MakeDepthShaderResouceView();
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -248,139 +247,38 @@ void GameScene::Update(){
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
-	switch (sceneNum_){
-	case SceneName::TITLE:
+		
+	followCamera_->SetIsMove(true);
 		
 		
-		//audio_->PauseWave(gameBGM);
-		followCamera_->SetIsMove(false);
-		followCamera_->CameraPosInit();
-		
-
-		if (fadeAlpha_ <= 0.0f) {
-			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_UP)|| input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_DOWN)){
-				if (isStart_ == false) {
-					isStart_ = true;
-				}
-				else {
-					isStart_ = false;
-				}
-				controlSprite_->isDraw_ =false;
-				backSprite_->isDraw_ = false;
-			}
-			if (isStart_ == false) {
-				selectSprite_->position_.y = 550.0f;
-			}
-			else {
-				selectSprite_->position_.y = 390.0f;
-			}
-
-			if (controlSprite_->isDraw_ == true) {
-				if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
-					controlSprite_->isDraw_ = false;
-					backSprite_->isDraw_ = false;
-				}
-			}
-
-			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && isStart_ == true) {
-				isFade_ = true;
-			}
-			else if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && isStart_ == false) {
-				controlSprite_->isDraw_ = true;
-				backSprite_->isDraw_ = true;
-			}
-
-			
-
-		}
-		if (isFade_) {
-			fadeAlpha_ += 0.01f;
-		}
-		else{
-			fadeAlpha_ -= 0.01f;
-		}
-		if (fadeAlpha_ >= 1.0f&&isFade_) {
-			followCamera_->RotateReset();
+	fadeAlpha_ -= 0.01f;
+	if (fadeAlpha_<=0.0f){
 			
 			
-			audio_->PauseWave(titleBGM);
-			//audio_->RePlayWave(gameBGM);
-			sceneNum_ = SceneName::GAME;
-		}
-		break;
-	case SceneName::GAME:
-		
-		followCamera_->SetIsMove(true);
-		
-		
-		fadeAlpha_ -= 0.01f;
-		if (fadeAlpha_<=0.0f){
-			
-			
-			isFade_ = false;
-			fadeAlpha_ = 0.0f;
-			lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
+		isFade_ = false;
+		fadeAlpha_ = 0.0f;
+		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
 
-			player_->Update();
-			for (const auto& enemy : enemies_) {
-				enemy->Update();
-			}
+		player_->Update();
+		for (const auto& enemy : enemies_) {
+			enemy->Update();
 		}
-		if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
-			postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
-		}
-		else if (postEffect_->GetEffectType() == PostEffect::EffectType::Smoothing9x9 and player_->GetHitTimer() == 0) {
-			postEffect_->SetPostEffect(PostEffect::EffectType::None);
-		}
-		
-
-		if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
-			isReset_ = true;
-			sceneNum_ = SceneName::CLEAR;
-		}
-
-		AllCollision();
-		//particle_->Update(player_->GetTransform(), followCamera_->GetViewProjection());
-
-		
-		break;
-	case SceneName::CLEAR:
-		followCamera_->SetIsMove(false);
-		
-		//audio_->PauseWave(gameBGM);
-		
-		if (isReset_){
-			player_->Respawn();
-			player_->Update();
-			followCamera_->CameraPosInit();
-			for (const auto& enemy : enemies_) {
-				enemy->Respawn({ 0, 1.0f, 20.0f });
-				enemy->Update();
-			}
-			isReset_ = false;
-		}
-		
-		
-		postEffect_->SetPostEffect(PostEffect::EffectType::None);
-		
-		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A)) {
-			isFade_ = true;
-		}
-		if (isFade_) {
-			fadeAlpha_ += 0.01f;
-		}
-		if (fadeAlpha_ >= 1.0f) {
-			isFade_ = false;
-			followCamera_->RotateReset();
-			audio_->RePlayWave(titleBGM);
-			sceneNum_ = SceneName::TITLE;
-		}
-
-		
-		break;
-	default:
-		assert(0);
 	}
+	if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
+		postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
+	}
+	else if (postEffect_->GetEffectType() == PostEffect::EffectType::Smoothing9x9 and player_->GetHitTimer() == 0) {
+		postEffect_->SetPostEffect(PostEffect::EffectType::None);
+	}
+		
+
+	if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
+		isReset_ = true;
+		sceneNum_ = SceneName::CLEAR;
+	}
+
+	AllCollision();
+
 
 	floorManager_->Update();
 	fadeSprite_->color_.w = fadeAlpha_;
@@ -392,11 +290,6 @@ void GameScene::Update(){
 	else if (fadeAlpha_ <= 0.0f) {
 		fadeAlpha_ = 0.0f;
 	}
-}
-
-void GameScene::AudioDataUnLoad(){
-	
-	
 }
 
 void GameScene::Debug(){
@@ -412,74 +305,28 @@ void GameScene::DrawParticle(){
 		enemy->ParticleDraw(followCamera_->GetViewProjection(), player_->GetTrailColor());
 	}
 
-	/*switch (sceneNum_) {
-	case SceneName::TITLE:
-		break;
-	case SceneName::GAME:
-		
-		break;
-	case SceneName::CLEAR:
-
-		break;
-	default:
-		assert(0);
-	}*/
-
 	textureManager_->PostDrawParticle();
 }
 
 void GameScene::DrawSkin3D(){
 	textureManager_->PreDrawSkin3D();
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-
-		break;
-	case SceneName::GAME:
-		player_->SkinningDraw(followCamera_->GetViewProjection());
-
-
-		break;
-	case SceneName::CLEAR:
-
-		break;
-	default:
-		assert(0);
-	}
+	player_->SkinningDraw(followCamera_->GetViewProjection());
 
 }
 
 void GameScene::Draw3D(){
 
-	
-
-
 	/*描画前処理*/
 	textureManager_->PreDrawMapping3D();
 
 	///*ここから下に描画処理を書き込む*/
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-		
-		break;
-	case SceneName::GAME:
-		
+	player_->Draw(followCamera_->GetViewProjection());
 
-		player_->Draw(followCamera_->GetViewProjection());
-
-		for (const auto& enemy : enemies_) {
-			enemy->Draw(followCamera_->GetViewProjection());
-		}
-
-		
-
-		lockOn_->Draw();
-		break;
-	case SceneName::CLEAR:
-		
-		break;
-	default:
-		assert(0);
+	for (const auto& enemy : enemies_) {
+		enemy->Draw(followCamera_->GetViewProjection());
 	}
+
+	lockOn_->Draw();
 	floorManager_->Draw(followCamera_->GetViewProjection());
 
 	textureManager_->PreDraw3D();
@@ -495,17 +342,13 @@ void GameScene::Draw3D(){
 	//skyBox_->Draw();
 
 	textureManager_->PreDrawWorld2D();
-	switch (sceneNum_){
-	case SceneName::GAME:
-		player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
 
-		for (const auto& enemy : enemies_) {
-			enemy->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
-		}
-		break;
-	default:
-		break;
+	player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
+
+	for (const auto& enemy : enemies_) {
+		enemy->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
 	}
+
 
 	
 }
@@ -514,30 +357,10 @@ void GameScene::Draw2D(){
 	/*描画前処理*/
 	textureManager_->PreDraw2D();
 	///*ここから下に描画処理を書き込む*/
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-		titleSprite_->Draw();
-		startSprite_->Draw();
-		selectSprite_->Draw();
-		comboSprite_->Draw();
-		backSprite_->Draw();
-		controlSprite_->Draw();
-		fadeSprite_->Draw();
-		break;
-	case SceneName::GAME:
-		actionTextSprite_->Draw();
-		attackSprite_->Draw();
-		fadeSprite_->Draw();
+	actionTextSprite_->Draw();
+	attackSprite_->Draw();
+	fadeSprite_->Draw();
 		
-		break;
-	case SceneName::CLEAR:
-		clearSprite_->Draw();
-		pressSprite_->Draw();
-		fadeSprite_->Draw();
-		break;
-	default:
-		assert(0);
-	}
 	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
 	
 	/*描画処理はここまで*/
@@ -549,110 +372,72 @@ void GameScene::Finalize(){
 	
 }
 
-void GameScene::Draw(){
+void GameScene::AllDraw3D(){
+	DrawSkin3D();
+	Draw3D();
+	DrawParticle();
+}
 
+void GameScene::AllDraw2D(){
+	Draw2D();
 }
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
-	switch (sceneNum_) {
-	case SceneName::TITLE:
-	ImGui::Begin("BGM関連");
-	if (ImGui::Button("音源の復活")){
-		titleBGM = audio_->PlayAudio(titleBGM, 0.5f, true);
-	}
-	if (ImGui::Button("最初から再生")) {
-		audio_->RePlayWave(titleBGM);
-	}
-	if (ImGui::Button("完全に停止")) {
-		audio_->StopWave(titleBGM);
-	}
-	if (ImGui::Button("一時停止")){
-		audio_->PauseWave(titleBGM);
-	}
-	if (ImGui::Button("停止解除")) {
-		audio_->ResumeWave(titleBGM);
-	}
-	ImGui::End();
-		break;
-	case SceneName::GAME:
-		player_->DrawImgui();
-		followCamera_->DrawImgui();
-		lockOn_->DrawImgui();
-		floorManager_->DrawImgui();
 
-		for (const auto& enemy : enemies_) {
-			enemy->DrawImgui();
-		}
+	player_->DrawImgui();
+	followCamera_->DrawImgui();
+	lockOn_->DrawImgui();
+	floorManager_->DrawImgui();
+
+	for (const auto& enemy : enemies_) {
+		enemy->DrawImgui();
+	}
 		
-		ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
-		if (ImGui::BeginMenuBar()) {
-			if (ImGui::BeginMenu("オブジェクトの生成")) {
-				if (ImGui::TreeNode("床生成")) {
-					ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
-					ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
-					ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("オブジェクトの生成")) {
+			if (ImGui::TreeNode("床生成")) {
+				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
+				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
+				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
 
-					ImGui::Checkbox("動く床にする", &isFloorMove_);
+				ImGui::Checkbox("動く床にする", &isFloorMove_);
 
-					if (ImGui::Button("床の追加")) {
-						floorManager_->AddFloor(firstFloor_, isFloorMove_);
-					}
-					ImGui::TreePop();
+				if (ImGui::Button("床の追加")) {
+					floorManager_->AddFloor(firstFloor_, isFloorMove_);
 				}
-
-
-				ImGui::EndMenu();
-			}
-			
-			if (ImGui::BeginMenu("ファイル関連")) {
-				for (size_t i = 0; i < stages_.size(); i++) {
-					if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
-						stageName_ = stages_[stageSelect_].c_str();
-					}
-
-				}
-				if (ImGui::Button("jsonファイルを作る")) {
-					FilesSave(stages_);
-				}
-				if (ImGui::Button("上書きセーブ")) {
-					FilesOverWrite(stageName_);
-				}
-
-				if (ImGui::Button("全ロード(手動)")) {
-					FilesLoad(stageName_);
-				}
-				ImGui::EndMenu();
+				ImGui::TreePop();
 			}
 
-			ImGui::EndMenuBar();
+
+			ImGui::EndMenu();
 		}
-		ImGui::End();
-		break;
-	case SceneName::CLEAR:
-		break;
-	default:
-		assert(0);
+			
+		if (ImGui::BeginMenu("ファイル関連")) {
+			for (size_t i = 0; i < stages_.size(); i++) {
+				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
+					stageName_ = stages_[stageSelect_].c_str();
+				}
+
+			}
+			if (ImGui::Button("jsonファイルを作る")) {
+				FilesSave(stages_);
+			}
+			if (ImGui::Button("上書きセーブ")) {
+				FilesOverWrite(stageName_);
+			}
+
+			if (ImGui::Button("全ロード(手動)")) {
+				FilesLoad(stageName_);
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
 	}
-
-	ImGui::Begin("スプライト");
-	ImGui::DragFloat3("start : ポジション", &startSprite_->position_.x, 1.0f);
-	ImGui::DragFloat3("start : 大きさ", &startSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("start : 色", &startSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("select : ポジション", &selectSprite_->position_.x, 1.0f);
-	ImGui::DragFloat3("select : 大きさ", &selectSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat3("select : 回転", &selectSprite_->rotation_.x, 0.01f);
-	ImGui::DragFloat4("select : 色", &selectSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("combo : ポジション", &comboSprite_->position_.x, 1.0f);
-	ImGui::DragFloat3("combo : 大きさ", &comboSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("combo : 色", &comboSprite_->color_.x, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat3("back : ポジション", &backSprite_->position_.x, 1.0f);
-	ImGui::DragFloat3("back : 大きさ", &backSprite_->scale_.x, 1.0f);
-	ImGui::DragFloat4("back : 色", &backSprite_->color_.x, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
-	//particle_->DrawImgui("ステージパーティクル");
-
 
 #endif // _DEBUG	
 }

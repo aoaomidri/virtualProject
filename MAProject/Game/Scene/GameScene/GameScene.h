@@ -28,13 +28,14 @@ public:
 	//更新
 	void Update()override;
 
-	void AudioDataUnLoad();
-
 	//削除をまとめた関数
 	void Finalize()override ;
 
-	//描画
-	void Draw()override;
+	//3D描画
+	void AllDraw3D()override;
+
+	//2D描画
+	void AllDraw2D()override;
 
 	//ゲーム全体にかかわるImgui
 	void Debug() override;
@@ -133,15 +134,6 @@ private:
 	uint32_t titleBGM{};
 
 	uint32_t gameBGM{};
-
-	//天球
-	/*std::unique_ptr<Object3D> skyDomeObj_;
-
-	std::unique_ptr<Model> skyDomeModel_;
-
-	EulerTransform skyDomeTrnasform_;
-
-	Matrix4x4 skyDomeMatrix_;*/
 
 	std::unique_ptr<SkyBox> skyBox_;
 

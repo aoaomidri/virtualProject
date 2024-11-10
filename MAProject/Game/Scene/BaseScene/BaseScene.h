@@ -6,6 +6,13 @@ class SceneManager;
 
 class BaseScene{
 public:
+	enum class SceneName {
+		Title,
+		Game,
+		Result,
+	};
+
+
 	/// <summary>
 	/// 初期化処理
 	/// </summary>

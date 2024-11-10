@@ -1,4 +1,13 @@
 #include "SceneManager.h"
+#include<assert.h>
+
+void SceneManager::ChangeScene(const AbstractSceneFactory::SceneName nextScene){
+	assert(sceneFactory_);
+	assert(nextScane_ == nullptr);
+
+	//次のシーンを生成
+	nextScane_ = sceneFactory_->CreateScene(nextScene);
+}
 
 void SceneManager::Update(){
 	/*シーン切り替え処理*/
@@ -6,12 +15,11 @@ void SceneManager::Update(){
 		//旧シーンの終了
 		if (scane_){
 			scane_->Finalize();
-			delete scane_;
 
 		}
 
 		//シーン切り替え
-		scane_ = nextScane_;
+		scane_ = std::move(nextScane_);
 		nextScane_ = nullptr;
 		scane_->SetSceneManager(this);
 		//次のシーンを初期化する
@@ -33,5 +41,4 @@ void SceneManager::Draw2D(){
 
 void SceneManager::Finalize(){
 	scane_->Finalize();
-	delete scane_;
 }

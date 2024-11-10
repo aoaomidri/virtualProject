@@ -22,10 +22,12 @@ void WholeGame::Initialize(){
 	levelLoader_ = LevelLoader::GetInstance();
 	levelLoader_->LoadLevelData();
 
-	scene_ = new TitleScene();
+	sceneFactory_ = std::make_unique<SceneFactory>();
 
 	sceneManager_ = SceneManager::GetInstance();
-	sceneManager_->SetNextScene(scene_);
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
+	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Title);
+
 
 	vignettingData_ = {
 		.scale = 16.0f,

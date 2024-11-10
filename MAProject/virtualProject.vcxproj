@@ -207,6 +207,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\BaseScene\BaseScene.cpp" />
     <ClCompile Include="Game\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Game\Scene\ResultScene\ResultScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="Game\Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
@@ -264,6 +265,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\BaseScene\BaseScene.h" />
     <ClInclude Include="Game\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Game\Scene\ResultScene\ResultScene.h" />
+    <ClInclude Include="Game\Scene\SceneFactory\AbstractSceneFactory.h" />
+    <ClInclude Include="Game\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="Game\Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Game\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Game\Stage\Floor\Floor.h" />

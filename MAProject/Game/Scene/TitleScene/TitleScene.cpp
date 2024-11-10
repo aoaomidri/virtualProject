@@ -204,8 +204,7 @@ void TitleScene::Update() {
 		fadeAlpha_ -= 0.01f;
 	}
 	if (fadeAlpha_ >= 1.0f && isFade_) {
-		BaseScene* scene = new GameScene();
-		SceneManager::GetInstance()->SetNextScene(scene);
+		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
 		audio_->PauseWave(titleBGM_);
 	}
 	

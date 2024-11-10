@@ -87,9 +87,6 @@
     <ClCompile Include="Game\Audio\Audio.cpp">
       <Filter>Game\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\BaseScene\BaseScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Camera\DebugCamera.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
@@ -107,9 +104,6 @@
     </ClCompile>
     <ClCompile Include="Game\Camera\FollowCamera.cpp">
       <Filter>Game\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scene\GameScene\GameScene.cpp">
-      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\HitRecord\HitRecord.cpp">
       <Filter>Game\HitRecord</Filter>
@@ -147,14 +141,8 @@
     <ClCompile Include="Game\random\RandomMaker.cpp">
       <Filter>math\random</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\ResultScene\ResultScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Light\SpotLight.cpp">
       <Filter>Game\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
-      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\WholeGame\WholeGame.cpp">
       <Filter>Game\WholeGame</Filter>
@@ -183,10 +171,29 @@
     <ClCompile Include="Game\Character\EnemyBullet.cpp">
       <Filter>Game\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="math\Vector4.cpp" />
-    <ClCompile Include="math\Vector3.cpp" />
+    <ClCompile Include="Game\Scene\BaseScene\BaseScene.cpp">
+      <Filter>Game\Scene\BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GameScene\GameScene.cpp">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\ResultScene\ResultScene.cpp">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="Game\Scene\SceneManager\SceneManager.cpp">
-      <Filter>Game\Scene</Filter>
+      <Filter>Game\Scene\SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector3.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneFactory\SceneFactory.cpp">
+      <Filter>Game\Scene\SceneFactory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,9 +257,6 @@
     <ClInclude Include="Game\Audio\Audio.h">
       <Filter>Game\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\BaseScene\BaseScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Camera\DebugCamera.h">
       <Filter>Game\Camera</Filter>
     </ClInclude>
@@ -270,9 +274,6 @@
     </ClInclude>
     <ClInclude Include="Game\Camera\FollowCamera.h">
       <Filter>Game\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\GameScene\GameScene.h">
-      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Game\HitRecord\HitRecord.h">
       <Filter>Game\HitRecord</Filter>
@@ -307,14 +308,8 @@
     <ClInclude Include="Game\random\RandomMaker.h">
       <Filter>math\random</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\ResultScene\ResultScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Light\SpotLight.h">
       <Filter>Game\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
-      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="math\Vector2.h">
       <Filter>math</Filter>
@@ -352,8 +347,26 @@
     <ClInclude Include="Game\Character\EnemyBullet.h">
       <Filter>Game\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Scene\BaseScene\BaseScene.h">
+      <Filter>Game\Scene\BaseScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\GameScene\GameScene.h">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\ResultScene\ResultScene.h">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
+      <Filter>Game\Scene\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="Game\Scene\SceneManager\SceneManager.h">
-      <Filter>Game\Scene</Filter>
+      <Filter>Game\Scene\SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneFactory\SceneFactory.h">
+      <Filter>Game\Scene\SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneFactory\AbstractSceneFactory.h">
+      <Filter>Game\Scene\SceneFactory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +476,18 @@
     </Filter>
     <Filter Include="Game\Stage\StageObject">
       <UniqueIdentifier>{311ff60b-9e9e-4ad6-822f-a300dc7d85ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\BaseScene">
+      <UniqueIdentifier>{f829c8ab-e971-4a44-9c8e-c86251bdb021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\Scenes">
+      <UniqueIdentifier>{12830f0d-9840-4d97-a03f-a5e8893962bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\SceneManager">
+      <UniqueIdentifier>{ab019665-ad3d-4e50-a519-3cf8dddeee02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\SceneFactory">
+      <UniqueIdentifier>{94e443d8-deb7-4f94-b452-c59a37918c20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

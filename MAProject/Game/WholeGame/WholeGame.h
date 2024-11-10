@@ -3,6 +3,7 @@
 #include"MAFramework.h"
 #include"LevelLoader/LevelLoader.h"
 #include"SceneManager/SceneManager.h"
+#include"SceneFactory/SceneFactory.h"
 #include"DirectionalLight.h"
 /*ゲーム全体を管理するクラス*/
 class WholeGame : public MAFramework{
@@ -31,6 +32,9 @@ private:
 	BaseScene* scene_;
 	//シーンマネージャー
 	SceneManager* sceneManager_;
+
+	//シーンファクトリー
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_;
 
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item = nullptr;

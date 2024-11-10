@@ -1,8 +1,9 @@
 #pragma once
 #include"BaseScene/BaseScene.h"
-
+#include"SceneFactory/AbstractSceneFactory.h"
+#include <memory>
 class SceneManager{
-public:
+
 public:
 	SceneManager() = default;
 	~SceneManager() = default;
@@ -15,7 +16,10 @@ public:
 	}
 
 	//次シーン予約
-	void SetNextScene(BaseScene* nextScene) { nextScane_ = nextScene; }
+	void ChangeScene(const AbstractSceneFactory::SceneName nextScene);
+
+	//次シーン予約
+	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 
 	//更新処理
 	void Update();
@@ -29,9 +33,12 @@ public:
 	void Finalize();
 private:
 	//今のシーン(実行中シーン)
-	BaseScene* scane_ = nullptr;
+	std::unique_ptr<BaseScene> scane_;
 	//次のシーン
-	BaseScene* nextScane_ = nullptr;
+	std::unique_ptr<BaseScene> nextScane_;
+
+	//シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 
 };
 

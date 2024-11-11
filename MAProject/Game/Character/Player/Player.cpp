@@ -1800,46 +1800,7 @@ void Player::SixthStrongAttackMotion(){
 
 		weapon_Rotate_ = Ease::Easing(Ease::EaseName::EaseInCubic, 2.3f, -5.5f, easeT_);
 		weaponTransform_.rotate.z = Ease::Easing(Ease::EaseName::EaseInCubic, 1.57f, 2.8f, easeT_);
-		/*if (weapon_Rotate_ >= 9.2f) 
-			waitTime_ -= 1;
-			weapon_Rotate_ = 9.2f;
-		}
-		else {
-			move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
-			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
-
-			if (!isCollisionEnemy_) {
-				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
-
-				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
-					move_.x = 0;
-				}
-				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
-					move_.z = 0;
-				}
-
-				playerTransform_.translate += move_ * motionSpeed_;
-			}
-			weaponTransform_.translate = playerTransform_.translate;
-
-
-		}
-
-		if (waitTime_ <= 0) {
-			isEndAttack_ = true;
-		}
-
-		if (isShakeDown_) {
-			if (weapon_Rotate_ < 4.5f) {
-				isTrail_ = false;
-				weapon_Rotate_ += kMoveWeaponShakeDown_ * 0.5f * motionSpeed_;
-			}
-			else {
-				isTrail_ = true;
-				weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_;
-			}
-
-		}*/
+		
 
 
 		weaponTransform_.rotate.x = weapon_Rotate_;

@@ -38,6 +38,10 @@ void TextureManager::Initialize() {
 	Model::SetDevice(device_);
 
 	heap_ = SRVDescriptorHeap::GetInstance();
+
+	MakeRenderTexShaderResourceView();
+	MakeDepthShaderResouceView();
+
 }
 
 void TextureManager::Finalize() {

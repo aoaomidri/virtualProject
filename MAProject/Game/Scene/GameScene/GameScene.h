@@ -138,12 +138,6 @@ private:
 	std::unique_ptr<SkyBox> skyBox_;
 
 	//スプライト関連
-	//タイトル
-	std::unique_ptr<Sprite> titleSprite_;
-
-	std::unique_ptr<Sprite> startSprite_;
-
-	std::unique_ptr<Sprite> selectSprite_;
 
 	bool isReset_ = false;
 

@@ -35,22 +35,9 @@ void GameScene::SoundLoad(){
 void GameScene::SpriteInitialize(){
 	uint32_t textureHandle = 0;
 
-	titleSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/title.png");
-	titleSprite_->Initialize(textureHandle);
-
-	startSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/start.png");
-	startSprite_->Initialize(textureHandle);
-
 	comboSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/combo.png");
 	comboSprite_->Initialize(textureHandle);
-
-	selectSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/select.png");
-	selectSprite_->Initialize(textureHandle);
-
 
 	controlSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/control.png");
@@ -174,23 +161,6 @@ void GameScene::Initialize(){
 	};
 
 	stageName_ = stages_[0].c_str();
-
-	titleSprite_->position_ = { 640.0f,175.0f };
-	titleSprite_->scale_.x = 850.0f;
-	titleSprite_->scale_.y = 150.0f;
-	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
-	titleSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
-
-	startSprite_->position_ = { 640.0f,390.0f };
-	startSprite_->anchorPoint_ = { 0.5f,0.5f };
-	startSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
-	startSprite_->isDraw_ = true;
-
-	selectSprite_->position_ = { 380.0f,390.0f };
-	selectSprite_->rotation_.z = -1.57f;
-	selectSprite_->anchorPoint_ = { 0.5f,0.5f };
-	selectSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-	selectSprite_->isDraw_ = true;
 
 	comboSprite_->position_ = { 640.0f,550.0f };
 	comboSprite_->anchorPoint_ = { 0.5f,0.5f };

@@ -198,6 +198,24 @@
     <ClCompile Include="Game\Character\Enemy\EnemyBullet.cpp">
       <Filter>Game\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.cpp">
+      <Filter>Game\Character\Player\PlayerState\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.cpp">
+      <Filter>Game\Character\Player\PlayerState\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerRoot.cpp">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerAttack.cpp">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerStrongAttack.cpp">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerDash.cpp">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -374,6 +392,24 @@
     <ClInclude Include="Game\Character\Enemy\EnemyBullet.h">
       <Filter>Game\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.h">
+      <Filter>Game\Character\Player\PlayerState\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.h">
+      <Filter>Game\Character\Player\PlayerState\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerRoot.h">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerAttack.h">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerStrongAttack.h">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerDash.h">
+      <Filter>Game\Character\Player\PlayerState\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli">
@@ -497,6 +533,18 @@
     </Filter>
     <Filter Include="Game\Character\Player\Attack">
       <UniqueIdentifier>{5ae1180a-abab-4064-93a1-df08fd8c33de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Character\Player\PlayerState">
+      <UniqueIdentifier>{e258284b-0b9c-4d72-af59-4217605a037b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Character\Player\PlayerState\Manager">
+      <UniqueIdentifier>{6fad05e9-8fa6-477c-951b-1cdb266f7007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Character\Player\PlayerState\Base">
+      <UniqueIdentifier>{e1bf7ac7-16f9-45a8-ab72-4751beb11ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Character\Player\PlayerState\States">
+      <UniqueIdentifier>{01492803-bbb5-4c07-9014-86f73a802892}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

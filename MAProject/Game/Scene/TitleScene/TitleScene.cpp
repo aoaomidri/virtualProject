@@ -100,9 +100,6 @@ void TitleScene::Initialize() {
 
 	floorManager_->AddFloor(firstFloor_, false);
 
-	textureManager_->MakeRenderTexShaderResourceView();
-	textureManager_->MakeDepthShaderResouceView();
-
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));

@@ -51,6 +51,7 @@ public:
 public:
 	virtual ~BaseScene() = default;
 
+protected:
 
 
 private:

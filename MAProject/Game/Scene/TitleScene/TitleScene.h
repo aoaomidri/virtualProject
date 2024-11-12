@@ -52,7 +52,7 @@ private:
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
-	//テクスチャマネージャー
+	//ポストエフェクト
 	PostEffect* postEffect_ = nullptr;
 
 	std::unique_ptr<FollowCamera> followCamera_;

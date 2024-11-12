@@ -18,7 +18,7 @@ public:
 	//次シーン予約
 	void ChangeScene(const AbstractSceneFactory::SceneName nextScene);
 
-	//次シーン予約
+	//シーン生成機構のセット
 	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 
 	//更新処理

@@ -60,8 +60,6 @@ public:
 
 	const Matrix4x4& GetRotateMatrix()const { return rotateMatrix_; };
 
-	const OBB& GetOBB()const { return OBB_; }
-
 	const OBB& GetAttackOBB()const { return attackOBB_; }
 
 	const OBB& GetBodyOBB()const { return bodyOBB_; }
@@ -145,9 +143,7 @@ private:
 
 	const ViewProjection* viewProjection_ = nullptr;
 
-	//自機のOBB
-	OBB OBB_{};
-
+	//攻撃のOBB
 	OBB attackOBB_{};
 
 	//自機のOBB
@@ -354,6 +350,9 @@ private:
 	/*突進攻撃*/
 	//突進の向き決めの時間
 	uint32_t directionTime_;
+
+	//突進攻撃の範囲
+	float collisionScale_ = 1.3f;
 
 	//突進への移行時間
 	uint32_t attackTransitionTime_;

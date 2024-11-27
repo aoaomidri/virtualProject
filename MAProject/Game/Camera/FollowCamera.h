@@ -18,6 +18,18 @@ struct ViewingFrustum {
 	float farZ;           // 深度限界（奥側）
 };
 
+struct CameraShake {
+	float amplitude;  // シェイクの振幅
+	float duration;   // シェイクの持続時間
+	float frequency;  // シェイクの周波数
+	float elapsedTime; // シェイクの経過時間
+
+	// シェイク中かどうか判定
+	bool IsActive() const {
+		return elapsedTime < duration;
+	}
+};
+
 class FollowCamera{
 public:
 	void Initialize();
@@ -31,6 +43,19 @@ public:
 	void CameraPosInit();
 
 	Vector3 offsetCalculation(const Vector3& offset) const;
+	/// <summary>
+	/// カメラシェイク開始
+	/// </summary>
+	/// <param name="amplitude">振幅</param>
+	/// <param name="duration">持続時間</param>
+	/// <param name="frequency">周波数</param>
+	void StartShake(float amplitude, float duration, float frequency = 10.0f) {
+		cameraShake_.amplitude = amplitude;
+		cameraShake_.duration = duration;
+		cameraShake_.frequency = frequency;
+		cameraShake_.elapsedTime = 0.0f;
+	}
+	
 
 	void DrawImgui();
 public:
@@ -56,9 +81,10 @@ public:
 		return mat;
 	}
 private:
-	
-
+	/*プライベート関数*/
 	void ApplyGlobalVariables();
+	//揺れの更新
+	void ShakeUpdate();
 
 private:
 	ViewProjection viewProjection_;
@@ -79,6 +105,8 @@ private:
 		.nearZ = viewProjection_.nearZ_,
 		.farZ = viewProjection_.farZ_
 	};
+
+
 
 	ViewingFrustum lockViewingFrustum_ = {
 		.translation_ = viewProjection_.translation_,
@@ -132,6 +160,13 @@ private:
 	const Vector3 Vec = { 0.0f,0.0f,1.0f };
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
+
+	//カメラシェイク用変数
+
+	//加算するオフセット
+	Vector2 addOffset_{};
+	//カメラシェイクのデータ
+	CameraShake cameraShake_{};
 
 	//入力
 	Input* input_ = nullptr;

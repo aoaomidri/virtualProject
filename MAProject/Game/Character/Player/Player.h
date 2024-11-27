@@ -66,6 +66,8 @@ public:
 
 	const bool GetIsHitEnemyAttack() const { return isHitEnemyAttack_; }
 
+	const bool GetIsJustAvoid() const { return isJustAvoid_; }
+
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
@@ -202,12 +204,17 @@ private:
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
 
+	//当たりを見るためのオブジェ
+	std::unique_ptr<Object3D> collisionObj_;
+
 	//自機のSRT
 	EulerTransform playerTransform_{};
 	
 	//武器のSRT
 	EulerTransform weaponTransform_{};
 	EulerTransform weaponCollisionTransform_{};
+
+	
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
@@ -265,7 +272,7 @@ private:
 	//被弾時の無敵時間
 	int hitTimer_ = 0;
 	//代入用ダッシュのクールタイム
-	int dashCoolTime_;
+	int dashCoolTime_ = 0;
 
 	struct WorkDash {
 		//ダッシュ用の媒介変数
@@ -284,7 +291,7 @@ private:
 	float weapon_Rotate_ = 0.0f;
 	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数
-	Vector3 weapon_offset_;
+	Vector3 weapon_offset_{};
 	Vector3 weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
 
 	const float kMoveWeapon_ = 0.1f;
@@ -409,7 +416,7 @@ private:
 
 	Vector3 groundOffsetBase_;
 	//破壊跡を固定するかどうか
-	bool isStopCrush_;
+	bool isStopCrush_ = false;
 
 	float crushScaleBase_ = 0.9f;
 
@@ -417,6 +424,6 @@ private:
 	Vector3 obbPoint_ = { -0.02f,0.0f,-0.05f };
 
 	//Obbの補正値
-	Vector3 obbAddScale_ = { -0.65f,0.5f,-0.65f };
+	Vector3 obbAddScale_ = { -0.5f,0.5f,0.0f };
 };
 

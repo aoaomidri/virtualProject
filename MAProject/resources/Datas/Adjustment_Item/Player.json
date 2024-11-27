@@ -1,7 +1,7 @@
 {
     "Player": {
         "AttackPower": 3,
-        "DashCoolTime": 10,
+        "DashCoolTime": 5,
         "DashSpeed": 10.0,
         "DownSpeed": -0.009999999776482582,
         "JumpPower": 0.20000000298023224,

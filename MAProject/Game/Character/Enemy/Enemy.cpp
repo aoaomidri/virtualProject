@@ -62,8 +62,8 @@ void Enemy::Initialize(const Vector3& position){
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
 
-	//collisionObj_ = std::make_unique<Object3D>();
-	//collisionObj_->Initialize("box");
+	collisionObj_ = std::make_unique<Object3D>();
+	collisionObj_->Initialize("box");
 
 	/*for (int i = 0; i < 20; i++){
 		particleObj_[i] = std::make_unique<Object3D>();
@@ -110,15 +110,12 @@ void Enemy::Initialize(const Vector3& position){
 
 	freeTime_ = 0;
 
-	OBB_ = levelLoader->GetLevelObjectOBB("Enemy");
-
-	collisionTransform_.translate = OBB_.center;
-	collisionTransform_.scale = OBB_.size;
+	collisionTransform_.translate = attackOBB_.center;
+	collisionTransform_.scale = attackOBB_.size;
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
 
 	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
-	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
 	SetOridentatios(attackOBB_, enemyRotateMatrix);
 
@@ -166,9 +163,7 @@ void Enemy::Update(){
 	shadow_->position_ = transform_.translate;
 	shadow_->position_.y = 1.11f;
 
-	/*for (int i = 0; i < particleNum_; i++) {
-		particleTransform_[i].translate += particleVec_[i];
-	}*/
+
 	collisionTransform_ = transform_;
 
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
@@ -191,24 +186,21 @@ void Enemy::Update(){
 		(*it)->Update();
 	}
 
-	OBB_.center = transform_.translate;
 	bodyOBB_.center = transform_.translate;
 	if (isNearAttack_){
 		Vector3 attackOffset = { 0.0f, 0.0f, 4.0f };
 		attackOffset = Matrix::TransformNormal(attackOffset, rotateMatrix_);
 
-		attackOBB_.center = OBB_.center + attackOffset;
+		attackOBB_.center = bodyOBB_.center + attackOffset;
 	}
 	else{
-		attackOBB_.center = OBB_.center;
+		attackOBB_.center = bodyOBB_.center;
 	}
 
-	
-	SetOridentatios(OBB_, rotateMatrix_);
 	SetOridentatios(bodyOBB_, rotateMatrix_);
 	SetOridentatios(attackOBB_, rotateMatrix_);
 
-	
+	collisionMatrix_ = Matrix::MakeAffineMatrix(attackOBB_.size, rotateMatrix_, attackOBB_.center);
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection){
@@ -237,18 +229,7 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	partsObj_->Update(viewProjection);
 	partsObj_->Draw();
 
-	/*if (isParticle_){
-		for (int i = 0; i < 10; i++) {
-			particleObj_[i]->SetMatrix(particleMatrix_[i]);
-			particleObj_[i]->Update(viewProjection);
-			particleObj_[i]->Draw();
-		}
-		for (int i = 10; i < 20; i++) {
-			particleObj_[i]->SetMatrix(particleMatrix_[i]);
-			particleObj_[i]->Update(viewProjection);
-			particleObj_[i]->Draw();
-		}
-	}*/
+	
 }
 
 void Enemy::TexDraw(const Matrix4x4& viewProjection){
@@ -299,19 +280,6 @@ void Enemy::Respawn(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	/*for (int i = 0; i < 20; i++) {
-		particleTransform_[i] = {
-			{0.1f,0.1f,0.1f},
-			{0.0f,0.0f,0.0f},
-			{0.0f,0.0f,0.0f}
-		};
-	}
-
-
-	for (int i = 0; i < 20; i++) {
-		particleVec_[i] = { 0.0f,0.0f,0.0f };
-	}*/
-
 	isDead_ = false;
 	isNoLife_ = false;
 	isParticle_ = true;
@@ -320,15 +288,12 @@ void Enemy::Respawn(const Vector3& position){
 
 	freeTime_ = 0;
 
-	OBB_ = levelLoader->GetLevelObjectOBB("Enemy");
-
-	collisionTransform_.translate = OBB_.center;
-	collisionTransform_.scale = OBB_.size;
 	bodyOBB_.center = transform_.translate;
 	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
+	collisionTransform_.translate = bodyOBB_.center;
+	collisionTransform_.scale = bodyOBB_.size;
 
 	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
-	SetOridentatios(OBB_, enemyRotateMatrix);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
 	SetOridentatios(attackOBB_, enemyRotateMatrix);
 
@@ -529,7 +494,7 @@ void Enemy::RootMotion(){
 
 	}
 	else if (farTime_ > lengthJudgment_) {
-		int i = 0;
+		int i = RandomMaker::DistributionInt(0, 2);
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kRun;
 		}
@@ -579,7 +544,7 @@ void Enemy::Dash(){
 
 	
 	
-	attackOBB_.size = OBB_.size * 2.8f;
+	attackOBB_.size = bodyOBB_.size * collisionScale_;
 	transform_.translate += move_;
 	
 
@@ -839,7 +804,7 @@ void Enemy::TripleAttack(){
 			attackDistance_ = distanceTime_;
 		}
 		else {
-			attackOBB_.size = OBB_.size * 2.4f;
+			attackOBB_.size = bodyOBB_.size * 2.4f;
 			attackDistance_ -= 1;
 		}
 
@@ -897,8 +862,9 @@ void Enemy::Tackle(){
 
 
 
-			attackOBB_.size = OBB_.size * 2.4f;
 			transform_.translate += move_;
+			attackOBB_.size = bodyOBB_.size * collisionScale_;
+			attackOBB_.center = transform_.translate;
 
 
 			//既定の時間経過で通常状態に戻る
@@ -976,7 +942,7 @@ void Enemy::RotateAttack(){
 
 	if (easeT_ < 1.0f) {		
 		easeT_ += (1.0f / 60.0f);
-		attackOBB_.size = OBB_.size * 2.4f;
+		attackOBB_.size = bodyOBB_.size * 2.4f;
 	}
 	else {
 		attackOBB_.size = { 0.0f,0.0f,0.0f };

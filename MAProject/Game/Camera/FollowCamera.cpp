@@ -16,6 +16,28 @@ void FollowCamera::ApplyGlobalVariables(){
 	}
 }
 
+void FollowCamera::ShakeUpdate(){
+	cameraShake_.elapsedTime += 1.0f / ImGui::GetIO().Framerate;
+
+	float progress = (cameraShake_.elapsedTime) / cameraShake_.duration;
+
+	cameraShake_.amplitude *= std::exp(-progress * 5.0f);
+
+	// Perlinノイズや乱数に基づくオフセット
+	float offsetX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;
+	float offsetY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;
+	float offsetZ = 0.0f;  // Z軸方向は揺れないようにする
+
+	rootOffset.x += offsetX;
+	rootOffset.y += offsetY;
+	rootOffset.z += offsetZ;
+
+	// シェイクが終了したら振幅をリセット
+	if (cameraShake_.elapsedTime >= cameraShake_.duration) {
+		cameraShake_.amplitude = 0.0f;
+	}
+}
+
 
 void FollowCamera::Initialize(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
@@ -96,6 +118,9 @@ void FollowCamera::Update(){
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	//}
 	rootOffset = { 0.0f, height_, distance };
+
+	ShakeUpdate();
+
 	baseOffset = rootOffset;
 
 	if (target_) {
@@ -149,6 +174,7 @@ Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	return offset_;
 }
 
+
 void FollowCamera::SetTarget(const EulerTransform* target){
 	target_ = target;
 	Reset();
@@ -165,7 +191,9 @@ void FollowCamera::DrawImgui(){
 	ImGui::DragFloat("オフセットY", &height_, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t_);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
-
+	if (ImGui::Button("カメラシェイク")) {
+		StartShake(0.5f, 1.0f);
+	}
 	ImGui::End();
 #endif
 }

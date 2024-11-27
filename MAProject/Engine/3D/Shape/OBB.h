@@ -18,3 +18,6 @@ struct AABB {
 void SetOridentatios(OBB& obb, const Matrix4x4& rotateMatrix);
 Matrix4x4 GetRotate(const OBB& obb);
 
+void CalculateVertices(const OBB& obb, const Matrix4x4& rotateMatrix, const Vector3& center, Vector3 vertices[8]);
+
+void ProjectOntoAxis(const Vector3 vertices[8], const Vector3& axis, float& min, float& max);

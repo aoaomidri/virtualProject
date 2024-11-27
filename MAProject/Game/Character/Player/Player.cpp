@@ -52,6 +52,9 @@ void Player::Initialize(){
 	
 	weaponObj_->SetIsLighting(false);
 
+	collisionObj_ = std::make_unique<Object3D>();
+	collisionObj_->Initialize("box");
+
 	shadow_ = std::make_unique<Sprite>();
 	shadow_->Initialize(TextureManager::GetInstance()->Load("resources/texture/shadow.png"));
 	shadow_->rotation_.x = 1.57f;
@@ -316,14 +319,12 @@ void Player::Draw(const ViewProjection& viewProjection){
 	weaponObj_->Draw();
 
 #ifdef _DEBUG
-	
+	/*collisionObj_->SetMatrix(playerOBBMatrix_);
+	collisionObj_->Update(viewProjection);
+	collisionObj_->Draw();*/
 
 #endif
-		/*particleTrans_.translate = weaponObj_->GetTopVerTex().head;
-		particleTrans_.scale = { 0.3f,0.3f,0.3f };
-
-		particleTransCenter_.translate = (weaponObj_->GetTopVerTex().tail + weaponObj_->GetTopVerTex().head) / 2.0f;
-		particleTransCenter_.scale = { 0.3f,0.3f,0.3f };*/
+		
 }
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
@@ -346,10 +347,12 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
 	ImGui::DragFloat3("OBB大きさ", &obbAddScale_.x, 0.01f);
 	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
+	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime_);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex);
 	ImGui::Text("敵に当たっているか = %d", isCollisionEnemy_);
+	ImGui::Text("敵に攻撃に当たっているか = %d", isHitEnemyAttack_);
 	ImGui::DragFloat("武器判定の回転", &weapon_Rotate_, 0.01f);
 	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
@@ -402,6 +405,11 @@ void Player::Respawn(){
 }
 
 void Player::OnCollisionEnemyAttack(){
+	//ジャスト回避判定
+	if (isDash_) {
+		isJustAvoid_ = true;
+		justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
+	}
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)
 		return;
@@ -989,9 +997,38 @@ void Player::BehaviorStrongAttackUpdate(){
 }
 
 void Player::BehaviorDashInitialize(){
+
 	workDash_.dashParameter_ = 0;
 
 	isDash_ = true;
+
+	move_.z = input_->GetPadLStick().y * moveSpeed_;
+	if (abs(move_.z) < 0.005f) {
+		move_.z = 0;
+	}
+	move_.x = input_->GetPadLStick().x * moveSpeed_;
+	if (abs(move_.x) < 0.005f) {
+		move_.x = 0;
+	}
+	move_.y = 0;
+
+	if (move_.x != 0.0f or move_.z != 0.0f) {
+		frontVec_ = postureVec_;
+		if (viewProjection_) {
+
+			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
+			move_ = Matrix::TransformNormal(move_, newRotateMatrix);
+			move_.y = 0.0f;
+		}
+
+		postureVec_ = move_;
+
+		//particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
+
+		Matrix4x4 directionTodirection_;
+		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
+	}
 }
 
 void Player::BehaviorDashUpdate(){
@@ -1000,12 +1037,11 @@ void Player::BehaviorDashUpdate(){
 
 	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
 
-	/*playerObj_->ChangeAnimation("Run");
-	playerObj_->SetChangeAnimSpeed(6.0f);*/
+	
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 15;
 
-	if (!isCollisionEnemy_) {
+	/*if (!isCollisionEnemy_)*/ {
 		Vector3 NextPos = playerTransform_.translate + move_;
 
 		if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
@@ -1022,8 +1058,6 @@ void Player::BehaviorDashUpdate(){
 		dashCoolTime_ =dashCoolTimeBase_;
 		isDash_ = false;
 		behaviorRequest_ = Behavior::kRoot;
-		/*playerObj_->ChangeAnimation("stand");
-		playerObj_->SetChangeAnimSpeed(3.0f);*/
 	}
 }
 

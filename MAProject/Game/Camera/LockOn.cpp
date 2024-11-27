@@ -35,7 +35,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = nullptr;
 			isLockOn_ = false;
 		}
-		else if (!InTarget(target_->GetOBB(), viewprojection, viewingFrustum)) {
+		else if (!InTarget(target_->GetBodyOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
 		}
 		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_R)) {
@@ -104,7 +104,7 @@ void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		//ワールドビュー座標変換
 		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 
-		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)){
+		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), viewingFrustum)){
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 		}		
 	}
@@ -135,7 +135,7 @@ void LockOn::TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		//ワールドビュー座標変換
 		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 
-		if (IsCollisionOBBViewFrustum(enemy->GetOBB(), viewingFrustum)) {
+		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), viewingFrustum)) {
 			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 		}
 	}

@@ -234,10 +234,10 @@ void GameScene::Update(){
 			enemy->Update();
 		}
 	}
-	if (player_->GetHitTimer() != 0 and postEffect_->GetEffectType() == PostEffect::EffectType::None) {
-		postEffect_->SetPostEffect(PostEffect::EffectType::Smoothing9x9);
+	if (player_->GetIsJustAvoid()){
+		postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	}
-	else if (postEffect_->GetEffectType() == PostEffect::EffectType::Smoothing9x9 and player_->GetHitTimer() == 0) {
+	else if (postEffect_->GetEffectType() != PostEffect::EffectType::None and player_->GetHitTimer() == 0 ) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::None);
 	}
 		
@@ -361,51 +361,8 @@ void GameScene::DrawImgui(){
 	for (const auto& enemy : enemies_) {
 		enemy->DrawImgui();
 	}
-		
-	ImGui::Begin("ステージ関連", nullptr, ImGuiWindowFlags_MenuBar);
 
-	if (ImGui::BeginMenuBar()) {
-		if (ImGui::BeginMenu("オブジェクトの生成")) {
-			if (ImGui::TreeNode("床生成")) {
-				ImGui::DragFloat3("床の大きさ", &firstFloor_.scale.x, 0.01f);
-				ImGui::DragFloat3("床の回転", &firstFloor_.rotate.x, 0.01f);
-				ImGui::DragFloat3("床の座標", &firstFloor_.translate.x, 0.1f);
-
-				ImGui::Checkbox("動く床にする", &isFloorMove_);
-
-				if (ImGui::Button("床の追加")) {
-					floorManager_->AddFloor(firstFloor_, isFloorMove_);
-				}
-				ImGui::TreePop();
-			}
-
-
-			ImGui::EndMenu();
-		}
-			
-		if (ImGui::BeginMenu("ファイル関連")) {
-			for (size_t i = 0; i < stages_.size(); i++) {
-				if (ImGui::RadioButton(stages_[i].c_str(), &stageSelect_, static_cast<int>(i))) {
-					stageName_ = stages_[stageSelect_].c_str();
-				}
-
-			}
-			if (ImGui::Button("jsonファイルを作る")) {
-				FilesSave(stages_);
-			}
-			if (ImGui::Button("上書きセーブ")) {
-				FilesOverWrite(stageName_);
-			}
-
-			if (ImGui::Button("全ロード(手動)")) {
-				FilesLoad(stageName_);
-			}
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMenuBar();
-	}
-	ImGui::End();
+	
 
 #endif // _DEBUG	
 }
@@ -427,7 +384,7 @@ void GameScene::AllCollision(){
 	}
 
 	for (const auto& enemy : enemies_) {
-		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetOBB())) {
+		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
 			uint32_t serialNumber = enemy->GetSerialNumber();
 			if (player_->RecordCheck(serialNumber)){
 				return;
@@ -453,9 +410,9 @@ void GameScene::AllCollision(){
 			player_->SetCollisionEnemy(false);
 		}
 
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())&& !player_->GetIsHitEnemyAttack()) {
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
 			player_->OnCollisionEnemyAttack();
-
+			followCamera_->StartShake(0.5f, 1.5f);
 			break;
 		}
 		
@@ -485,6 +442,8 @@ void GameScene::FilesLoad(const std::string& stage) {
 }
 
 bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
+	
+
 	Vector3 vector{};
 	Matrix matrix;
 

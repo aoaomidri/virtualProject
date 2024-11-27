@@ -260,11 +260,11 @@ private:
 
 	//ダッシュ時のスピード倍率
 	float dashSpeed_ = 10.0f;
-	//ダッシュのクールタイム
+	//ダッシュのクールタイムのベース
 	int dashCoolTimeBase_ = 20;
-
+	//被弾時の無敵時間
 	int hitTimer_ = 0;
-
+	//代入用ダッシュのクールタイム
 	int dashCoolTime_;
 
 	struct WorkDash {
@@ -273,6 +273,11 @@ private:
 	};
 
 	WorkDash workDash_;
+
+	//応刀受付時間のベース
+	int justAvoidAttackTimerBase_ = 60;
+	//応刀受付時間
+	int justAvoidAttackTimer_ = 0;
 
 	//////*攻撃に関連するもの*///////
 	//武器の回転
@@ -368,6 +373,8 @@ private:
 	bool isCollisionEnemy_ = false;
 	//敵の攻撃に当たったかどうか
 	bool isHitEnemyAttack_ = false;
+	//攻撃に回避を合わせたか(ジャスト回避をしているか)
+	bool isJustAvoid_ = false;
 
 private:
 	//ロックオン

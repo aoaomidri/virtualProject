@@ -9,6 +9,7 @@
 class PlayerStateManager{
 public:
 	using StateName = IPlayerState::StateName;
+	using PLContext = IPlayerState::PlayerContext;
 
 	PlayerStateManager() = default;
 	~PlayerStateManager() = default;
@@ -32,6 +33,8 @@ private:
 	std::unique_ptr<IPlayerState> nowState_;
 	//次の状態
 	std::unique_ptr<IPlayerState> nextState_;
+
+	PLContext context_;
 
 };
 

@@ -44,6 +44,7 @@ void Player::Initialize(){
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize("PlayerFace");
 
+	//playerObj_->SetTexture("resources/DDS/uvCheck.dds");
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
@@ -154,6 +155,7 @@ void Player::Update(){
 		}		
 	}
 
+	//カウンター時間経過処理
 	if (counterTime_ < counterTimeBase_){
 		isGuardHit_ = false;
 	}
@@ -162,6 +164,15 @@ void Player::Update(){
 		counterTime_++;
 	}
 
+	//ジャスト回避時間経過処理
+	if (justAvoidAttackTimer_ != 0) {
+		justAvoidAttackTimer_--;
+	}
+	else if (justAvoidAttackTimer_ <= 0) {
+		isJustAvoid_ = false;
+	}
+
+	//被弾無敵の経過処理
 	if (hitTimer_ != 0) {
 		hitTimer_--;
 	}
@@ -239,16 +250,12 @@ void Player::Update(){
 	playerScaleMatrix_ = Matrix::MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::MakeTranslateMatrix(playerTransform_.translate);
 
-	if (isDash_){
-		playerOBB_.center.y = 10000;
+	
+	playerOBB_.center = playerTransform_.translate + obbPoint_;
 
-	}
-	else {
-		playerOBB_.center = playerTransform_.translate + obbPoint_;
-
-		playerOBB_.size = playerTransform_.scale + obbAddScale_;
-		SetOridentatios(playerOBB_, playerRotateMatrix_);
-	}
+	playerOBB_.size = playerTransform_.scale + obbAddScale_;
+	SetOridentatios(playerOBB_, playerRotateMatrix_);
+	
 
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
@@ -398,14 +405,23 @@ void Player::OnCollisionEnemyAttack(){
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)
 		return;
-
+	//カウンター判定
 	if (isGuard_){
 		isGuardHit_ = true;
 		counterTime_ = 0;
 	}
 	else {
-		isHitEnemyAttack_ = true;
-		hitTimer_ = 30;
+		//ジャスト回避判定
+		if (isDash_){
+			isJustAvoid_ = true;
+			justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
+		}
+		else {
+			//普通に被弾
+			isHitEnemyAttack_ = true;
+			hitTimer_ = 30;
+
+		}
 	}
 	
 }

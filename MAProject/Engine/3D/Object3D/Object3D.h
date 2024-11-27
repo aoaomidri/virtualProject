@@ -42,6 +42,10 @@ public:
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
 
+	void SetTexture(const std::string fileName) {
+		texHandle_ = TextureManager::GetInstance()->Load(fileName);
+	}
+
 	void SetDissolve(const float data) {
 		dissolveData_->threshold = data;
 	}

@@ -274,6 +274,8 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
 	}
 	else {
 		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		mipImages = std::move(image);
+
 		assert(SUCCEEDED(hr));
 	}
 	

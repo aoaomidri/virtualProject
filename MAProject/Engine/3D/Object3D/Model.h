@@ -131,6 +131,7 @@ public:
 
 	
 public:
+	//頂点バッファの設定
 	void Draw(ID3D12GraphicsCommandList* CommandList) const;
 
 	static Model* GetInstance();
@@ -144,18 +145,20 @@ public:
 	//ファイルの名前が違うのであれば
 	static Model::Animation LoadAnimationFile(const std::string& filename, const std::string& modelName);
 
-
+	//マテリアル情報を取り出す
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
+	//デバイスのセット
 	static void SetDevice(ID3D12Device* device) { Model::device_ = device; }
-
+	//終了処理
 	void Finalize();
-
+	//skeletonの生成
 	Skeleton CreateSkeleton(const Node& rootNode);
-
+	//スキンクラスターの生成
 	SkinCluster CreateSkinCluster(const Skeleton& skeleton);
 
 public:
+	/*ゲッター群*/
+
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView_; }
 	D3D12_INDEX_BUFFER_VIEW GetIndexBifferView()const { return indexBufferView_; }
 	
@@ -172,22 +175,23 @@ public:
 	const std::vector<uint32_t> GetIndexData()const { return modelData_.indices; }
 	
 public:
+	//assimpでのモデルの読み込み
 	void LoadFromOBJInternalAssimp(const std::string& filename, const std::string& modelName);
-
+	//頂点情報の生成
 	void MakeVertexResource();
 
 private:
 
-
+	//リソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
 
 	//OBJファイルから3Dモデルを読み込む(非公開)
 	void LoadFromOBJInternal(const std::string& filename);
 
-
+	//Nodeを読み込む
 	Node ReadNode(aiNode* node);
-
+	//Jointの生成
 	int32_t CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 
 	

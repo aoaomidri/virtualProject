@@ -243,8 +243,6 @@ void GameScene::Update(){
 		
 
 	if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
-		isReset_ = true;
-		sceneNum_ = SceneName::CLEAR;
 	}
 
 	AllCollision();

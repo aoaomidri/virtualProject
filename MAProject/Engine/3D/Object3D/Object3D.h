@@ -62,6 +62,10 @@ public:
 		setMatrix_ = matrix;
 	}
 
+	void SetTimeScale(const float scale) {
+		timeScale_ = scale;
+	}
+
 	void SetAnimation(const Model::Animation animation) {
 		animation_ = animation;
 	}
@@ -149,6 +153,8 @@ private:
 	//データを書き込む
 	//アニメーションの再生中の時刻
 	float animationTime = 0.0f;
+
+	float timeScale_ = 1.0f;
 
 	Vector2 trailData_;
 

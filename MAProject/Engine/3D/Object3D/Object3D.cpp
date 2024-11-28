@@ -42,7 +42,7 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 	//rotate_.y += 0.01f;
 
 	if (animation_.duration != 0) {
-		animationTime += 1.0f / 60.0f;
+		animationTime += (1.0f / 60.0f) * timeScale_;
 		animationTime = std::fmod(animationTime, animation_.duration);
 		Model::NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[model_->GetNodeName()];
 		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);

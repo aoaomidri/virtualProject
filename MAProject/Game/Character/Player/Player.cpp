@@ -142,7 +142,7 @@ void Player::Update(){
 
 
 	if (isDissolve_){
-		weaponThreshold_ += 0.03f;
+		weaponThreshold_ += 0.03f * timeScale_;
 		if (weaponThreshold_ > 1.0f) {
 			weaponThreshold_ = 1.0f;
 			addPosition_.y = 0.0f;
@@ -164,7 +164,7 @@ void Player::Update(){
 	}
 
 	if (isGuardHit_){
-		counterTime_++;
+		counterTime_ += timeScale_;
 	}
 
 	//ジャスト回避時間経過処理
@@ -293,7 +293,10 @@ void Player::Update(){
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
-	trail_->Update();
+	if (timeScale_ != 0.0f){
+		trail_->Update();
+	}
+	
 
 	if (playerTransform_.translate.y <= -5.0f) {
 		Respawn();
@@ -347,6 +350,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
 	ImGui::DragFloat3("OBB大きさ", &obbAddScale_.x, 0.01f);
 	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
+	ImGui::Text("おちているかどうか = %d", isDown_);
 	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime_);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer);
@@ -380,7 +384,7 @@ void Player::DrawImgui(){
 }
 
 void Player::OnFlootCollision(OBB obb){
-	playerTransform_.translate.y = playerTransform_.scale.y + obbAddScale_.y + obb.size.y;
+	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
 	downVector_ = { 0.0f,0.0f,0.0f };
 }
 
@@ -404,11 +408,13 @@ void Player::Respawn(){
 	shadow_->color_.w = 0.5f;
 }
 
-void Player::OnCollisionEnemyAttack(){
+void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 	//ジャスト回避判定
 	if (isDash_) {
 		isJustAvoid_ = true;
 		justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
+		enemyNumber_ = serialNumber;
+		GameTime::SlowDownTime(1.0f, 0.2f);
 	}
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)
@@ -423,6 +429,8 @@ void Player::OnCollisionEnemyAttack(){
 		if (isDash_){
 			isJustAvoid_ = true;
 			justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
+			enemyNumber_ = serialNumber;
+			GameTime::SlowDownTime(1.0f, 0.2f);
 		}
 		else {
 			//普通に被弾
@@ -499,7 +507,7 @@ void Player::BehaviorRootUpdate(){
 	}
 
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && !isDown_) {
-		downVector_.y += jumpPower_;
+		downVector_.y += jumpPower_ * timeScale_;
 		
 	}
 	Vector3 NextPos = playerTransform_.translate + move_;
@@ -511,20 +519,20 @@ void Player::BehaviorRootUpdate(){
 		move_.z = 0;
 	}
 
-	playerTransform_.translate += move_;
+	playerTransform_.translate += move_ * timeScale_;
 	
 	if (isDown_) {
-		downVector_.y += downSpeed_;
+		downVector_.y += downSpeed_ * timeScale_;
 	}
 	
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_ -= 1;
 	}
-	floatSin_ += floatSpeed_;
+	floatSin_ += floatSpeed_ * timeScale_;
 	if (floatSin_ >= (std::numbers::pi * 2.0f)) {
 		floatSin_ = 0.0f;
 	}
-	playerTransform_.translate.y += downVector_.y;
+	playerTransform_.translate.y += downVector_.y * timeScale_;
 	if (!isDissolve_ ) {
 
 		if (!isWeaponDebugFlug_) {
@@ -545,12 +553,13 @@ void Player::BehaviorRootUpdate(){
 		Vector3 addPosRotate{};
 		addPosRotate = Matrix::TransformNormal(addPosition_, playerRotateMatrix_);
 
-		weaponTransform_.translate += addPosRotate;
+		weaponTransform_.translate += addPosRotate * timeScale_;
 	}
 	
 	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
-	trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
-
+	if (timeScale_ != 0.0f) {
+		trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
+	}
 	if (input_->GetPadButtonTriger(Input::GamePad::RB) && dashCoolTime_ <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
@@ -790,7 +799,8 @@ void Player::BehaviorAttackUpdate(){
 				behaviorRequest_ = Behavior::kStrongAttack;
 			}
 			else {
-				if (++workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
+				workAttack_.attackParameter += timeScale_;
+				if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 
 					behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
@@ -843,14 +853,14 @@ void Player::BehaviorAttackUpdate(){
 	}
 	downVector_.y += downSpeed_;
 
-	playerTransform_.translate.y += downVector_.y;
+	playerTransform_.translate.y += downVector_.y * timeScale_;
 	
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	weaponCollisionTransform_.translate.y += addPosition_.y + 1.0f;
+	weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f) * timeScale_;
 
 	weaponTransform_.translate = weaponCollisionTransform_.translate;
 
@@ -858,7 +868,10 @@ void Player::BehaviorAttackUpdate(){
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
-		trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+		if (timeScale_ != 0.0f){
+			trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+		}
+		
 	}
 	
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
@@ -928,8 +941,8 @@ void Player::BehaviorStrongAttackUpdate(){
 	frontVec_ = postureVec_;
 
 	if (isEndAttack_) {
-			 
-		if (++workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
+		workAttack_.attackParameter += timeScale_;
+		if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 			isDissolve_ = true;
 			behaviorRequest_ = Behavior::kRoot;
 			workAttack_.attackParameter = 0;
@@ -976,18 +989,19 @@ void Player::BehaviorStrongAttackUpdate(){
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
-		if (isTrail_) {
-			if (workAttack_.comboIndex == 1) {
-				trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+		if (timeScale_ != 0.0f) {
+			if (isTrail_) {
+				if (workAttack_.comboIndex == 1) {
+					trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+				}
+				else {
+					trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+				}
 			}
 			else {
-				trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+				trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 			}
 		}
-		else {
-			trail_->SetPos(Vector3(0.0f,0.0f,0.0f), Vector3(0.0f, 0.0f, 0.0f));
-		}
-		
 	}
 
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
@@ -1050,11 +1064,12 @@ void Player::BehaviorDashUpdate(){
 		if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
 			move_.z = 0;
 		}
-		playerTransform_.translate += move_;
+		playerTransform_.translate += move_ * timeScale_;
 	}
 
 	//既定の時間経過で通常状態に戻る
-	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+	workDash_.dashParameter_ += timeScale_;
+	if (workDash_.dashParameter_ >= behaviorDashTime) {
 		dashCoolTime_ =dashCoolTimeBase_;
 		isDash_ = false;
 		behaviorRequest_ = Behavior::kRoot;
@@ -1063,7 +1078,7 @@ void Player::BehaviorDashUpdate(){
 
 void Player::AttackMotion(){
 	if (weapon_Rotate_ >= 2.4f) {
-		waitTime_ -= 1;
+		waitTime_ -= 1 * timeScale_;
 		weapon_Rotate_ = 3.16f;
 	}
 	else if (weapon_Rotate_ <= -1.0f) {
@@ -1083,10 +1098,10 @@ void Player::AttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1098,7 +1113,7 @@ void Player::AttackMotion(){
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1129,10 +1144,10 @@ void Player::SecondAttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1144,7 +1159,7 @@ void Player::SecondAttackMotion(){
 	}
 	else if (isShakeDown_) {
 		
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 	
 
@@ -1181,10 +1196,10 @@ void Player::ThirdAttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1196,7 +1211,7 @@ void Player::ThirdAttackMotion(){
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1224,10 +1239,10 @@ void Player::FourthAttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1239,7 +1254,7 @@ void Player::FourthAttackMotion(){
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1269,10 +1284,10 @@ void Player::FifthAttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1284,7 +1299,7 @@ void Player::FifthAttackMotion(){
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1316,10 +1331,10 @@ void Player::SixthAttackMotion(){
 				move_.z = 0;
 			}
 
-			playerTransform_.translate += move_ * motionSpeed_;
+			playerTransform_.translate += (move_ * motionSpeed_) * timeScale_;
 		}
 		weaponTransform_.translate = playerTransform_.translate;
-		workAttack_.AttackTimer++;
+		workAttack_.AttackTimer += timeScale_;
 	}
 
 	if (waitTime_ <= 0) {
@@ -1331,7 +1346,7 @@ void Player::SixthAttackMotion(){
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1703,7 +1718,7 @@ void Player::FourthStrongAttackMotion(){
 				playerTransform_.translate += move_ * motionSpeed_;
 			}
 			weaponTransform_.translate = playerTransform_.translate;
-			workAttack_.AttackTimer++;
+			workAttack_.AttackTimer += timeScale_;
 		}
 
 	}

@@ -226,6 +226,7 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	collisionObj_->Draw();*/
 #endif // _DEBUG
 	partsObj_->SetMatrix(partsMatrix_);
+	partsObj_->SetTimeScale(timeScale_);
 	partsObj_->Update(viewProjection);
 	partsObj_->Draw();
 
@@ -464,7 +465,7 @@ void Enemy::RootMotion(){
 		move_.z = 0;
 	}
 
-	transform_.translate += move;
+	transform_.translate += move * timeScale_;
 
 	
 	if (target_){
@@ -478,30 +479,33 @@ void Enemy::RootMotion(){
 		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
+	//スクリーンに映っていたら距離に応じての行動を行う
+	if (isOnScreen_) {
 
-	if (playerLength_ > farPlayer_) {
-		farTime_++;
-	}
-	else if (playerLength_ < nearPlayer_) {
-		nearTime_++;
-	}
-	if (nearTime_ > lengthJudgment_) {
-		int i = RandomMaker::DistributionInt(0, 2);
-		/*if (i == 0) {
-			behaviorRequest_ = Behavior::kBack;
-		}*/
-		
+		if (playerLength_ > farPlayer_) {
+			farTime_++;
+		}
+		else if (playerLength_ < nearPlayer_) {
+			nearTime_++;
+		}
+		//指定の秒数近くにいた場合
+		if (nearTime_ > lengthJudgment_) {
+			//攻撃を準備する
+			behaviorRequest_ = Behavior::kPreliminalyAction;			
 
-	}
-	else if (farTime_ > lengthJudgment_) {
-		int i = RandomMaker::DistributionInt(0, 2);
-		if (i == 0) {
-			behaviorRequest_ = Behavior::kRun;
 		}
-		else {
-			behaviorRequest_ = Behavior::kPreliminalyAction;
+		//逆に離れていた場合
+		else if (farTime_ > lengthJudgment_) {
+			int i = RandomMaker::DistributionInt(0, 2);
+			//分岐
+			if (i == 0) {
+				behaviorRequest_ = Behavior::kRun;
+			}
+			else {
+				behaviorRequest_ = Behavior::kPreliminalyAction;
+			}
+
 		}
-		
 	}
 	
 }
@@ -545,7 +549,7 @@ void Enemy::Dash(){
 	
 	
 	attackOBB_.size = bodyOBB_.size * collisionScale_;
-	transform_.translate += move_;
+	transform_.translate += move_ * timeScale_;
 	
 
 	//既定の時間経過で通常状態に戻る
@@ -581,7 +585,7 @@ void Enemy::EnemyRun(){
 		move_.z = 0;
 	}
 
-	transform_.translate += move;
+	transform_.translate += move * timeScale_;
 
 
 	if (target_) {
@@ -610,6 +614,7 @@ void Enemy::EnemyRun(){
 
 void Enemy::BehaviorFreeInitialize(){
 	freeTime_ = 0;
+	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
 void Enemy::Free(){
@@ -623,12 +628,9 @@ void Enemy::BehaviorPreliminalyActionInitialize(){
 }
 
 void Enemy::PreliminalyAction(){
-	enemyColor_.y -= 0.02f;
-	enemyColor_.z = enemyColor_.y;
-
-	if (enemyColor_.y <= 0.2f){
-		behaviorRequest_ = Behavior::kAttack;
-	}
+	
+	behaviorRequest_ = Behavior::kAttack;
+	
 }
 
 void Enemy::BehaviorLeaningBackInitialize(){
@@ -851,7 +853,7 @@ void Enemy::Tackle(){
 
 	}
 
-	if (directionTime_ <= 0) {
+	if (enemyColor_.y <= 0.2f) {
 		if (attackTransitionTime_ <= 0) {
 			move_ = { 0, 0, dashSpeed_ };
 
@@ -880,7 +882,11 @@ void Enemy::Tackle(){
 	else {
 		
 		dashRotateMatrix_ = rotateMatrix_;
-		directionTime_--;
+
+		enemyColor_.y -= 0.02f;
+		enemyColor_.z = enemyColor_.y;
+
+		//directionTime_--;
 	}
 	
 }

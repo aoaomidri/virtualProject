@@ -1,5 +1,5 @@
 #include "TitleScene.h"
-#include"GameScene/GameScene.h"
+
 
 void TitleScene::TextureLoad() {
 	textureManager_->Load("resources/texture/rock.png");

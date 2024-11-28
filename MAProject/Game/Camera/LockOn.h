@@ -2,7 +2,9 @@
 #include"FollowCamera.h"
 #include"Sprite.h"
 #include"OBB.h"
+#include"Shape/Collider.h"
 #include"Enemy.h"
+
 /*ロックオンの更新*/
 class LockOn{
 public:
@@ -14,7 +16,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input, const ViewingFrustum& viewingFrustum);
+	void Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input, const ViewingFrustum& viewingFrustum, const bool isAvoid, const uint32_t serialNumber);
 
 	/// <summary>
 	/// 描画
@@ -22,18 +24,15 @@ public:
 	void Draw();
 
 	void DrawImgui();
-
-	bool IsCollisionViewFrustum(const OBB& obb, const ViewingFrustum& viewingFrustum);
-
-	bool IsCollisionOBB(const OBB& obb, const ViewingFrustum& viewingFrustum);
-
-	bool IsCollisionOBBViewFrustum(const OBB& obb, const ViewingFrustum& viewingFrustum);
 	
 private:
 	/// <summary>
 	/// 検索
 	/// </summary>
 	void search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
+
+	//ジャスト回避したときの検索
+	void avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection);
 
 	/// <summary>
 	/// 範囲内判定

@@ -3,20 +3,11 @@
 #include"Input.h"
 #include"Adjustment_Item.h"
 #include"ViewProjection.h"
+#include"ViewingFrustum.h"
 #include"Matrix.h"
 /*プレイヤーの後ろについて回るカメラ*/
 //前方宣言
 class LockOn;
-
-struct ViewingFrustum {
-	Vector3 translation_; // カメラの座標
-	Vector3 rotate_;      // カメラの回転
-	Vector3 direction;    // カメラの向き
-	float verticalFOV;    // 縦画角
-	float aspectRatio;    // アスペクト比
-	float nearZ;          // 深度限界（手前側）
-	float farZ;           // 深度限界（奥側）
-};
 
 struct CameraShake {
 	float amplitude;  // シェイクの振幅

@@ -80,6 +80,10 @@ public:
 
 	void SetTargetMat(const Matrix4x4* target) { targetRotateMat_ = target; }
 
+	void SetTimeScale(const float scale) { timeScale_ = scale; }
+
+	void SetIsOnScreen(const bool flag) { isOnScreen_ = flag; }
+
 	static uint32_t GetEnemyDestroyingNum() {
 		return enemyDestroyingNumber_;
 	}
@@ -141,6 +145,7 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	//カメラの情報
 	const ViewProjection* viewProjection_ = nullptr;
 
 	//攻撃のOBB
@@ -187,6 +192,8 @@ private:
 	float backSpeed_ = -2.0f;
 
 	float hitBackSpeed_ = 1.0f;
+	//ゲー無の時間
+	float timeScale_ = 0.0f;
 
 	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.3f };
 
@@ -199,8 +206,10 @@ private:
 	bool isDead_ = false;
 	//近接攻撃中かどうか
 	bool isNearAttack_ = false;
-
+	//体力がなくなったかどうか
 	bool isNoLife_ = false;
+	//画面内にいるかどうか
+	bool isOnScreen_ = false;
 
 	int32_t enemyLifeMax_ = 3;
 

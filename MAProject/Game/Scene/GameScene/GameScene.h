@@ -17,6 +17,7 @@
 #include"SkyBox.h"
 #include"Audio.h"
 #include"LevelLoader/LevelLoader.h"
+#include"SceneManager/SceneManager.h"
 #include"StageObject.h"
 #include"PostEffect.h"
 /*インゲーム部分の初期化、更新、描画*/
@@ -74,8 +75,6 @@ private:
 	void FilesSave(const std::vector<std::string>& stages);
 	void FilesOverWrite(const std::string& stage);
 	void FilesLoad(const std::string& stage);
-	//OBB同士の当たり判定
-	bool IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2);
 
 private:
 	/*ファイル関連*/
@@ -151,6 +150,9 @@ private:
 
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
+	//停止させる時間
+	float stopTime_ = 0.08f;
+
 	bool isFade_ = false;
 
 	std::unique_ptr<Sprite> pressSprite_;
@@ -165,17 +167,6 @@ private:
 	std::unique_ptr<LockOn> lockOn_;
 
 	std::unique_ptr<StageObject> stageObject_;
-
-	//シーン関連
-	enum SceneName{
-		TITLE,
-		GAME,
-		CLEAR
-	};
-
-	int sceneNum_;
-
-
 
 };
 

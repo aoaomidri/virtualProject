@@ -52,6 +52,8 @@ void WholeGame::Update(){
 
 	adjustment_item->Update();
 
+	GameTime::Update();
+
 	sceneManager_->Update();
 	DrawImgui();
 
@@ -130,6 +132,17 @@ void WholeGame::DrawImgui(){
 	ImGui::End();
 	ImGui::Begin("FPS");
 	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+	ImGui::End();
+
+	ImGui::Begin("ゲーム内の時間");
+	ImGui::SliderFloat("時間の速さ", &GameTime::timeScale_, 0.0f, 1.0f, "%.1f");
+	if (ImGui::Button("時間を止める")){
+		GameTime::StopTime(1.0f);
+	}
+	if (ImGui::Button("時間を遅くする")) {
+		GameTime::SlowDownTime(1.0f, 0.5f);
+	}
+
 	ImGui::End();
 
 	ImGui::Begin("ポストエフェクトの情報");

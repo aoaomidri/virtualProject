@@ -14,6 +14,7 @@
 #include"ParticleBase.h"
 #include<optional>
 #include"Effect/TrailRender.h"
+#include"GameTime.h"
 /*プレイヤーが操作する自機の更新描画*/
 //前方宣言
 class LockOn;
@@ -76,11 +77,13 @@ public:
 
 	const int GetHitTimer()const { return hitTimer_; }
 
+	const uint32_t GetSerialNumber()const { return enemyNumber_; }
+
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
 
-	void OnCollisionEnemyAttack();
+	void OnCollisionEnemyAttack(const uint32_t serialNumber);
 
 	//Setter
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
@@ -90,6 +93,8 @@ public:
 	void SetIsDown(bool isDown);
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+
+	void SetTimeScale(const float scale) { timeScale_ = scale; }
 
 private:
 	//クラス内関数
@@ -113,13 +118,13 @@ private:
 public:
 	
 	struct  WorkAttack{
-		uint32_t attackParameter = 0;
+		float attackParameter = 0;
 		int32_t comboIndex = 0;
 		int32_t inComboPhase = 0;
 		bool comboNext = false;
 		bool strongComboNext = false;
-		uint32_t AttackTimer = 0;
-		uint32_t nextAttackTimer = 0;
+		float AttackTimer = 0;
+		float nextAttackTimer = 0;
 	};
 
 	WorkAttack workAttack_;
@@ -191,6 +196,8 @@ private:
 	void SettingGroundCrushTex();
 
 private:
+
+
 	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
 
@@ -276,10 +283,12 @@ private:
 
 	struct WorkDash {
 		//ダッシュ用の媒介変数
-		uint32_t dashParameter_ = 0;
+		float dashParameter_ = 0;
 	};
 
 	WorkDash workDash_;
+
+	float timeScale_ = 0.0f;
 
 	//応刀受付時間のベース
 	int justAvoidAttackTimerBase_ = 60;
@@ -305,12 +314,14 @@ private:
 	//強2攻撃での追撃回数カウント
 	int32_t strongSecondAttackCount_ = 0;
 
-	int32_t waitTimeBase_ = 7;
-	int32_t waitTime_ = 0;
+	uint32_t enemyNumber_ = 100;
+
+	float waitTimeBase_ = 7.0f;
+	float waitTime_ = 0;
 
 	//強攻撃強化時間
-	int32_t counterTimeBase_ = 30;
-	int32_t counterTime_ = 0;
+	float counterTimeBase_ = 30.0f;
+	float counterTime_ = 0;
 
 	//武器の高さ補正
 	Vector3 addPosition_ = {};

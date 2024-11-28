@@ -17,7 +17,7 @@ void FollowCamera::ApplyGlobalVariables(){
 }
 
 void FollowCamera::ShakeUpdate(){
-	cameraShake_.elapsedTime += 1.0f / ImGui::GetIO().Framerate;
+	cameraShake_.elapsedTime += 1.0f / 60.0f;
 
 	float progress = (cameraShake_.elapsedTime) / cameraShake_.duration;
 

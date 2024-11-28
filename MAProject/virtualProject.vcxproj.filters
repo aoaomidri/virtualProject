@@ -216,6 +216,9 @@
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerDash.cpp">
       <Filter>Game\Character\Player\PlayerState\States</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Time\GameTime.cpp">
+      <Filter>Game\Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -410,6 +413,15 @@
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerDash.h">
       <Filter>Game\Character\Player\PlayerState\States</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Time\GameTime.h">
+      <Filter>Game\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Shape\Collider.h">
+      <Filter>Engine\3D\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Shape\ViewingFrustum.h">
+      <Filter>Engine\3D\Shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli">
@@ -545,6 +557,9 @@
     </Filter>
     <Filter Include="Game\Character\Player\PlayerState\States">
       <UniqueIdentifier>{01492803-bbb5-4c07-9014-86f73a802892}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Time">
+      <UniqueIdentifier>{0ffbffeb-ca39-4132-9917-294d21c3a24c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -202,7 +202,7 @@ void GameScene::Initialize(){
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	sceneNum_ = SceneName::GAME;
+	
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
@@ -218,8 +218,7 @@ void GameScene::Update(){
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 		
-	followCamera_->SetIsMove(true);
-		
+	followCamera_->SetIsMove(true);		
 		
 	fadeAlpha_ -= 0.01f;
 	if (fadeAlpha_<=0.0f){
@@ -227,14 +226,17 @@ void GameScene::Update(){
 			
 		isFade_ = false;
 		fadeAlpha_ = 0.0f;
-		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum());
+		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
 
+		player_->SetTimeScale(GameTime::timeScale_);
 		player_->Update();
 		for (const auto& enemy : enemies_) {
+			enemy->SetTimeScale(GameTime::timeScale_);
 			enemy->Update();
 		}
 	}
 	if (player_->GetIsJustAvoid()){
+		
 		postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	}
 	else if (postEffect_->GetEffectType() != PostEffect::EffectType::None and player_->GetHitTimer() == 0 ) {
@@ -243,6 +245,10 @@ void GameScene::Update(){
 		
 
 	if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
+	}
+
+	if (input_->Trigerkey(DIK_R)) {
+		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
 	}
 
 	AllCollision();
@@ -362,6 +368,9 @@ void GameScene::DrawImgui(){
 		enemy->DrawImgui();
 	}
 
+	ImGui::Begin("停止時間");
+	ImGui::DragFloat("時間", &stopTime_, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
 	
 
 #endif // _DEBUG	
@@ -391,8 +400,15 @@ void GameScene::AllCollision(){
 			}
 			//接触履歴に登録
 			player_->AddRecord(serialNumber);
-
+			GameTime::StopTime(stopTime_);
 			enemy->OnCollision();
+		}
+
+		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
+			enemy->SetIsOnScreen(true);
+		}
+		else {
+			enemy->SetIsOnScreen(false);
 		}
 
 		//if (enemy->GetIsDead()) {
@@ -411,7 +427,9 @@ void GameScene::AllCollision(){
 		}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-			player_->OnCollisionEnemyAttack();
+
+
+			player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
 			followCamera_->StartShake(0.5f, 1.5f);
 			break;
 		}
@@ -441,96 +459,4 @@ void GameScene::FilesLoad(const std::string& stage) {
 	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
 }
 
-bool GameScene::IsCollisionOBBOBB(const OBB& obb1, const OBB& obb2){
-	
 
-	Vector3 vector{};
-	Matrix matrix;
-
-	Vector3 separatingAxis[15]{};
-	separatingAxis[0] = obb1.orientations[0];
-	separatingAxis[1] = obb1.orientations[1];
-	separatingAxis[2] = obb1.orientations[2];
-	separatingAxis[3] = obb2.orientations[0];
-	separatingAxis[4] = obb2.orientations[1];
-	separatingAxis[5] = obb2.orientations[2];
-	int axisNum = 6;
-	for (int index1 = 0; index1 < 3; index1++) {
-		for (int index2 = 0; index2 < 3; index2++) {
-			separatingAxis[axisNum] = vector.Cross(obb1.orientations[index1], obb2.orientations[index2]);
-			axisNum++;
-		}
-	}
-
-	Vector3 obb1Vertex[8]{};
-	// bottom
-	obb1Vertex[0] = Vector3{ -obb1.size.x, -obb1.size.y, -obb1.size.z };
-	obb1Vertex[1] = Vector3{ +obb1.size.x, -obb1.size.y, -obb1.size.z };
-	obb1Vertex[2] = Vector3{ -obb1.size.x, -obb1.size.y, +obb1.size.z };
-	obb1Vertex[3] = Vector3{ +obb1.size.x, -obb1.size.y, +obb1.size.z };
-	// top
-	obb1Vertex[4] = Vector3{ -obb1.size.x, +obb1.size.y, -obb1.size.z };
-	obb1Vertex[5] = Vector3{ +obb1.size.x, +obb1.size.y, -obb1.size.z };
-	obb1Vertex[6] = Vector3{ -obb1.size.x, +obb1.size.y, +obb1.size.z };
-	obb1Vertex[7] = Vector3{ +obb1.size.x, +obb1.size.y, +obb1.size.z };
-
-	Matrix4x4 rotateMatrix1 = GetRotate(obb1);
-
-	Vector3 obb2Vertex[8]{};
-	// bottom
-	obb2Vertex[0] = Vector3{ -obb2.size.x, -obb2.size.y, -obb2.size.z };
-	obb2Vertex[1] = Vector3{ +obb2.size.x, -obb2.size.y, -obb2.size.z };
-	obb2Vertex[2] = Vector3{ -obb2.size.x, -obb2.size.y, +obb2.size.z };
-	obb2Vertex[3] = Vector3{ +obb2.size.x, -obb2.size.y, +obb2.size.z };
-	// top
-	obb2Vertex[4] = Vector3{ -obb2.size.x, +obb2.size.y, -obb2.size.z };
-	obb2Vertex[5] = Vector3{ +obb2.size.x, +obb2.size.y, -obb2.size.z };
-	obb2Vertex[6] = Vector3{ -obb2.size.x, +obb2.size.y, +obb2.size.z };
-	obb2Vertex[7] = Vector3{ +obb2.size.x, +obb2.size.y, +obb2.size.z };
-
-	Matrix4x4 rotateMatrix2 = GetRotate(obb2);
-
-	for (int index = 0; index < 8; index++) {
-		obb1Vertex[index] = matrix.TransformVec(obb1Vertex[index], rotateMatrix1);
-		obb1Vertex[index] = (obb1Vertex[index] + obb1.center);
-		obb2Vertex[index] = matrix.TransformVec(obb2Vertex[index], rotateMatrix2);
-		obb2Vertex[index] = (obb2Vertex[index] + obb2.center);
-	}
-
-	for (axisNum = 0; axisNum < 15; axisNum++) {
-		float projectionPoint1[8]{};
-		float projectionPoint2[8]{};
-		float min1, max1;
-		float min2, max2;
-		min1 = vector.Dot(obb1Vertex[0], vector.Normalize(separatingAxis[axisNum]));
-		min2 = vector.Dot(obb2Vertex[0], vector.Normalize(separatingAxis[axisNum]));
-		max1 = min1;
-		max2 = min2;
-		for (int index = 0; index < 8; index++) {
-			projectionPoint1[index] =
-				vector.Dot(obb1Vertex[index], vector.Normalize(separatingAxis[axisNum]));
-			projectionPoint2[index] =
-				vector.Dot(obb2Vertex[index], vector.Normalize(separatingAxis[axisNum]));
-			if (index == 0) {
-				min1 = projectionPoint1[index];
-				min2 = projectionPoint2[index];
-				max1 = min1;
-				max2 = min2;
-			}
-			else {
-				min1 = std::min(min1, projectionPoint1[index]);
-				min2 = std::min(min2, projectionPoint2[index]);
-				max1 = max(max1, projectionPoint1[index]);
-				max2 = max(max2, projectionPoint2[index]);
-			}
-		}
-		float L1 = max1 - min1;
-		float L2 = max2 - min2;
-		float sumSpan = L1 + L2;
-		float longSpan = max(max1, max2) - std::min(min1, min2);
-		if (sumSpan < longSpan) {
-			return false;
-		}
-	}
-	return true;
-}

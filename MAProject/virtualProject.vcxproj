@@ -84,7 +84,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;$(ProjectDir)Game\Time\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -220,6 +220,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Stage\Floor\Floor.cpp" />
     <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
     <ClCompile Include="Game\Stage\StageObject\StageObject.cpp" />
+    <ClCompile Include="Game\Time\GameTime.cpp" />
     <ClCompile Include="Game\WholeGame\MAFramework.cpp" />
     <ClCompile Include="Game\WholeGame\WholeGame.cpp" />
     <ClCompile Include="main.cpp" />
@@ -243,7 +244,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Object3D\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\3D\Object3D\SkinAnimObject3D.h" />
     <ClInclude Include="Engine\3D\Object3D\SkyBox.h" />
+    <ClInclude Include="Engine\3D\Shape\Collider.h" />
     <ClInclude Include="Engine\3D\Shape\OBB.h" />
+    <ClInclude Include="Engine\3D\Shape\ViewingFrustum.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />
     <ClInclude Include="Engine\Base\ComputeGraphicsPipeline.h" />
@@ -286,6 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Stage\Floor\Floor.h" />
     <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
     <ClInclude Include="Game\Stage\StageObject\StageObject.h" />
+    <ClInclude Include="Game\Time\GameTime.h" />
     <ClInclude Include="Game\WholeGame\MAFramework.h" />
     <ClInclude Include="Game\WholeGame\WholeGame.h" />
     <ClInclude Include="math\Ease\Ease.h" />

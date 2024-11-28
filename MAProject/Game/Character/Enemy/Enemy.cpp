@@ -58,9 +58,14 @@ void Enemy::Initialize(const Vector3& position){
 
 	bodyObj_ = std::make_unique<Object3D>();
 	bodyObj_->Initialize("Enemy");
+	bodyObj_->SetIsLighting(false);
+	bodyObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
 	partsObj_ = std::make_unique<Object3D>();
 	partsObj_->Initialize("EnemyParts");
+	partsObj_->SetIsLighting(true);
+	partsObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
+
 
 	collisionObj_ = std::make_unique<Object3D>();
 	collisionObj_->Initialize("box");
@@ -634,7 +639,7 @@ void Enemy::PreliminalyAction(){
 }
 
 void Enemy::BehaviorLeaningBackInitialize(){
-	
+	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	transform_.rotate = hitEaseStart_;
 	rotateEaseT_ = 0.0f;
 }

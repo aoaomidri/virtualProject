@@ -47,6 +47,10 @@ private:
 
 	PostEffect::HSVMaterial hsv_{};
 
+	/*ポストエフェクト推移用*/
+
+	PostEffect::PostBlend postBlend_{};
+
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;
 

@@ -9,6 +9,10 @@ struct HSVMaterial {
 	float32_t value;
 };
 
+struct PostBlend {
+	float32_t blendFactor;
+};
+
 float32_t WrapValue(float32_t value ,float32_t minRange, float32_t maxRange){
 	float32_t range = maxRange - minRange;
 	float32_t modValue = fmod(value - minRange, range);

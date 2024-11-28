@@ -43,6 +43,8 @@ void Player::Initialize(){
 
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize("PlayerFace");
+	playerObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
+	playerObj_->SetIsLighting(true);
 
 	//playerObj_->SetTexture("resources/DDS/uvCheck.dds");
 
@@ -131,6 +133,13 @@ void Player::Initialize(){
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
+
+	audio_ = Audio::GetInstance();
+	
+	avoidSE_ = audio_->LoadAudio("SE/avoidSE.mp3");
+	attackMotionSE_ = audio_->LoadAudio("SE/attackMotionSE.mp3");
+	playerHitSE_ = audio_->LoadAudio("SE/playerHitSE.mp3");
+
 }
 
 void Player::Update(){
@@ -434,6 +443,7 @@ void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 		}
 		else {
 			//普通に被弾
+			audio_->PlayAudio(playerHitSE_, 0.5f, false);
 			isHitEnemyAttack_ = true;
 			hitTimer_ = 30;
 
@@ -565,12 +575,14 @@ void Player::BehaviorRootUpdate(){
 	}
 
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
+		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kAttack;
 		isDissolve_ = false;
 		weaponThreshold_ = 0.0f;
 	}
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !isDown_) {
+		//audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
 		isDissolve_ = false;
@@ -770,20 +782,25 @@ void Player::BehaviorAttackUpdate(){
 
 
 			}
-
+			
 			if (workAttack_.comboIndex == 1) {
+				
 				BehaviorAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 2) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				BehaviorSecondAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 3) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				BehaviorThirdAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 4) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				BehaviorFourthAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 5) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 
 				BehaviorFifthAttackInitialize();
 			}
@@ -1011,6 +1028,8 @@ void Player::BehaviorStrongAttackUpdate(){
 }
 
 void Player::BehaviorDashInitialize(){
+
+	audio_->PlayAudio(avoidSE_, 0.5f, false);
 
 	workDash_.dashParameter_ = 0;
 
@@ -1315,6 +1334,7 @@ void Player::SixthAttackMotion(){
 		SettingGroundCrushTex();
 	}
 	else if (weapon_Rotate_ <= -0.6f) {
+		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		isShakeDown_ = true;
 	}
 	else {
@@ -1583,6 +1603,7 @@ void Player::StrongAttackMotion(){
 		}
 
 		if (waitTime_ <= 0) {
+			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 			isEndAttack_ = true;
 		}
 
@@ -1607,12 +1628,13 @@ void Player::StrongAttackMotion(){
 }
 
 void Player::SecondStrongAttackMotion(){
+
 	easeT_ += addEaseT_;
-	if (easeT_ >= 1.0f) {
+	if (easeT_ > 1.0f) {
 		easeT_ = 1.0f;
 		waitTime_ -= 1;
-
-		
+		addEaseT_ = 0.0f;
+		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 	}
 	if (easeT_ >= 0.7f){
 		if (strongSecondAttackCount_ < kStrongSecondAttackCountMax_) {
@@ -1652,6 +1674,7 @@ void Player::ThirdStrongAttackMotion(){
 		SettingGroundCrushTex();
 	}
 	else if (weapon_Rotate_ <= -0.9f) {
+		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		isShakeDown_ = true;
 		isTrail_ = true;
 	}
@@ -1682,6 +1705,7 @@ void Player::FourthStrongAttackMotion(){
 		
 	}
 	else if (weapon_Rotate_ <= -0.9f) {
+		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		isShakeDown_ = true;
 		downVector_.y += jumpPower_ / 3.0f;
 	}
@@ -1736,6 +1760,7 @@ void Player::FifthStrongAttackMotion(){
 				weapon_Rotate_ = 3.0f;
 			}
 			else if (weapon_Rotate_ <= -0.5f) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				isShakeDown_ = true;
 				isTrail_ = true;
 			}
@@ -1763,6 +1788,8 @@ void Player::FifthStrongAttackMotion(){
 				weapon_Rotate_ = -0.3f;
 			}
 			else if (weapon_Rotate_ >= 3.3f) {
+				
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				isShakeDown_ = true;
 			}
 
@@ -1778,6 +1805,7 @@ void Player::FifthStrongAttackMotion(){
 					waitTime_ = waitTimeBase_;
 					weaponTransform_.rotate.z = -1.5f;
 					hitRecord_.Clear();
+					audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				}
 				else {
 					waitTime_ = waitTimeBase_;
@@ -1805,6 +1833,7 @@ void Player::FifthStrongAttackMotion(){
 			SettingGroundCrushTex();
 		}
 		else if (weapon_Rotate_ <= -0.5f) {
+			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 			isTrail_ = true;
 			isShakeDown_ = true;
 		}
@@ -1851,10 +1880,11 @@ void Player::SixthStrongAttackMotion(){
 	}
 	else {
 		easeT_ += addEaseT_;
-		if (easeT_ >= 1.0f) {
+		if (easeT_ > 1.0f) {
 			easeT_ = 1.0f;
 			waitTime_ -= 1;
-
+			addEaseT_ = 0.0f;
+			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 			SettingGroundCrushTex();
 		}
 		

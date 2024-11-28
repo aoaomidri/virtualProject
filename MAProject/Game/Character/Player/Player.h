@@ -14,6 +14,7 @@
 #include"ParticleBase.h"
 #include<optional>
 #include"Effect/TrailRender.h"
+#include"Audio.h"
 #include"GameTime.h"
 /*プレイヤーが操作する自機の更新描画*/
 //前方宣言
@@ -400,6 +401,16 @@ private:
 
 	//入力
 	Input* input_ = nullptr;
+
+	//音関係
+	Audio* audio_ = nullptr;
+
+	//回避の時の音
+	uint32_t avoidSE_;
+	//武器を振るときの音
+	uint32_t attackMotionSE_;
+	//被弾時の音
+	uint32_t playerHitSE_{};
 
 	HitRecord hitRecord_;
 

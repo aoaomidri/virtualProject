@@ -335,7 +335,7 @@ void GraphicsPipeline::makeRootSignatureCopy(ID3D12Device* device){
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameter[5] = {};
+	D3D12_ROOT_PARAMETER rootParameter[6] = {};
 
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
@@ -361,6 +361,10 @@ void GraphicsPipeline::makeRootSignatureCopy(ID3D12Device* device){
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[4].Descriptor.ShaderRegister = 2;
+
+	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[5].Descriptor.ShaderRegister = 3;
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSampler[2] = {};

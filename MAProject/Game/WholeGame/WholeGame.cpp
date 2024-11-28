@@ -33,6 +33,8 @@ void WholeGame::Initialize(){
 		.scale = 16.0f,
 		.pow = 0.8f,
 	};
+
+	postBlend_.blendFactor = 1.0f;
 	
 }
 
@@ -161,6 +163,11 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat("saturate", &hsv_.saturation, 0.001f, -1.0f, 1.0f);
 	ImGui::DragFloat("value", &hsv_.value, 0.001f, -1.0f, 1.0f);
 	postEffect_->SetHSVData(hsv_);
+
+	ImGui::Text("ポストエフェクトの補正値");
+	ImGui::SliderFloat("blendFactor", &postBlend_.blendFactor, 0.0f, 1.0f, "%.2f");
+	postEffect_->SetPostBlend(postBlend_);
+
 	ImGui::End();
 
 	

@@ -52,6 +52,7 @@ void PostEffect::Initialize(){
 	ProjectInverseResource();
 	CreateThresholdResource();
 	CreateHSVResource();
+	CreateBlendResource();
 
 }
 
@@ -172,4 +173,12 @@ void PostEffect::CreateHSVResource(){
 
 	HSVData_->value = 0.0f;
 
+}
+
+void PostEffect::CreateBlendResource(){
+	blendResource_ = TextureManager::GetInstance()->CreateBufferResource(sizeof(PostBlend));
+
+	blendResource_->Map(0, nullptr, reinterpret_cast<void**>(&blendData_));
+
+	blendData_->blendFactor = 1.0f;
 }

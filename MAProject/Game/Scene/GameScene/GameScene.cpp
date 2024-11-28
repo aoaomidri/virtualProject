@@ -28,8 +28,10 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	titleBGM = audio_->LoadAudio("Game3.mp3");
-	gameBGM = audio_->LoadAudio("Game3.mp3");
+	gameBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
+	
+	enemyHitSE_ = audio_->LoadAudio("SE/enemyHitSE.mp3");
+
 }
 
 void GameScene::SpriteInitialize(){
@@ -93,9 +95,17 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	audio_->ResumeWave(titleBGM);
-	/*audio_->PlayAudio(gameBGM, 0.1f, true);
-	audio_->PauseWave(gameBGM);*/
+	audio_->ResumeWave(gameBGM_);
+	
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "athers";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "stopTime", stopTime_);
+
+	/*敵の彩度外部に吐き出す事を忘れずに*/
+	
 
 	SpriteInitialize();
 	ObjectInitialize();
@@ -214,6 +224,11 @@ void GameScene::Initialize(){
 
 void GameScene::Update(){
 	DrawImgui();
+
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "athers";
+
+	stopTime_ = adjustment_item->GetfloatValue(groupName, "stopTime");
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
@@ -232,6 +247,7 @@ void GameScene::Update(){
 		player_->Update();
 		for (const auto& enemy : enemies_) {
 			enemy->SetTimeScale(GameTime::timeScale_);
+			enemy->SetShininess(enemyShininess_);
 			enemy->Update();
 		}
 	}
@@ -273,7 +289,6 @@ void GameScene::Debug(){
 void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
-
 	player_->ParticleDraw(followCamera_->GetViewProjection());
 	for (const auto& enemy : enemies_) {
 		enemy->ParticleDraw(followCamera_->GetViewProjection(), player_->GetTrailColor());
@@ -294,6 +309,8 @@ void GameScene::Draw3D(){
 	textureManager_->PreDrawMapping3D();
 
 	///*ここから下に描画処理を書き込む*/
+
+	textureManager_->PreDraw3D();
 	player_->Draw(followCamera_->GetViewProjection());
 
 	for (const auto& enemy : enemies_) {
@@ -302,8 +319,6 @@ void GameScene::Draw3D(){
 
 	lockOn_->Draw();
 	floorManager_->Draw(followCamera_->GetViewProjection());
-
-	textureManager_->PreDraw3D();
 	stageObject_->Draw(followCamera_->GetViewProjection());
 	
 	/*描画処理はここまで*/
@@ -400,6 +415,7 @@ void GameScene::AllCollision(){
 			}
 			//接触履歴に登録
 			player_->AddRecord(serialNumber);
+			audio_->PlayAudio(enemyHitSE_, 0.5f, false);
 			GameTime::StopTime(stopTime_);
 			enemy->OnCollision();
 		}
@@ -427,10 +443,9 @@ void GameScene::AllCollision(){
 		}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-
-
 			player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
 			followCamera_->StartShake(0.5f, 1.5f);
+			
 			break;
 		}
 		

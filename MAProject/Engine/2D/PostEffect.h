@@ -62,6 +62,11 @@ public:
 		float saturation;//彩度
 		float value;//明度
 	};
+	//ポストエフェクトの調整用の値
+	struct PostBlend {
+		float blendFactor; // ブレンド比率 (0.0～1.0)
+		float padding[3];  // 16バイト境界に合わせるためのパディング
+	};
 public:
 	const uint32_t GetEffectType()const {
 		return selectPost_;
@@ -85,6 +90,13 @@ public:
 	const D3D12_GPU_VIRTUAL_ADDRESS GetHSVMaterial()const {
 		return HSVResource_->GetGPUVirtualAddress();
 	}
+
+	//BlendのResourceを送る
+	const D3D12_GPU_VIRTUAL_ADDRESS GetBlendPost()const {
+		return blendResource_->GetGPUVirtualAddress();
+	}
+
+
 public:
 	void SetVignettingData(const Vignetting& data) {
 		vignettingData_->scale = data.scale;
@@ -103,6 +115,10 @@ public:
 
 	void SetThreshold(const float& data) {
 		thresholdData_->threshold = data;
+	}
+
+	void SetPostBlend(const PostBlend& data) {
+		blendData_->blendFactor = data.blendFactor;
 	}
 
 	void SetMatProjectionInverse(const Matrix4x4& mat) {
@@ -131,6 +147,13 @@ public:
 		return false;
 	}
 
+	bool IsSelectGray() const {
+		if (selectPost_ == EffectType::Gray){
+			return true;
+		}
+		return false;
+	}
+
 	bool IsSelectVignetting() const {
 		if (selectPost_ == EffectType::NormalVignetting || selectPost_ == EffectType::GrayVignetting || selectPost_ == EffectType::SepiaVignetting) {
 			return true;
@@ -139,13 +162,17 @@ public:
 	}
 
 private:
+	//リソースを生成するための関数
+	//ヴィネットのリソース
 	void CreateVignettingResource();
-
+	//プロジェクション行列の逆行列の生成
 	void ProjectInverseResource();
-
+	//しきい値の生成
 	void CreateThresholdResource();
-
+	//HSVリソースの生成
 	void CreateHSVResource();
+	//ブレンド用のリソースの生成
+	void CreateBlendResource();
 
 private:
 	//ポストエフェクト
@@ -199,5 +226,9 @@ private:
 	ComPtr<ID3D12Resource> HSVResource_;
 
 	HSVMaterial* HSVData_ = nullptr;
+
+	ComPtr<ID3D12Resource> blendResource_;
+
+	PostBlend* blendData_ = nullptr;
 };
 

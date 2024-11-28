@@ -72,6 +72,11 @@ public:
 
 	//Setter
 
+	void SetShininess(const float shininess) {
+		bodyObj_->SetShininess(shininess);
+		partsObj_->SetShininess(shininess);
+	}
+
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	void SetIsDead(bool isDead) { isDead_ = isDead; }

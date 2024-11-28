@@ -198,8 +198,7 @@ void TextureManager::DrawCopy(){
 	auto commandList = DirectXCommon::GetInstance()->GetCommandList();
 	auto postEffect = PostEffect::GetInstance();
 
-	postEffect->SetPipeLine();
-	
+	postEffect->SetPipeLine();	
 	
 	commandList->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
 	if (postEffect->IsSelectOutLine()){
@@ -216,7 +215,9 @@ void TextureManager::DrawCopy(){
 		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetThreshold());
 	}
 	commandList->SetGraphicsRootConstantBufferView(4, postEffect->GetHSVMaterial());
-	
+	if (postEffect->IsSelectGray()){
+		commandList->SetGraphicsRootConstantBufferView(5, postEffect->GetBlendPost());
+	}
 
 
 	commandList->DrawInstanced(3, 1, 0, 0);

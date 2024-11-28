@@ -26,7 +26,8 @@ void GameTime::Update(){
 		}
 	}
 	else {
-		/*元の倍率*/
+		/*元の倍率*/		
 		timeScale_ = 1.0f;
+		
 	}
 }

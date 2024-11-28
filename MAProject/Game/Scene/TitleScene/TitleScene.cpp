@@ -27,7 +27,7 @@ void TitleScene::TextureLoad() {
 }
 
 void TitleScene::SoundLoad() {
-	titleBGM_ = audio_->LoadAudio("Game3.mp3");
+	titleBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
 }
 
 void TitleScene::SpriteInitialize() {

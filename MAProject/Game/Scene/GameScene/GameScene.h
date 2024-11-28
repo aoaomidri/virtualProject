@@ -129,11 +129,13 @@ private:
 
 	//音関係
 	Audio* audio_ = nullptr;
+	//ゲームのBGM
+	uint32_t gameBGM_{};
+	//プレイヤーの攻撃が当たったときのSE
+	uint32_t enemyHitSE_{};
+	
 
-	uint32_t titleBGM{};
-
-	uint32_t gameBGM{};
-
+	/*スカイボックス*/
 	std::unique_ptr<SkyBox> skyBox_;
 
 	//スプライト関連
@@ -152,6 +154,9 @@ private:
 	float fadeAlpha_ = 0.0f;
 	//停止させる時間
 	float stopTime_ = 0.08f;
+
+	//敵の反射強度
+	float enemyShininess_;
 
 	bool isFade_ = false;
 

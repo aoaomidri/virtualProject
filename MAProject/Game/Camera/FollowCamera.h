@@ -86,6 +86,8 @@ private:
 
 	Vector3 cameraOffset{};
 
+	Vector2 limitPos_{ 95.0f,-95.0f };
+
 	//視錐台
 	ViewingFrustum viewingFrustum_ = {
 		.translation_ = viewProjection_.translation_,
@@ -152,6 +154,11 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	//入力
+	Input* input_ = nullptr;
+
+	//カメラを動かすことが出来るフラグ
+	bool isMove_;
 	//カメラシェイク用変数
 
 	//加算するオフセット
@@ -159,10 +166,5 @@ private:
 	//カメラシェイクのデータ
 	CameraShake cameraShake_{};
 
-	//入力
-	Input* input_ = nullptr;
-
-	//カメラを動かすことが出来るフラグ
-	bool isMove_;
 };
 

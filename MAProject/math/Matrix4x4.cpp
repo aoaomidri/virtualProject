@@ -315,12 +315,40 @@ Matrix4x4 Matrix4x4::DirectionToDirection(const Vector3& from, const Vector3& to
 	Vector3 tn = Vector3::Normalize(to);
 
 	if (fn == -tn) {
-		if (fn.x != 0 || fn.z != 0) {
+		/*if (fn.x != 0 || fn.z != 0) {
 			axis = { 0.0f,fn.z,-fn.x };
 		}
 		else {
 			axis = Vector3::Normalize(Vector3::Cross(fn, tn));
+		}*/
+
+		// Y軸と平行か確認
+		if (fabs(fn.y) < 0.99f) {  // Y軸に平行でなければY軸を選択
+			axis = { 0.0f, 1.0f, 0.0f };
 		}
+		else {  // Y軸に平行ならZ軸を選択
+			axis = { 0.0f, 0.0f, 1.0f };
+		}
+
+		// 180°回転行列を生成
+		float x = axis.x;
+		float y = axis.y;
+		float z = axis.z;
+
+		// 180度回転のクォータニオンから回転行列を構築
+		m[0][0] = -1 + 2 * (x * x);
+		m[0][1] = 2 * x * y;
+		m[0][2] = 2 * x * z;
+
+		m[1][0] = 2 * y * x;
+		m[1][1] = -1 + 2 * (y * y);
+		m[1][2] = 2 * y * z;
+
+		m[2][0] = 2 * z * x;
+		m[2][1] = 2 * z * y;
+		m[2][2] = -1 + 2 * (z * z);
+
+		return *this;
 	}
 	else if (fn == tn) {
 		return Identity();

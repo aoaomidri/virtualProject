@@ -136,7 +136,7 @@ void Player::Initialize(){
 	addPosition_ = { 0.0f };
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(15, "resources/texture/TrailEffect/whiteTrail.png");
+	trail_->Initialize(10, "resources/texture/TrailEffect/whiteTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
@@ -375,6 +375,8 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::DragFloat("移動限界", &limitPos_.x, 0.01f);
+	limitPos_.y = -limitPos_.x;
 	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);
 	ImGui::Text("スティックの横 = %.4f", input_->GetPadLStick().x);
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
@@ -496,11 +498,11 @@ void Player::BehaviorRootUpdate(){
 	frontVec_ = postureVec_;
 	/*自機の移動*/	
 	move_.z = input_->GetPadLStick().y * moveSpeed_;
-	if (abs(move_.z) < 0.005f) {
+	if (abs(move_.z) < 0.0005f) {
 		move_.z = 0;
 	}	
 	move_.x = input_->GetPadLStick().x * moveSpeed_;
-	if (abs(move_.x) < 0.005f) {
+	if (abs(move_.x) < 0.0005f) {
 		move_.x = 0;
 	}
 	
@@ -546,10 +548,10 @@ void Player::BehaviorRootUpdate(){
 	}
 	Vector3 NextPos = playerTransform_.translate + move_;
 
-	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f){
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y){
 		move_.x = 0;
 	}
-	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 		move_.z = 0;
 	}
 
@@ -1099,10 +1101,10 @@ void Player::BehaviorDashUpdate(){
 	if (!isAvoidAttack_) {
 		Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
 
-		if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+		if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 			move_.x = 0;
 		}
-		if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+		if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 			move_.z = 0;
 		}
 		playerTransform_.translate += move_ * timeScale_;
@@ -1114,10 +1116,10 @@ void Player::BehaviorDashUpdate(){
 		if (Vector3::Length(sub) >= 10.0f) {
 			Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 			playerTransform_.translate += move_ * timeScale_;
@@ -1162,10 +1164,10 @@ void Player::AttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1208,10 +1210,10 @@ void Player::SecondAttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1260,10 +1262,10 @@ void Player::ThirdAttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1303,10 +1305,10 @@ void Player::FourthAttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1348,10 +1350,10 @@ void Player::FifthAttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1396,10 +1398,10 @@ void Player::SixthAttackMotion(){
 		if (!isCollisionEnemy_) {
 			Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}
-			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 				move_.z = 0;
 			}
 
@@ -1640,10 +1642,10 @@ void Player::StrongAttackMotion(){
 			if (!isCollisionEnemy_) {
 				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 					move_.x = 0;
 				}
-				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 					move_.z = 0;
 				}
 
@@ -1784,10 +1786,10 @@ void Player::FourthStrongAttackMotion(){
 			if (!isCollisionEnemy_) {
 				Vector3 NextPos = playerTransform_.translate + move_ * motionSpeed_;
 
-				if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 					move_.x = 0;
 				}
-				if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 					move_.z = 0;
 				}
 

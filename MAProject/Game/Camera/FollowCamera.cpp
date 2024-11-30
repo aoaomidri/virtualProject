@@ -124,13 +124,33 @@ void FollowCamera::Update(){
 	baseOffset = rootOffset;
 
 	if (target_) {
-		//追従座標の補完
-		interTarget_ = Vector3::Lerp(interTarget_, target_->translate, t_);
 		//追従対象からカメラまでのオフセット
 		Vector3 offset = offsetCalculation(baseOffset);
 
+		//追従座標の補完
+		interTarget_ = Vector3::Lerp(interTarget_, target_->translate, t_);
+
+		Vector3 result = interTarget_ + offset;
+
+		if (result.x >= limitPos_.x or result.x <= limitPos_.y){
+			if (result.x > 0){
+				result.x = limitPos_.x;
+			}
+			else {
+				result.x = limitPos_.y;
+			}
+		}
+		if (result.z >= limitPos_.x or result.z <= limitPos_.y) {
+			if (result.z > 0) {
+				result.z = limitPos_.x;
+			}
+			else {
+				result.z = limitPos_.y;
+			}
+		}
+
 		//座標をコピーしてオフセット分ずらす
-		viewProjection_.translation_ = interTarget_ + offset;
+		viewProjection_.translation_ = result;
 
 	}
 
@@ -191,6 +211,8 @@ void FollowCamera::DrawImgui(){
 	ImGui::DragFloat("オフセットY", &height_, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t_);
 	ImGui::Text("アングル補完レート = %.1f", angle_t);
+	ImGui::DragFloat("移動限界", &limitPos_.x, 0.01f);
+	limitPos_.y = -limitPos_.x;
 	if (ImGui::Button("カメラシェイク")) {
 		StartShake(0.5f, 1.0f);
 	}

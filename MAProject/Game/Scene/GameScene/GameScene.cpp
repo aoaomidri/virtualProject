@@ -106,7 +106,7 @@ void GameScene::Initialize(){
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
 
-	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
+	//firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
 
 	floorManager_->AddFloor(firstFloor_, false);
 

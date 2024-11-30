@@ -7,7 +7,7 @@ void Floor::Initialize(EulerTransform transform){
 	floorTransform_ = transform;
 
 	floorOBB_.center = floorTransform_.translate;
-	floorOBB_.size = floorTransform_.scale;
+	floorOBB_.size = { 1000.0f,1.0f,1000.0f };
 	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
@@ -29,7 +29,7 @@ void Floor::Update(){
 		}
 	}
 	floorOBB_.center = floorTransform_.translate;
-	floorOBB_.size = floorTransform_.scale;
+	floorOBB_.size = { 1000.0f,1.0f,1000.0f };
 	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 

@@ -100,9 +100,9 @@ private:
 	std::unique_ptr<FloorManager> floorManager_;
 
 	EulerTransform firstFloor_ = {
-		.scale = {50.0f,1.0f,50.0f},
+		.scale = {1.0f,0.5f,1.0f},
 		.rotate = {0},
-		.translate = {0,0.f,0.0f}
+		.translate = {0.0,0.f,0.0f}
 	};
 
 	bool isFloorMove_ = false;

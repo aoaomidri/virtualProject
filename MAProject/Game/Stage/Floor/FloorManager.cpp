@@ -10,16 +10,7 @@ void FloorManager::Initialize() {
 }
 
 void FloorManager::Update(){
-	//ブレイクフラグの立った床を削除
-	/*floors_.remove_if([](Floor* floor) {
-		if (floor->GetIsDelete()) {
-			delete floor;
-
-			return true;
-		}
-		return false;
-
-	});*/
+	
 	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 		(*it)->Update();
 	}

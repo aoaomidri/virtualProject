@@ -78,15 +78,19 @@ public:
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	//コントローラー
+
+	//ボタンが入力されているか
 	bool GetPadButton(UINT button);
-
+	//ボタンが離された瞬間か
 	bool GetPadButtonRelease(UINT button);
-
+	//ボタンを押した瞬間か
 	bool GetPadButtonTriger(UINT button);
-
-	Vector2 GetPadLStick();
-
-	Vector2 GetPadRStick();
+	//Lスティックを倒しているか
+	bool GetIsPushedLStick() const;
+	//Lスティックの倒した量の取得
+	Vector2 GetPadLStick() const;
+	//Rスティックの倒した量の取得
+	Vector2 GetPadRStick() const;
 
 	bool GetLTriggerDown();
 

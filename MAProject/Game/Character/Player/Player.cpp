@@ -608,7 +608,6 @@ void Player::BehaviorRootUpdate(){
 		weaponThreshold_ = 0.0f;
 	}
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !isDown_) {
-		//audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
 		isDissolve_ = false;
@@ -848,7 +847,11 @@ void Player::BehaviorAttackUpdate(){
 			else {
 				workAttack_.attackParameter += timeScale_;
 				if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
-
+					behaviorRequest_ = Behavior::kRoot;
+					isDissolve_ = true;
+					workAttack_.attackParameter = 0;
+				}
+				if (input_->GetIsPushedLStick() and (workAttack_.attackParameter * 4.0f >= ((float)(workAttack_.nextAttackTimer) / motionSpeed_))) {
 					behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;

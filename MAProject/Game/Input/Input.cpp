@@ -189,7 +189,21 @@ bool Input::GetPadButtonTriger(UINT button){
 	return xinputState.Gamepad.wButtons == button && oldXInputState.Gamepad.wButtons != button;
 }
 
-Vector2 Input::GetPadLStick()
+bool Input::GetIsPushedLStick() const{
+
+	float x = static_cast<float>(xinputState.Gamepad.sThumbLX);
+	float y = static_cast<float>(xinputState.Gamepad.sThumbLY);
+
+	if (x != 0.000f or y != 0.000f){
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+
+Vector2 Input::GetPadLStick() const
 {
 	SHORT x = xinputState.Gamepad.sThumbLX;
 	SHORT y = xinputState.Gamepad.sThumbLY;
@@ -197,7 +211,7 @@ Vector2 Input::GetPadLStick()
 	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
 }
 
-Vector2 Input::GetPadRStick()
+Vector2 Input::GetPadRStick() const
 {
 	SHORT x = xinputState.Gamepad.sThumbRX;
 	SHORT y = xinputState.Gamepad.sThumbRY;

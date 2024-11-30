@@ -91,19 +91,12 @@ void GameScene::Initialize(){
 	textureManager_ = TextureManager::GetInstance();
 
 	postEffect_ = PostEffect::GetInstance();
-	postEffect_->SetPostEffect(PostEffect::EffectType::None);
+	postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	
 	TextureLoad();
 	SoundLoad();
 	audio_->ResumeWave(gameBGM_);
 	
-	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "athers";
-	//グループを追加
-	adjustment_item->CreateGroup(groupName);
-	//アイテムの追加
-	adjustment_item->AddItem(groupName, "stopTime", stopTime_);
-
 	/*敵の彩度外部に吐き出す事を忘れずに*/
 	
 
@@ -223,12 +216,8 @@ void GameScene::Initialize(){
 }
 
 void GameScene::Update(){
+	bool frontFlag = false;
 	DrawImgui();
-
-	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "athers";
-
-	stopTime_ = adjustment_item->GetfloatValue(groupName, "stopTime");
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
@@ -241,23 +230,29 @@ void GameScene::Update(){
 			
 		isFade_ = false;
 		fadeAlpha_ = 0.0f;
-		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
 
+		frontFlag = player_->GetIsJustAvoid();
 		player_->SetTimeScale(GameTime::timeScale_);
 		player_->Update();
+		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
+
+		if (!player_->GetIsJustAvoid() and frontFlag){
+			lockOn_->TargetReset();
+		}
+
 		for (const auto& enemy : enemies_) {
 			enemy->SetTimeScale(GameTime::timeScale_);
 			enemy->SetShininess(enemyShininess_);
 			enemy->Update();
 		}
 	}
-	if (player_->GetIsJustAvoid()){
+	/*if (player_->GetIsJustAvoid()){
 		
 		postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	}
 	else if (postEffect_->GetEffectType() != PostEffect::EffectType::None and player_->GetHitTimer() == 0 ) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::None);
-	}
+	}*/
 		
 
 	if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
@@ -337,8 +332,6 @@ void GameScene::Draw3D(){
 	for (const auto& enemy : enemies_) {
 		enemy->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
 	}
-
-
 	
 }
 
@@ -381,12 +374,7 @@ void GameScene::DrawImgui(){
 
 	for (const auto& enemy : enemies_) {
 		enemy->DrawImgui();
-	}
-
-	ImGui::Begin("停止時間");
-	ImGui::DragFloat("時間", &stopTime_, 0.01f, 0.0f, 1.0f);
-	ImGui::End();
-	
+	}	
 
 #endif // _DEBUG	
 }
@@ -413,10 +401,15 @@ void GameScene::AllCollision(){
 			if (player_->RecordCheck(serialNumber)){
 				return;
 			}
+			//ノックバックの種類を指定
+			enemy->SetKnockBackType(player_->GetKnockbackType());
 			//接触履歴に登録
 			player_->AddRecord(serialNumber);
+			//ヒット音の再生
 			audio_->PlayAudio(enemyHitSE_, 0.5f, false);
-			GameTime::StopTime(stopTime_);
+			//ヒットストップ
+			GameTime::StopTime(player_->GetHitStop());
+			//当たったときの処理
 			enemy->OnCollision();
 		}
 
@@ -427,13 +420,6 @@ void GameScene::AllCollision(){
 			enemy->SetIsOnScreen(false);
 		}
 
-		//if (enemy->GetIsDead()) {
-		//	
-		//	//audio_->PauseWave(gameBGM);
-		//	isReset_ = true;
-		//	sceneNum_ = SceneName::CLEAR;
-		//}
-
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);
 			break;
@@ -443,16 +429,15 @@ void GameScene::AllCollision(){
 		}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
+			if (!player_->GetIsJustAvoid()) {
+				followCamera_->StartShake(0.5f, 1.5f);
+			}	
 			player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
-			followCamera_->StartShake(0.5f, 1.5f);
 			
-			break;
+			
 		}
 		
 	}
-
-	
-
 
 }
 

@@ -74,29 +74,29 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t3 specularDirectionalLight = 
 		gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
 
-		// //ここからポイントライト
+		// // //ここからポイントライト
 
-		float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
-		halfVector = normalize(-pointLightDirection + toEye);
-		NDotH = dot(normalize(input.normal),halfVector);
-		specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
+		// float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
+		// halfVector = normalize(-pointLightDirection + toEye);
+		// NDotH = dot(normalize(input.normal),halfVector);
+		// specularPow=pow(saturate(NDotH),gMaterial.shininess);//反射強度
 
-		NdotL = dot(normalize(input.normal),-pointLightDirection);
-		cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+		// NdotL = dot(normalize(input.normal),-pointLightDirection);
+		// cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 
 
 		
-		//減衰計算
-		float32_t distance = length(gPointLight.position - input.worldPosition);//ポイントライトへの距離
-		float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
+		// //減衰計算
+		// float32_t distance = length(gPointLight.position - input.worldPosition);//ポイントライトへの距離
+		// float32_t factor = pow(saturate(-distance / gPointLight.radius + 1.0), gPointLight.decay); //指数によるコントロール
 
-		//拡散反射
-		float32_t3 diffusePointLight = 
-		gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
+		// //拡散反射
+		// float32_t3 diffusePointLight = 
+		// gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
 
-		//鏡面反射
-		float32_t3 specularPointLight = 
-		gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
+		// //鏡面反射
+		// float32_t3 specularPointLight = 
+		// gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f) * factor;
 
 		float32_t mask = gMaskTexture.Sample(gSampler, input.texcoord);
 		//maskの値が閾値以下の場合はdiscardして抜く
@@ -107,7 +107,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		//Edgeっぽさを算出
 		float32_t edge = 1.0f - smoothstep(gThreshold.threshold, gThreshold.threshold + 0.02f,mask);
 
-		output.color.rgb = diffuseDirectionalLight + specularDirectionalLight + diffusePointLight + specularPointLight;
+		output.color.rgb = diffuseDirectionalLight/* + specularDirectionalLight + diffusePointLight + specularPointLight*/;
 
 		output.color.rgb += edge * float32_t3(1.0f,0.4f,0.3f);
 		

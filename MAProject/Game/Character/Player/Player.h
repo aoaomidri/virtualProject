@@ -22,6 +22,9 @@ class LockOn;
 
 class Player {
 public:
+	using KnockbackType = HitRecord::KnockbackType;
+
+
 	~Player();
 
 	//調整項目
@@ -80,11 +83,27 @@ public:
 
 	const uint32_t GetSerialNumber()const { return enemyNumber_; }
 
+	const bool GetIsAvoidAttack()const { return isAvoidAttack_; }
+
+	const HitRecord::KnockbackType GetKnockbackType()const { return type_; }
+
+	const float GetHitStop()const {
+		if (workAttack_.comboIndex == 6){
+			return strongHitStop_;
+		}
+		else {
+			return hitStop_;
+		}
+
+	}
+
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
 
 	void OnCollisionEnemyAttack(const uint32_t serialNumber);
+
+
 
 	//Setter
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
@@ -105,6 +124,9 @@ private:
 	
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
+	//ジャスト回避行動初期化
+	void BehaviorJustAvoidInitialize();
+
 	// 通常行動更新
 	void BehaviorRootUpdate();
 	//攻撃行動更新
@@ -115,6 +137,9 @@ private:
 	void BehaviorStrongAttackUpdate();
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
+
+	//ジャスト回避行動初期化
+	void BehaviorJustAvoidUpdate();
 
 public:
 	
@@ -295,8 +320,20 @@ private:
 	int justAvoidAttackTimerBase_ = 60;
 	//応刀受付時間
 	int justAvoidAttackTimer_ = 0;
+	//ジャスト回避時のエフェクトの補正値
+	float postBlend_ = 0.0f;
+	//上記の補正値を補正するための値
+	float postT_ = 0.0f;
+	//補正値の加算量
+	float addPostT_ = 0.0f;
+	//ジャスト回避したときの値
+	float justAvoidT_ = 0.0f;
 
 	//////*攻撃に関連するもの*///////
+	//ヒットストップの時間
+	float hitStop_ = 0.0f;
+	float strongHitStop_ = 0.0f;
+	
 	//武器の回転
 	float weapon_Rotate_ = 0.0f;
 	float arm_Rotate_ = -3.15f;
@@ -374,13 +411,16 @@ private:
 	//強攻撃中に攻撃を受けたかどうか
 	bool isGuardHit_ = false;
 
+	//回避反撃を行うかどうか
+	bool isAvoidAttack_ = false;
+
 	/*振る舞い系*/
 	enum class Behavior {
 		kRoot,			//通常状態
 		kAttack,		//攻撃中
 		kStrongAttack,  //強攻撃中
 		kDash,			//ダッシュ中
-
+		kJustAvoid,		//ジャスト回避中
 	};
 
 	Behavior behavior_ = Behavior::kRoot;
@@ -413,6 +453,8 @@ private:
 	uint32_t playerHitSE_{};
 
 	HitRecord hitRecord_;
+
+	HitRecord::KnockbackType type_;
 
 	std::unique_ptr<ParticleBase> particle_;
 

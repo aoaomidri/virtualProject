@@ -4,6 +4,16 @@
 /*当たりを記録して重複を防ぐ*/
 class HitRecord{
 public:
+
+	/// <summary>
+	/// ノックバックの種類
+	/// </summary>
+	enum KnockbackType {
+		Left,
+		Right,
+		Center
+	};
+
 	//履歴追加
 	void AddRecord(uint32_t number);
 

@@ -31,7 +31,11 @@ void Enemy::ApplyGlobalVariables(){
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 	freeTimeMax_ = adjustment_item->GetIntValue(groupName, "FreeTimeMax");
 	hitBackSpeed_ = adjustment_item->GetfloatValue(groupName, "HitBackSpeed");
-
+	strongHitBackSpeed_ = adjustment_item->GetfloatValue(groupName, "StrongHitBackSpeed");
+	/*ノックバック関連*/
+	hitEaseStartLeft_ = adjustment_item->GetVector3Value(groupName, "HitEaseLeft");
+	hitEaseStartRight_ = adjustment_item->GetVector3Value(groupName, "HitEaseRight");
+	hitEaseStartCenter_ = adjustment_item->GetVector3Value(groupName, "HitEaseCenter");
 }
 
 void Enemy::Initialize(const Vector3& position){
@@ -49,6 +53,11 @@ void Enemy::Initialize(const Vector3& position){
 	adjustment_item->AddItem(groupName, "EnemyLifeMax", enemyLifeMax_);
 	adjustment_item->AddItem(groupName, "FreeTimeMax", freeTimeMax_);
 	adjustment_item->AddItem(groupName, "HitBackSpeed", hitBackSpeed_);
+	adjustment_item->AddItem(groupName, "StrongHitBackSpeed", strongHitBackSpeed_);
+	/*ノックバック関連*/
+	adjustment_item->AddItem(groupName, "HitEaseLeft", hitEaseStartLeft_);
+	adjustment_item->AddItem(groupName, "HitEaseRight", hitEaseStartRight_);
+	adjustment_item->AddItem(groupName, "HitEaseCenter", hitEaseStartCenter_);
 
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 
@@ -58,7 +67,7 @@ void Enemy::Initialize(const Vector3& position){
 
 	bodyObj_ = std::make_unique<Object3D>();
 	bodyObj_->Initialize("Enemy");
-	bodyObj_->SetIsLighting(false);
+	bodyObj_->SetIsLighting(true);
 	bodyObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
 	partsObj_ = std::make_unique<Object3D>();
@@ -69,13 +78,6 @@ void Enemy::Initialize(const Vector3& position){
 
 	collisionObj_ = std::make_unique<Object3D>();
 	collisionObj_->Initialize("box");
-
-	/*for (int i = 0; i < 20; i++){
-		particleObj_[i] = std::make_unique<Object3D>();
-		particleObj_[i]->Initialize("box");
-	}*/
-
-	//boxObj_ = LevelLoader::GetInstance()->GetLevelObject("ENCube");
 	
 	transform_ = {
 		levelLoader->GetLevelObjectTransform("Enemy").scale,
@@ -314,7 +316,7 @@ void Enemy::Respawn(const Vector3& position){
 
 void Enemy::OnCollision(){
 	particle_->SetIsDraw(true);
-	enemyLife_--;
+	//enemyLife_--;
 	ParticleMove();
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
@@ -529,7 +531,7 @@ void Enemy::BackStep(){
 	const uint32_t behaviorDashTime = 8;
 
 	
-	transform_.translate += move_;
+	transform_.translate += move_ * timeScale_;
 	
 
 	//既定の時間経過で通常状態に戻る
@@ -640,25 +642,51 @@ void Enemy::PreliminalyAction(){
 
 void Enemy::BehaviorLeaningBackInitialize(){
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
-	transform_.rotate = hitEaseStart_;
+
+	attackOBB_.size = { 0.0f,0.0f,0.0f };
+
+	playerMat_ = *targetRotateMat_;
+
+	switch (type_){
+	case HitRecord::Left:
+		transform_.rotate = hitEaseStartLeft_;
+		knockBackEaseStart_ = hitEaseStartLeft_;
+		break;
+	case HitRecord::Right:
+		transform_.rotate = hitEaseStartRight_;
+		knockBackEaseStart_ = hitEaseStartRight_;
+		break;
+	case HitRecord::Center:
+		transform_.rotate = hitEaseStartCenter_;
+		knockBackEaseStart_ = hitEaseStartCenter_;
+		break;
+	default:
+		transform_.rotate = hitEaseStartLeft_;
+		break;
+	}
+	
 	rotateEaseT_ = 0.0f;
 }
 
 void Enemy::LeaningBack(){
-	move_ = { 0, 0, backSpeed_ * hitBackSpeed_ };
-
-	move_ = Matrix::TransformNormal(move_, *targetRotateMat_);
+	if (type_ == HitRecord::Center) {
+		move_ = { 0, 0, backSpeed_ * strongHitBackSpeed_ };
+	}
+	else {
+		move_ = { 0, 0, backSpeed_ * hitBackSpeed_ };
+	}
+	move_ = Matrix::TransformNormal(move_, playerMat_);
 	move_.y = 0;
-	transform_.translate += move_;
+	transform_.translate += move_ * timeScale_;
 
-	rotateEaseT_ += addRotateEaseT_;
+	rotateEaseT_ += addRotateEaseT_ * timeScale_;
 
 	if (rotateEaseT_ >= 1.0f) {
 		rotateEaseT_ = 1.0f;
 	}
 
-	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, hitEaseStart_.x, 0.0f, rotateEaseT_);
-	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, hitEaseStart_.z, 0.0f, rotateEaseT_);
+	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.x, 0.0f, rotateEaseT_);
+	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.z, 0.0f, rotateEaseT_);
 
 	if (rotateEaseT_ >= 1.0f) {
 		behaviorRequest_ = Behavior::kRoot;
@@ -667,8 +695,8 @@ void Enemy::LeaningBack(){
 }
 
 void Enemy::DeadMotion(){
-	transform_.translate -= deadMove_;
-	transform_.rotate.x += 0.3f;	
+	transform_.translate -= deadMove_ * timeScale_;
+	transform_.rotate.x += 0.3f*timeScale_;	
 	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
 	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
@@ -679,7 +707,7 @@ void Enemy::DeadMotion(){
 	//partsTransform_.rotate.x += 0.3f;
 	
 	if (threshold_ < 1.0f) {
-		threshold_ += 0.0075f;
+		threshold_ += 0.0075f * timeScale_;
 	}
 	else {
 		isDead_ = true;
@@ -826,7 +854,7 @@ void Enemy::TripleAttack(){
 		if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
 			move_.z = 0;
 		}
-		transform_.translate += move;
+		transform_.translate += move * timeScale_;
 	}
 
 	if (isMaxContext_ and isAttackEnd_){
@@ -867,13 +895,9 @@ void Enemy::Tackle(){
 			//ダッシュの時間<frame>
 			const uint32_t behaviorDashTime = 30;
 
-
-
-			transform_.translate += move_;
+			transform_.translate += move_* timeScale_;
 			attackOBB_.size = bodyOBB_.size * collisionScale_;
-			attackOBB_.center = transform_.translate;
-
-
+			
 			//既定の時間経過で通常状態に戻る
 			if (++dashTimer_ >= behaviorDashTime) {
 				attackOBB_.size = { 0,0,0 };
@@ -888,7 +912,7 @@ void Enemy::Tackle(){
 		
 		dashRotateMatrix_ = rotateMatrix_;
 
-		enemyColor_.y -= 0.02f;
+		enemyColor_.y -= 0.02f * timeScale_;
 		enemyColor_.z = enemyColor_.y;
 
 		//directionTime_--;
@@ -952,7 +976,7 @@ void Enemy::RotateAttack(){
 	attackRotate_ = ease_.Easing(Ease::EaseName::EaseOutQuart, 0.0f, (3.14f * 4.0f), easeT_);
 
 	if (easeT_ < 1.0f) {		
-		easeT_ += (1.0f / 60.0f);
+		easeT_ += (1.0f / 60.0f) * timeScale_;
 		attackOBB_.size = bodyOBB_.size * 2.4f;
 	}
 	else {

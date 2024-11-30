@@ -89,6 +89,8 @@ public:
 
 	void SetIsOnScreen(const bool flag) { isOnScreen_ = flag; }
 
+	void SetKnockBackType(const HitRecord::KnockbackType type) { type_ = type; }
+
 	static uint32_t GetEnemyDestroyingNum() {
 		return enemyDestroyingNumber_;
 	}
@@ -100,13 +102,14 @@ private:
 private:
 	static const int particleNum_ = 20;
 
-	//自機のモデル
-	std::unique_ptr<Object3D> bodyObj_;
-	std::unique_ptr<Object3D> partsObj_;
-	
+	//敵の体力
+	int32_t enemyLifeMax_ = 0;
+
+	int enemyLife_ = 0;
 
 	//自機のモデル
-	//Object3D* boxObj_;
+	std::unique_ptr<Object3D> bodyObj_;
+	std::unique_ptr<Object3D> partsObj_;	
 	
 	HitRecord hitRecord_;
 
@@ -142,6 +145,8 @@ private:
 
 	//スケールを無視したマトリックス
 	Matrix4x4 moveMatrix_{};
+
+	Matrix4x4 playerMat_{};
 
 	//自機の移動
 	Vector3 move_{};
@@ -184,28 +189,29 @@ private:
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
 
-
 	/// <summary>
 	///倍率
 	/// </summary>
 	float magnification = 1.0f;
 	//移動スピード
 	float moveSpeed_ = 0.03f;
-
+	//ダッシュの時間
 	float dashSpeed_ = 3.0f;
-
+	//バックステップの時間
 	float backSpeed_ = -2.0f;
-
+	//ヒットバックの速度
 	float hitBackSpeed_ = 1.0f;
+	//強ヒットバックの速度
+	float strongHitBackSpeed_ = 1.0f;
 	//ゲー無の時間
 	float timeScale_ = 0.0f;
-
-	Vector3 hitEaseStart_ = { -0.3f,0.0f,-0.3f };
+	//パーティクルの速度
+	float particleSpeed_ = 0.0f;	
 
 	float rotateEaseT_ = 0.0f;
 
 	const float addRotateEaseT_ = (1.0f / 30.0f);
-
+	//ダッシュの時間
 	int dashTimer_ = 0;
 
 	bool isDead_ = false;
@@ -215,16 +221,22 @@ private:
 	bool isNoLife_ = false;
 	//画面内にいるかどうか
 	bool isOnScreen_ = false;
+	//パーティクルを発生させるかどうか
+	bool isParticle_ = false;	
 
-	int32_t enemyLifeMax_ = 3;
+	HitRecord::KnockbackType type_;
 
-	int enemyLife_ = 10;
+	//ノックバックイージング
+	Vector3 knockBackEaseStart_{};
 
-	bool isParticle_ = false;
+	//左から攻撃を受けたときのノックバック
+	Vector3 hitEaseStartLeft_ = { -0.3f,0.0f,-0.3f };
 
-	float particleSpeed_;
+	//左から攻撃を受けたときのノックバック
+	Vector3 hitEaseStartRight_ = { 0.3f,0.0f,-0.3f };
 
-	
+	//左から攻撃を受けたときのノックバック
+	Vector3 hitEaseStartCenter_ = { -0.3f,0.0f,-0.3f };
 
 private:
 	/*振る舞い系*/
@@ -298,7 +310,7 @@ private:
 
 private:
 	//攻撃関係の関数群
-	/*.OK = 実装済み*/
+	
 	enum class AttackBehavior {
 		kTriple,		//三連撃.OK
 		kCharge,		//近づいて溜めて一撃(X字で剣を振る)

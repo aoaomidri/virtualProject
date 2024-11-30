@@ -12,7 +12,10 @@ public:
     static float GetScaledDeltaTime() {
         return deltaTime_ * timeScale_;
     }
-
+    //スローかどうかを取得
+    static bool GetIsSlow() {
+        return isSlowDown_;
+    }     
     //時間スケールの変更
     static void ChangeTimeScale(float timeScale) {
         timeScale_ = timeScale;

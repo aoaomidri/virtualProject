@@ -34,7 +34,7 @@ void WholeGame::Initialize(){
 		.pow = 0.8f,
 	};
 
-	postBlend_.blendFactor = 1.0f;
+	postBlend_ = 1.0f;
 	
 }
 
@@ -165,8 +165,8 @@ void WholeGame::DrawImgui(){
 	postEffect_->SetHSVData(hsv_);
 
 	ImGui::Text("ポストエフェクトの補正値");
-	ImGui::SliderFloat("blendFactor", &postBlend_.blendFactor, 0.0f, 1.0f, "%.2f");
-	postEffect_->SetPostBlend(postBlend_);
+	ImGui::SliderFloat("blendFactor", &postBlend_, 0.0f, 1.0f, "%.2f");
+	//postEffect_->SetPostBlend(postBlend_);
 
 	ImGui::End();
 

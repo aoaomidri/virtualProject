@@ -134,7 +134,7 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 			//移動ベクトルに合わせてz軸回転
 			if (isAlignedToMovement_){
 				// 移動ベクトルを正規化
-				Vector3 direction = (*particleIterator).transform.translate - previewTrans; // 移動ベクトル
+				Vector3 direction = previewTrans - (*particleIterator).transform.translate; // 移動ベクトル
 				float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 				if (length > std::numeric_limits<float>::epsilon()) {
 					direction.x /= length;

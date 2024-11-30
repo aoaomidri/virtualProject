@@ -152,8 +152,6 @@ private:
 
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
-	//停止させる時間
-	float stopTime_ = 0.08f;
 
 	//敵の反射強度
 	float enemyShininess_;

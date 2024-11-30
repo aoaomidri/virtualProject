@@ -20,7 +20,10 @@ void Player::ApplyGlobalVariables() {
 	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
 	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
 	trailPosData_ = adjustment_item->GetVector2Value(groupName, "TrailPosData");
-
+	hitStop_ = adjustment_item->GetfloatValue(groupName, "HitStop");
+	strongHitStop_ = adjustment_item->GetfloatValue(groupName, "StrongHitStop");
+	addPostT_ = adjustment_item->GetfloatValue(groupName, "AddPostT");
+	justAvoidT_ = adjustment_item->GetfloatValue(groupName, "JustAvoidT");
 }
 
 void Player::Initialize(){
@@ -38,6 +41,10 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
 	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
 	adjustment_item->AddItem(groupName, "TrailPosData", trailPosData_);
+	adjustment_item->AddItem(groupName, "HitStop", hitStop_);
+	adjustment_item->AddItem(groupName, "StrongHitStop", strongHitStop_);
+	adjustment_item->AddItem(groupName, "AddPostT", addPostT_);
+	adjustment_item->AddItem(groupName, "JustAvoidT", justAvoidT_);
 	
 	input_ = Input::GetInstance();
 
@@ -175,14 +182,26 @@ void Player::Update(){
 	if (isGuardHit_){
 		counterTime_ += timeScale_;
 	}
-
+	
 	//ジャスト回避時間経過処理
-	if (justAvoidAttackTimer_ != 0) {
+	if (justAvoidAttackTimer_ > 0) {
+		postT_ = 0.9f;
 		justAvoidAttackTimer_--;
 	}
 	else if (justAvoidAttackTimer_ <= 0) {
+		postT_ -= addPostT_;
 		isJustAvoid_ = false;
 	}
+	//値を制限
+	if (postT_ > 1.0f){
+		postT_ = 1.0f;
+	}
+	else if (postT_ < 0.0f){
+		postT_ = 0.0f;
+	}
+
+	postBlend_ = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 1.0f, postT_);
+	PostEffect::GetInstance()->SetPostBlend(postBlend_);
 
 	//被弾無敵の経過処理
 	if (hitTimer_ != 0) {
@@ -356,9 +375,12 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);
+	ImGui::Text("スティックの横 = %.4f", input_->GetPadLStick().x);
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
 	ImGui::DragFloat3("OBB大きさ", &obbAddScale_.x, 0.01f);
 	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
+	ImGui::Text("ロックオンしている敵 = %d", enemyNumber_);
 	ImGui::Text("おちているかどうか = %d", isDown_);
 	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
 	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime_);
@@ -418,8 +440,9 @@ void Player::Respawn(){
 }
 
 void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
+	
 	//ジャスト回避判定
-	if (isDash_) {
+	if (isDash_ and !isJustAvoid_) {
 		isJustAvoid_ = true;
 		justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
 		enemyNumber_ = serialNumber;
@@ -435,7 +458,7 @@ void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 	}
 	else {
 		//ジャスト回避判定
-		if (isDash_){
+		if (isDash_ and !isJustAvoid_){
 			isJustAvoid_ = true;
 			justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
 			enemyNumber_ = serialNumber;
@@ -462,6 +485,7 @@ void Player::SetIsDown(bool isDown){
 }
 
 void Player::BehaviorRootInitialize(){
+
 	move_ = { 0.0f,0.0f,0.0f };
 	workAttack_.comboIndex = 0;
 	
@@ -574,7 +598,7 @@ void Player::BehaviorRootUpdate(){
 		behaviorRequest_ = Behavior::kDash;
 	}
 
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kAttack;
@@ -592,6 +616,7 @@ void Player::BehaviorRootUpdate(){
 }
 
 void Player::BehaviorAttackInitialize(){
+	type_ = KnockbackType::Left;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -618,6 +643,7 @@ void Player::BehaviorAttackInitialize(){
 }
 
 void Player::BehaviorSecondAttackInitialize(){
+	type_ = KnockbackType::Right;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -646,6 +672,7 @@ void Player::BehaviorSecondAttackInitialize(){
 }
 
 void Player::BehaviorThirdAttackInitialize(){
+	type_ = KnockbackType::Left;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -673,8 +700,8 @@ void Player::BehaviorThirdAttackInitialize(){
 	isEndAttack_ = false;
 }
 
-void Player::BehaviorFourthAttackInitialize()
-{
+void Player::BehaviorFourthAttackInitialize(){
+	type_ = KnockbackType::Left;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -693,8 +720,8 @@ void Player::BehaviorFourthAttackInitialize()
 	isEndAttack_ = false;
 }
 
-void Player::BehaviorFifthAttackInitialize()
-{
+void Player::BehaviorFifthAttackInitialize(){
+	type_ = KnockbackType::Right;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -723,6 +750,7 @@ void Player::BehaviorFifthAttackInitialize()
 }
 
 void Player::BehaviorSixthAttackInitialize(){
+	type_ = KnockbackType::Center;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -1028,54 +1056,48 @@ void Player::BehaviorStrongAttackUpdate(){
 }
 
 void Player::BehaviorDashInitialize(){
-
+	isAvoidAttack_ = false;
 	audio_->PlayAudio(avoidSE_, 0.5f, false);
 
 	workDash_.dashParameter_ = 0;
 
 	isDash_ = true;
+}
 
-	move_.z = input_->GetPadLStick().y * moveSpeed_;
-	if (abs(move_.z) < 0.005f) {
-		move_.z = 0;
-	}
-	move_.x = input_->GetPadLStick().x * moveSpeed_;
-	if (abs(move_.x) < 0.005f) {
-		move_.x = 0;
-	}
-	move_.y = 0;
+void Player::BehaviorJustAvoidInitialize(){
 
-	if (move_.x != 0.0f or move_.z != 0.0f) {
-		frontVec_ = postureVec_;
-		if (viewProjection_) {
-
-			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
-			move_ = Matrix::TransformNormal(move_, newRotateMatrix);
-			move_.y = 0.0f;
-		}
-
-		postureVec_ = move_;
-
-		//particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
-
-		Matrix4x4 directionTodirection_;
-		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
-	}
 }
 
 void Player::BehaviorDashUpdate(){
+	frontVec_ = postureVec_;
 	Matrix4x4 newRotateMatrix_ = playerRotateMatrix_;
 	move_ = { 0, 0, moveSpeed_ * dashSpeed_ };
 
 	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
+	//ジャスト回避していたら追撃ができるように
+	if (isJustAvoid_) {
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
+			isAvoidAttack_ = true;
+			Vector3 lockOnPos = lockOn_->GetTargetPosition();
+			Vector3 sub = lockOnPos - playerTransform_.translate;
+			sub.y = 0;
+			Vector3 subNorm = Vector3::Normalize(sub);
+			postureVec_ = subNorm;
 
+			Matrix4x4 directionTodirection_;
+			directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+			playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
+			move_ = subNorm * dashSpeed_;
+			move_.y = 0;
+
+		}
+	}
 	
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 15;
 
-	/*if (!isCollisionEnemy_)*/ {
-		Vector3 NextPos = playerTransform_.translate + move_;
+	if (!isAvoidAttack_) {
+		Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
 
 		if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
 			move_.x = 0;
@@ -1085,14 +1107,44 @@ void Player::BehaviorDashUpdate(){
 		}
 		playerTransform_.translate += move_ * timeScale_;
 	}
+	else {
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - playerTransform_.translate;
+
+		if (Vector3::Length(sub) >= 10.0f) {
+			Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
+
+			if (NextPos.x >= 97.0f or NextPos.x <= -97.0f) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= 97.0f or NextPos.z <= -97.0f) {
+				move_.z = 0;
+			}
+			playerTransform_.translate += move_ * timeScale_;
+		}
+		else {
+			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			workAttack_.comboIndex = 1;
+			behaviorRequest_ = Behavior::kAttack;
+			isDissolve_ = false;
+			dashCoolTime_ = dashCoolTimeBase_;
+			isDash_ = false;
+			weaponThreshold_ = 0.0f;
+			
+		}
+	}
 
 	//既定の時間経過で通常状態に戻る
 	workDash_.dashParameter_ += timeScale_;
 	if (workDash_.dashParameter_ >= behaviorDashTime) {
-		dashCoolTime_ =dashCoolTimeBase_;
+		dashCoolTime_ = dashCoolTimeBase_;
 		isDash_ = false;
 		behaviorRequest_ = Behavior::kRoot;
 	}
+}
+
+void Player::BehaviorJustAvoidUpdate(){
+
 }
 
 void Player::AttackMotion(){

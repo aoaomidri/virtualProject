@@ -1,13 +1,29 @@
 {
     "Enemy": {
         "BackSpeed": -2.0,
-        "DownSpeed": 1.7,
+        "DownSpeed": 1.7000000476837158,
         "EnemyLifeMax": 5,
         "FarPlayer": 30.0,
         "FreeTimeMax": 45,
         "HitBackSpeed": -0.05000000074505806,
+        "HitEaseCenter": [
+            -1.0,
+            0.0,
+            0.0
+        ],
+        "HitEaseLeft": [
+            -0.44999998807907104,
+            0.0,
+            -0.44999998807907104
+        ],
+        "HitEaseRight": [
+            -0.44999998807907104,
+            0.0,
+            0.44999998807907104
+        ],
         "LengthJudgment": 90,
         "MoveSpeed": 0.020999999716877937,
-        "NearPlayer": 14.949999809265137
+        "NearPlayer": 14.949999809265137,
+        "StrongHitBackSpeed": -0.15000000596046448
     }
 }

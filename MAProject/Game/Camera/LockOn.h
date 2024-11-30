@@ -24,6 +24,8 @@ public:
 	void Draw();
 
 	void DrawImgui();
+
+
 	
 private:
 	/// <summary>
@@ -32,18 +34,20 @@ private:
 	void search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
 
 	//ジャスト回避したときの検索
-	void avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection);
+	void avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const uint32_t serialNumber);
 
 	/// <summary>
 	/// 範囲内判定
 	/// </summary>
 	bool InTarget(const OBB enemyOBB, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
-	/// <summary>
-	/// ターゲットリセット
-	/// </summary>
-	void TargetReset(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
+	
 
 public:
+	/// <summary>
+/// ターゲットリセット
+/// </summary>
+	void TargetReset();
+
 	Vector3 GetTargetPosition() const;
 
 	bool ExistTarget() const { return target_ ? true : false; }

@@ -49,7 +49,7 @@ private:
 
 	/*ポストエフェクト推移用*/
 
-	PostEffect::PostBlend postBlend_{};
+	float postBlend_ = 0.0f;
 
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;

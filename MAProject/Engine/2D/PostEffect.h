@@ -117,8 +117,8 @@ public:
 		thresholdData_->threshold = data;
 	}
 
-	void SetPostBlend(const PostBlend& data) {
-		blendData_->blendFactor = data.blendFactor;
+	void SetPostBlend(const float& data) {
+		blendData_->blendFactor = data;
 	}
 
 	void SetMatProjectionInverse(const Matrix4x4& mat) {

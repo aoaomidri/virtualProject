@@ -1,9 +1,7 @@
 #include "ResultScene.h"
 
 void ResultScene::TextureLoad(){
-	textureManager_->Load("resources/texture/uvChecker.png");
-	textureManager_->Load("resources/texture/Floor.png");
-	textureManager_->Load("resources/texture/Road.png");
+	
 	
 }
 

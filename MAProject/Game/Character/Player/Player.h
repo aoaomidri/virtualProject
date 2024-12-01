@@ -273,7 +273,7 @@ private:
 	//自機の移動
 	Vector3 move_{};
 	//移動限界 xが+側、yが-側
-	Vector2 limitPos_{ 80.0f,-80.0f };
+	Vector2 limitPos_{ 70.0f,-70.0f };
 
 	//ジャンプ
 	float jumpPower_ = 0.2f;

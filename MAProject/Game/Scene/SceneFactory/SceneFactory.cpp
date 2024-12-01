@@ -15,6 +15,7 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const SceneName sceneName){
 			newScene = std::make_unique<GameScene>();
 			break;
 		case SceneName::Result:
+			newScene = std::make_unique<ResultScene>();
 			break;
 		
 		}

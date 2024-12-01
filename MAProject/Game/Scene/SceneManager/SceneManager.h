@@ -2,6 +2,7 @@
 #include"BaseScene/BaseScene.h"
 #include"SceneFactory/AbstractSceneFactory.h"
 #include <memory>
+#include"Sprite.h"
 class SceneManager{
 
 public:
@@ -36,6 +37,8 @@ private:
 	std::unique_ptr<BaseScene> scane_;
 	//次のシーン
 	std::unique_ptr<BaseScene> nextScane_;
+
+	
 
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

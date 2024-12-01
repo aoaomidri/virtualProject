@@ -42,6 +42,8 @@ class TitleScene : public BaseScene {
 
 	//ゲーム全体にかかわるImgui
 	void Debug() override;
+
+
 	void DrawParticle();
 	void DrawSkin3D();
 	void Draw3D();

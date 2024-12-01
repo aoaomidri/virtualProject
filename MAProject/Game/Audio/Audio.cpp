@@ -77,6 +77,7 @@ void Audio::RePlayWave(uint32_t soundHandle){
 
 
 void Audio::StopWave(uint32_t voiceHandle){
+	PauseWave(voiceHandle);
 	// 再生中リストから検索
 	auto it = std::find_if(
 		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == voiceHandle; });

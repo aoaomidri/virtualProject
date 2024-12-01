@@ -219,6 +219,13 @@ void GameScene::Initialize(){
 void GameScene::Update(){
 	bool frontFlag = false;
 	DrawImgui();
+
+	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+		if (enemy->GetIsDead()) {
+			return true;
+		}
+		return false;
+	});
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
@@ -240,6 +247,9 @@ void GameScene::Update(){
 		if (!player_->GetIsJustAvoid() and frontFlag){
 			lockOn_->TargetReset();
 		}
+		if (enemies_.size() == 0){
+			SceneManager::GetInstance()->ChangeScene(SceneName::Result);
+		}
 
 		for (const auto& enemy : enemies_) {
 			enemy->SetTimeScale(GameTime::timeScale_);
@@ -256,12 +266,17 @@ void GameScene::Update(){
 	}*/
 		
 
-	if (input_->Trigerkey(DIK_C)&&input_->Trigerkey(DIK_L)){
+	if (input_->Trigerkey(DIK_C) && input_->Trigerkey(DIK_L)) {
+
 	}
+#ifdef _DEBUG
 
 	if (input_->Trigerkey(DIK_R)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
 	}
+
+#endif // _DEBUG	
+	
 
 	AllCollision();
 

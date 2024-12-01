@@ -324,7 +324,11 @@ private:
 		//突進攻撃のタイマーの最大値
 		float tackleTimerBase_ = 0.5f;
 		//突進のスピード
-		float tackleSpeed_ = 1.5f;
+		float tackleSpeed_ = 1.0f;
+		//突進攻撃の判定のタイマー
+		float tackleHitTimer_ = 0.0f;
+		//突進攻撃の判定のタイマーの最大値
+		float tackleHitTimerBase_ = 0.05f;
 
 		//派生用フラグ
 		bool isChangeEndAttack_ = false;

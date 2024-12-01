@@ -92,22 +92,22 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,1.7f,7.0f}
 	};
 
-	emitter_.count = 7;
+	emitter_.count = 10;
 	emitter_.transform = {
 		levelLoader->GetLevelObjectTransform("Enemy").scale,
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
 	};
-	emitter_.transform.scale.x /= 6.0f;
+	emitter_.transform.scale /= 4.0f;
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(emitter_, false);
 	particle_->SetIsDraw(false);
 	particle_->SetIsBillborad(true);
 	particle_->SetIsUpper(true);
-	particle_->SetIsAlignedToMovement(true);
+	particle_->SetIsAlignedToMovement(false);
 	particle_->SetLifeTime(0.3f);
-	particle_->SetVelocityRange(Vector2(-50.0f, 50.0f));
+	particle_->SetVelocityRange(Vector2(-30.0f, 30.0f));
 
 	isDead_ = false;
 	isNoLife_ = false;
@@ -245,9 +245,10 @@ void Enemy::TexDraw(const Matrix4x4& viewProjection){
 }
 
 void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& color){
-
+	EulerTransform patTransform = transform_;
+	patTransform.translate.y += 1.0f;
 	particle_->SetOneColor(color);
-	particle_->Update(transform_, viewProjection);
+	particle_->Update(patTransform, viewProjection);
 	particle_->Draw();
 }
 
@@ -316,7 +317,7 @@ void Enemy::Respawn(const Vector3& position){
 
 void Enemy::OnCollision(){
 	particle_->SetIsDraw(true);
-	//enemyLife_--;
+	enemyLife_--;
 	ParticleMove();
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
@@ -377,7 +378,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -644,6 +645,7 @@ void Enemy::BehaviorLeaningBackInitialize(){
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	attackOBB_.size = { 0.0f,0.0f,0.0f };
+	bodyObj_->SetTexture(enemyHitTexPath_);
 
 	playerMat_ = *targetRotateMat_;
 
@@ -677,9 +679,9 @@ void Enemy::LeaningBack(){
 	}
 	move_ = Matrix::TransformNormal(move_, playerMat_);
 	move_.y = 0;
-	transform_.translate += move_ * timeScale_;
+	transform_.translate += move_;
 
-	rotateEaseT_ += addRotateEaseT_ * timeScale_;
+	rotateEaseT_ += addRotateEaseT_;
 
 	if (rotateEaseT_ >= 1.0f) {
 		rotateEaseT_ = 1.0f;
@@ -689,6 +691,7 @@ void Enemy::LeaningBack(){
 	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.z, 0.0f, rotateEaseT_);
 
 	if (rotateEaseT_ >= 1.0f) {
+		bodyObj_->SetTexture(enemyTexPath_);
 		behaviorRequest_ = Behavior::kRoot;
 	}
 

@@ -492,7 +492,7 @@ void Player::SetIsDown(bool isDown){
 }
 
 void Player::BehaviorRootInitialize(){
-
+	isDash_ = false;
 	move_ = { 0.0f,0.0f,0.0f };
 	workAttack_.comboIndex = 0;
 	
@@ -915,7 +915,7 @@ void Player::BehaviorAttackUpdate(){
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f) * timeScale_;
+	weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f);
 
 	weaponTransform_.translate = weaponCollisionTransform_.translate;
 
@@ -1075,8 +1075,11 @@ void Player::BehaviorDashInitialize(){
 }
 
 void Player::BehaviorJustAvoidInitialize(){
-	isJustAvoid_ = false;
-	isAvoidAttack_ = true;
+	//isJustAvoid_ = false;
+	isAvoidAttack_ = false;
+	type_ = KnockbackType::Center;
+	/*移動部分の初期化*/
+	//ターゲットに向かって移動する
 	Vector3 lockOnPos = lockOn_->GetTargetPosition();
 	Vector3 sub = lockOnPos - playerTransform_.translate;
 	sub.y = 0;
@@ -1091,6 +1094,30 @@ void Player::BehaviorJustAvoidInitialize(){
 
 	workAvoidAttack_.tackleTimer_ = 0.0f;
 	workAvoidAttack_.isChangeEndAttack_ = false;
+
+	/*武器や攻撃関連の初期化*/
+	/*剣を引いて突くような動作*/
+	workAttack_.attackParameter = 0;
+	weaponTransform_.rotate.x = 1.57f;
+	weaponTransform_.rotate.y = 0.0f;
+	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.translate = playerTransform_.translate;
+	weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
+	hitRecord_.Clear();
+	workAttack_.AttackTimer = 0;
+	easeT_ = 0;
+	addEaseT_ = 0.04f;
+	waitTime_ = waitTimeBase_;
+	addPosition_.y = 0.0f;
+	trail_->Reset();
+	strongSecondAttackCount_ = 0;
+	isNextAttack_ = false;
+	isTrail_ = false;
+	isShakeDown_ = false;
+	isEndAttack_ = false;
 }
 
 void Player::BehaviorDashUpdate(){
@@ -1101,7 +1128,7 @@ void Player::BehaviorDashUpdate(){
 	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
 	//ジャスト回避していたら追撃ができるように
 	if (isJustAvoid_) {
-		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
+		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 			//isAvoidAttack_ = true;
 			/*Vector3 lockOnPos = lockOn_->GetTargetPosition();
 			Vector3 sub = lockOnPos - playerTransform_.translate;
@@ -1146,24 +1173,64 @@ void Player::BehaviorDashUpdate(){
 }
 
 void Player::BehaviorJustAvoidUpdate(){
-	Vector3 lockOnPos = lockOn_->GetTargetPosition();
-	Vector3 sub = lockOnPos - playerTransform_.translate;
-	
-	Vector3 NextPos = playerTransform_.translate + (move_);
+	if (!isAvoidAttack_){
+		easeT_ += addEaseT_;
+		if (easeT_ > 1.0f) {
+			easeT_ = 1.0f;
+			waitTime_ -= 1;
+			addEaseT_ = 0.0f;
+			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			isJustAvoid_ = false;
+			isAvoidAttack_ = true;
+		}
+		
+		weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInOutCirc, 0.5f, 0.0f, easeT_);
+		weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInOutCirc, 0.0f, 4.0f, easeT_);
 
-	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
-		move_.x = 0;
-	}
-	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-		move_.z = 0;
-	}
-	playerTransform_.translate += move_;
+		
 
-	workAvoidAttack_.tackleTimer_ += GameTime::deltaTime_;
-	
-	if (workAvoidAttack_.tackleTimerBase_ < workAvoidAttack_.tackleTimer_){
-		behaviorRequest_ = Behavior::kRoot;
+		if (weapon_offset_Base_.x > -0.9f) {
+			addEaseT_ = 0.08f;
+		}
 	}
+	else {
+		Vector3 lockOnPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockOnPos - playerTransform_.translate;
+
+		Vector3 NextPos = playerTransform_.translate + (move_);
+
+		if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+			move_.x = 0;
+		}
+		if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+			move_.z = 0;
+		}
+
+		workAvoidAttack_.tackleHitTimer_ += GameTime::deltaTime_;
+
+		if (workAvoidAttack_.tackleHitTimer_ > workAvoidAttack_.tackleHitTimerBase_){
+			workAvoidAttack_.tackleHitTimer_ = 0.0f;
+			hitRecord_.Clear();
+		}
+
+		playerTransform_.translate += move_;
+
+		workAvoidAttack_.tackleTimer_ += GameTime::deltaTime_;
+
+		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+		weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
+		weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
+		weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
+		weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f);
+
+		weaponTransform_.translate = weaponCollisionTransform_.translate;
+
+		if (workAvoidAttack_.tackleTimerBase_ < workAvoidAttack_.tackleTimer_) {
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+	
+	
 	
 	/*audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 	workAttack_.comboIndex = 1;

@@ -50,9 +50,10 @@ void GraphicsPipeline::ParticleExclusiveInitialize(const std::wstring& VSname, c
 	makeParticleRootSignature(DirectXCommon::GetInstance()->GetDevice());
 	makeInputLayout();
 	makeBlendState(blend);
-	makeRasterizerState(isCulling);
+	isCulling;
+	makeRasterizerState(false);
 	ShaderCompile(VSname, PSname);
-	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ZERO);
+	makeDepthStencil(D3D12_DEPTH_WRITE_MASK_ALL);
 
 	makeGraphicsPipelineParticle(DirectXCommon::GetInstance()->GetDevice());
 }

@@ -109,7 +109,10 @@ private:
 
 	//自機のモデル
 	std::unique_ptr<Object3D> bodyObj_;
-	std::unique_ptr<Object3D> partsObj_;	
+	std::unique_ptr<Object3D> partsObj_;
+
+	const std::string enemyTexPath_ = "resources/Model/Enemy/EnemyTex.png";
+	const std::string enemyHitTexPath_ = "resources/Model/Enemy/EnemyHitTex.png";
 	
 	HitRecord hitRecord_;
 

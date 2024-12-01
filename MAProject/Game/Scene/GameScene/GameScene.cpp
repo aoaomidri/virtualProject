@@ -10,6 +10,7 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Road.png");
 	//textureManager_->Load("resources/texture/Sky.png");
 	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");
+	textureManager_->Load("resources/Model/Enemy/EnemyHitTex.png");
 	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Model/Weapon/Sword.png");
 	textureManager_->Load("resources/texture/Magic.png");
@@ -406,7 +407,7 @@ void GameScene::AllCollision(){
 			//接触履歴に登録
 			player_->AddRecord(serialNumber);
 			//ヒット音の再生
-			audio_->PlayAudio(enemyHitSE_, 0.5f, false);
+			audio_->PlayAudio(enemyHitSE_, 0.3f, false);
 			//ヒットストップ
 			GameTime::StopTime(player_->GetHitStop());
 			//当たったときの処理

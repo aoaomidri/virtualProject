@@ -134,25 +134,13 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 			//移動ベクトルに合わせてz軸回転
 			if (isAlignedToMovement_){
 				// 移動ベクトルを正規化
-				Vector3 direction = previewTrans - (*particleIterator).transform.translate; // 移動ベクトル
-				float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-				if (length > std::numeric_limits<float>::epsilon()) {
-					direction.x /= length;
-					direction.y /= length;
-				}
-				else {
-					direction.x = 1.0f; // デフォルト方向
-					direction.y = 0.0f;
-				}
-
-				// Z軸回転行列を手動で構築
-				Matrix4x4 zRotationMatrix;
-				zRotationMatrix.m[0][0] = direction.x;
-				zRotationMatrix.m[0][1] = -direction.y;
-				zRotationMatrix.m[1][0] = direction.y;
-				zRotationMatrix.m[1][1] = direction.x;
-				zRotationMatrix.m[2][2] = 1.0f;
-				zRotationMatrix.m[3][3] = 1.0f;
+				Vector3 normalizedDirection = Vector3::Normalize(((*particleIterator).velocity * kDeltaTime_));
+				Vector3 defaultForward = Vector3(0, 0, 1);  // デフォルトの前方ベクトル
+				float dotProduct = Vector3::Dot(defaultForward, normalizedDirection);
+				float angle = acos(dotProduct);  // デフォルト前方ベクトルとの角度
+				Vector3 rotationAxis = Vector3::Normalize(Vector3::Cross(defaultForward, normalizedDirection));
+				
+				Matrix4x4 zRotationMatrix = Matrix::MakeRotateAxisAngle(rotationAxis, angle);				
 
 				// ビルボード行列にZ軸回転を適用
 				Matrix4x4 finalBillboardMatrix = Matrix::Multiply(billboardMatrix_, zRotationMatrix);

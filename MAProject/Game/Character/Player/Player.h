@@ -317,6 +317,20 @@ private:
 	WorkDash workDash_;
 
 	float timeScale_ = 0.0f;
+	/*応刀用の構造体*/
+	struct WorkAvoidAttack {
+		//突進攻撃のタイマー
+		float tackleTimer_ = 0.0f;
+		//突進攻撃のタイマーの最大値
+		float tackleTimerBase_ = 0.5f;
+		//突進のスピード
+		float tackleSpeed_ = 1.5f;
+
+		//派生用フラグ
+		bool isChangeEndAttack_ = false;
+	};
+
+	WorkAvoidAttack workAvoidAttack_;
 
 	//応刀受付時間のベース
 	int justAvoidAttackTimerBase_ = 60;

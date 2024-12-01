@@ -229,6 +229,9 @@ void Player::Update(){
 		case Behavior::kDash:
 			BehaviorDashInitialize();
 			break;		
+		case Behavior::kJustAvoid:
+			BehaviorJustAvoidInitialize();
+			break;
 		}
 
 	}
@@ -249,7 +252,9 @@ void Player::Update(){
 	case Behavior::kDash:
 		BehaviorDashUpdate();
 		break;
-	
+	case Behavior::kJustAvoid:
+		BehaviorJustAvoidUpdate();
+		break;
 	}
 	
 	shadow_->position_ = playerTransform_.translate;
@@ -286,7 +291,6 @@ void Player::Update(){
 
 	playerOBB_.size = playerTransform_.scale + obbAddScale_;
 	SetOridentatios(playerOBB_, playerRotateMatrix_);
-	
 
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
@@ -467,11 +471,12 @@ void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 			GameTime::SlowDownTime(1.0f, 0.2f);
 		}
 		else {
-			//普通に被弾
-			audio_->PlayAudio(playerHitSE_, 0.5f, false);
-			isHitEnemyAttack_ = true;
-			hitTimer_ = 30;
-
+			if (!isJustAvoid_) {
+				//普通に被弾
+				audio_->PlayAudio(playerHitSE_, 0.5f, false);
+				isHitEnemyAttack_ = true;
+				hitTimer_ = 30;
+			}
 		}
 	}
 	
@@ -1070,7 +1075,22 @@ void Player::BehaviorDashInitialize(){
 }
 
 void Player::BehaviorJustAvoidInitialize(){
+	isJustAvoid_ = false;
+	isAvoidAttack_ = true;
+	Vector3 lockOnPos = lockOn_->GetTargetPosition();
+	Vector3 sub = lockOnPos - playerTransform_.translate;
+	sub.y = 0;
+	Vector3 subNorm = Vector3::Normalize(sub);
+	postureVec_ = subNorm;
 
+	Matrix4x4 directionTodirection_;
+	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+	playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
+	move_ = subNorm * workAvoidAttack_.tackleSpeed_;
+	move_.y = 0;
+
+	workAvoidAttack_.tackleTimer_ = 0.0f;
+	workAvoidAttack_.isChangeEndAttack_ = false;
 }
 
 void Player::BehaviorDashUpdate(){
@@ -1082,8 +1102,8 @@ void Player::BehaviorDashUpdate(){
 	//ジャスト回避していたら追撃ができるように
 	if (isJustAvoid_) {
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !isDown_) {
-			isAvoidAttack_ = true;
-			Vector3 lockOnPos = lockOn_->GetTargetPosition();
+			//isAvoidAttack_ = true;
+			/*Vector3 lockOnPos = lockOn_->GetTargetPosition();
 			Vector3 sub = lockOnPos - playerTransform_.translate;
 			sub.y = 0;
 			Vector3 subNorm = Vector3::Normalize(sub);
@@ -1093,8 +1113,10 @@ void Player::BehaviorDashUpdate(){
 			directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 			playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
 			move_ = subNorm * dashSpeed_;
-			move_.y = 0;
+			move_.y = 0;*/
 
+			behaviorRequest_ = Behavior::kJustAvoid;
+			dashCoolTime_ = dashCoolTimeBase_;
 		}
 	}
 	
@@ -1112,32 +1134,7 @@ void Player::BehaviorDashUpdate(){
 		}
 		playerTransform_.translate += move_ * timeScale_;
 	}
-	else {
-		Vector3 lockOnPos = lockOn_->GetTargetPosition();
-		Vector3 sub = lockOnPos - playerTransform_.translate;
-
-		if (Vector3::Length(sub) >= 10.0f) {
-			Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
-
-			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
-				move_.x = 0;
-			}
-			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-				move_.z = 0;
-			}
-			playerTransform_.translate += move_ * timeScale_;
-		}
-		else {
-			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
-			workAttack_.comboIndex = 1;
-			behaviorRequest_ = Behavior::kAttack;
-			isDissolve_ = false;
-			dashCoolTime_ = dashCoolTimeBase_;
-			isDash_ = false;
-			weaponThreshold_ = 0.0f;
-			
-		}
-	}
+	
 
 	//既定の時間経過で通常状態に戻る
 	workDash_.dashParameter_ += timeScale_;
@@ -1149,7 +1146,34 @@ void Player::BehaviorDashUpdate(){
 }
 
 void Player::BehaviorJustAvoidUpdate(){
+	Vector3 lockOnPos = lockOn_->GetTargetPosition();
+	Vector3 sub = lockOnPos - playerTransform_.translate;
+	
+	Vector3 NextPos = playerTransform_.translate + (move_);
 
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+		move_.z = 0;
+	}
+	playerTransform_.translate += move_;
+
+	workAvoidAttack_.tackleTimer_ += GameTime::deltaTime_;
+	
+	if (workAvoidAttack_.tackleTimerBase_ < workAvoidAttack_.tackleTimer_){
+		behaviorRequest_ = Behavior::kRoot;
+	}
+	
+	/*audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+	workAttack_.comboIndex = 1;
+	behaviorRequest_ = Behavior::kAttack;
+	isDissolve_ = false;
+	dashCoolTime_ = dashCoolTimeBase_;
+	isDash_ = false;
+	weaponThreshold_ = 0.0f;*/
+
+	
 }
 
 void Player::AttackMotion(){

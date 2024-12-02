@@ -319,8 +319,11 @@ void Enemy::Respawn(const Vector3& position){
 void Enemy::OnCollision(){
 	particle_->SetIsDraw(true);
 	enemyLife_--;
-	ParticleMove();
 	particle_->AddParticle(emitter_);
+	behaviorRequest_ = Behavior::kLeaningBack;
+}
+
+void Enemy::OnCollisionGuard(){
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
@@ -705,6 +708,10 @@ void Enemy::BehaviorLeaningBackInitialize(){
 		knockBackEaseStart_ = hitEaseStartRight_;
 		break;
 	case HitRecord::Center:
+		transform_.rotate = hitEaseStartCenter_;
+		knockBackEaseStart_ = hitEaseStartCenter_;
+		break;
+	case HitRecord::Guard:
 		transform_.rotate = hitEaseStartCenter_;
 		knockBackEaseStart_ = hitEaseStartCenter_;
 		break;

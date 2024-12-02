@@ -11,7 +11,8 @@ public:
 	enum KnockbackType {
 		Left,
 		Right,
-		Center
+		Center,
+		Guard
 	};
 
 	//履歴追加

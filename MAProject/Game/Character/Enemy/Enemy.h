@@ -44,8 +44,10 @@ public:
 
 	//リスポーン
 	void Respawn(const Vector3& position);
-
+	//被弾時の処理
 	void OnCollision();
+	//ガード中に当たったときの処理
+	void OnCollisionGuard();
 
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 

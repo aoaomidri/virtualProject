@@ -73,6 +73,8 @@ public:
 
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }
 
+	const bool GetIsGuard()const { return isGuard_; }
+
 	const bool GetIsDash() const { return isDash_; }
 
 	const OBB& GetOBB()const { return playerOBB_; }
@@ -387,8 +389,12 @@ private:
 	float waitTime_ = 0;
 
 	//強攻撃強化時間
-	float counterTimeBase_ = 30.0f;
+	float counterTimeBase_ = 60.0f;
 	float counterTime_ = 0;
+
+	//カウンター時の判定の大きさ
+	Vector3 counterScale_{};
+
 
 	//武器の高さ補正
 	Vector3 addPosition_ = {};
@@ -411,6 +417,9 @@ private:
 	float weaponThreshold_ = 0.0f;
 	//取得する頂点座標を調整する
 	Vector2 trailPosData_ = { 0.0f,3.0f };
+
+	//取得する頂点座標を調整する
+	Vector2 trailPosDataGuard_ = { 7.0f,0.5f };
 
 	bool isDissolve_ = false;
 	//武器を振り下ろしかどうか

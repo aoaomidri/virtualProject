@@ -403,23 +403,48 @@ void GameScene::AllCollision(){
 	}
 
 	for (const auto& enemy : enemies_) {
+		uint32_t serialNumber = enemy->GetSerialNumber();
+		if (player_->GetIsGuard()){
+			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
+				
+				if (player_->RecordCheck(serialNumber)) {
+					return;
+				}
+
+				
+				player_->OnCollisionEnemyAttack(serialNumber);
+				//ノックバックの種類を指定
+				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
+				//ヒット音の再生
+				audio_->PlayAudio(enemyHitSE_, 0.3f, false);
+				//当たったときの処理
+				enemy->OnCollisionGuard();
+				
+			}
+		}
+		
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
 			uint32_t serialNumber = enemy->GetSerialNumber();
-			if (player_->RecordCheck(serialNumber)){
+			if (player_->RecordCheck(serialNumber)) {
 				return;
 			}
-			//ノックバックの種類を指定
-			enemy->SetKnockBackType(player_->GetKnockbackType());
-			//接触履歴に登録
-			player_->AddRecord(serialNumber);
-			//ヒット音の再生
-			audio_->PlayAudio(enemyHitSE_, 0.3f, false);
-			//ヒットストップ
-			GameTime::StopTime(player_->GetHitStop());
-			//当たったときの処理
-			enemy->OnCollision();
+			if (player_->GetIsGuard()) {
+				
+			}
+			else {
+				//ノックバックの種類を指定
+				enemy->SetKnockBackType(player_->GetKnockbackType());
+				//接触履歴に登録
+				player_->AddRecord(serialNumber);
+				//ヒット音の再生
+				audio_->PlayAudio(enemyHitSE_, 0.3f, false);
+				//ヒットストップ
+				GameTime::StopTime(player_->GetHitStop());
+				//当たったときの処理
+				enemy->OnCollision();
+			}
 		}
-
+		
 		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
 			enemy->SetIsOnScreen(true);
 		}
@@ -438,18 +463,19 @@ void GameScene::AllCollision(){
 		if (player_->GetIsDash()){
 			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
 				
-				player_->OnCollisionEnemyAttackAvoid(enemy->GetSerialNumber());
+				player_->OnCollisionEnemyAttackAvoid(serialNumber);
 			}
 		}
 		else {
-			if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {				
-				followCamera_->StartShake(0.5f, 1.5f);				
-				player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
+			if (!player_->GetIsGuard()) {
+				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
 
+					followCamera_->StartShake(0.5f, 1.5f);
+					player_->OnCollisionEnemyAttack(serialNumber);
+
+				}
 			}
 		}
-
-		
 		
 	}
 

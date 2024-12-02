@@ -138,7 +138,7 @@ void Player::Initialize(){
 	addPosition_ = { 0.0f };
 
 	trail_ = std::make_unique<TrailEffect>();
-	trail_->Initialize(10, "resources/texture/TrailEffect/whiteTrail.png");
+	trail_->Initialize(12, "resources/texture/TrailEffect/whiteTrail.png");
 
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
@@ -153,6 +153,10 @@ void Player::Initialize(){
 
 void Player::Update(){
 	ApplyGlobalVariables();
+
+	if (isGuardHit_){
+		trailPosData_ = trailPosDataGuard_;
+	}
 
 	//武器のディゾルブ関連
 	weaponObj_->SetDissolve(weaponThreshold_);
@@ -177,7 +181,7 @@ void Player::Update(){
 	}
 
 	//カウンター時間経過処理
-	if (counterTime_ < counterTimeBase_){
+	if (counterTime_ > counterTimeBase_){
 		isGuardHit_ = false;
 	}
 
@@ -612,7 +616,7 @@ void Player::BehaviorRootUpdate(){
 		isDissolve_ = false;
 		weaponThreshold_ = 0.0f;
 	}
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !isDown_) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
 		isDissolve_ = false;
@@ -1713,13 +1717,19 @@ void Player::StrongAttackMotion(){
 	if (!chargeEnd_){
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)){
 			isGuard_ = true;
-
+			weaponCollisionTransform_.scale = { 0.6f,2.0f,0.6f };
 		}
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y)){
 			isGuard_ = false;
 			chargeEnd_ = true;
 			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
 			weaponTransform_.rotate.z = 1.57f;
+			if (isGuardHit_) {
+				counterScale_ = Vector3(0.9f, 3.0f, 0.9f) * 5.0f;
+			}
+			else {
+				counterScale_ = { 0.9f,3.0f,0.9f };
+			}
 			//addPosition_.y = 0.5f;
 		}
 
@@ -1743,7 +1753,7 @@ void Player::StrongAttackMotion(){
 					move_.z = 0;
 				}
 
-				playerTransform_.translate += move_ * motionSpeed_;
+				playerTransform_.translate += move_ * motionSpeed_ * timeScale_;
 			}
 			weaponTransform_.translate = playerTransform_.translate;
 			
@@ -1751,18 +1761,24 @@ void Player::StrongAttackMotion(){
 		}
 
 		if (waitTime_ <= 0) {
-			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			if (!audio_->IsPlaying(attackMotionSE_)) {
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			};
+			
 			isEndAttack_ = true;
 		}
 
 		if (isShakeDown_) {
 			if (weapon_Rotate_ < 4.5f){
 				isTrail_ = false;
-				weapon_Rotate_+= kMoveWeaponShakeDown_ * 0.5f * motionSpeed_;
+				weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
+				weapon_Rotate_+= kMoveWeaponShakeDown_ * 0.5f * motionSpeed_ * timeScale_;
 			}
 			else {
+				
+				weaponCollisionTransform_.scale = counterScale_;
 				isTrail_ = true;
-				weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_;
+				weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_ * timeScale_;
 			}
 
 		}

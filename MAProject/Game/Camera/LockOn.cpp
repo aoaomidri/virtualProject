@@ -13,7 +13,7 @@ void LockOn::Initialize(){
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, Input* input,const ViewingFrustum& viewingFrustum, const bool isAvoid, const uint32_t serialNumber){
 	
-	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)||input->Trigerkey(DIK_R)) {
+	if (input->GetPadButtonTriger(XINPUT_GAMEPAD_START)||input->Trigerkey(DIK_L)) {
 		if (autoLockOn_){
 			autoLockOn_ = false;
 			
@@ -25,20 +25,20 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}		
 	}
 	if (autoLockOn_) {
-		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_L)) {
 			isLockOn_ = true;
 		}
 	}
 
 	if (target_){
-		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
+		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_L)) {
 			target_ = nullptr;
 			isLockOn_ = false;
 		}
 		else if (!InTarget(target_->GetBodyOBB(), viewprojection, viewingFrustum)) {
 			target_ = nullptr;
 		}
-		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_R)) {			
+		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_L)) {
 			++it;
 			if (it == targets.end()) {
 				it = targets.begin();
@@ -54,8 +54,8 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			avoidSearch(enemies, viewprojection, serialNumber);
 		}
 
-		if (!autoLockOn_){
-			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_R)) {
+		/*if (!autoLockOn_){
+			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_L)) {
 				search(enemies, viewprojection, viewingFrustum);
 			}
 		}
@@ -64,7 +64,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 				search(enemies, viewprojection, viewingFrustum);
 			}
 			
-		}
+		}*/
 		
 	}
 

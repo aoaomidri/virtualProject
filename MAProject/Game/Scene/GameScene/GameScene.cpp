@@ -435,14 +435,21 @@ void GameScene::AllCollision(){
 			player_->SetCollisionEnemy(false);
 		}
 
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-			if (!player_->GetIsJustAvoid()) {
-				followCamera_->StartShake(0.5f, 1.5f);
-			}	
-			player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
-			
-			
+		if (player_->GetIsDash()){
+			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
+				
+				player_->OnCollisionEnemyAttackAvoid(enemy->GetSerialNumber());
+			}
 		}
+		else {
+			if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {				
+				followCamera_->StartShake(0.5f, 1.5f);				
+				player_->OnCollisionEnemyAttack(enemy->GetSerialNumber());
+
+			}
+		}
+
+		
 		
 	}
 

@@ -24,6 +24,7 @@ void Player::ApplyGlobalVariables() {
 	strongHitStop_ = adjustment_item->GetfloatValue(groupName, "StrongHitStop");
 	addPostT_ = adjustment_item->GetfloatValue(groupName, "AddPostT");
 	justAvoidT_ = adjustment_item->GetfloatValue(groupName, "JustAvoidT");
+	scaleValue_ = adjustment_item->GetfloatValue(groupName, "ScaleValue");
 }
 
 void Player::Initialize(){
@@ -45,6 +46,7 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "StrongHitStop", strongHitStop_);
 	adjustment_item->AddItem(groupName, "AddPostT", addPostT_);
 	adjustment_item->AddItem(groupName, "JustAvoidT", justAvoidT_);
+	adjustment_item->AddItem(groupName, "ScaleValue", scaleValue_);
 	
 	input_ = Input::GetInstance();
 
@@ -290,7 +292,14 @@ void Player::Update(){
 	playerOBB_.center = playerTransform_.translate + obbPoint_;
 
 	playerOBB_.size = playerTransform_.scale + obbAddScale_;
+
 	SetOridentatios(playerOBB_, playerRotateMatrix_);
+
+	justAvoidOBB_ = playerOBB_;
+
+	justAvoidObbScale_ = { scaleValue_,scaleValue_,scaleValue_ };
+
+	justAvoidOBB_.size = playerOBB_.size + justAvoidObbScale_;
 
 	
 	weaponOBB_.center = weaponCollisionTransform_.translate;
@@ -447,13 +456,6 @@ void Player::Respawn(){
 
 void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 	
-	//ジャスト回避判定
-	if (isDash_ and !isJustAvoid_) {
-		isJustAvoid_ = true;
-		justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
-		enemyNumber_ = serialNumber;
-		GameTime::SlowDownTime(1.0f, 0.2f);
-	}
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)
 		return;
@@ -462,24 +464,22 @@ void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
 		isGuardHit_ = true;
 		counterTime_ = 0;
 	}
-	else {
-		//ジャスト回避判定
-		if (isDash_ and !isJustAvoid_){
-			isJustAvoid_ = true;
-			justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
-			enemyNumber_ = serialNumber;
-			GameTime::SlowDownTime(1.0f, 0.2f);
-		}
-		else {
-			if (!isJustAvoid_) {
-				//普通に被弾
-				audio_->PlayAudio(playerHitSE_, 0.5f, false);
-				isHitEnemyAttack_ = true;
-				hitTimer_ = 30;
-			}
-		}
+	else {	
+		if (!isJustAvoid_) {
+			//普通に被弾
+			audio_->PlayAudio(playerHitSE_, 0.5f, false);
+			isHitEnemyAttack_ = true;
+			hitTimer_ = 30;
+		}		
 	}
 	
+}
+
+void Player::OnCollisionEnemyAttackAvoid(const uint32_t serialNumber){
+	isJustAvoid_ = true;
+	justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
+	enemyNumber_ = serialNumber;
+	GameTime::SlowDownTime(1.0f, 0.2f);
 }
 
 void Player::SetIsDown(bool isDown){

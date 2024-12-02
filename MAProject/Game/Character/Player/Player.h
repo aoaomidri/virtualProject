@@ -73,9 +73,13 @@ public:
 
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }
 
+	const bool GetIsDash() const { return isDash_; }
+
 	const OBB& GetOBB()const { return playerOBB_; }
 
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
+
+	const OBB& GetJustAvoidOBB()const { return justAvoidOBB_; }
 
 	const ParticleBase* GetParticle()const { return particle_.get(); }
 
@@ -100,10 +104,10 @@ public:
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
-
+	//非回避中の当たりの処理
 	void OnCollisionEnemyAttack(const uint32_t serialNumber);
-
-
+	//回避中の当たりの処理
+	void OnCollisionEnemyAttackAvoid(const uint32_t serialNumber);
 
 	//Setter
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
@@ -290,6 +294,11 @@ private:
 
 	//自機のOBB
 	OBB playerOBB_{};
+
+	//ジャスト回避用のOBB
+	OBB justAvoidOBB_{};
+
+
 
 	//武器のOBB
 	OBB weaponOBB_{};
@@ -509,5 +518,11 @@ private:
 
 	//Obbの補正値
 	Vector3 obbAddScale_ = { -0.5f,0.5f,0.0f };
+
+	//ジャスト回避用のobbの補正値
+	Vector3 justAvoidObbScale_{};
+
+	//大きさ補正の値
+	float scaleValue_ = 0.0f;
 };
 

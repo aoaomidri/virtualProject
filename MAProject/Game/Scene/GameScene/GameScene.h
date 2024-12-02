@@ -76,13 +76,6 @@ private:
 	void FilesOverWrite(const std::string& stage);
 	void FilesLoad(const std::string& stage);
 
-private:
-	/*ファイル関連*/
-	int stageSelect_;
-
-	std::string stageName_;
-
-	std::vector<std::string> stages_;
 
 private:
 	//クラス内変数

@@ -171,6 +171,13 @@ private:
 
 	Vector3 deadMove_ = { 0,0.02f,0.1f };
 
+	//移動限界 xが+側、yが-側
+	Vector2 limitPos_{ 70.0f,-70.0f };
+
+	float enemyLimitPos_ = 15.0f;
+	//座標補正
+	float positionCoordinate_ = 69.9f;
+
 	float deadYAngle_ = 0;
 
 	//プレイヤーとの距離を保存する用の変数

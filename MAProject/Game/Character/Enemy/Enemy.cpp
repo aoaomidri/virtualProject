@@ -255,6 +255,7 @@ void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& co
 void Enemy::DrawImgui() {
 #ifdef _DEBUG
 	ImGui::Begin("敵の変数");
+	ImGui::DragFloat3("敵の座標", &transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("敵の回転", &transform_.rotate.x, 0.01f);
 	ImGui::Text("%.2f", rotateMatrix_.RotateAngleYFromMatrix());
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
@@ -378,7 +379,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -404,6 +405,26 @@ void Enemy::MotionUpdate(){
 	case Behavior::kLeaningBack:
 		LeaningBack();
 		break;
+	}
+
+	/*敵の移動*/
+	Vector3 NowPos = transform_.translate;
+
+	if (NowPos.x >= limitPos_.x or NowPos.x <= limitPos_.y) {
+		if (NowPos.x > 0){
+			transform_.translate.x = positionCoordinate_;
+		}
+		else {
+			transform_.translate.x = -positionCoordinate_;
+		}
+	}
+	if (NowPos.z >= limitPos_.x or NowPos.z <= limitPos_.y) {
+		if (NowPos.z > 0) {
+			transform_.translate.z = positionCoordinate_;
+		}
+		else {
+			transform_.translate.z = -positionCoordinate_;
+		}
 	}
 
 	Vector3 lockOnPos = target_->translate;
@@ -466,10 +487,10 @@ void Enemy::RootMotion(){
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
 
-	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 		move_.x = 0;
 	}
-	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 		move_.z = 0;
 	}
 
@@ -504,15 +525,22 @@ void Enemy::RootMotion(){
 		}
 		//逆に離れていた場合
 		else if (farTime_ > lengthJudgment_) {
-			int i = RandomMaker::DistributionInt(0, 2);
-			//分岐
-			if (i == 0) {
+			if (transform_.translate.x >= limitPos_.x - enemyLimitPos_ or transform_.translate.x <= limitPos_.y + enemyLimitPos_) {
 				behaviorRequest_ = Behavior::kRun;
 			}
-			else {
-				behaviorRequest_ = Behavior::kPreliminalyAction;
+			if (transform_.translate.z >= limitPos_.x - enemyLimitPos_ or transform_.translate.z <= limitPos_.y + enemyLimitPos_) {
+				behaviorRequest_ = Behavior::kRun;
 			}
-
+			if (behaviorRequest_ == std::nullopt) {
+				int i = RandomMaker::DistributionInt(0, 2);
+				//分岐
+				if (i == 0) {
+					behaviorRequest_ = Behavior::kRun;
+				}
+				else {
+					behaviorRequest_ = Behavior::kPreliminalyAction;
+				}
+			}
 		}
 	}
 	
@@ -527,6 +555,16 @@ void Enemy::BackStep(){
 	move_ = { 0, 0, backSpeed_ };
 
 	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
+
+	/*敵の移動*/
+	Vector3 NextPos = transform_.translate + move_;
+
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+		move_.z = 0;
+	}
 
 	//ダッシュの時間<frame>
 	const uint32_t behaviorDashTime = 8;
@@ -551,10 +589,18 @@ void Enemy::Dash(){
 
 	move_ = Matrix::TransformNormal(move_, dashRotateMatrix_);
 
-	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 30;
+	/*敵の移動*/
+	Vector3 NextPos = transform_.translate + move_;
 
-	
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+		move_.z = 0;
+	}
+
+	//ダッシュの時間<frame>
+	const uint32_t behaviorDashTime = 30;	
 	
 	attackOBB_.size = bodyOBB_.size * collisionScale_;
 	transform_.translate += move_ * timeScale_;
@@ -586,10 +632,10 @@ void Enemy::EnemyRun(){
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
 
-	if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 		move_.x = 0;
 	}
-	if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
 		move_.z = 0;
 	}
 
@@ -679,6 +725,16 @@ void Enemy::LeaningBack(){
 	}
 	move_ = Matrix::TransformNormal(move_, playerMat_);
 	move_.y = 0;
+	/*敵の移動*/
+	Vector3 NextPos = transform_.translate + move_;
+
+	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+		move_.x = 0;
+	}
+	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+		move_.z = 0;
+	}
+
 	transform_.translate += move_;
 
 	rotateEaseT_ += addRotateEaseT_;
@@ -894,6 +950,16 @@ void Enemy::Tackle(){
 			move_ = { 0, 0, dashSpeed_ };
 
 			move_ = Matrix::TransformNormal(move_, dashRotateMatrix_);
+
+			/*敵の移動*/
+			Vector3 NextPos = transform_.translate + move_;
+
+			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
+				move_.x = 0;
+			}
+			if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
+				move_.z = 0;
+			}
 
 			//ダッシュの時間<frame>
 			const uint32_t behaviorDashTime = 30;

@@ -13,7 +13,7 @@ struct PixelShaderOutput {
 PixelShaderOutput main(VertexShaderOutput input) {
 	const float32_t2 kCenter = float32_t2(0.5f,0.5f);//中心点。ここを基準に放射的にブラーがかかる
 	const int32_t kNumSamples = 10;//サンプリング数。多いほど滑らかだが重い
-	const float32_t kBlurWidth = 0.01f;//ぼかし幅。大きいほど大きい
+	const float32_t kBlurWidth = 0.001f;//ぼかし幅。大きいほど大きい
 	//中心から現在のuvに対しての方向を計算
 	//普段方向と言えば単位ベクトルだが、ここではあえて正規化せず、遠いほど遠くをサンプリングをする
 	float32_t2 direction = input.texcoord - kCenter;

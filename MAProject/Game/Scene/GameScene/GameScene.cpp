@@ -157,15 +157,6 @@ void GameScene::Initialize(){
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
-	stages_ = {
-		"Stage1",
-		"Stage2",
-		"Stage3",
-		"Stage4"
-	};
-
-	stageName_ = stages_[0].c_str();
-
 	comboSprite_->position_ = { 640.0f,550.0f };
 	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
 	comboSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };

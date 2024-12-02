@@ -68,6 +68,8 @@ private:
 
 	//imguiの描画
 	void DrawImgui();
+	//時間画像の更新
+	void TimeTexUpdate();
 
 
 	/*分ける予定があるけどひとまずのやつ*/
@@ -131,29 +133,27 @@ private:
 	/*スカイボックス*/
 	std::unique_ptr<SkyBox> skyBox_;
 
+	//敵の反射強度
+	float enemyShininess_;
+
 	//スプライト関連
 
 	bool isReset_ = false;
 
 	bool isStart_ = true;
 
-	std::unique_ptr<Sprite> comboSprite_;
-
-	std::unique_ptr<Sprite> controlSprite_;
 
 	std::unique_ptr<Sprite> backSprite_;
 
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
 
-	//敵の反射強度
-	float enemyShininess_;
-
 	bool isFade_ = false;
 
-	std::unique_ptr<Sprite> pressSprite_;
+	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
 
-	std::unique_ptr<Sprite> clearSprite_;
+	std::unique_ptr<Sprite> slushTex_;
+
 
 	std::unique_ptr<Sprite> actionTextSprite_;
 

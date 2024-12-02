@@ -38,27 +38,12 @@ void GameScene::SoundLoad(){
 void GameScene::SpriteInitialize(){
 	uint32_t textureHandle = 0;
 
-	comboSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/combo.png");
-	comboSprite_->Initialize(textureHandle);
-
-	controlSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/control.png");
-	controlSprite_->Initialize(textureHandle);
-	controlSprite_->isDraw_ = false;
 	//////ここから修正
 	backSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/Whitex64.png");
 	backSprite_->Initialize(textureHandle);
 	backSprite_->isDraw_ = false;
 
-	pressSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/pressA.png");
-	pressSprite_->Initialize(textureHandle);
-
-	clearSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/Clear.png");
-	clearSprite_->Initialize(textureHandle);
 
 	fadeSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/Black.png");
@@ -71,6 +56,13 @@ void GameScene::SpriteInitialize(){
 	attackSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/STAttack.png");
 	attackSprite_->Initialize(textureHandle);
+
+	for (size_t i = 0; i < timerTexs_.size(); i++){
+		timerTexs_[i] = std::make_unique<Sprite>();
+		textureHandle = textureManager_->Load("resources/texture/number/number.png");
+		timerTexs_[i]->Initialize(textureHandle);
+	}
+
 }
 
 void GameScene::ObjectInitialize() {
@@ -88,6 +80,8 @@ void GameScene::ObjectInitialize() {
 void GameScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
+
+	GameTime::ResetGameTimer();
 
 	textureManager_ = TextureManager::GetInstance();
 
@@ -116,26 +110,26 @@ void GameScene::Initialize(){
 	player_->Update();
 
 	enemysPos_ = {
-		Vector3(0.0f,1.0f,20.0f),
-		Vector3(-5.0f,1.0f,25.0f),
-		Vector3(5.0f,1.0f,25.0f),
-		Vector3(-10.0f,1.0f,30.0f),
-		Vector3(0.0f,1.0f,30.0f),
-		Vector3(10.0f,1.0f,30.0f),
-		Vector3(-15.0f,1.0f,35.0f),
-		Vector3(-5.0f,1.0f,35.0f),
-		Vector3(5.0f,1.0f,35.0f),
-		Vector3(15.0f,1.0f,-35.0f),
-		Vector3(0.0f,1.0f,-20.0f),
-		Vector3(-5.0f,1.0f,-25.0f),
-		Vector3(5.0f,1.0f,-25.0f),
-		Vector3(-10.0f,1.0f,-30.0f),
-		Vector3(0.0f,1.0f,-30.0f),
-		Vector3(10.0f,1.0f,-30.0f),
-		Vector3(-15.0f,1.0f,-35.0f),
-		Vector3(-5.0f,1.0f,-35.0f),
-		Vector3(5.0f,1.0f,-35.0f),
-		Vector3(15.0f,1.0f,-35.0f)
+		Vector3(0.0f,2.5f,20.0f),
+		Vector3(-5.0f,2.5f,25.0f),
+		Vector3(5.0f,2.5f,25.0f),
+		Vector3(-10.0f,2.5f,30.0f),
+		Vector3(0.0f,2.5f,30.0f),
+		Vector3(10.0f,2.5f,30.0f),
+		Vector3(-15.0f,2.5f,35.0f),
+		Vector3(-5.0f,2.5f,35.0f),
+		Vector3(5.0f,2.5f,35.0f),
+		Vector3(15.0f,2.5f,-35.0f),
+		Vector3(0.0f,2.5f,-20.0f),
+		Vector3(-5.0f,2.5f,-25.0f),
+		Vector3(5.0f,2.5f,-25.0f),
+		Vector3(-10.0f,2.5f,-30.0f),
+		Vector3(0.0f,2.5f,-30.0f),
+		Vector3(10.0f,2.5f,-30.0f),
+		Vector3(-15.0f,2.5f,-35.0f),
+		Vector3(-5.0f,2.5f,-35.0f),
+		Vector3(5.0f,2.5f,-35.0f),
+		Vector3(15.0f,2.5f,-35.0f)
 	};
 
 	for (size_t i = 0; i < enemyNum_; i++) {
@@ -157,26 +151,12 @@ void GameScene::Initialize(){
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
-	comboSprite_->position_ = { 640.0f,550.0f };
-	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
-	comboSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
-	comboSprite_->isDraw_ = true;
-
-	controlSprite_->position_ = { 640.0f,360.0f };
-	controlSprite_->anchorPoint_ = { 0.5f,0.5f };
-	controlSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	backSprite_->position_ = { 640.0f,360.0f };
 	backSprite_->anchorPoint_ = { 0.5f,0.5f };
 	backSprite_->scale_.x = 1280.0f;
 	backSprite_->scale_.y = 720.0f;
 	backSprite_->color_ = {0.0f,0.0f,0.0f,0.85f };
-
-	pressSprite_->position_ = { 640.0f,500.0f };
-	pressSprite_->scale_.x = 600.0f;
-	pressSprite_->scale_.y = 136.0f;
-	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
-	pressSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	actionTextSprite_->position_ = { 1072.0f,500.0f };
 	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
@@ -186,16 +166,18 @@ void GameScene::Initialize(){
 	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
 	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	clearSprite_->position_ = { 640.0f,175.0f };
-	clearSprite_->scale_.x = 850.0f;
-	clearSprite_->scale_.y = 150.0f;
-	clearSprite_->anchorPoint_ = { 0.5f,0.5f };
-
 	fadeSprite_->position_ = { 640.0f,360.0f };
 	fadeSprite_->scale_.x = 1280.0f;
 	fadeSprite_->scale_.y = 720.0f;
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
+
+	for (size_t i = 0; i < timerTexs_.size(); i++){
+		timerTexs_[i]->scale_ = { 96.0f,96.0f };
+		timerTexs_[i]->anchorPoint_ = { 0.5f,0.5f };
+		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
+		timerTexs_[i]->position_ = { 500.0f,80.0f,0.0f };
+	}
 
 	
 	lockOn_ = std::make_unique<LockOn>();
@@ -210,6 +192,14 @@ void GameScene::Initialize(){
 void GameScene::Update(){
 	bool frontFlag = false;
 	DrawImgui();
+
+	GameTime::InGameUpdate();
+
+	TimeTexUpdate();
+
+	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
+	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
+	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->GetIsDead()) {
@@ -349,6 +339,11 @@ void GameScene::Draw2D(){
 	actionTextSprite_->Draw();
 	attackSprite_->Draw();
 	fadeSprite_->Draw();
+
+	for (size_t i = 0; i < timerTexs_.size(); i++){
+		timerTexs_[i]->Draw();
+	}
+	
 		
 	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
 	
@@ -373,6 +368,13 @@ void GameScene::AllDraw2D(){
 
 void GameScene::DrawImgui(){
 #ifdef _DEBUG
+	ImGui::Begin("テクスチャ");
+	ImGui::DragFloat3("position", &timerTexs_[0]->position_.x, 0.1f);
+	ImGui::DragFloat3("uvTrans", &timerTexs_[0]->uvTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("uvScale", &timerTexs_[0]->uvTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("uvRotate", &timerTexs_[0]->uvTransform_.rotate.x, 0.1f);
+	ImGui::End();
+
 
 	player_->DrawImgui();
 	followCamera_->DrawImgui();
@@ -384,6 +386,12 @@ void GameScene::DrawImgui(){
 	}	
 
 #endif // _DEBUG	
+}
+
+void GameScene::TimeTexUpdate(){
+	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
+	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
+	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
 }
 
 

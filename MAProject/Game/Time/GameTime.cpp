@@ -5,6 +5,7 @@ float GameTime::deltaTime_ = 1.0f / 60.0f;  // 60 FPSで約16ms
 float GameTime::timeScale_ = 1.0f;
 float GameTime::duration_ = 0.0f;
 float GameTime::elapsedTime_ = 0.0f;
+float GameTime::inGameTime_ = 0.0f;
 bool GameTime::isStop_ = false;
 bool GameTime::isSlowDown_ = false;
 
@@ -30,4 +31,8 @@ void GameTime::Update(){
 		timeScale_ = 1.0f;
 		
 	}
+}
+
+void GameTime::InGameUpdate(){
+	inGameTime_ += deltaTime_ * timeScale_;
 }

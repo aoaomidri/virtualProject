@@ -451,6 +451,8 @@ private:
 
 	//回避反撃を行うかどうか
 	bool isAvoidAttack_ = false;
+	//突きを行うかどうか
+	bool isThrust_ = false;
 
 	/*振る舞い系*/
 	enum class Behavior {

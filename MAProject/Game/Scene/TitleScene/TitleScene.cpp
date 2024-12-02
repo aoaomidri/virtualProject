@@ -108,11 +108,11 @@ void TitleScene::Initialize() {
 	titleSprite_->scale_.x = 850.0f;
 	titleSprite_->scale_.y = 150.0f;
 	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
-	titleSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	titleSprite_->color_ = { 0.529f, 0.808f, 0.922f,1.0f };
 
 	startSprite_->position_ = { 640.0f,390.0f };
 	startSprite_->anchorPoint_ = { 0.5f,0.5f };
-	startSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	startSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
 	startSprite_->isDraw_ = true;
 
 	selectSprite_->position_ = { 380.0f,390.0f };

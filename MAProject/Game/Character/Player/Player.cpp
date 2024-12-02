@@ -191,10 +191,14 @@ void Player::Update(){
 	
 	//ジャスト回避時間経過処理
 	if (justAvoidAttackTimer_ > 0) {
+		if (behavior_ != Behavior::kJustAvoid){
+			justAvoidAttackTimer_--;
+		}
 		postT_ = 0.9f;
-		justAvoidAttackTimer_--;
+		
 	}
 	else if (justAvoidAttackTimer_ <= 0) {
+		GameTime::ReverseTimeChange();
 		postT_ -= addPostT_;
 		isJustAvoid_ = false;
 	}
@@ -392,6 +396,7 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::DragFloat("easeT", &easeT_, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("移動限界", &limitPos_.x, 0.01f);
 	limitPos_.y = -limitPos_.x;
 	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);
@@ -483,7 +488,7 @@ void Player::OnCollisionEnemyAttackAvoid(const uint32_t serialNumber){
 	isJustAvoid_ = true;
 	justAvoidAttackTimer_ = justAvoidAttackTimerBase_;
 	enemyNumber_ = serialNumber;
-	GameTime::SlowDownTime(1.0f, 0.2f);
+	GameTime::SlowDownTime(10.0f, 0.2f);
 }
 
 void Player::SetIsDown(bool isDown){
@@ -497,6 +502,7 @@ void Player::SetIsDown(bool isDown){
 
 void Player::BehaviorRootInitialize(){
 	isDash_ = false;
+	GameTime::ReverseTimeChange();
 	move_ = { 0.0f,0.0f,0.0f };
 	workAttack_.comboIndex = 0;
 	
@@ -1112,7 +1118,7 @@ void Player::BehaviorJustAvoidInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
 	hitRecord_.Clear();
 	workAttack_.AttackTimer = 0;
-	easeT_ = 0;
+	easeT_ = 1.0f;
 	addEaseT_ = 0.04f;
 	waitTime_ = waitTimeBase_;
 	addPosition_.y = 0.0f;
@@ -1120,8 +1126,10 @@ void Player::BehaviorJustAvoidInitialize(){
 	strongSecondAttackCount_ = 0;
 	isNextAttack_ = false;
 	isTrail_ = false;
+	isThrust_ = false;
 	isShakeDown_ = false;
 	isEndAttack_ = false;
+	weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
 }
 
 void Player::BehaviorDashUpdate(){
@@ -1178,26 +1186,40 @@ void Player::BehaviorDashUpdate(){
 
 void Player::BehaviorJustAvoidUpdate(){
 	if (!isAvoidAttack_){
-		easeT_ += addEaseT_;
-		if (easeT_ > 1.0f) {
-			easeT_ = 1.0f;
-			waitTime_ -= 1;
-			addEaseT_ = 0.0f;
-			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
-			isJustAvoid_ = false;
-			isAvoidAttack_ = true;
+
+		if (!isThrust_){
+			
+
+			easeT_ -= (addEaseT_ / 2.0f) ;
+			if (easeT_ < 0.0f) {
+				easeT_ = 0.0f;
+				isThrust_ = true;
+			}
+
+			weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInBack, 1.5f, 0.0f, easeT_);
+			weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 4.0f, easeT_);
+		}
+		else {
+			
+			easeT_ += (addEaseT_ * 4.0f);
+			if (easeT_ > 1.0f) {
+				easeT_ = 1.0f;
+				waitTime_ -= 1;
+				addEaseT_ = 0.0f;
+				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				justAvoidAttackTimer_ = 0;
+				isJustAvoid_ = false;
+				isAvoidAttack_ = true;
+			}
+
+			weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInExpo, 1.5f, 0.0f, easeT_);
+			weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInExpo, 0.0f, 4.0f, easeT_);
 		}
 		
-		weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInOutCirc, 0.5f, 0.0f, easeT_);
-		weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInOutCirc, 0.0f, 4.0f, easeT_);
-
 		
-
-		if (weapon_offset_Base_.x > -0.9f) {
-			addEaseT_ = 0.08f;
-		}
 	}
 	else {
+		weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - playerTransform_.translate;
 
@@ -1221,20 +1243,20 @@ void Player::BehaviorJustAvoidUpdate(){
 
 		workAvoidAttack_.tackleTimer_ += GameTime::deltaTime_;
 
-		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
-		weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
-		weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-		weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f);
-
-		weaponTransform_.translate = weaponCollisionTransform_.translate;
+		
 
 		if (workAvoidAttack_.tackleTimerBase_ < workAvoidAttack_.tackleTimer_) {
 			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
 	
-	
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
+	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
+	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
+	weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f);
+
+	weaponTransform_.translate = weaponCollisionTransform_.translate;
 	
 	/*audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 	workAttack_.comboIndex = 1;

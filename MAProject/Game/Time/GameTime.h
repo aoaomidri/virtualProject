@@ -7,6 +7,8 @@ public:
     static float timeScale_;     
     //時間の更新処理
     static void Update();
+    //インゲームの時間更新処理
+    static void InGameUpdate();
 
     // 実際の時間経過を取得する関数
     static float GetScaledDeltaTime() {
@@ -15,7 +17,53 @@ public:
     //スローかどうかを取得
     static bool GetIsSlow() {
         return isSlowDown_;
-    }     
+    } 
+
+    
+    /// <summary>
+    /// インゲームで経過秒数の一の位を取得(0～59まで)
+    /// </summary>
+    /// <returns></returns>
+    static int GetSecondsOnes() {
+        int result = 0;
+        result = (int)(inGameTime_) % 60;
+
+        result = result % 10;
+
+        return result;
+    }
+
+    /// <summary>
+    /// インゲームで経過秒数の十の位を取得(0～59まで)
+    /// </summary>
+    /// <returns></returns>
+    static int GetSecondsTens() {
+        int result = 0;
+        result = (int)(inGameTime_) % 60;
+        result = result / 10;
+
+        return result;
+    }
+
+    /// <summary>
+   /// インゲームで経過秒数を取得(0～59まで)
+   /// </summary>
+   /// <returns></returns>
+    static int GetMinutes() {
+        int result = 0;
+        result = (int)(inGameTime_) / 60;
+
+        return result;
+    }
+
+    static float GetInGameTimer() {
+        return inGameTime_;
+    }
+
+    static void ResetGameTimer() {
+        inGameTime_ = 0.0f;
+    }
+
     //時間スケールの変更
     static void ChangeTimeScale(float timeScale) {
         timeScale_ = timeScale;
@@ -40,6 +88,13 @@ public:
         elapsedTime_ = 0.0f;
         isSlowDown_ = true;
     }
+    /// <summary>
+    /// 時間の変化を戻す
+    /// </summary>
+    static void ReverseTimeChange() {
+        isSlowDown_ = false;
+        isStop_ = false;
+    }
 
 private:
     static float duration_;   // シェイクの持続時間
@@ -50,6 +105,9 @@ private:
 
     //時間を遅くさせるか
     static bool isSlowDown_;
+
+    //インゲームの経過時間
+    static float inGameTime_;
 
 };
 

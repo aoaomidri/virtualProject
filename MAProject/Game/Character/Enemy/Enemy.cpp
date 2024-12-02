@@ -98,7 +98,7 @@ void Enemy::Initialize(const Vector3& position){
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
 	};
-	emitter_.transform.scale /= 4.0f;
+	emitter_.transform.scale /= 2.0f;
 
 	particle_ = std::make_unique<ParticleBase>();
 	particle_->Initialize(emitter_, false);
@@ -382,7 +382,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kBack:
 		BackStep();
@@ -438,7 +438,7 @@ void Enemy::MotionUpdate(){
 	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 
 	/*エネミーのパーツ*/
-	Vector3 parts_offset = { 0.0f, 3.0f, 0.0f };
+	Vector3 parts_offset = { 0.0f, 1.5f, 0.0f };
 	parts_offset = Matrix::TransformNormal(parts_offset, resultRotateMat);
 
 	partsTransform_.translate = transform_.translate + parts_offset;

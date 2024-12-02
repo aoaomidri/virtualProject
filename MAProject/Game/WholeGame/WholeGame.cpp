@@ -137,11 +137,14 @@ void WholeGame::DrawImgui(){
 	ImGui::End();
 
 	ImGui::Begin("ゲーム内の時間");
+	ImGui::Text("現在のゲーム内経過時間：%d分%d%d秒", GameTime::GetMinutes(), GameTime::GetSecondsTens(), GameTime::GetSecondsOnes());
+
 	ImGui::SliderFloat("時間の速さ", &GameTime::timeScale_, 0.0f, 1.0f, "%.1f");
-	if (ImGui::Button("時間を止める")){
+
+	if (ImGui::Button("一時的に時間を止める")){
 		GameTime::StopTime(1.0f);
 	}
-	if (ImGui::Button("時間を遅くする")) {
+	if (ImGui::Button("一時的に時間を遅くする")) {
 		GameTime::SlowDownTime(1.0f, 0.5f);
 	}
 

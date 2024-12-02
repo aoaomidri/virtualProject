@@ -198,7 +198,7 @@ void Player::Update(){
 		
 	}
 	else if (justAvoidAttackTimer_ <= 0) {
-		GameTime::ReverseTimeChange();
+		
 		postT_ -= addPostT_;
 		isJustAvoid_ = false;
 	}
@@ -649,6 +649,7 @@ void Player::BehaviorAttackInitialize(){
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
+	weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
 
 	workAttack_.AttackTimer = 0;
 	hitRecord_.Clear();
@@ -1203,6 +1204,7 @@ void Player::BehaviorJustAvoidUpdate(){
 			
 			easeT_ += (addEaseT_ * 4.0f);
 			if (easeT_ > 1.0f) {
+				GameTime::ReverseTimeChange();
 				easeT_ = 1.0f;
 				waitTime_ -= 1;
 				addEaseT_ = 0.0f;
@@ -1550,6 +1552,7 @@ void Player::SixthAttackMotion(){
 
 void Player::BehaviorStrongAttackInitialize(){
 	trail_->Reset();
+	type_ = KnockbackType::Center;
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
 	workAttack_.attackParameter = 0;
@@ -1741,7 +1744,7 @@ void Player::StrongAttackMotion(){
 			isGuard_ = true;
 			weaponCollisionTransform_.scale = { 0.6f,2.0f,0.6f };
 		}
-		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y)){
+		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y) or isGuardHit_){
 			isGuard_ = false;
 			chargeEnd_ = true;
 			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
@@ -1783,9 +1786,7 @@ void Player::StrongAttackMotion(){
 		}
 
 		if (waitTime_ <= 0) {
-			if (!audio_->IsPlaying(attackMotionSE_)) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
-			};
+			
 			
 			isEndAttack_ = true;
 		}
@@ -1796,8 +1797,10 @@ void Player::StrongAttackMotion(){
 				weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
 				weapon_Rotate_+= kMoveWeaponShakeDown_ * 0.5f * motionSpeed_ * timeScale_;
 			}
-			else {
-				
+			else {		
+				if (!isTrail_) {
+					audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				};
 				weaponCollisionTransform_.scale = counterScale_;
 				isTrail_ = true;
 				weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_ * timeScale_;

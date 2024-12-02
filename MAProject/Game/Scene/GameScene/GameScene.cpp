@@ -29,7 +29,6 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	gameBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
 	
 	enemyHitSE_ = audio_->LoadAudio("SE/enemyHitSE.mp3");
 
@@ -90,7 +89,6 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	audio_->ResumeWave(gameBGM_);
 	
 	/*敵の彩度外部に吐き出す事を忘れずに*/
 	
@@ -353,7 +351,6 @@ void GameScene::Draw2D(){
 }
 
 void GameScene::Finalize(){
-	
 }
 
 void GameScene::AllDraw3D(){
@@ -392,6 +389,7 @@ void GameScene::TimeTexUpdate(){
 	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
 	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
 	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
+	timerTexs_[0]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutesTens());
 }
 
 
@@ -477,7 +475,7 @@ void GameScene::AllCollision(){
 		else {
 			if (!player_->GetIsGuard()) {
 				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-
+					GameTime::AddGameTime();
 					followCamera_->StartShake(0.5f, 1.5f);
 					player_->OnCollisionEnemyAttack(serialNumber);
 

@@ -28,6 +28,8 @@ void TitleScene::TextureLoad() {
 
 void TitleScene::SoundLoad() {
 	titleBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
+
+
 }
 
 void TitleScene::SpriteInitialize() {
@@ -88,7 +90,12 @@ void TitleScene::Initialize() {
 
 	TextureLoad();
 	SoundLoad();
+
+
 	audio_->PlayAudio(titleBGM_, 0.1f, true);
+
+	
+	audio_->SetVolume(titleBGM_, 0.1f);
 
 	SpriteInitialize();
 	ObjectInitialize();
@@ -123,7 +130,7 @@ void TitleScene::Initialize() {
 
 	comboSprite_->position_ = { 640.0f,550.0f };
 	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
-	comboSprite_->color_ = { 0.0f,0.0f,0.0f,1.0f };
+	comboSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
 	comboSprite_->isDraw_ = true;
 
 	controlSprite_->position_ = { 640.0f,360.0f };
@@ -202,7 +209,7 @@ void TitleScene::Update() {
 	}
 	if (fadeAlpha_ >= 1.0f && isFade_) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
-		audio_->PauseWave(titleBGM_);
+		
 	}
 	
 	

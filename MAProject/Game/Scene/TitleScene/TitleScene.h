@@ -76,6 +76,8 @@ private:
 
 	uint32_t titleBGM_{};
 
+	
+
 	std::unique_ptr<SkyBox> skyBox_;
 
 	//スプライト関連

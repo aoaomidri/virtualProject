@@ -1,4 +1,5 @@
 #include "ResultScene.h"
+#include <GameTime.h>
 
 void ResultScene::TextureLoad(){
 	
@@ -6,7 +7,6 @@ void ResultScene::TextureLoad(){
 }
 
 void ResultScene::SoundLoad(){
-	resultBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
 }
 
 void ResultScene::SpriteInitialize(){
@@ -20,15 +20,28 @@ void ResultScene::SpriteInitialize(){
 	textureHandle = textureManager_->Load("resources/texture/Press.png");
 	pressSprite_->Initialize(textureHandle);
 
+	for (size_t i = 0; i < timerTexs_.size(); i++) {
+		timerTexs_[i] = std::make_unique<Sprite>();
+		textureHandle = textureManager_->Load("resources/texture/number/number.png");
+		timerTexs_[i]->Initialize(textureHandle);
+	}
+
 	clearSprite_->position_ = { 640.0f,175.0f };
 	clearSprite_->scale_.x = 850.0f;
 	clearSprite_->scale_.y = 150.0f;
 	clearSprite_->anchorPoint_ = { 0.5f,0.5f };
 
-	pressSprite_->position_ = { 640.0f,500.0f };
+	pressSprite_->position_ = { 640.0f,600.0f };
 	pressSprite_->scale_.x = 600.0f;
 	pressSprite_->scale_.y = 136.0f;
 	pressSprite_->anchorPoint_ = { 0.5f,0.5f };
+
+	for (size_t i = 0; i < timerTexs_.size(); i++) {
+		timerTexs_[i]->scale_ = { 96.0f,96.0f };
+		timerTexs_[i]->anchorPoint_ = { 0.5f,0.5f };
+		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
+		timerTexs_[i]->position_ = { 500.0f,400.0f,0.0f };
+	}
 }
 
 void ResultScene::ObjectInitialize(){
@@ -39,6 +52,8 @@ void ResultScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
 
+
+
 	textureManager_ = TextureManager::GetInstance();
 
 	postEffect_ = PostEffect::GetInstance();
@@ -46,7 +61,6 @@ void ResultScene::Initialize(){
 
 	TextureLoad();
 	SoundLoad();
-	audio_->PlayAudio(resultBGM_, 0.1f, true);
 
 	SpriteInitialize();
 	ObjectInitialize();
@@ -69,28 +83,29 @@ void ResultScene::Initialize(){
 }
 
 void ResultScene::Finalize(){
-
 }
 
 void ResultScene::Update(){
 
+	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
+	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
+	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
+
+	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
+	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
+	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
+	timerTexs_[0]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutesTens());
+
+
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
-	//audio_->PauseWave(gameBGM);
 	followCamera_->SetIsMove(false);
 	
 	if (input_->GetPadButtonTriger(Input::GamePad::A) || input_->GetPadButtonTriger(Input::GamePad::B)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Title);
-		audio_->StopWave(resultBGM_);
 
 	}
-	else {
-		if (input_->GetPadButtonTriger(Input::GamePad::X) || input_->GetPadButtonTriger(Input::GamePad::Y)) {
-			
-			audio_->StopWave(resultBGM_);
-		}
-	}
-
+	
 	floorManager_->Update();
 	
 }
@@ -154,6 +169,10 @@ void ResultScene::Draw2D(){
 	///*ここから下に描画処理を書き込む*/
 	clearSprite_->Draw();
 	pressSprite_->Draw();
+
+	for (size_t i = 0; i < timerTexs_.size(); i++) {
+		timerTexs_[i]->Draw();
+	}
 	
 
 	/*描画処理はここまで*/

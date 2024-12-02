@@ -56,12 +56,23 @@ public:
         return result;
     }
 
+    static int GetMinutesTens() {
+        int result = 0;
+        result = (int)(inGameTime_) / 600;
+
+        return result;
+    }
+
     static float GetInGameTimer() {
         return inGameTime_;
     }
 
     static void ResetGameTimer() {
         inGameTime_ = 0.0f;
+    }
+
+    static void AddGameTime() {
+        inGameTime_ += 3.0f;
     }
 
     //時間スケールの変更

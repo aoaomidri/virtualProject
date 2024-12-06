@@ -101,7 +101,7 @@ void GameScene::Initialize(){
 
 	//firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
 
-	floorManager_->AddFloor(firstFloor_, false);
+	floorManager_->AddFloor(firstFloor_);
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
@@ -418,7 +418,7 @@ void GameScene::AllCollision(){
 				}
 
 				
-				player_->OnCollisionEnemyAttack(serialNumber);
+				player_->OnCollisionEnemyAttack();
 				//ノックバックの種類を指定
 				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
 				//ヒット音の再生
@@ -430,7 +430,6 @@ void GameScene::AllCollision(){
 		}
 		
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
-			uint32_t serialNumber = enemy->GetSerialNumber();
 			if (player_->RecordCheck(serialNumber)) {
 				return;
 			}
@@ -477,7 +476,7 @@ void GameScene::AllCollision(){
 				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
 					GameTime::AddGameTime();
 					followCamera_->StartShake(0.5f, 1.5f);
-					player_->OnCollisionEnemyAttack(serialNumber);
+					player_->OnCollisionEnemyAttack();
 
 				}
 			}

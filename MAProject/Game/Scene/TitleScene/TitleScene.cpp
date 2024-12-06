@@ -105,7 +105,7 @@ void TitleScene::Initialize() {
 
 	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
 
-	floorManager_->AddFloor(firstFloor_, false);
+	floorManager_->AddFloor(firstFloor_);
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();

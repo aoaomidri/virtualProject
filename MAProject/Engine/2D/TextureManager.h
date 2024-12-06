@@ -37,9 +37,9 @@ public:
 	//	シングルトンインスタンスの取得
 	static TextureManager* GetInstance();
 
-	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU[index]; }
+	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU_[index]; }
 
-	D3D12_GPU_DESCRIPTOR_HANDLE SendRenderGPUDescriptorHandle()const { return renderTextureSrvHandleGPU; }
+	D3D12_GPU_DESCRIPTOR_HANDLE SendRenderGPUDescriptorHandle()const { return renderTextureSrvHandleGPU_; }
 
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
@@ -150,30 +150,30 @@ private:
 
 
 	////SRVを作成するDescripterHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kMaxSRVConst]{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kMaxSRVConst]{};
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[kMaxSRVConst]{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_[kMaxSRVConst]{};
 	//インスタンシング用のSRV作成用
-	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU{};
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU_{};
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU_{};
 
 	//RenderTexture用のSRV作成用
-	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureSrvHandleGPU{};
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTextureSrvHandleCPU_{};
+	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureSrvHandleGPU_{};
 
 	//Outline用のSRV作成用
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU{};
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilSrvHandleCPU_{};
+	D3D12_GPU_DESCRIPTOR_HANDLE depthStencilSrvHandleGPU_{};
 
 	SRVDescriptorHeap* heap_ = nullptr;
 
-	DirectX::ScratchImage mipImages;
-	DirectX::TexMetadata metadata;
+	DirectX::ScratchImage mipImages_;
+	DirectX::TexMetadata metadata_;
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_;
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc;
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc_;
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC recderTextureSrvDesc;
+	D3D12_SHADER_RESOURCE_VIEW_DESC recderTextureSrvDesc_;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC depthTextureSrvDesc_;
 
@@ -202,21 +202,19 @@ private:
 
 template<typename T>
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::MakeInstancingShaderResourceView(ID3D12Resource* resource, uint32_t numElements) {
-	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	instancingSrvDesc.Buffer.FirstElement = 0;
-	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = numElements;
-	instancingSrvDesc.Buffer.StructureByteStride = sizeof(T);
+	instancingSrvDesc_.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc_.Buffer.FirstElement = 0;
+	instancingSrvDesc_.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc_.Buffer.NumElements = numElements;
+	instancingSrvDesc_.Buffer.StructureByteStride = sizeof(T);
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	instancingSrvHandleCPU = heap_->GetCPUDescriptorHandle();
-	instancingSrvHandleGPU = heap_->GetGPUDescriptorHandle();
+	instancingSrvHandleCPU_ = heap_->GetCPUDescriptorHandle();
+	instancingSrvHandleGPU_ = heap_->GetGPUDescriptorHandle();
 
 	//SRVの生成
-	device_->CreateShaderResourceView(resource, &instancingSrvDesc, instancingSrvHandleCPU);
+	device_->CreateShaderResourceView(resource, &instancingSrvDesc_, instancingSrvHandleCPU_);
 
-	return instancingSrvHandleGPU;
+	return instancingSrvHandleGPU_;
 }

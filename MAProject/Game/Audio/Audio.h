@@ -150,7 +150,7 @@ private:
 	const Audio& operator=(const Audio&) = delete;
 
 	//インクルードパス
-	const std::string ResourcesPath = "resources/Audio";
+	const std::string ResourcesPath_ = "resources/Audio";
 
 	HRESULT hr_;
 	//インスタンス
@@ -223,8 +223,6 @@ private:
 	IMFMediaType* pMFMediaType_{ nullptr };
 
 	WAVEFORMATEX* waveFormat_{ nullptr };
-
-	XAUDIO2_BUFFER buffer{ 0 };
 
 	int32_t debugNumber_ = 0;
 };

@@ -86,17 +86,7 @@ public:
 		}	
 	}
 
-	/// <summary>
-	/// 現在のアニメーションと引数のアニメーションを比較
-	/// </summary>
-	/// <param name="name">比較したいアニメーション</param>
-	bool ChackAnimation(const std::string& name) const{
-		
-
-
-		return false;
-	}
-
+	
 	/// <summary>
 	/// 現在のアニメーションの名前
 	/// </summary>

@@ -380,6 +380,8 @@ void Player::Draw(const ViewProjection& viewProjection){
 }
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
+	/*昔は使っていたが現状はスキニングモデルを使っていないので放置*/
+	viewProjection;
 	
 }
 
@@ -463,7 +465,7 @@ void Player::Respawn(){
 	shadow_->color_.w = 0.5f;
 }
 
-void Player::OnCollisionEnemyAttack(const uint32_t serialNumber){
+void Player::OnCollisionEnemyAttack(){
 	
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)

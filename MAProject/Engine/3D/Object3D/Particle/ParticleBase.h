@@ -81,7 +81,7 @@ public:
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
-	ID3D12Resource* GetInstancingResource()const { return wvpInstancingResource.Get(); }
+	ID3D12Resource* GetInstancingResource()const { return wvpInstancingResource_.Get(); }
 	/// <summary>
 	/// ループしないものに限り追加でパーティクルを発生させる
 	/// </summary>
@@ -126,17 +126,17 @@ private:
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
 private:
-	const std::string ResourcesPath = "resources/";
+	const std::string ResourcesPath_ = "resources/";
 
-	HRESULT hr;
+	HRESULT hr_{};
 
 	//頂点バッファービューを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 
 	//頂点リソースにデータを書き込む
-	VertexData* vertexDate = nullptr;
+	VertexData* vertexDate_ = nullptr;
 
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleNone_;
@@ -146,24 +146,24 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleMultily_;
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineParticleScreen_;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
 	//マテリアルにデータを書き込む
-	Model::Material* materialDate = nullptr;
+	Model::Material* materialDate_ = nullptr;
 
 	//モデル読み込み
 	Model::ModelData modelData_;
 
 	//粒の数
-	int numInstance = 0;
+	int numInstance_ = 0;
 
 	static const int particleMaxNum_ = 600;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpInstancingResource_;
 
 	//データを書き込む
-	ParticleForGPU* wvpData = nullptr;
+	ParticleForGPU* wvpData_ = nullptr;
 
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_{};
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
 
@@ -195,7 +195,7 @@ private:
 
 	AccelerationField accelerationField_{};
 
-	EulerTransform cameraTransform{};
+	EulerTransform cameraTransform_{};
 
 	bool isDraw_ = true;
 
@@ -226,8 +226,8 @@ private:
 	};
 
 	float lifeTime_ = 0;
-
-	int blend_;
+	
+	int blend_ = 0;
 
 	uint32_t textureHandle_ = 0;
 

@@ -39,7 +39,7 @@ private:
 	/// <summary>
 	/// 範囲内判定
 	/// </summary>
-	bool InTarget(const OBB enemyOBB, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum);
+	bool InTarget(const OBB enemyOBB, const ViewingFrustum& viewingFrustum);
 	
 
 public:

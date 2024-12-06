@@ -65,21 +65,21 @@ public:
 	void EndImgui();
 
 	//デバイス取得
-	ID3D12Device* GetDevice() const { return device.Get(); }
+	ID3D12Device* GetDevice() const { return device_.Get(); }
 
 	//コマンドリスト取得
-	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 	//スワップチェーンの設定を取得
-	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc() const { return swapChainDesc; }
+	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc() const { return swapChainDesc_; }
 
 	//RTVの設定の取得
-	D3D12_RENDER_TARGET_VIEW_DESC GetRTVDesc() const { return rtvDesc; }
+	D3D12_RENDER_TARGET_VIEW_DESC GetRTVDesc() const { return rtvDesc_; }
 
 	//RenderTextureを取得する
-	ID3D12Resource* GetRenderTexture()const { return renderTextureResouce.Get(); }
+	ID3D12Resource* GetRenderTexture()const { return renderTextureResouce_.Get(); }
 
-	ID3D12Resource* GetDepthStencil()const { return depthStencilResource.Get(); }
+	ID3D12Resource* GetDepthStencil()const { return depthStencilResource_.Get(); }
 
 
 private://メンバ関数	
@@ -110,74 +110,74 @@ private://メンバ関数
 
 private://メンバ変数
 	//DirectX12デバイス
-	ComPtr<ID3D12Device> device = nullptr;
+	ComPtr<ID3D12Device> device_ = nullptr;
 
 	//DXGIファクトリーの生成
-	ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
+	ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
 
 	//コマンドキューの生成
-	ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+	ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
 
 	//コマンドアロケーターの生成
-	ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 
 	//コマンドリストの生成
-	ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
 
 	//スワップチェーンの生成
-	ComPtr<IDXGISwapChain4> swapChain = nullptr;
+	ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
 
 	//スワップチェーンを生成
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_{};
 
 	//RTVの設定
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
 
 
 
 	//バックバッファ
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
 
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
+	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 
 
 
 	//深度バッファの生成
-	ComPtr<ID3D12Resource> depthStencilResource;
+	ComPtr<ID3D12Resource> depthStencilResource_;
 
-	ComPtr<ID3D12Resource> renderTextureResouce;
+	ComPtr<ID3D12Resource> renderTextureResouce_;
 
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 	SRVDescriptorHeap* srvDescriptorHeap_ = nullptr;
 
 	//フェンスの生成
-	ComPtr<ID3D12Fence> fence = nullptr;
+	ComPtr<ID3D12Fence> fence_ = nullptr;
 
-	uint64_t fenceValue = 0;
+	uint64_t fenceValue_ = 0;
 
 	int32_t chackHandleNum_;
 
-	const Vector4 kRenderTargetClearValue{ 0.0f,0.25f,0.5f,1.0f };//いったんわかりやすいように赤
+	const Vector4 kRenderTargetClearValue_{ 0.0f,0.25f,0.5f,1.0f };//いったんわかりやすいように赤
 
 
 	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER renderTexBarrier{};
+	D3D12_RESOURCE_BARRIER renderTexBarrier_{};
 
 	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER swapBarrier{};
+	D3D12_RESOURCE_BARRIER swapBarrier_{};
 
 	//バリア
 	D3D12_RESOURCE_BARRIER depthBarrier_{};
 
-	D3D12_VIEWPORT viewport{};
+	D3D12_VIEWPORT viewport_{};
 
 	//シザー矩形
-	D3D12_RECT scissorRect{};
+	D3D12_RECT scissorRect_{};
 	
 	//HRESULTはWindows系のエラーコード
 	//関数が成功したかどうかをSUCCEEDEDマクロで判定できる
-	HRESULT hr = S_FALSE;
+	HRESULT hr_ = S_FALSE;
 
 	//WindowsAPI
 	WinApp* winapp_ = nullptr;

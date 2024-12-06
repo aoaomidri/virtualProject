@@ -18,7 +18,6 @@ void FloorManager::Update(){
 }
 
 void FloorManager::Draw(const ViewProjection& viewProjection){
-	int num = 0;
 
 	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 		(*it)->Draw(viewProjection);
@@ -26,7 +25,7 @@ void FloorManager::Draw(const ViewProjection& viewProjection){
 
 }
 
-void FloorManager::AddFloor(const EulerTransform& transform, bool isMoving){
+void FloorManager::AddFloor(const EulerTransform& transform){
 	//std::unique_ptr<Object3D> object_ = std::make_unique<Object3D>();
 	//object_->Initialize("Floor");
 	//objects_.emplace_back(std::move(object_));
@@ -174,7 +173,7 @@ void FloorManager::ChackFiles() {
 			continue;
 		}
 
-		if (LoadChackItem(kDirectoryPath, filePath.stem().string())) {
+		if (LoadChackItem(filePath.stem().string())) {
 			chackOnlyNumber = 1;
 		}
 
@@ -199,7 +198,7 @@ void FloorManager::ChackFiles() {
 
 void FloorManager::LoadFiles(const std::string& stage) {
 
-	if (!LoadChackItem(kDirectoryPath, kItemName_))
+	if (!LoadChackItem(kItemName_))
 		return;
 	if (!std::filesystem::exists(kDirectoryPath)) {
 		std::string message = "Failed open data file for write.";
@@ -288,14 +287,14 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 		}
 
 
-		AddFloor(newTrans, isNewMove);
+		AddFloor(newTrans);
 
 		
 	}
 
 }
 
-bool FloorManager::LoadChackItem(const std::string& directoryPath, const std::string& itemName) {
+bool FloorManager::LoadChackItem(const std::string& itemName) {
 
 	// 書き込むjsonファイルのフルパスを合成する
 	std::string filePath = kDirectoryPath + itemName + ".json";

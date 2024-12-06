@@ -32,8 +32,6 @@ void Input::Initialize() {
 
 	ZeroMemory(&xinputState, sizeof(XINPUT_STATE));
 
-	DWORD Dr = XInputGetState(0, &xinputState);
-
 	hr == ERROR_SUCCESS ? isConnectPad = true : isConnectPad = false;
 }
 

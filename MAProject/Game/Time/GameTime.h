@@ -46,16 +46,19 @@ public:
     }
 
     /// <summary>
-   /// インゲームで経過秒数を取得(0～59まで)
-   /// </summary>
-   /// <returns></returns>
+    /// インゲームで経過分数の一の位取得(0～59まで)
+    /// </summary>
+    /// <returns></returns>
     static int GetMinutes() {
         int result = 0;
         result = (int)(inGameTime_) / 60;
 
         return result;
     }
-
+    /// <summary>
+    /// インゲームで経過分数の十の位取得(0～59まで)
+    /// </summary>
+    /// <returns></returns>
     static int GetMinutesTens() {
         int result = 0;
         result = (int)(inGameTime_) / 600;

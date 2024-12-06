@@ -39,9 +39,6 @@ public:
 	//Imgui描画
 	void DrawImgui();
 
-	//床と当たった時のonCollision
-	void onFlootCollision(OBB obb);
-
 	//リスポーン
 	void Respawn(const Vector3& position);
 	//被弾時の処理
@@ -372,28 +369,28 @@ private:
 	std::array<Vector3, 3> posContainer_;
 
 	//間の待ちの時間
-	uint32_t attackDistance_;
+	uint32_t attackDistance_ = 0;
 
 	//待ちに入るための
 	bool isAttackEnd_ = false;
 
 	//移動のコンテナがすべて埋まったかどうか
-	bool isMaxContext_;
+	bool isMaxContext_ = false;
 
 	//現在の攻撃回数
-	uint32_t attackCount_;
+	uint32_t attackCount_ = 0;
 
 	const uint32_t distanceTime_ = 20;
 
 	/*突進攻撃*/
 	//突進の向き決めの時間
-	uint32_t directionTime_;
+	uint32_t directionTime_ = 0;
 
 	//突進攻撃の範囲
 	float collisionScale_ = 1.3f;
 
 	//突進への移行時間
-	uint32_t attackTransitionTime_;
+	uint32_t attackTransitionTime_ = 0;
 
 	/*回転突進攻撃*/
 
@@ -404,18 +401,18 @@ private:
 
 	Vector3 attackBasePos_{};
 
-	float easeT_;
+	float easeT_ = 0;
 
-	float attackRotate_;
+	float attackRotate_ = 0;
 
-	Ease ease_;
+	Ease ease_{};
 
 
 	/*飛ぶ斬撃みたいなの*/
 
 	std::list<std::unique_ptr< EnemyBullet>> bullets_;
 
-	float bulletSpeed_;
+	float bulletSpeed_ = 0.0f;
 
 	Vector3 slashAngle_{};
 

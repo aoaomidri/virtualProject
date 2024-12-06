@@ -30,7 +30,7 @@ void ParticleBase::Initialize(const ParticleBase::Emitter& emitter, const bool i
 
 	blend_ = BlendMode::kBlendModeAdd;
 
-	cameraTransform = {
+	cameraTransform_ = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,2.0f,-10.0f}
@@ -106,7 +106,7 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 	
 	Vector3 previewTrans{};
 
-	numInstance = 0;
+	numInstance_ = 0;
 	for (std::list<Particle>::iterator particleIterator = particles_.begin(); particleIterator != particles_.end();) {
 		if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
 			particleIterator = particles_.erase(particleIterator);
@@ -193,12 +193,12 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 
 
 		Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
-		if (numInstance < particleMaxNum_) {
-			wvpData[numInstance].WVP = worldViewProjectionMatrix;
-			wvpData[numInstance].World = worldMatrix_;
-			wvpData[numInstance].color = (*particleIterator).color;
-			wvpData[numInstance].color.w = alpha_;
-			++numInstance;
+		if (numInstance_ < particleMaxNum_) {
+			wvpData_[numInstance_].WVP = worldViewProjectionMatrix;
+			wvpData_[numInstance_].World = worldMatrix_;
+			wvpData_[numInstance_].color = (*particleIterator).color;
+			wvpData_[numInstance_].color.w = alpha_;
+			++numInstance_;
 		}
 		++particleIterator;
 	}
@@ -241,15 +241,15 @@ void ParticleBase::Draw() {
 
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	DirectXCommon::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	DirectXCommon::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(textureHandle_));
 
 	//3D三角の描画
-	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), numInstance, 0, 0);
+	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), numInstance_, 0, 0);
 		
 	
 }
@@ -321,52 +321,52 @@ Microsoft::WRL::ComPtr<ID3D12Resource> ParticleBase::CreateBufferResource(size_t
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr_ = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return bufferResource;
 }
 
 void ParticleBase::makeResource() {
 	//頂点リソースの作成
-	vertexResource = CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
+	vertexResource_ = CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
 
 	
 	//リソースの先頭のアドレスから使う
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点三つ分のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData_.vertices.size());
 	//1頂点当たりのサイズ
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	//書き込むためのアドレスを取得
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate));
-	std::memcpy(vertexDate, modelData_.vertices.data(), sizeof(VertexData)* modelData_.vertices.size());
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDate_));
+	std::memcpy(vertexDate_, modelData_.vertices.data(), sizeof(VertexData)* modelData_.vertices.size());
 	
 
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(sizeof(Model::Material));
+	 materialResource_ = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
 	//今回は赤を書き込んでみる
-	materialDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
-	materialDate->uvTransform = Matrix::MakeIdentity4x4();
+	materialDate_->uvTransform = Matrix::MakeIdentity4x4();
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpInstancingResource = CreateBufferResource(sizeof(ParticleForGPU) * particleMaxNum_);
+	wvpInstancingResource_ = CreateBufferResource(sizeof(ParticleForGPU) * particleMaxNum_);
 	//書き込むためのアドレスを取得
-	wvpInstancingResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpInstancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	for (uint32_t i = 0; i < particleMaxNum_; ++i) {
 		
 		//単位行列を書き込んでおく
-		wvpData[i].WVP = Matrix::MakeIdentity4x4();
-		wvpData[i].World = Matrix::MakeIdentity4x4();
-		wvpData[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		wvpData_[i].WVP = Matrix::MakeIdentity4x4();
+		wvpData_[i].World = Matrix::MakeIdentity4x4();
+		wvpData_[i].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
 }

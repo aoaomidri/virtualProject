@@ -32,7 +32,7 @@ public:
 	/// <summary>
 	/// 床追加
 	/// </summary>
-	void AddFloor(const EulerTransform& transform, bool isMoving);
+	void AddFloor(const EulerTransform& transform);
 
 	/// <summary>
 	/// imgui表示
@@ -66,7 +66,7 @@ public:
 
 	void LoadFile(const std::string& groupName, const std::string& stage);
 
-	bool LoadChackItem(const std::string& directoryPath, const std::string& itemName);
+	bool LoadChackItem(const std::string& itemName);
 
 private:
 

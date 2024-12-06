@@ -181,7 +181,7 @@ uint32_t Audio::LoadAudio(const std::string fileName){
 }
 
 void Audio::MakeSourceReader(const std::string fileName){
-	std::string st = (ResourcesPath + "/" + fileName);
+	std::string st = (ResourcesPath_ + "/" + fileName);
 	std::wstring wst;
 	wst.assign(st.begin(), st.end());
 

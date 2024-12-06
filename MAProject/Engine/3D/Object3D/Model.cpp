@@ -423,8 +423,6 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton){
 	skinCluster.paletteResouce->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	skinCluster.mappedPalette = { mappedPalette,skeleton.joints.size() };//spanを使ってアクセスするようにする
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	skinCluster.paletteSrvHandle.first = SRVDescriptorHeap::GetInstance()->GetCPUDescriptorHandle();
 	skinCluster.paletteSrvHandle.second = SRVDescriptorHeap::GetInstance()->GetGPUDescriptorHandle();
 	

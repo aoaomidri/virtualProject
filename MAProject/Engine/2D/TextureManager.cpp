@@ -75,30 +75,30 @@ uint32_t TextureManager::Load(const std::string& filePath){
 	textureArray_[i].first = result;
 	textureArray_[i].second = i;
 
-	mipImages = LoadTexture(filePath);
-	metadata = mipImages.GetMetadata();
-	textureBuffers_[i] = CreateTextureResource(metadata);
-	intermediateBuffers_[i] = UploadTextureData(textureBuffers_[i], mipImages);
+	mipImages_ = LoadTexture(filePath);
+	metadata_ = mipImages_.GetMetadata();
+	textureBuffers_[i] = CreateTextureResource(metadata_);
+	intermediateBuffers_[i] = UploadTextureData(textureBuffers_[i], mipImages_);
 
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	if (metadata.IsCubemap()){
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-		srvDesc.TextureCube.MostDetailedMip = 0;
-		srvDesc.TextureCube.MipLevels = UINT_MAX;
-		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	srvDesc_.Format = metadata_.format;
+	srvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	if (metadata_.IsCubemap()){
+		srvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc_.TextureCube.MostDetailedMip = 0;
+		srvDesc_.TextureCube.MipLevels = UINT_MAX;
+		srvDesc_.TextureCube.ResourceMinLODClamp = 0.0f;
 	}
 	else {
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+		srvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc_.Texture2D.MipLevels = UINT(metadata_.mipLevels);
 	}
 	
 
-	textureSrvHandleCPU[i] = heap_->GetCPUDescriptorHandle();
-	textureSrvHandleGPU[i] = heap_->GetGPUDescriptorHandle();
+	textureSrvHandleCPU_[i] = heap_->GetCPUDescriptorHandle();
+	textureSrvHandleGPU_[i] = heap_->GetGPUDescriptorHandle();
 
 	//SRVの生成
-	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc, textureSrvHandleCPU[i]);
+	device_->CreateShaderResourceView(textureBuffers_[i].Get(), &srvDesc_, textureSrvHandleCPU_[i]);
 
 	return i;
 }
@@ -200,10 +200,10 @@ void TextureManager::DrawCopy(){
 
 	postEffect->SetPipeLine();	
 	
-	commandList->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU);
+	commandList->SetGraphicsRootDescriptorTable(0, renderTextureSrvHandleGPU_);
 	if (postEffect->IsSelectOutLine()){
 
-		commandList->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU);
+		commandList->SetGraphicsRootDescriptorTable(1, depthStencilSrvHandleGPU_);
 		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetCameraMat());		
 	}
 	if (postEffect->IsSelectVignetting()) {
@@ -211,7 +211,7 @@ void TextureManager::DrawCopy(){
 	}
 
 	if (postEffect->IsSelectDissolve()) {
-		commandList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU[dissolveTexNumber_]);
+		commandList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU_[dissolveTexNumber_]);
 		commandList->SetGraphicsRootConstantBufferView(3, postEffect->GetThreshold());
 	}
 	commandList->SetGraphicsRootConstantBufferView(4, postEffect->GetHSVMaterial());
@@ -225,18 +225,16 @@ void TextureManager::DrawCopy(){
 
 void TextureManager::MakeRenderTexShaderResourceView() {
 
-	recderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	recderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	recderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	recderTextureSrvDesc.Texture2D.MipLevels = 1;
+	recderTextureSrvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	recderTextureSrvDesc_.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	recderTextureSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	recderTextureSrvDesc_.Texture2D.MipLevels = 1;
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	renderTextureSrvHandleCPU = heap_->GetCPUDescriptorHandle();
-	renderTextureSrvHandleGPU = heap_->GetGPUDescriptorHandle();
+	renderTextureSrvHandleCPU_ = heap_->GetCPUDescriptorHandle();
+	renderTextureSrvHandleGPU_ = heap_->GetGPUDescriptorHandle();
 
 	//SRVの生成
-	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetRenderTexture(), &recderTextureSrvDesc, renderTextureSrvHandleCPU);
+	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetRenderTexture(), &recderTextureSrvDesc_, renderTextureSrvHandleCPU_);
 
 }
 
@@ -247,12 +245,10 @@ void TextureManager::MakeDepthShaderResouceView(){
 	depthTextureSrvDesc_.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	depthTextureSrvDesc_.Texture2D.MipLevels = 1;
 
-	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	depthStencilSrvHandleCPU_ = heap_->GetCPUDescriptorHandle();
+	depthStencilSrvHandleGPU_ = heap_->GetGPUDescriptorHandle();
 
-	depthStencilSrvHandleCPU = heap_->GetCPUDescriptorHandle();
-	depthStencilSrvHandleGPU = heap_->GetGPUDescriptorHandle();
-
-	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetDepthStencil(), &depthTextureSrvDesc_, depthStencilSrvHandleCPU);
+	device_->CreateShaderResourceView(DirectXCommon::GetInstance()->GetDepthStencil(), &depthTextureSrvDesc_, depthStencilSrvHandleCPU_);
 }
 
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){

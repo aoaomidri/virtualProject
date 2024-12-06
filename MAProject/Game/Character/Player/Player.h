@@ -107,7 +107,7 @@ public:
 
 	bool RecordCheck(uint32_t number) {return hitRecord_.RecordCheck(number); }
 	//非回避中の当たりの処理
-	void OnCollisionEnemyAttack(const uint32_t serialNumber);
+	void OnCollisionEnemyAttack();
 	//回避中の当たりの処理
 	void OnCollisionEnemyAttackAvoid(const uint32_t serialNumber);
 

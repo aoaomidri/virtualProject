@@ -270,10 +270,6 @@ void Enemy::DrawImgui() {
 #endif
 }
 
-void Enemy::onFlootCollision(OBB obb){
-
-}
-
 void Enemy::Respawn(const Vector3& position){
 	auto levelLoader = LevelLoader::GetInstance();
 
@@ -784,23 +780,9 @@ void Enemy::DeadMotion(){
 
 void Enemy::BehaviorAttackInitialize() {
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	int i = RandomMaker::DistributionInt(0, 3);
-	//一旦雑魚想定なので突進攻撃だけにする
-
-	/*if (i == 0) {
-		ATBehaviorRequest_ = AttackBehavior::kXAttack;
-	}
-
-	else if (i == 1) {
-		ATBehaviorRequest_ = AttackBehavior::kRotateAttack;
-	}
-	else if (i == 2) {
-		ATBehaviorRequest_ = AttackBehavior::kTriple;
-	}
-	else */{
-		ATBehaviorRequest_ = AttackBehavior::kTackle;
-	}
+	
+	ATBehaviorRequest_ = AttackBehavior::kTackle;
+	
 
 }
 

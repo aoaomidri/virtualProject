@@ -404,7 +404,7 @@ float Ease::SetEaseT(Ease::EaseName name, float t)
 		break;
 	}
 
-	return 0.0f;
+	
 
 }
 

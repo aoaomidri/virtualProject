@@ -35,7 +35,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = nullptr;
 			isLockOn_ = false;
 		}
-		else if (!InTarget(target_->GetBodyOBB(), viewprojection, viewingFrustum)) {
+		else if (!InTarget(target_->GetBodyOBB(), viewingFrustum)) {
 			target_ = nullptr;
 		}
 		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_L)) {
@@ -150,7 +150,7 @@ void LockOn::avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	}
 }
 
-bool LockOn::InTarget(const OBB enemyOBB, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){
+bool LockOn::InTarget(const OBB enemyOBB, const ViewingFrustum& viewingFrustum){
 	return (IsCollisionOBBViewFrustum(enemyOBB, viewingFrustum));
 }
 

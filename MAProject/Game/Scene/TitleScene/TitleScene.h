@@ -76,7 +76,7 @@ private:
 
 	uint32_t titleBGM_{};
 
-	
+	uint32_t gameBGM_{};
 
 	std::unique_ptr<SkyBox> skyBox_;
 

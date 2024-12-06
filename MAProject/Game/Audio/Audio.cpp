@@ -1,5 +1,6 @@
 #include "Audio.h"
 #include <cassert>
+#include"ImGuiManager.h"
 
 Audio* Audio::GetInstance(){
 	static Audio instance;
@@ -39,6 +40,40 @@ void Audio::Finalize(){
 		SoundUnload(&soundData);
 	}
 
+}
+
+void Audio::AudioDebug(){
+	ImGui::SetNextWindowSize(ImVec2(280, 300), ImGuiCond_::ImGuiCond_Once);
+
+	ImGui::Begin("音のデバック");
+	//ここの間にスクロールで表示したいものを入れる
+	ImGui::BeginChild("TableRegion", ImVec2(200, 100), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+	for (int i = 0; i < soundDatas_.size(); i++){
+		if (soundDatas_[i].pBuffer == nullptr){
+			break;
+		}
+		ImGui::RadioButton(soundDatas_[i].name_.c_str(), &debugNumber_, i);
+		
+	}
+	ImGui::EndChild();
+	
+	if (ImGui::Button("再生")){
+		PlayAudio(debugNumber_, 0.1f, true);
+	}
+	if (ImGui::Button("停止")) {
+		PauseWave(debugNumber_);
+	}
+	if (ImGui::Button("停止からの再開")) {
+		ResumeWave(debugNumber_);
+	}
+	if (ImGui::Button("最初から再生")) {
+		RePlayWave(debugNumber_);
+	}
+	if (ImGui::Button("削除")) {
+		StopWave(debugNumber_);
+	}
+
+	ImGui::End();
 }
 
 void Audio::SoundUnload(SoundData* soundData){
@@ -240,7 +275,7 @@ uint32_t Audio::PlayAudio(uint32_t soundHandle, float volume, bool isLoop) {
 	//未ロードだった場合止める
 	assert(soundData.bufferSize != 0);
 
-	uint32_t playingHandle = GetIndexVoice();
+	uint32_t playingHandle = soundHandle;
 
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
 

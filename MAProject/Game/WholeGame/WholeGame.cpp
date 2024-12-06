@@ -173,7 +173,7 @@ void WholeGame::DrawImgui(){
 
 	ImGui::End();
 
-	
+	Audio::GetInstance()->AudioDebug();
 
 	ImGui::Begin("DirectionalLightの情報");
 	ImGui::ColorEdit4("ライトの色", &directionalData_.color.x);

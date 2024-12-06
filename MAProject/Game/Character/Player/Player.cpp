@@ -1598,8 +1598,8 @@ void Player::BehaviorSecondStrongAttackInitialize(){
 	hitRecord_.Clear();
 	workAttack_.AttackTimer = 0;
 	easeT_ = 0;
-	addEaseT_ = 0.04f;
-	waitTime_ = waitTimeBase_;
+	addEaseT_ = 0.08f;
+	waitTime_ = waitTimeBase_ * 2.0f;
 	addPosition_.y = 0.0f;
 	trail_->Reset();
 	strongSecondAttackCount_ = 0;
@@ -1798,7 +1798,7 @@ void Player::StrongAttackMotion(){
 				weapon_Rotate_+= kMoveWeaponShakeDown_ * 0.5f * motionSpeed_ * timeScale_;
 			}
 			else {		
-				if (!isTrail_) {
+				if (!isTrail_ and workAttack_.comboIndex != 2) {
 					audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 				};
 				weaponCollisionTransform_.scale = counterScale_;
@@ -1821,11 +1821,15 @@ void Player::SecondStrongAttackMotion(){
 	easeT_ += addEaseT_;
 	if (easeT_ > 1.0f) {
 		easeT_ = 1.0f;
-		waitTime_ -= 1;
 		addEaseT_ = 0.0f;
 		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 	}
-	if (easeT_ >= 0.7f){
+
+	if (easeT_ == 1.0f) {
+		waitTime_ -= 1.0f;
+	}
+
+	if (easeT_ >= 0.3f){
 		if (strongSecondAttackCount_ < kStrongSecondAttackCountMax_) {
 
 			if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
@@ -1836,9 +1840,9 @@ void Player::SecondStrongAttackMotion(){
 	
 	if (waitTime_ <= 0) {
 		if (isNextAttack_ && !isEndAttack_) {
-			waitTime_ = waitTimeBase_;
+			waitTime_ = waitTimeBase_ * 2.0f;
 			easeT_ = 0;
-			addEaseT_ = 0.04f;
+			addEaseT_ = 0.08f;
 			strongSecondAttackCount_++;
 			isNextAttack_ = false;
 		}
@@ -1850,9 +1854,9 @@ void Player::SecondStrongAttackMotion(){
 	weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInBack, -0.5f, 0.0f, easeT_);
 	weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 4.0f, easeT_);
 
-	if (weapon_offset_Base_.x > -0.9f) {
+	/*if (weapon_offset_Base_.x > -0.9f) {
 		addEaseT_ = 0.08f;
-	}
+	}*/
 	
 }
 

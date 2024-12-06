@@ -2069,12 +2069,17 @@ void Player::SixthStrongAttackMotion(){
 	}
 	else {
 		easeT_ += addEaseT_;
+
 		if (easeT_ > 1.0f) {
 			easeT_ = 1.0f;
-			waitTime_ -= 1;
+			
 			addEaseT_ = 0.0f;
 			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
 			SettingGroundCrushTex();
+		}
+
+		if (easeT_ == 1.0f) {
+			waitTime_ -= 1;
 		}
 		
 

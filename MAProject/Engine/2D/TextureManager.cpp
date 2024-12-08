@@ -255,14 +255,13 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
 	//	テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr;
 	if (filePathW.ends_with(L".dds")) {
-		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+		hr_ = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
 	}
 	else {
-		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+		hr_ = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	}
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	//	ミニマップの作成
 	DirectX::ScratchImage mipImages{};
@@ -270,10 +269,10 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath){
 		mipImages = std::move(image);
 	}
 	else {
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		hr_ = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
 		mipImages = std::move(image);
 
-		assert(SUCCEEDED(hr));
+		assert(SUCCEEDED(hr_));
 	}
 	
 	//	ミニマップ付きのデータを返す
@@ -316,9 +315,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateBufferResource(size
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	ComPtr<ID3D12Resource> bufferResource = nullptr;
-	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr_ = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return bufferResource;
 }
@@ -340,14 +339,14 @@ Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(con
 
 	//3, Respurceを生成する
 	ComPtr<ID3D12Resource> resource = nullptr;
-	HRESULT hr = device_->CreateCommittedResource(
+	hr_ = device_->CreateCommittedResource(
 		&heapProperties,//Heapの設定
 		D3D12_HEAP_FLAG_NONE,//Heapの特殊な設定。
 		&resourceDesc,//Resourceの設定
 		D3D12_RESOURCE_STATE_COPY_DEST,//初回のResourceState。Textureは基本読むだけ
 		nullptr,//Clear最適値。使わないのでnullptr
 		IID_PPV_ARGS(&resource));//作成するResourceポインタへのポインタ
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return resource;
 }

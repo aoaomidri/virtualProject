@@ -193,7 +193,7 @@ private:
 	/// </summary>
 	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst> textureArray_;
 
-	
+	HRESULT hr_;
 	
 	size_t slashPos_;
 	size_t dotPos_;

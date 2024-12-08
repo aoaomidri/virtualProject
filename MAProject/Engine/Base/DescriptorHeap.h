@@ -54,5 +54,7 @@ private:
 	const D3D12_DESCRIPTOR_HEAP_TYPE srvHeapType_ = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
 	uint32_t descriptorSizeSRV_;
+
+	HRESULT hr_;
 };
 

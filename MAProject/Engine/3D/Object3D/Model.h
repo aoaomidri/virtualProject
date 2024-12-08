@@ -221,5 +221,6 @@ private:
 
 	static ID3D12Device* device_;
 
+	HRESULT hr_;
 };
 

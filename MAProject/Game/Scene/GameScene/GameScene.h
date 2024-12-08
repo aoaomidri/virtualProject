@@ -10,7 +10,7 @@
 #include"Quaternion.h"
 #include"FollowCamera.h"
 #include"Player.h"
-#include"Enemy.h"
+#include"EnemyManager.h"
 #include"FloorManager.h"
 #include"LockOn.h"
 #include"ParticleBase.h"
@@ -101,15 +101,12 @@ private:
 	};
 
 	bool isFloorMove_ = false;
-
+	//プレイヤー
 	std::unique_ptr<Player> player_;
+	//敵
+	std::unique_ptr<EnemyManager> enemyManager_;
 
-	std::unique_ptr<Enemy> enemy_;
-	std::list<std::unique_ptr<Enemy>> enemies_;
 
-	static const size_t enemyNum_ = 20;
-
-	std::array<Vector3, enemyNum_> enemysPos_;
 
 	int chackCollision = 0;
 
@@ -131,10 +128,7 @@ private:
 	
 
 	/*スカイボックス*/
-	std::unique_ptr<SkyBox> skyBox_;
-
-	//敵の反射強度
-	float enemyShininess_;
+	std::unique_ptr<SkyBox> skyBox_;	
 
 	//スプライト関連
 

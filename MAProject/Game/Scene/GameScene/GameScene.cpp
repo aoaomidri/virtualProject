@@ -107,39 +107,10 @@ void GameScene::Initialize(){
 	player_->Initialize();
 	player_->Update();
 
-	enemysPos_ = {
-		Vector3(0.0f,2.5f,20.0f),
-		Vector3(-5.0f,2.5f,25.0f),
-		Vector3(5.0f,2.5f,25.0f),
-		Vector3(-10.0f,2.5f,30.0f),
-		Vector3(0.0f,2.5f,30.0f),
-		Vector3(10.0f,2.5f,30.0f),
-		Vector3(-15.0f,2.5f,35.0f),
-		Vector3(-5.0f,2.5f,35.0f),
-		Vector3(5.0f,2.5f,35.0f),
-		Vector3(15.0f,2.5f,-35.0f),
-		Vector3(0.0f,2.5f,-20.0f),
-		Vector3(-5.0f,2.5f,-25.0f),
-		Vector3(5.0f,2.5f,-25.0f),
-		Vector3(-10.0f,2.5f,-30.0f),
-		Vector3(0.0f,2.5f,-30.0f),
-		Vector3(10.0f,2.5f,-30.0f),
-		Vector3(-15.0f,2.5f,-35.0f),
-		Vector3(-5.0f,2.5f,-35.0f),
-		Vector3(5.0f,2.5f,-35.0f),
-		Vector3(15.0f,2.5f,-35.0f)
-	};
-
-	for (size_t i = 0; i < enemyNum_; i++) {
-		enemy_ = std::make_unique<Enemy>();
-		enemy_->Initialize(enemysPos_[i]);
-		enemy_->SetTarget(&player_->GetTransform());
-		enemy_->SetTargetMat(&player_->GetRotateMatrix());
-		enemy_->Update();
-		enemies_.push_back(std::move(enemy_));
-
-	}
-	
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->SetTarget(&player_->GetTransform());
+	enemyManager_->SetTargetMat(&player_->GetRotateMatrix());
+	enemyManager_->Initialize();
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -199,12 +170,7 @@ void GameScene::Update(){
 	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
 	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
-		if (enemy->GetIsDead()) {
-			return true;
-		}
-		return false;
-	});
+	
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
@@ -221,20 +187,16 @@ void GameScene::Update(){
 		frontFlag = player_->GetIsJustAvoid();
 		player_->SetTimeScale(GameTime::timeScale_);
 		player_->Update();
-		lockOn_->Update(enemies_, followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
+		lockOn_->Update(enemyManager_->GetEnemies(), followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
 
 		if (!player_->GetIsJustAvoid() and frontFlag){
 			lockOn_->TargetReset();
 		}
-		if (enemies_.size() == 0){
+		if (enemyManager_->GetEnemyNum() == 0) {
 			SceneManager::GetInstance()->ChangeScene(SceneName::Result);
 		}
-
-		for (const auto& enemy : enemies_) {
-			enemy->SetTimeScale(GameTime::timeScale_);
-			enemy->SetShininess(enemyShininess_);
-			enemy->Update();
-		}
+		enemyManager_->SetTimeScale(GameTime::timeScale_);
+		enemyManager_->Update();
 	}
 	/*if (player_->GetIsJustAvoid()){
 		
@@ -280,9 +242,9 @@ void GameScene::DrawParticle(){
 	textureManager_->PreDrawParticle();
 
 	player_->ParticleDraw(followCamera_->GetViewProjection());
-	for (const auto& enemy : enemies_) {
-		enemy->ParticleDraw(followCamera_->GetViewProjection(), player_->GetTrailColor());
-	}
+	
+	enemyManager_->ParticleDraw(followCamera_.get(), player_->GetTrailColor());
+	
 
 	textureManager_->PostDrawParticle();
 }
@@ -303,9 +265,7 @@ void GameScene::Draw3D(){
 	textureManager_->PreDraw3D();
 	player_->Draw(followCamera_->GetViewProjection());
 
-	for (const auto& enemy : enemies_) {
-		enemy->Draw(followCamera_->GetViewProjection());
-	}
+	enemyManager_->Draw(followCamera_.get());
 
 	lockOn_->Draw();
 	floorManager_->Draw(followCamera_->GetViewProjection());
@@ -324,9 +284,7 @@ void GameScene::Draw3D(){
 
 	player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
 
-	for (const auto& enemy : enemies_) {
-		enemy->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
-	}
+	enemyManager_->TexDraw(followCamera_.get());
 	
 }
 
@@ -378,9 +336,7 @@ void GameScene::DrawImgui(){
 	lockOn_->DrawImgui();
 	floorManager_->DrawImgui();
 
-	for (const auto& enemy : enemies_) {
-		enemy->DrawImgui();
-	}	
+	enemyManager_->DrawImgui();
 
 #endif // _DEBUG	
 }
@@ -408,7 +364,7 @@ void GameScene::AllCollision(){
 		}
 	}
 
-	for (const auto& enemy : enemies_) {
+	for (const auto& enemy : enemyManager_->GetEnemies()) {
 		uint32_t serialNumber = enemy->GetSerialNumber();
 		if (player_->GetIsGuard()){
 			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {

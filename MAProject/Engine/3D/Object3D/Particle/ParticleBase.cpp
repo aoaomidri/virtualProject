@@ -255,6 +255,7 @@ void ParticleBase::Draw() {
 }
 
 void ParticleBase::DrawImgui(const std::string& imguiTag){
+	imguiTag;
 #ifdef _DEBUG
 	ImGui::Begin(imguiTag.c_str());
 	ImGui::Text("現在のパーティクルの数 = %d", particles_.size());

@@ -114,9 +114,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Model::CreateBufferResource(ID3D12Device*
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr_ = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return bufferResource;
 }

@@ -22,11 +22,11 @@ class Sprite {
 public:
 	Sprite() = default;
 	~Sprite() = default;
-
+	//初期化処理
 	void Initialize(uint32_t TextureNumber = UINT32_MAX);	
-
+	//画面前方に表示するスプライトの描画
 	void Draw();
-
+	//3D空間に表示するスプライトの描画
 	void Draw(const Matrix4x4& viewPro);
 
 	///*Setter*///
@@ -82,62 +82,62 @@ public:
 	bool GetIsFlipX() const {return isFlipX_ ; }
 	
 	bool GetIsFlipY() const { return isFlipY_; }
-
+	//Resourceを生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(
 		ID3D12Device* device, size_t sizeInBytes);
-
+	//Resourceづくりをまとめる
 	void makeSpriteResource();
 
 	//テクスチャサイズをイメージに合わせる
 	void AdjustTextureSize();
 private:
-
+	//更新処理
 	void Update();
 	
 	//3d空間上に設置するための更新処理
 	void Update(const Matrix4x4& viewPro);
 
 private:
-	HRESULT hr;
+	HRESULT hr_{};
 
 	ID3D12Device* device_ = nullptr;
 
 	ID3D12GraphicsCommandList* commandList_ = nullptr;
 
 	//頂点バッファービューを作成する
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_{};
 
-	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite_{};
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite_;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite_;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite;
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSprite_;
 
 	//マテリアルにデータを書き込む
-	Model::Material* materialDate = nullptr;
+	Model::Material* materialDate_ = nullptr;
 
-	VertexData* vertexDataSprite = nullptr;
+	VertexData* vertexDataSprite_ = nullptr;
 
-	Matrix4x4* wvpDataSprite = nullptr;
+	Matrix4x4* wvpDataSprite_ = nullptr;
 
 	TextureManager* textureManager_ = nullptr;
 
-	EulerTransform transformSprite{};
+	EulerTransform transformSprite_{};
 
-	EulerTransform cameraTransform{};
+	EulerTransform cameraTransform_{};
 
-	int textureNumber_;
+	int textureNumber_ = 0;
 
 public:
 	//データを書き込む
 
 	Vector3 position_ = { 0.0f,0.0f };
 
-	Vector3 rotation_;
+	Vector3 rotation_{};
 
 	Vector2 scale_ = { 100.0f,100.0f };
 

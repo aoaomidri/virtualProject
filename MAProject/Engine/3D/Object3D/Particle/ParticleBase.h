@@ -27,17 +27,17 @@ public:
 		float frequencyTime;//頻度用時刻
 	};
 public:
-
+	//初期化処理
 	void Initialize(const ParticleBase::Emitter& emitter, const bool isLoop);
-	
+	//更新処理
 	void Update(const EulerTransform& transform,const ViewProjection& viewProjection);
-
+	//描画処理
 	void Draw();
-
+	//imgui描画処理
 	void DrawImgui(const std::string& imguiTag);
-
+	//バッファリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
-
+	//Resource生成
 	void makeResource();
 public:
 	void SetAcceleration(const Vector3& acceleration) { accelerationField_.acceleration = acceleration; }
@@ -122,7 +122,7 @@ private:
 	Particle MakeNewParticle(const Vector3& transform);
 
 	std::list<Particle> Emission(const Emitter& emitter);
-
+	//当たり処理
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
 private:

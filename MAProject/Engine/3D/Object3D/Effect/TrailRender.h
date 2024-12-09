@@ -17,9 +17,9 @@ public:
 public:
 	//初期化処理
 	void Initialize();
-
+	//描画
 	void Draw(const TrailEffect* trail, const Matrix4x4& viewPro);
-
+	//Resource生成
 	void MakeResource();
 
 public:

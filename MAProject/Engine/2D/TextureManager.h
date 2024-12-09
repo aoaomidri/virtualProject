@@ -28,42 +28,42 @@ public:
 	TextureManager(const TextureManager& textureManager) = delete;
 	TextureManager& operator=(const TextureManager&) = delete;
 	//TextureManager();
-
+	//初期化処理
 	void Initialize();
-
+	//終了処理
 	void Finalize();
 	
 
 	//	シングルトンインスタンスの取得
 	static TextureManager* GetInstance();
-
+	//GPUのハンドルを送る
 	D3D12_GPU_DESCRIPTOR_HANDLE SendGPUDescriptorHandle(uint32_t index)const { return textureSrvHandleGPU_[index]; }
-
+	//Render用のGPUハンドルを送る
 	D3D12_GPU_DESCRIPTOR_HANDLE SendRenderGPUDescriptorHandle()const { return renderTextureSrvHandleGPU_; }
-
+	//テクスチャバッファを取得する
 	ID3D12Resource* GetTextureBuffer(uint32_t index)const { return textureBuffers_[index].Get(); }
 
 	
 
 	//void Load(const std::string& filePath, uint32_t index);
-
+	//テクスチャを読み込む
 	uint32_t Load(const std::string& filePath);
-
+	//インスタンシング用のSRVを生成する
 	template<typename T>
 	D3D12_GPU_DESCRIPTOR_HANDLE MakeInstancingShaderResourceView(ID3D12Resource* resource, uint32_t numElements);
 
-
+	/*描画前後の処理まとめ*/
 	void PreDraw2D();
 	
 	void PostDraw2D();
-
+	
 	void PreDrawWorld2D();
 
 	void PreDraw3D();
 
-	void PreDrawMapping3D();
-
 	void PostDraw3D();
+
+	void PreDrawMapping3D();
 
 	void PreDrawSkyBox();
 
@@ -84,15 +84,15 @@ public:
 	
 
 public:
-
+	//Render用のSRVを生成する
 	void MakeRenderTexShaderResourceView();
-
+	//Depth用のSRVを生成する
 	void MakeDepthShaderResouceView();
-
+	//bufferResourceの生成
 	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 public:
-
+	/*Getter*/
 	const uint32_t GetSkyBoxTex()const {
 		return skyBoxTexNumber_;
 	}
@@ -100,7 +100,7 @@ public:
 	const uint32_t GetDissolveTex()const {
 		return dissolveTexNumber_;
 	}
-
+	/*Setter*/
 	void  SetSkyBoxTex(const uint32_t texNum) {
 		skyBoxTexNumber_ = texNum;
 	}
@@ -116,23 +116,18 @@ private:
 	//	TextureResourceにデータを転送する
 	[[nodiscard]] ComPtr<ID3D12Resource> UploadTextureData(
 		ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages
-		);
-
-	
-
+		);	
+	//テクスチャのリソースを生成する
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
-
-
-
 
 private:
 	//SRVの最大個数
-	static const size_t kMaxSRVConst = 257;
+	static const size_t kMaxSRVConst_ = 257;
 
 	//テクスチャバッファ
-	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> textureBuffers_;
+	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst_> textureBuffers_;
 
-	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst> intermediateBuffers_;
+	std::array<ComPtr<ID3D12Resource>, kMaxSRVConst_> intermediateBuffers_;
 
 
 	std::unique_ptr<GraphicsPipeline> GraphicsPipeline2D_;
@@ -150,8 +145,8 @@ private:
 
 
 	////SRVを作成するDescripterHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[kMaxSRVConst]{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_[kMaxSRVConst]{};
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_[kMaxSRVConst_]{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_[kMaxSRVConst_]{};
 	//インスタンシング用のSRV作成用
 	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU_{};
@@ -191,7 +186,7 @@ private:
 	/// <summary>
 	/// Textureのコンテナ(キー値: ファイルネーム,番号);
 	/// </summary>
-	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst> textureArray_;
+	std::array<std::pair<std::string, uint32_t>, kMaxSRVConst_> textureArray_;
 
 	HRESULT hr_;
 	

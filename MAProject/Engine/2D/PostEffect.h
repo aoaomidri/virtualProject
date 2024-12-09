@@ -191,9 +191,9 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineVignettingSepiaScale_;
 
 	//Smoothing
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing3x3;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing5x5;
-	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing9x9;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing3x3_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing5x5_;
+	std::unique_ptr<GraphicsPipeline> GraphicsPipelineSmoothing9x9_;
 
 	//LuminanceOutLine
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineOutLine_;
@@ -205,8 +205,8 @@ private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineDissolve_;
 
 
-	ComPtr<ID3D12Resource> textureResource;
-	ComPtr<ID3D12Resource> intermediateResource;
+	ComPtr<ID3D12Resource> textureResource_;
+	ComPtr<ID3D12Resource> intermediateResource_;
 
 	ComPtr<ID3D12Resource> vignettingResource_;
 

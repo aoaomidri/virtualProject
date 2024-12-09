@@ -18,21 +18,21 @@ public:
 	struct CameraForGPU{
 		Vector3 worldPosition;
 	};
-
+	//ファイルネームが一致しているときの初期化
 	void Initialize(const std::string fileName, const bool isLoop);
-
+	//ファイルネームが違うときの初期化
 	void Initialize(const std::string fileName, const std::string& modelName, const bool isLoop);
-	
+	//更新処理
 	void Update(const ViewProjection& viewProjection);
-
+	//skeletonの更新
 	void SkeletonUpdate(Model::Skeleton& skeleton);
-
+	//クラスターの更新
 	void SkeletonUpdate(Model::SkinCluster& skinCluster, Model::Skeleton& skeleton);
-
+	//描画処理
 	void Draw();
-
+	//imgui描画処理
 	void DrawImgui(std::string name);
-	
+	/*setter*/
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
 	void SetIsLighting(const bool& isLighting) { isUseLight_ = isLighting; }
@@ -69,7 +69,7 @@ public:
 
 		animationName_.push_back(fileName);
 	}
-
+	//アニメーションの変更
 	void ChangeAnimation(const std::string& modelName) {
 		if (nowAnimName_ == modelName) {
 			return;
@@ -99,7 +99,7 @@ public:
 
 		return std::string();
 	}
-
+	/*Getter*/
 	const std::vector<std::string>& GetAnimations() {
 		return animationName_;
 	}
@@ -115,11 +115,11 @@ public:
 	void SetChangeAnimSpeed(const float speed) {
 		changeAnimSpeed_ = speed;
 	}
-
+	//アニメーションの停止
 	void AnimationStop() {
 		isAnimation_ = false;
 	}
-	
+	//最初から再生する
 	void RestartAnimation() {
 		animationTime_ = 0;
 	}
@@ -133,7 +133,7 @@ public:
 			AnimationStop();
 		}
 	}
-
+	//アニメーションを再開する
 	void AnimationStart() {
 		isAnimation_ = true;
 	}
@@ -143,12 +143,13 @@ public:
 	const EulerTransform& GetTransform()const { return transform_; }
 
 	const std::vector<Model::Joint>& GetJoint()const { return skeleton_.joints; }
-
+	//バッファリソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
-
+	//リソースの生成
 	void makeResource();
 
 private:
+	/*キーフレームの計算処理*/
 	Vector3 CalculateValue(const std::vector<Model::KeyframeVector3>& keyframes, float time);
 
 	Quaternion CalculateValue(const std::vector<Model::KeyframeQuaternion>& keyframes, float time);
@@ -187,7 +188,7 @@ private:
 
 	uint32_t texHandle_;
 
-	HRESULT hr;
+	HRESULT hr_;
 
 
 	ComPtr<ID3D12Resource> materialResource_;

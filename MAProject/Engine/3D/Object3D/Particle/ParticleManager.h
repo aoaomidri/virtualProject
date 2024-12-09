@@ -7,7 +7,7 @@
 #include"TextureManager.h"
 #include"ViewProjection.h"
 #include"Model.h"
-/*ゲーム内で生成されたパーティクルを管理する「未完成」*/
+/*ゲーム内で生成されたパーティクルを管理する(未完成なので現在はどこにも使用しておりません)*/
 
 class ParticleManager{
 public:
@@ -131,7 +131,7 @@ private:
 private:
 	const std::string ResourcesPath_ = "resources/";
 
-	HRESULT hr_;
+	HRESULT hr_{};
 
 	//粒の数
 	int numInstance_ = 0;

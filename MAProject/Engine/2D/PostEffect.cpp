@@ -29,12 +29,12 @@ void PostEffect::Initialize(){
 	GraphicsPipelineVignettingSepiaScale_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/VignettingSepiaScale.PS.hlsl");
 
 	//smoothing
-	GraphicsPipelineSmoothing3x3 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing3x3->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter3x3.PS.hlsl");
-	GraphicsPipelineSmoothing5x5 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing5x5->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter5x5.PS.hlsl");
-	GraphicsPipelineSmoothing9x9 = std::make_unique<GraphicsPipeline>();
-	GraphicsPipelineSmoothing9x9->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter9x9.PS.hlsl");
+	GraphicsPipelineSmoothing3x3_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing3x3_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter3x3.PS.hlsl");
+	GraphicsPipelineSmoothing5x5_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing5x5_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter5x5.PS.hlsl");
+	GraphicsPipelineSmoothing9x9_ = std::make_unique<GraphicsPipeline>();
+	GraphicsPipelineSmoothing9x9_->InitializeCopy(L"resources/shaders/PostEffect/FullScreen.VS.hlsl", L"resources/shaders/PostEffect/GaussianFilter9x9.PS.hlsl");
 
 	//outline
 	GraphicsPipelineOutLine_ = std::make_unique<GraphicsPipeline>();
@@ -102,16 +102,16 @@ void PostEffect::SetPipeLine(){
 		commandList->SetPipelineState(GraphicsPipelineVignettingSepiaScale_->GetPipeLineState());
 	}
 	else if (selectPost_ == PostEffect::Smoothing3x3) {
-		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing3x3->GetRootSignature());
-		commandList->SetPipelineState(GraphicsPipelineSmoothing3x3->GetPipeLineState());
+		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing3x3_->GetRootSignature());
+		commandList->SetPipelineState(GraphicsPipelineSmoothing3x3_->GetPipeLineState());
 	}
 	else if (selectPost_ == PostEffect::Smoothing5x5) {
-		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing5x5->GetRootSignature());
-		commandList->SetPipelineState(GraphicsPipelineSmoothing5x5->GetPipeLineState());
+		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing5x5_->GetRootSignature());
+		commandList->SetPipelineState(GraphicsPipelineSmoothing5x5_->GetPipeLineState());
 	}
 	else if (selectPost_ == PostEffect::Smoothing9x9) {
-		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing9x9->GetRootSignature());
-		commandList->SetPipelineState(GraphicsPipelineSmoothing9x9->GetPipeLineState());
+		commandList->SetGraphicsRootSignature(GraphicsPipelineSmoothing9x9_->GetRootSignature());
+		commandList->SetPipelineState(GraphicsPipelineSmoothing9x9_->GetPipeLineState());
 	}
 	else if (selectPost_ == PostEffect::OutLine) {
 		commandList->SetGraphicsRootSignature(GraphicsPipelineOutLine_->GetRootSignature());

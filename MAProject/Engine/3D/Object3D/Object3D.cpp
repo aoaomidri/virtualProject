@@ -10,7 +10,7 @@ void Object3D::Initialize(const std::string fileName) {
 
 	isDraw_ = true;
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
 	model_ = ModelManager::GetInstance()->LoadModelFile(fileName);
 
@@ -42,12 +42,12 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 	//rotate_.y += 0.01f;
 
 	if (animation_.duration != 0) {
-		animationTime += (1.0f / 60.0f) * timeScale_;
-		animationTime = std::fmod(animationTime, animation_.duration);
+		animationTime_ += (1.0f / 60.0f) * timeScale_;
+		animationTime_ = std::fmod(animationTime_, animation_.duration);
 		Model::NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[model_->GetNodeName()];
-		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);
-		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime);
-		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime);
+		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime_);
+		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime_);
+		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime_);
 		localMatrix_ = Matrix::MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
 	}
 	else {
@@ -93,28 +93,28 @@ void Object3D::Update(const ViewProjection& viewProjection) {
 		vectorTop_.head = { matTop_.m[3][0],matTop_.m[3][1], matTop_.m[3][2] };
 		vectorTop_.tail = { matTail_.m[3][0],matTail_.m[3][1], matTail_.m[3][2] };
 	}
-	wvpData->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
-	materialDate->enableLighting = isUseLight_;
+	wvpData_->WVP = Matrix::Multiply(localMatrix_, worldViewProjectionMatrix);
+	materialDate_->enableLighting = isUseLight_;
 
-	wvpData->World = Matrix::Multiply(localMatrix_, worldMatrix_);
-	wvpData->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
+	wvpData_->World = Matrix::Multiply(localMatrix_, worldMatrix_);
+	wvpData_->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
 	
-	if (directionalLight){
-	directionalLightDate->color = directionalLight->color;
-	directionalLightDate->direction = directionalLight->direction;
-	directionalLightDate->intensity = directionalLight->intensity;
+	if (directionalLight_){
+	directionalLightDate_->color = directionalLight_->color;
+	directionalLightDate_->direction = directionalLight_->direction;
+	directionalLightDate_->intensity = directionalLight_->intensity;
 
 	}
-	if (pointLight){
-	pointLightData->color = pointLight->color;
-	pointLightData->position = pointLight->position;
-	pointLightData->intensity = pointLight->intensity;
-	pointLightData->radius = pointLight->radius;
-	pointLightData->decay = pointLight->decay;
+	if (pointLight_){
+	pointLightData_->color = pointLight_->color;
+	pointLightData_->position = pointLight_->position;
+	pointLightData_->intensity = pointLight_->intensity;
+	pointLightData_->radius = pointLight_->radius;
+	pointLightData_->decay = pointLight_->decay;
 
 	}
 
-	materialDate->shininess = shininess_;
+	materialDate_->shininess = shininess_;
 
 	cameraForGPU_->worldPosition = viewProjection.translation_;
 }
@@ -127,12 +127,12 @@ void Object3D::UniqueUpdate(){
 	//rotate_.y += 0.01f;
 
 	if (animation_.duration != 0) {
-		animationTime += 1.0f / 60.0f;
-		animationTime = std::fmod(animationTime, animation_.duration);
+		animationTime_ += 1.0f / 60.0f;
+		animationTime_ = std::fmod(animationTime_, animation_.duration);
 		Model::NodeAnimation& rootNodeAnimation = animation_.nodeAnimations[model_->GetNodeName()];
-		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime);
-		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime);
-		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime);
+		animeTranslate_ = CalculateValue(rootNodeAnimation.translate, animationTime_);
+		animeRotate_ = CalculateValue(rootNodeAnimation.rotate, animationTime_);
+		animeScale_ = CalculateValue(rootNodeAnimation.scale, animationTime_);
 		localMatrix_ = Matrix::MakeAffineMatrix(animeScale_, animeRotate_, animeTranslate_);
 	}
 	else {
@@ -190,13 +190,13 @@ void Object3D::Draw() {
 	model_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, texManagerIns->SendGPUDescriptorHandle(texHandle_));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(3, texManagerIns->SendGPUDescriptorHandle(texManagerIns->GetSkyBoxTex()));
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource_->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, pointLightResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(7, texManagerIns->SendGPUDescriptorHandle(texManagerIns->GetDissolveTex()));
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(8, dissolveResource_->GetGPUVirtualAddress());
 	//3D三角の描画
@@ -222,11 +222,11 @@ void Object3D::DrawImgui(std::string name){
 }
 
 void Object3D::SetDirectionalLight(const DirectionalLight::DirectionalLightData* light){
-	directionalLight = light;
+	directionalLight_ = light;
 }
 
 void Object3D::SetPointLight(const PointLight::PointLightData* pLight){
-	pointLight = pLight;
+	pointLight_ = pLight;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(size_t sizeInBytes) {
@@ -248,65 +248,65 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Object3D::CreateBufferResource(size_t siz
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr_ = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return bufferResource;
 }
 
 void Object3D::makeResource() {
 	//マテリアル用のリソース
-	 materialResource = CreateBufferResource(sizeof(Model::Material));
+	 materialResource_ = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
 	//今回は赤を書き込んでみる
-	materialDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
-	materialDate->uvTransform.Identity();
+	materialDate_->uvTransform.Identity();
 
-	materialDate->shininess = 1.0f;
+	materialDate_->shininess = 1.0f;
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpResource = CreateBufferResource(sizeof(TransformationMatrix));
+	wvpResource_ = CreateBufferResource(sizeof(TransformationMatrix));
 	//書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData->WVP = Matrix::MakeIdentity4x4();
-	wvpData->World = Matrix::MakeIdentity4x4();
-	wvpData->WorldInverseTranspose = Matrix::MakeIdentity4x4();
+	wvpData_->WVP = Matrix::MakeIdentity4x4();
+	wvpData_->World = Matrix::MakeIdentity4x4();
+	wvpData_->WorldInverseTranspose = Matrix::MakeIdentity4x4();
 
 	/*平行光源用リソース関連*/
 	//マテリアル用のリソース
-	directionalLightResource = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
+	directionalLightResource_ = CreateBufferResource(sizeof(DirectionalLight::DirectionalLightData));
 
 	//書き込むためのアドレスを取得
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate));
+	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightDate_));
 	//今回は白を書き込んでみる
-	directionalLightDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLightDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	directionalLightDate->direction = { 0.0f,-1.0f,0.0f };
+	directionalLightDate_->direction = { 0.0f,-1.0f,0.0f };
 
-	directionalLightDate->intensity = 1.0f;
+	directionalLightDate_->intensity = 1.0f;
 
 	//マテリアル用のリソース
-	pointLightResource = CreateBufferResource(sizeof(PointLight::PointLightData));
+	pointLightResource_ = CreateBufferResource(sizeof(PointLight::PointLightData));
 
 	//書き込むためのアドレスを取得
-	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
 	//今回は白を書き込んでみる
-	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	pointLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	pointLightData->position = { 0.0f,10.0f,0.0f };
+	pointLightData_->position = { 0.0f,10.0f,0.0f };
 
-	pointLightData->intensity = 1.0f;
+	pointLightData_->intensity = 1.0f;
 
-	pointLightData->radius = 1.0f;
+	pointLightData_->radius = 1.0f;
 
-	pointLightData->decay = 1.0f;
+	pointLightData_->decay = 1.0f;
 
 	/*カメラリソース関連*/
 	cameraResource_ = CreateBufferResource(sizeof(CameraForGPU));

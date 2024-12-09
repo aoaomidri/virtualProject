@@ -48,7 +48,7 @@ public:
 		tempPos_.head = head;
 		tempPos_.tail = tail;
 	};
-
+	//リセット処理
 	void Reset() {
 		posArray_.clear();
 		vertex_.clear();
@@ -91,7 +91,7 @@ private:
 	std::vector<PosBuffer>GetUsedPosArray();
 	//曲線で補正を掛けて滑らかにする
 	void CreateCurveVertex(std::vector<PosBuffer>& container);
-
+	//頂点データ生成
 	void MakeVertexData();
 	
 private:

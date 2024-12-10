@@ -12,7 +12,9 @@ public:
 		Left,
 		Right,
 		Center,
-		Guard
+		Guard,
+		Strong,
+		Few,
 	};
 
 	//履歴追加

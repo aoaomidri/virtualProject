@@ -413,7 +413,15 @@ void GameScene::AllCollision(){
 				//ヒットストップ
 				GameTime::StopTime(player_->GetHitStop());
 				//当たったときの処理
-				enemy->OnCollision();
+				if (player_->ChackStrongBack()){
+					followCamera_->StartShake(1.0f, 3.0f);
+					enemy->OnCollisionStrong();
+				}
+				else {
+					enemy->OnCollision();
+				}
+				
+				
 			}
 		}
 		

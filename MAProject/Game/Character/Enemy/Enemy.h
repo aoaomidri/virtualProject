@@ -43,6 +43,9 @@ public:
 	void Respawn(const Vector3& position);
 	//被弾時の処理
 	void OnCollision();
+	//被弾時の処理
+	void OnCollisionStrong();
+
 	//ガード中に当たったときの処理
 	void OnCollisionGuard();
 
@@ -213,6 +216,8 @@ private:
 	//ヒットバックの速度
 	float hitBackSpeed_ = 1.0f;
 	//強ヒットバックの速度
+	float fewHitBackSpeed_ = 0.015f;
+	//強ヒットバックの速度
 	float strongHitBackSpeed_ = 1.0f;
 	//ゲー無の時間
 	float timeScale_ = 0.0f;
@@ -224,6 +229,13 @@ private:
 	const float addRotateEaseT_ = (1.0f / 30.0f);
 	//ダッシュの時間
 	int dashTimer_ = 0;
+
+	//くらった時のジャンプ
+	float jumpPower_ = 0.4f;
+
+	//落下関連
+	float downSpeed_ = -0.02f;
+	Vector3 downVector_ = { 0 };
 
 	bool isDead_ = false;
 	//近接攻撃中かどうか
@@ -247,7 +259,9 @@ private:
 	Vector3 hitEaseStartRight_ = { 0.3f,0.0f,-0.3f };
 
 	//左から攻撃を受けたときのノックバック
-	Vector3 hitEaseStartCenter_ = { -0.3f,0.0f,-0.3f };
+	Vector3 hitEaseStartCenter_ = { -0.3f,0.0f,0.0f };
+
+	Vector3 hitEaseStartStrong_ = { -1.57f,0.0f,0.0f };
 
 private:
 	/*振る舞い系*/

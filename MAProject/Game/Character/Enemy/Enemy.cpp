@@ -319,6 +319,13 @@ void Enemy::OnCollision(){
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
+void Enemy::OnCollisionStrong(){
+	particle_->SetIsDraw(true);
+	enemyLife_ -= 3;
+	particle_->AddParticle(emitter_);
+	behaviorRequest_ = Behavior::kLeaningBack;
+}
+
 void Enemy::OnCollisionGuard(){
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
@@ -711,6 +718,16 @@ void Enemy::BehaviorLeaningBackInitialize(){
 		transform_.rotate = hitEaseStartCenter_;
 		knockBackEaseStart_ = hitEaseStartCenter_;
 		break;
+	case HitRecord::Strong:
+		transform_.rotate = hitEaseStartStrong_;
+		knockBackEaseStart_ = hitEaseStartStrong_;
+		downVector_ = { 0.0f };
+		downVector_.y += jumpPower_;
+		break;
+	case HitRecord::Few:
+		transform_.rotate = hitEaseStartCenter_;
+		knockBackEaseStart_ = hitEaseStartCenter_;
+		break;
 	default:
 		transform_.rotate = hitEaseStartLeft_;
 		break;
@@ -720,8 +737,11 @@ void Enemy::BehaviorLeaningBackInitialize(){
 }
 
 void Enemy::LeaningBack(){
-	if (type_ == HitRecord::Center) {
+	if (type_ == HitRecord::Center || type_ == HitRecord::Strong) {
 		move_ = { 0, 0, backSpeed_ * strongHitBackSpeed_ };
+	}
+	else if (type_ == HitRecord::Few){
+		move_ = { 0, 0, backSpeed_ * fewHitBackSpeed_ };
 	}
 	else {
 		move_ = { 0, 0, backSpeed_ * hitBackSpeed_ };
@@ -738,6 +758,15 @@ void Enemy::LeaningBack(){
 		move_.z = 0;
 	}
 
+	
+	downVector_.y += downSpeed_ * timeScale_;
+		
+	transform_.translate.y += downVector_.y * timeScale_;
+
+	if (transform_.translate.y < 2.5f){
+		transform_.translate.y = 2.5f;
+	}
+
 	transform_.translate += move_;
 
 	rotateEaseT_ += addRotateEaseT_;
@@ -749,7 +778,7 @@ void Enemy::LeaningBack(){
 	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.x, 0.0f, rotateEaseT_);
 	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.z, 0.0f, rotateEaseT_);
 
-	if (rotateEaseT_ >= 1.0f) {
+	if (rotateEaseT_ >= 1.0f && transform_.translate.y == 2.5f) {
 		bodyObj_->SetTexture(enemyTexPath_);
 		behaviorRequest_ = Behavior::kRoot;
 	}

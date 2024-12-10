@@ -769,7 +769,7 @@ void Player::BehaviorFifthAttackInitialize(){
 }
 
 void Player::BehaviorSixthAttackInitialize(){
-	type_ = KnockbackType::Center;
+	type_ = KnockbackType::Strong;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -1612,7 +1612,7 @@ void Player::BehaviorSecondStrongAttackInitialize(){
 }
 
 void Player::BehaviorThirdStrongAttackInitialize(){
-
+	type_ = KnockbackType::Strong;
 	trail_->Reset();
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
@@ -1630,7 +1630,7 @@ void Player::BehaviorThirdStrongAttackInitialize(){
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-
+	
 
 	workAttack_.AttackTimer = 0;
 	hitRecord_.Clear();
@@ -1659,7 +1659,7 @@ void Player::BehaviorFourthStrongAttackInitialize(){
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-
+	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 
 	workAttack_.AttackTimer = 0;
 	hitRecord_.Clear();
@@ -1672,7 +1672,7 @@ void Player::BehaviorFourthStrongAttackInitialize(){
 
 void Player::BehaviorFifthStrongAttackInitialize(){
 	
-
+	type_ = KnockbackType::Few;
 	///
 	trail_->Reset();
 	workAttack_.comboNext = false;
@@ -1685,12 +1685,14 @@ void Player::BehaviorFifthStrongAttackInitialize(){
 	weaponTransform_.rotate.z = -1.5f;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
+
 	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
+	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 
 	hitRecord_.Clear();
 	workAttack_.AttackTimer = 0;
@@ -1726,6 +1728,7 @@ void Player::BehaviorSixthStrongAttackInitialize(){
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
+	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 
 	easeT_ = 0;
 	addEaseT_ = 0.03f;
@@ -1747,6 +1750,7 @@ void Player::StrongAttackMotion(){
 			weaponCollisionTransform_.scale = { 0.6f,2.0f,0.6f };
 		}
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y) or isGuardHit_){
+			type_ = HitRecord::Strong;
 			isGuard_ = false;
 			chargeEnd_ = true;
 			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
@@ -1880,10 +1884,11 @@ void Player::ThirdStrongAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
+		weaponCollisionTransform_.scale = Vector3();
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 5.0f);
 	}
 	else if (isShakeDown_) {
-
+		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 		weapon_Rotate_ += kMoveWeaponShakeDown_ * 2.0f * motionSpeed_;
 	}
 
@@ -1913,10 +1918,11 @@ void Player::FourthStrongAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
+		weaponCollisionTransform_.scale = Vector3();
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
 	}
 	else if (isShakeDown_) {
-
+		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 		weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_;
 
 		if (downVector_.y != 0.0f) {
@@ -2009,6 +2015,7 @@ void Player::FifthStrongAttackMotion(){
 					isShakeDown_ = false;
 					isTrail_ = false;
 					isFinishAttack_ = true;
+					type_ = HitRecord::Strong;
 					hitRecord_.Clear();
 				}
 			}
@@ -2042,7 +2049,7 @@ void Player::FifthStrongAttackMotion(){
 			weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
 		}
 		else if (isShakeDown_) {
-
+			weaponCollisionTransform_.scale = Vector3(0.9f, 4.5f, 0.9f) * strongAddScale_;
 			weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
 		}
 	}
@@ -2056,6 +2063,7 @@ void Player::FifthStrongAttackMotion(){
 
 void Player::SixthStrongAttackMotion(){
 	if (!chargeEnd_) {
+		weaponCollisionTransform_.scale = Vector3();
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)) {
 			isGuard_ = true;
 			weaponTransform_.rotate.x += 0.01f;
@@ -2074,6 +2082,7 @@ void Player::SixthStrongAttackMotion(){
 
 	}
 	else {
+		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
 		easeT_ += addEaseT_;
 
 		if (easeT_ > 1.0f) {

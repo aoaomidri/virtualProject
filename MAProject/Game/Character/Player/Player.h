@@ -52,6 +52,15 @@ public:
 
 	//リスポーン
 	void Respawn();
+	//ヒットバックのタイプが強いものの場合
+	bool ChackStrongBack() const {
+		if (type_ == HitRecord::Center || type_ == HitRecord::Strong){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 public:
 	//Getter
@@ -94,6 +103,15 @@ public:
 	const HitRecord::KnockbackType GetKnockbackType()const { return type_; }
 
 	const float GetHitStop()const {
+		if (behavior_ == Behavior::kStrongAttack){
+			if (workAttack_.comboIndex != 5) {
+				return strongHitStop_;
+			}
+			else {
+				return hitStop_;
+			}
+		} 
+
 		if (workAttack_.comboIndex == 6){
 			return strongHitStop_;
 		}
@@ -364,7 +382,11 @@ private:
 	//ヒットストップの時間
 	float hitStop_ = 0.0f;
 	float strongHitStop_ = 0.0f;
-	
+	/*当たり関係*/
+	float strongAddScale_ = 3.0f;
+
+	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
+
 	//武器の回転
 	float weapon_Rotate_ = 0.0f;
 	float arm_Rotate_ = -3.15f;

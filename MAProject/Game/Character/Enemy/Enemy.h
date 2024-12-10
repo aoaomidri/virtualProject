@@ -69,6 +69,8 @@ public:
 
 	uint32_t GetSerialNumber()const { return serialNumber_; }
 
+	bool GetIsOnScreen()const { return isOnScreen_; }
+
 	//Setter
 
 	void SetShininess(const float shininess) {

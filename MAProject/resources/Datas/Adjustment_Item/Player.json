@@ -5,14 +5,14 @@
         "DashCoolTime": 5,
         "DashSpeed": 10.0,
         "DownSpeed": -0.009999999776482582,
-        "HitStop": 0.0700000999821186066,
+        "HitStop": 0.0600000999821186066,
         "JumpPower": 0.20000000298023224,
         "JustAvoidT": 0.8999999761581421,
         "MotionDistance": 3.0,
         "MotionSpeed": 1.399999976158142,
         "MoveSpeed": 0.07000000029802322,
         "ScaleValue": 0.6100000143051147,
-        "StrongHitStop": 0.20000000298023224,
+        "StrongHitStop": 0.15000000298023224,
         "TrailPosData": [
             3.700000047683716,
             0.699999988079071

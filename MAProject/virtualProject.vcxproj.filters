@@ -222,6 +222,9 @@
     <ClCompile Include="Game\Character\Enemy\EnemyManager.cpp">
       <Filter>Game\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Object3D\InstancingObject3D.cpp">
+      <Filter>Engine\3D\Object3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -427,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="Game\Character\Enemy\EnemyManager.h">
       <Filter>Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Object3D\InstancingObject3D.h">
+      <Filter>Engine\3D\Object3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

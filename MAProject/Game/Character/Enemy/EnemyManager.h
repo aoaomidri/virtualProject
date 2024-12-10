@@ -46,7 +46,7 @@ private:
 	//敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;
 	//敵の最大値
-	static const size_t enemyNum_ = 40;
+	static const size_t enemyNum_ = 100;
 	//ひとまず手打ちでの敵の初期値座標
 	std::array<Vector3, enemyNum_> enemysPos_;
 

@@ -366,6 +366,17 @@ void GameScene::AllCollision(){
 
 	for (const auto& enemy : enemyManager_->GetEnemies()) {
 		uint32_t serialNumber = enemy->GetSerialNumber();
+		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
+			enemy->SetIsOnScreen(true);
+		}
+		else {
+			enemy->SetIsOnScreen(false);
+		}
+
+		if (!enemy->GetIsOnScreen()) {
+			continue;
+		} 
+
 		if (player_->GetIsGuard()){
 			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
 				
@@ -406,12 +417,6 @@ void GameScene::AllCollision(){
 			}
 		}
 		
-		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
-			enemy->SetIsOnScreen(true);
-		}
-		else {
-			enemy->SetIsOnScreen(false);
-		}
 
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);

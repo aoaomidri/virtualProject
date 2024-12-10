@@ -55,7 +55,7 @@ void WinApp::Initialize() {
 		//デバッグレイヤーを有効化する
 		debugController->EnableDebugLayer();
 		//さらにGPU側でもチェックできるようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
+		debugController->SetEnableGPUBasedValidation(false);
 	}
 #endif // _DEBUG
 

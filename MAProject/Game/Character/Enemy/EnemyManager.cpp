@@ -53,7 +53,6 @@ void EnemyManager::Initialize(){
 		enemy_->SetTargetMat(targetRotateMat_);
 		enemy_->Update();
 		enemies_.push_back(std::move(enemy_));
-
 	}
 }
 

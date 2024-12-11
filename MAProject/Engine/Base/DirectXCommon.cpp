@@ -603,13 +603,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateRenderTextureResourc
 	return resource;
 }
 
-void DirectXCommon::StartImgui(){
-	
-}
 
-void DirectXCommon::EndImgui(){
-	
-}
 
 
 

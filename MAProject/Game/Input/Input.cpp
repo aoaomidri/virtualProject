@@ -16,62 +16,62 @@ void Input::Initialize() {
 
 	/*キー入力の初期化処理*/	
 	hr = DirectInput8Create
-	(this->winapp_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	(this->winapp_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(hr));
 
 	//キーボードデバイスの作成
-	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	hr = directInput_->CreateDevice(GUID_SysKeyboard, &keyboard_, NULL);
 	assert(SUCCEEDED(hr));
 	//入力データ形式のセット
-	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
+	hr = keyboard_->SetDataFormat(&c_dfDIKeyboard);
 	assert(SUCCEEDED(hr));
 	//排他制御レベルのセット
-	hr = keyboard->SetCooperativeLevel
+	hr = keyboard_->SetCooperativeLevel
 	(this->winapp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
-	ZeroMemory(&xinputState, sizeof(XINPUT_STATE));
+	ZeroMemory(&xinputState_, sizeof(XINPUT_STATE));
 
-	hr == ERROR_SUCCESS ? isConnectPad = true : isConnectPad = false;
+	hr == ERROR_SUCCESS ? isConnectPad_ = true : isConnectPad_ = false;
 }
 
 void Input::Update() {
 	//キーボード情報の取得開始
-	keyboard->Acquire();
+	keyboard_->Acquire();
 	//全キーの入力状態を取得する
-	memcpy(prekey, key, sizeof(key));
-	keyboard->GetDeviceState(sizeof(key), key);
+	memcpy(prekey_, key_, sizeof(key_));
+	keyboard_->GetDeviceState(sizeof(key_), key_);
 
-	oldXInputState = xinputState;
-	DWORD dresult = XInputGetState(0, &xinputState);
+	oldXInputState_ = xinputState_;
+	DWORD dresult = XInputGetState(0, &xinputState_);
 	//	接続状況の確認
-	dresult == ERROR_SUCCESS ? isConnectPad = true : isConnectPad = false;
-	if (isConnectPad) {
+	dresult == ERROR_SUCCESS ? isConnectPad_ = true : isConnectPad_ = false;
+	if (isConnectPad_) {
 
 		// デッドzoneの設定
-		if ((xinputState.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_&&
-			xinputState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_) &&
-			(xinputState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_ &&
-				xinputState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_))
+		if ((xinputState_.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_&&
+			xinputState_.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_) &&
+			(xinputState_.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_ &&
+				xinputState_.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * DeadZone_))
 		{
-			xinputState.Gamepad.sThumbLX = 0;
-			xinputState.Gamepad.sThumbLY = 0;
+			xinputState_.Gamepad.sThumbLX = 0;
+			xinputState_.Gamepad.sThumbLY = 0;
 		}
 
-		if ((xinputState.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
-			xinputState.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_) &&
-			(xinputState.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
-				xinputState.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_))
+		if ((xinputState_.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
+			xinputState_.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_) &&
+			(xinputState_.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_ &&
+				xinputState_.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * DeadZone_))
 		{
-			xinputState.Gamepad.sThumbRX = 0;
-			xinputState.Gamepad.sThumbRY = 0;
+			xinputState_.Gamepad.sThumbRX = 0;
+			xinputState_.Gamepad.sThumbRY = 0;
 		}
 	}
 
 }
 
 bool Input::Pushkey(BYTE keyNumber) {
-	if (key[keyNumber]){
+	if (key_[keyNumber]){
 		return true;
 	}
 
@@ -79,7 +79,7 @@ bool Input::Pushkey(BYTE keyNumber) {
 }
 
 bool Input::Trigerkey(BYTE keyNumber) {
-	if (key[keyNumber] && !prekey[keyNumber]) {
+	if (key_[keyNumber] && !prekey_[keyNumber]) {
 		return true;
 	}
 
@@ -87,14 +87,14 @@ bool Input::Trigerkey(BYTE keyNumber) {
 }
 
 bool Input::Relecekey(BYTE keyNumber) {
-	if (!key[keyNumber] && prekey[keyNumber]) {
+	if (!key_[keyNumber] && prekey_[keyNumber]) {
 		return true;
 	}
 	return false;
 }
 
 bool Input::PushRight() {
-	if (key[DIK_RIGHT]) {
+	if (key_[DIK_RIGHT]) {
 		return true;
 	}
 
@@ -102,7 +102,7 @@ bool Input::PushRight() {
 }
 
 bool Input::TrigerRight() {
-	if (key[DIK_RIGHT] && !prekey[DIK_RIGHT]) {
+	if (key_[DIK_RIGHT] && !prekey_[DIK_RIGHT]) {
 		return true;
 	}
 
@@ -110,7 +110,7 @@ bool Input::TrigerRight() {
 }
 
 bool Input::PushLeft() {
-	if (key[DIK_LEFT]) {
+	if (key_[DIK_LEFT]) {
 		return true;
 	}
 
@@ -118,7 +118,7 @@ bool Input::PushLeft() {
 }
 
 bool Input::TrigerLeft() {
-	if (key[DIK_LEFT] && !prekey[DIK_LEFT]) {
+	if (key_[DIK_LEFT] && !prekey_[DIK_LEFT]) {
 		return true;
 	}
 
@@ -126,7 +126,7 @@ bool Input::TrigerLeft() {
 }
 
 bool Input::PushUp() {
-	if (key[DIK_UP]) {
+	if (key_[DIK_UP]) {
 		return true;
 	}
 
@@ -134,7 +134,7 @@ bool Input::PushUp() {
 }
 
 bool Input::TrigerUp() {
-	if (key[DIK_UP] && !prekey[DIK_UP]) {
+	if (key_[DIK_UP] && !prekey_[DIK_UP]) {
 		return true;
 	}
 
@@ -142,7 +142,7 @@ bool Input::TrigerUp() {
 }
 
 bool Input::PushDown() {
-	if (key[DIK_DOWN]) {
+	if (key_[DIK_DOWN]) {
 		return true;
 	}
 
@@ -150,7 +150,7 @@ bool Input::PushDown() {
 }
 
 bool Input::TrigerDown() {
-	if (key[DIK_DOWN] && !prekey[DIK_DOWN]) {
+	if (key_[DIK_DOWN] && !prekey_[DIK_DOWN]) {
 		return true;
 	}
 
@@ -167,12 +167,12 @@ bool Input::GetPadButton(UINT button){
 		return GetRTrigger();
 	}
 
-	return xinputState.Gamepad.wButtons == button;
+	return xinputState_.Gamepad.wButtons == button;
 }
 
 bool Input::GetPadButtonRelease(UINT button)
 {
-	return xinputState.Gamepad.wButtons != button && oldXInputState.Gamepad.wButtons == button;
+	return xinputState_.Gamepad.wButtons != button && oldXInputState_.Gamepad.wButtons == button;
 }
 
 bool Input::GetPadButtonTriger(UINT button){
@@ -184,13 +184,13 @@ bool Input::GetPadButtonTriger(UINT button){
 		return GetRTriggerDown();
 	}
 
-	return xinputState.Gamepad.wButtons == button && oldXInputState.Gamepad.wButtons != button;
+	return xinputState_.Gamepad.wButtons == button && oldXInputState_.Gamepad.wButtons != button;
 }
 
 bool Input::GetIsPushedLStick() const{
 
-	float x = static_cast<float>(xinputState.Gamepad.sThumbLX);
-	float y = static_cast<float>(xinputState.Gamepad.sThumbLY);
+	float x = static_cast<float>(xinputState_.Gamepad.sThumbLX);
+	float y = static_cast<float>(xinputState_.Gamepad.sThumbLY);
 
 	if (x != 0.000f or y != 0.000f){
 		return true;
@@ -203,16 +203,16 @@ bool Input::GetIsPushedLStick() const{
 
 Vector2 Input::GetPadLStick() const
 {
-	SHORT x = xinputState.Gamepad.sThumbLX;
-	SHORT y = xinputState.Gamepad.sThumbLY;
+	SHORT x = xinputState_.Gamepad.sThumbLX;
+	SHORT y = xinputState_.Gamepad.sThumbLY;
 
 	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
 }
 
 Vector2 Input::GetPadRStick() const
 {
-	SHORT x = xinputState.Gamepad.sThumbRX;
-	SHORT y = xinputState.Gamepad.sThumbRY;
+	SHORT x = xinputState_.Gamepad.sThumbRX;
+	SHORT y = xinputState_.Gamepad.sThumbRY;
 
 	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
 }
@@ -220,7 +220,7 @@ Vector2 Input::GetPadRStick() const
 bool Input::GetLTriggerDown()
 {
 	//	デッドラインの設定必須
-	if (oldXInputState.Gamepad.bLeftTrigger < 128 && xinputState.Gamepad.bLeftTrigger >= 128)
+	if (oldXInputState_.Gamepad.bLeftTrigger < 128 && xinputState_.Gamepad.bLeftTrigger >= 128)
 	{
 		return true;
 	}
@@ -230,7 +230,7 @@ bool Input::GetLTriggerDown()
 bool Input::GetRTriggerDown()
 {
 	//	デッドラインの設定必須
-	if (oldXInputState.Gamepad.bRightTrigger < 128 && xinputState.Gamepad.bRightTrigger >= 128)
+	if (oldXInputState_.Gamepad.bRightTrigger < 128 && xinputState_.Gamepad.bRightTrigger >= 128)
 	{
 		return true;
 	}
@@ -239,7 +239,7 @@ bool Input::GetRTriggerDown()
 bool Input::GetLTrigger()
 {
 	//	デッドラインの設定必須
-	if (xinputState.Gamepad.bLeftTrigger >= 128) {
+	if (xinputState_.Gamepad.bLeftTrigger >= 128) {
 		return true;
 	}
 	return false;
@@ -248,7 +248,7 @@ bool Input::GetLTrigger()
 bool Input::GetRTrigger()
 {
 	//	デッドラインの設定必須
-	if (xinputState.Gamepad.bRightTrigger >= 128) {
+	if (xinputState_.Gamepad.bRightTrigger >= 128) {
 		return true;
 	}
 	return false;

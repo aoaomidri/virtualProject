@@ -14,26 +14,30 @@ public:
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	static SRVDescriptorHeap* GetInstance();
-
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="device">デバイス</param>
 	void Initialize(ID3D12Device* device);
-
+	
+	/// DescriptorHeapの生成
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 public:
-
+	/*getter*/
 	ID3D12DescriptorHeap* GetSRVHeap() const { return srvDescriptorHeap_.Get(); }
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(){
 		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-		handleCPU.ptr += (descriptorSizeSRV_ * setHeapPositionCPU_);
+		handleCPU.ptr += (size_t)(descriptorSizeSRV_ * setHeapPositionCPU_);
 		setHeapPositionCPU_++;
 		return handleCPU;
 	}
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(){
 		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart();
-		handleGPU.ptr += (descriptorSizeSRV_ * setHeapPositionGPU_);
+		handleGPU.ptr += (size_t)(descriptorSizeSRV_ * setHeapPositionGPU_);
 		setHeapPositionGPU_++;
 		return handleGPU;
 	}

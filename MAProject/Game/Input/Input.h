@@ -100,25 +100,25 @@ public:
 
 	bool GetRTrigger();
 
-	bool GetConnectPad() const { return isConnectPad; }
+	bool GetConnectPad() const { return isConnectPad_; }
 
 private:
-	BYTE key[256] = {};
-	BYTE prekey[256] = {};
+	BYTE key_[256] = {};
+	BYTE prekey_[256] = {};
 
 	const float DeadZone_ = 2.0f;
 
-	bool isConnectPad = false;
+	bool isConnectPad_ = false;
 
 	WinApp* winapp_ = nullptr;
 
-	XINPUT_STATE xinputState;
+	XINPUT_STATE xinputState_;
 
-	XINPUT_STATE oldXInputState;
+	XINPUT_STATE oldXInputState_;
 
-	ComPtr<IDirectInputDevice8> keyboard;
+	ComPtr<IDirectInputDevice8> keyboard_;
 
-	ComPtr<IDirectInput8> directInput;
+	ComPtr<IDirectInput8> directInput_;
 
 };
 

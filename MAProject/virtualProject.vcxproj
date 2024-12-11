@@ -173,7 +173,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\2D\TextureManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailRender.cpp" />
-    <ClCompile Include="Engine\3D\Object3D\InstancingObject3D.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Manager\ModelManager.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Model.cpp" />
     <ClCompile Include="Engine\3D\Object3D\Object3D.cpp" />
@@ -183,7 +182,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Object3D\SkyBox.cpp" />
     <ClCompile Include="Engine\3D\Shape\OBB.cpp" />
     <ClCompile Include="Engine\3D\ViewProjection.cpp" />
-    <ClCompile Include="Engine\Base\ComputeGraphicsPipeline.cpp" />
     <ClCompile Include="Engine\Base\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipeline.cpp" />
@@ -191,7 +189,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\WinApp.cpp" />
     <ClCompile Include="externals\ImGuiManager.cpp" />
     <ClCompile Include="Game\Audio\Audio.cpp" />
-    <ClCompile Include="Game\Camera\DebugCamera.cpp" />
     <ClCompile Include="Game\Camera\FollowCamera.cpp" />
     <ClCompile Include="Game\Camera\LockOn.cpp" />
     <ClCompile Include="Game\Character\Enemy\Enemy.cpp" />
@@ -239,7 +236,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\2D\TextureManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h" />
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailRender.h" />
-    <ClInclude Include="Engine\3D\Object3D\InstancingObject3D.h" />
     <ClInclude Include="Engine\3D\Object3D\Manager\ModelManager.h" />
     <ClInclude Include="Engine\3D\Object3D\Model.h" />
     <ClInclude Include="Engine\3D\Object3D\Object3D.h" />
@@ -252,7 +248,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Shape\ViewingFrustum.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />
-    <ClInclude Include="Engine\Base\ComputeGraphicsPipeline.h" />
     <ClInclude Include="Engine\Base\DescriptorHeap.h" />
     <ClInclude Include="Engine\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\GraphicsPipeline.h" />
@@ -261,7 +256,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="externals\ImGuiManager.h" />
     <ClInclude Include="Game\Audio\Audio.h" />
-    <ClInclude Include="Game\Camera\DebugCamera.h" />
     <ClInclude Include="Game\Camera\FollowCamera.h" />
     <ClInclude Include="Game\Camera\LockOn.h" />
     <ClInclude Include="Game\Character\Enemy\Enemy.h" />

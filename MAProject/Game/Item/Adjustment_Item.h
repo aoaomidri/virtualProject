@@ -76,6 +76,6 @@ private:
 	std::map<std::string, Group> datas_;
 
 	//グローバル変数の保存先ファイルパス
-	const std::string kDirectoryPath = "Resources/Datas/Adjustment_Item/";
+	const std::string kDirectoryPath_ = "Resources/Datas/Adjustment_Item/";
 };
 

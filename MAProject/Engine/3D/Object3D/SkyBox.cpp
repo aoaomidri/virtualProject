@@ -10,7 +10,7 @@ void SkyBox::Initialize(const std::string fileName) {
 
 	isDraw_ = true;
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 	
 	texHandle_ = TextureManager::GetInstance()->Load(fileName);	
 
@@ -40,14 +40,14 @@ void SkyBox::Update(const ViewProjection& viewProjection) {
 
 	Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 
-	wvpData->WVP = worldViewProjectionMatrix;
-	materialDate->enableLighting = isUseLight_;
+	wvpData_->WVP = worldViewProjectionMatrix;
+	materialDate_->enableLighting = isUseLight_;
 
-	wvpData->World = worldMatrix_;
-	wvpData->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
+	wvpData_->World = worldMatrix_;
+	wvpData_->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
 
 
-	materialDate->shininess = shininess_;
+	materialDate_->shininess = shininess_;
 
 }
 
@@ -60,8 +60,8 @@ void SkyBox::Draw() {
 	DirectXCommon::GetInstance()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	//形状を設定。
 	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, wvpResource->GetGPUVirtualAddress());
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(0, wvpResource_->GetGPUVirtualAddress());
+	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource_->GetGPUVirtualAddress());
 	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->SendGPUDescriptorHandle(texHandle_));
 	//3D三角の描画
 	DirectXCommon::GetInstance()->GetCommandList()->DrawIndexedInstanced(kIndexNum_, 1, 0, 0, 0);
@@ -97,9 +97,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> SkyBox::CreateBufferResource(size_t sizeI
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> bufferResource = nullptr;
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+	hr_ = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&bufferResource));
-	assert(SUCCEEDED(hr));
+	assert(SUCCEEDED(hr_));
 
 	return bufferResource;
 }
@@ -176,27 +176,27 @@ void SkyBox::makeResource() {
 	MakeVertexResouce();
 
 	//マテリアル用のリソース
-	materialResource = CreateBufferResource(sizeof(Model::Material));
+	materialResource_ = CreateBufferResource(sizeof(Model::Material));
 
 	//書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialDate));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDate_));
 	//今回は赤を書き込んでみる
-	materialDate->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialDate_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	materialDate->enableLighting = false;
+	materialDate_->enableLighting = false;
 
-	materialDate->uvTransform.Identity();
+	materialDate_->uvTransform.Identity();
 
-	materialDate->shininess = 1.0f;
+	materialDate_->shininess = 1.0f;
 
 	//wvp用のリソースを作る。TransformationMatrix一つ分のサイズを用意する
-	wvpResource = CreateBufferResource(sizeof(TransformationMatrix));
+	wvpResource_ = CreateBufferResource(sizeof(TransformationMatrix));
 	//書き込むためのアドレスを取得
-	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData->WVP = Matrix::MakeIdentity4x4();
-	wvpData->World = Matrix::MakeIdentity4x4();
-	wvpData->WorldInverseTranspose = Matrix::MakeIdentity4x4();
+	wvpData_->WVP = Matrix::MakeIdentity4x4();
+	wvpData_->World = Matrix::MakeIdentity4x4();
+	wvpData_->WorldInverseTranspose = Matrix::MakeIdentity4x4();
 
 
 

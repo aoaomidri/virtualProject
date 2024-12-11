@@ -6,7 +6,7 @@ void FollowCamera::ApplyGlobalVariables(){
 
 	angle_t = adjustment_item->GetfloatValue(groupName, "AngleComplement");
 	t_ = adjustment_item->GetfloatValue(groupName, "PositionComplement");
-	distance = adjustment_item->GetfloatValue(groupName, "distance");
+	distance_ = adjustment_item->GetfloatValue(groupName, "distance");
 
 	if (angle_t > 1.0f) {
 		angle_t = 1.0f;
@@ -28,9 +28,9 @@ void FollowCamera::ShakeUpdate(){
 	float offsetY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;
 	float offsetZ = 0.0f;  // Z軸方向は揺れないようにする
 
-	rootOffset.x += offsetX;
-	rootOffset.y += offsetY;
-	rootOffset.z += offsetZ;
+	rootOffset_.x += offsetX;
+	rootOffset_.y += offsetY;
+	rootOffset_.z += offsetZ;
 
 	// シェイクが終了したら振幅をリセット
 	if (cameraShake_.elapsedTime >= cameraShake_.duration) {
@@ -47,19 +47,19 @@ void FollowCamera::Initialize(){
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
 	adjustment_item->AddItem(groupName, "PositionComplement", t_);
-	adjustment_item->AddItem(groupName, "distance", distance);
+	adjustment_item->AddItem(groupName, "distance", distance_);
 
 	input_ = Input::GetInstance();
 
 	destinationAngleX_ = 0.0f;
 
 
-	rootOffset = { 0.0f, height_, distance };
+	rootOffset_= { 0.0f, height_, distance_ };
 
-	minRotate = 0.1f;
-	maxRotate = 0.9f;
+	minRotate_ = 0.1f;
+	maxRotate_ = 0.9f;
 
-	baseOffset = rootOffset;
+	baseOffset_ = rootOffset_;
 
 	destinationAngleX_ = 0.2f;
 
@@ -81,7 +81,7 @@ void FollowCamera::Update(){
 		postureVec_ = sub;
 
 		Matrix4x4 newMatrix;
-		newMatrix.DirectionToDirection(Vector3::Normalize(Vec), Vector3::Normalize(postureVec_));
+		newMatrix.DirectionToDirection(Vector3::Normalize(Vec_), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::RotateAngleYFromMatrix(newMatrix);
 		destinationAngleX_ = 0.15f;
 	}
@@ -90,11 +90,11 @@ void FollowCamera::Update(){
 		if (input_->GetConnectPad() && isMove_) {
 			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
 			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_.rotation_);
-			postureVec_ = Matrix::TransformNormal(Vec, newRotateMatrix);
+			postureVec_ = Matrix::TransformNormal(Vec_, newRotateMatrix);
 			postureVec_.y = 0.0f;
 			postureVec_ = Vector3::Normalize(postureVec_);
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_THUMB)) {
-				destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
+				destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
 				destinationAngleX_ = 0.2f;
 			}
 		}
@@ -105,11 +105,11 @@ void FollowCamera::Update(){
 		destinationAngleY_ += cameraMove_.y;
 
 
-		if (destinationAngleX_ <= minRotate) {
-			destinationAngleX_ = minRotate;
+		if (destinationAngleX_ <= minRotate_) {
+			destinationAngleX_ = minRotate_;
 		}
-		else if (destinationAngleX_ >= maxRotate) {
-			destinationAngleX_ = maxRotate;
+		else if (destinationAngleX_ >= maxRotate_) {
+			destinationAngleX_ = maxRotate_;
 		}
 
 		viewProjection_.rotation_.y =
@@ -117,15 +117,15 @@ void FollowCamera::Update(){
 		viewProjection_.rotation_.x =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	//}
-	rootOffset = { 0.0f, height_, distance };
+	rootOffset_ = { 0.0f, height_, distance_ };
 
 	ShakeUpdate();
 
-	baseOffset = rootOffset;
+	baseOffset_ = rootOffset_;
 
 	if (target_) {
 		//追従対象からカメラまでのオフセット
-		Vector3 offset = offsetCalculation(baseOffset);
+		Vector3 offset = offsetCalculation(baseOffset_);
 
 		//追従座標の補完
 		interTarget_ = Vector3::Lerp(interTarget_, target_->translate, t_);
@@ -170,17 +170,17 @@ void FollowCamera::Reset(){
 		interTarget_ = target_->translate;
 		viewProjection_.rotation_.y = target_->rotate.y;
 	}
-	Vector3 offset = offsetCalculation(baseOffset);
+	Vector3 offset = offsetCalculation(baseOffset_);
 	viewProjection_.translation_ = interTarget_ + offset;
 }
 
 void FollowCamera::RotateReset(){
-	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
 	destinationAngleX_ = 0.2f;
 }
 
 void FollowCamera::CameraPosInit(){
-	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix);
+	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
 	destinationAngleX_ = 0.2f;
 	cameraMove_ = { 0,0,0 };
 }
@@ -206,7 +206,7 @@ void FollowCamera::DrawImgui(){
 	ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);
-	ImGui::DragFloat3("カメラのオフセット", &cameraOffset.x, 0.01f);
+	ImGui::DragFloat3("カメラのオフセット", &cameraOffset_.x, 0.01f);
 	ImGui::DragFloat3("カメラの向き", &postureVec_.x, 0.01f);
 	ImGui::DragFloat("オフセットY", &height_, 0.1f);
 	ImGui::Text("位置補完レート = %.1f", t_);

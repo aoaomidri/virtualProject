@@ -20,25 +20,37 @@ public:
 	struct SkyBoxVertexData{
 		Vector4 position;
 	};
-
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="fileName">ファイルネーム</param>
 	void Initialize(const std::string fileName);
-
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	/// <param name="viewProjection">カメラの情報</param>
 	void Update(const ViewProjection& viewProjection);
-
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	void Draw();
-
+	/// <summary>
+	/// imgui描画
+	/// </summary>
+	/// <param name="name">タグの名前</param>
 	void DrawImgui(std::string name);
 
+	/*描画するかしないかの設定*/
 	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
 
 	const bool& GetIsDraw()const { return isDraw_; }
 
 private:
-
+	//Resourceの初期設定
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
-
+	//頂点リソースの生成
 	void MakeVertexResouce();
-
+	//Resourceの生成
 	void makeResource();
 
 public:
@@ -47,7 +59,7 @@ public:
 private:
 	uint32_t texHandle_;
 
-	HRESULT hr;
+	HRESULT hr_;
 
 	const size_t kVertexNum_ = 8;
 
@@ -70,17 +82,17 @@ private:
 	uint32_t* indexData_ = nullptr;
 
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
 	//マテリアルにデータを書き込む
-	Model::Material* materialDate = nullptr;
+	Model::Material* materialDate_ = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
 
 	//データを書き込む
-	TransformationMatrix* wvpData = nullptr;
+	TransformationMatrix* wvpData_ = nullptr;
 
 	/*ライト関連*/
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_;
 
 
 	//データを書き込む

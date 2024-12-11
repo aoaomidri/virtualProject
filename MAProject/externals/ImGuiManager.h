@@ -18,6 +18,7 @@ public:
 	void Draw();
 
 private:
+	//imguiの初期化処理
 	void ImguiInitialize();
 
 	ID3D12Device* device_ = nullptr;

@@ -62,6 +62,8 @@ public:
 
 private:
 	//メンバ関数
+	//種類や用途が違うものを関数で分けています
+
 	void makeGraphicsPipeline(ID3D12Device* device);
 
 	void makeGraphicsPipelineParticle(ID3D12Device* device);

@@ -87,9 +87,6 @@
     <ClCompile Include="Game\Audio\Audio.cpp">
       <Filter>Game\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\DebugCamera.cpp">
-      <Filter>Game\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Light\DirectionalLight.cpp">
       <Filter>Game\Light</Filter>
     </ClCompile>
@@ -149,9 +146,6 @@
     </ClCompile>
     <ClCompile Include="math\Ease\Ease.cpp">
       <Filter>math\Ease</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\ComputeGraphicsPipeline.cpp">
-      <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3D\Object3D\Effect\TrailEffect.cpp">
       <Filter>Engine\3D\Object3D\Effect</Filter>
@@ -222,9 +216,6 @@
     <ClCompile Include="Game\Character\Enemy\EnemyManager.cpp">
       <Filter>Game\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3D\Object3D\InstancingObject3D.cpp">
-      <Filter>Engine\3D\Object3D</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -286,9 +277,6 @@
     </ClInclude>
     <ClInclude Include="Game\Audio\Audio.h">
       <Filter>Game\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Camera\DebugCamera.h">
-      <Filter>Game\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Game\Light\DirectionalLight.h">
       <Filter>Game\Light</Filter>
@@ -355,9 +343,6 @@
     </ClInclude>
     <ClInclude Include="math\Ease\Ease.h">
       <Filter>math\Ease</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\ComputeGraphicsPipeline.h">
-      <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3D\Effect\TrailEffect.h">
       <Filter>Engine\3D\Object3D\Effect</Filter>
@@ -430,9 +415,6 @@
     </ClInclude>
     <ClInclude Include="Game\Character\Enemy\EnemyManager.h">
       <Filter>Game\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3D\Object3D\InstancingObject3D.h">
-      <Filter>Engine\3D\Object3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

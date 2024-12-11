@@ -39,30 +39,24 @@ public:
 
 	//描画後処理
 	void PostDraw();
-
+	//終了処理
 	void Finalize();
 
-	/*void SpritePreDraw();
-
-	void SpritePostDraw();*/
 	//ログの表示
 	void Log(const std::string& messaga);
-
+	/*文字列変換処理*/
 	std::wstring ConvertString(const std::string& str);
 
 	std::string ConvertString(const std::wstring& str);
-
+	//ヒープの作成
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
+	//CPUハンドルの取得
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
-
+	//DepthStencilTextureResourceの生成
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height);
-
+	//RenderTextureResourceの生成
 	ComPtr<ID3D12Resource> CreateRenderTextureResource(ComPtr<ID3D12Device> device, int32_t width, int32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
-	void StartImgui();
-
-	void EndImgui();
 
 	//デバイス取得
 	ID3D12Device* GetDevice() const { return device_.Get(); }

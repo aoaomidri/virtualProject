@@ -39,11 +39,11 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = nullptr;
 		}
 		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_L)) {
-			++it;
-			if (it == targets.end()) {
-				it = targets.begin();
+			++it_;
+			if (it_ == targets_.end()) {
+				it_ = targets_.begin();
 			}
-			target_ = it->second;
+			target_ = it_->second;
 		}
 		else if (target_->GetIsNoLife()) {
 			target_ = nullptr;
@@ -96,7 +96,7 @@ void LockOn::DrawImgui(){
 }
 
 void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const ViewingFrustum& viewingFrustum){
-	targets.clear();
+	targets_.clear();
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		if (enemy->GetIsDead()){
 			continue;
@@ -106,23 +106,23 @@ void LockOn::search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 
 		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), viewingFrustum)){
-			targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
+			targets_.emplace_back(std::make_pair(positionView.z, enemy.get()));
 		}		
 	}
 	target_ = nullptr;
-	if (!targets.empty()) {
+	if (!targets_.empty()) {
 		//距離で昇順にソート
-		targets.sort([](auto& pair, auto& pair2) {return pair.first < pair2.first; });
+		targets_.sort([](auto& pair, auto& pair2) {return pair.first < pair2.first; });
 		//ソートの結果一番近い敵をロックオン対象とする
-		length = targets.front().first;
-		target_ = targets.front().second;
-		it = targets.begin();
+		length_ = targets_.front().first;
+		target_ = targets_.front().second;
+		it_ = targets_.begin();
 	}
 
 }
 
 void LockOn::avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewprojection, const uint32_t serialNumber){
-	targets.clear();
+	targets_.clear();
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		if (enemy->GetIsDead()) {
 			continue;
@@ -132,11 +132,11 @@ void LockOn::avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		//ワールドビュー座標変換
 		Vector3 positionView = Matrix::TransformVec(positionWorld, viewprojection.matView_);
 		
-		targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
+		targets_.emplace_back(std::make_pair(positionView.z, enemy.get()));
 		
 	}
 	target_ = nullptr;
-	if (!targets.empty()) {
+	if (!targets_.empty()) {
 		for (const std::unique_ptr<Enemy>& enemy : enemies) {
 			if (enemy->GetIsDead()) {
 				continue;

@@ -140,12 +140,12 @@ void Adjustment_Item::SaveFile(const std::string& groupName) {
 			Vector4 value = std::get<Vector4>(item);
 			root[groupName][itemName] = nlohmann::json::array({ value.x, value.y, value.z ,value.w });
 		}
-		std::filesystem::path dir(kDirectoryPath);
+		std::filesystem::path dir(kDirectoryPath_);
 		if (!std::filesystem::exists("Resources/Datas/Adjustment_Item")) {
 			std::filesystem::create_directory("Resources/Datas/Adjustment_Item");
 		}
 		// 書き込むjsonファイルのフルパスを合成する
-		std::string filePath = kDirectoryPath + groupName + ".json";
+		std::string filePath = kDirectoryPath_ + groupName + ".json";
 		// 書き込み用ファイルストリーム
 		std::ofstream ofs;
 		// ファイルを書き込みように開く
@@ -165,7 +165,6 @@ void Adjustment_Item::SaveFile(const std::string& groupName) {
 }
 
 void Adjustment_Item::LoadFiles() {
-	const std::string kDirectoryPath_ = "Resources/Datas/Adjustment_Item/";
 	if (!std::filesystem::exists(kDirectoryPath_)) {
 		return;
 	}
@@ -191,7 +190,7 @@ void Adjustment_Item::LoadFiles() {
 
 void Adjustment_Item::LoadFile(const std::string& groupName) {
 	//読み込むjsonファイルのフルパスを合成する
-	std::string filePath = kDirectoryPath + groupName + ".json";
+	std::string filePath = kDirectoryPath_ + groupName + ".json";
 	//読み込み用のファイルストリーム
 	std::ifstream ifs;
 	//ファイルを読み込み用に開く

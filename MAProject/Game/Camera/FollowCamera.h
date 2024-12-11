@@ -23,17 +23,16 @@ struct CameraShake {
 
 class FollowCamera{
 public:
+	//初期化処理
 	void Initialize();
-
+	//更新処理
 	void Update();
-
+	//カメラの位置をリセット
 	void Reset();
-
+	//カメラの回転角のリセット
 	void RotateReset();
-
+	//カメラの座標の初期化
 	void CameraPosInit();
-
-	Vector3 offsetCalculation(const Vector3& offset) const;
 	/// <summary>
 	/// カメラシェイク開始
 	/// </summary>
@@ -76,15 +75,17 @@ private:
 	void ApplyGlobalVariables();
 	//揺れの更新
 	void ShakeUpdate();
+	//オフセットの計算
+	Vector3 offsetCalculation(const Vector3& offset) const;
 
 private:
 	ViewProjection viewProjection_;
 
 	Vector3 cameraMove_{};
 
-	const Vector3 baseCameraOffset = { 0.0f,1.0f,-8.0f };
+	const Vector3 kBaseCameraOffset_ = { 0.0f,1.0f,-8.0f };
 
-	Vector3 cameraOffset{};
+	Vector3 cameraOffset_{};
 
 	Vector2 limitPos_{ 95.0f,-95.0f };
 
@@ -118,12 +119,12 @@ private:
 	const EulerTransform* target_ = nullptr;
 
 	// 追従対象
-	const Matrix4x4* targetRotateMatrix = nullptr;
+	const Matrix4x4* targetRotateMatrix_ = nullptr;
 
 	// 追従対象の残像座標
 	Vector3 interTarget_ = {};
 
-	float distance;
+	float distance_;
 	float height_ = 1.5f;
 	const float offset_t = 0.1f;
 
@@ -136,21 +137,21 @@ private:
 	float destinationAngleY_ = 0.0f;
 	float destinationAngleX_ = 0.0f;
 	//基準のオフセット
-	Vector3 baseOffset;
+	Vector3 baseOffset_;
 
-	Vector3 rootOffset;
+	Vector3 rootOffset_;
 
-	float maxRotate;
+	float maxRotate_;
 
-	float minRotate;
+	float minRotate_;
 
-	float rotateSpeed = 0.05f;
+	float rotateSpeed_ = 0.05f;
 
 	//ロックオン
 	const LockOn* lockOn_ = nullptr;
 
 	//姿勢ベクトル
-	const Vector3 Vec = { 0.0f,0.0f,1.0f };
+	const Vector3 Vec_ = { 0.0f,0.0f,1.0f };
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 

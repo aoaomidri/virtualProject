@@ -75,9 +75,9 @@ private:
 
 	Vector2 screenPos_;
 
-	std::list<std::pair<float, const Enemy*>> targets;
+	std::list<std::pair<float, const Enemy*>> targets_;
 
-	std::list<std::pair<float, const Enemy*>>::iterator it;
+	std::list<std::pair<float, const Enemy*>>::iterator it_;
 
 	bool autoLockOn_ = false;
 
@@ -89,6 +89,6 @@ private:
 
 	bool isLockOn_ = false;
 
-	float length = 0;
+	float length_ = 0;
 };
 

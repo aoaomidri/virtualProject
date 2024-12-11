@@ -1093,6 +1093,7 @@ void Player::BehaviorJustAvoidInitialize(){
 	type_ = KnockbackType::Center;
 	/*移動部分の初期化*/
 	//ターゲットに向かって移動する
+	
 	Vector3 lockOnPos = lockOn_->GetTargetPosition();
 	Vector3 sub = lockOnPos - playerTransform_.translate;
 	sub.y = 0;
@@ -1188,6 +1189,7 @@ void Player::BehaviorDashUpdate(){
 }
 
 void Player::BehaviorJustAvoidUpdate(){
+	frontVec_ = postureVec_;
 	if (!isAvoidAttack_){
 
 		if (!isThrust_){
@@ -1253,6 +1255,11 @@ void Player::BehaviorJustAvoidUpdate(){
 			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
+
+	Matrix4x4 directionTodirection_;
+	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
+	playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
+
 	
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);

@@ -7,7 +7,7 @@
 
 class SceneFactory : public AbstractSceneFactory{
 public:
-
+	//シーンの生成
 	std::unique_ptr<BaseScene> CreateScene(const SceneName sceneName)override;
 
 private:

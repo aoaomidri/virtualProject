@@ -33,7 +33,7 @@ public:
 	void Initialize();
 	//更新処理
 	void Update();
-
+	//テクスチャ描画
 	void TexDraw(const Matrix4x4& viewProjection);
 
 	//描画
@@ -41,7 +41,7 @@ public:
 
 	//描画
 	void SkinningDraw(const ViewProjection& viewProjection);
-
+	//パーティクル描画
 	void ParticleDraw(const ViewProjection& viewProjection);
 
 	//Imgui描画
@@ -186,7 +186,7 @@ public:
 	Vector3 baseRotate_ = { 0 };
 
 	//コンボの数
-	static const int ConboNum = 6;
+	static const int conboNum_ = 6;
 
 private:
 	//弱1攻撃行動初期化

@@ -54,7 +54,7 @@ public:
 
 	void SetPosition(const Vector3& pos) { viewProjection_.translation_ = pos; }
 
-	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix = target; }
+	void SetTargetMatrix(const Matrix4x4* target) { targetRotateMatrix_ = target; }
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 

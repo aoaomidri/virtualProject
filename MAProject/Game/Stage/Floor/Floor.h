@@ -23,9 +23,9 @@ public:
 	//Getter
 	const EulerTransform& GetTransform() const { return floorTransform_; }
 
-	bool GetIsMove() { return isMove_; }
+	bool GetIsMove() const { return isMove_; }
 
-	bool GetIsDelete() { return isDelete_; }
+	bool GetIsDelete() const { return isDelete_; }
 
 	const OBB& GetOBB()const { return floorOBB_; }
 
@@ -40,9 +40,9 @@ private:
 
 	Vector3 moveSpeed_ = { 0.02f,0.0f,0.0f };
 
-	float moveMax = 0.0f;
+	float moveMax_ = 0.0f;
 
-	float Magnification = 1.0f;
+	float magnification_ = 1.0f;
 
 	bool isMove_;
 

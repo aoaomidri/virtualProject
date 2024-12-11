@@ -909,7 +909,7 @@ void Player::BehaviorAttackUpdate(){
 		break;
 	}
 	//コンボ上限に達していない
-	if (workAttack_.comboIndex< ConboNum) {
+	if (workAttack_.comboIndex< conboNum_) {
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 			//コンボ有効
 			workAttack_.comboNext= true;

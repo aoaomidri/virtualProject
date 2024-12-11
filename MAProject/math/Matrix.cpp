@@ -34,10 +34,6 @@ Matrix* Matrix::GetInstance(){
 }
 ;
 
-void Matrix::Update() {
-	
-}
-
 Vector3 Matrix::Cross(const Vector3& vA, const Vector3& vB) {
 	Vector3 result{};
 

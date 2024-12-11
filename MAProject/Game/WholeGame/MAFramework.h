@@ -50,6 +50,6 @@ public:
 	PostEffect* postEffect_ = nullptr;
 
 private:
-	MSG msg{};
+	MSG msg_{};
 };
 

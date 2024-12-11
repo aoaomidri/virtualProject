@@ -9,7 +9,7 @@ public:
 	/// 仮想デストラクタ
 	/// </summary>
 	virtual ~AbstractSceneFactory() = default;
-
+	//シーンの生成
 	virtual std::unique_ptr<BaseScene> CreateScene(const SceneName sceneName) = 0;
 
 };

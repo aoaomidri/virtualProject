@@ -47,7 +47,7 @@ void MAFramework::Update(){
 void MAFramework::Run(){
 	//初期化
 	Initialize();
-	while (msg.message != WM_QUIT){
+	while (msg_.message != WM_QUIT){
 		Update();
 		if (IsEndRequst()){
 			break;

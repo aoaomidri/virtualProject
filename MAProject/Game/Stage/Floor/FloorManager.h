@@ -55,31 +55,31 @@ public: // アクセッサ
 
 public:
 	using json = nlohmann::json;
-
+	//ファイルに保存
 	void SaveFile(const std::vector<std::string>& stages);
-
+	//ファイルを上書き
 	void FileOverWrite(const std::string& stage);
-
+	//ファイルを検索
 	void ChackFiles();
-
+	//全ファイルを検索
 	void LoadFiles(const std::string& stage);
-
+	//ファイルを読み込み
 	void LoadFile(const std::string& groupName, const std::string& stage);
-
+	//要素があるか確認
 	bool LoadChackItem(const std::string& itemName);
 
 private:
 
-
+	//json形式からの変換
 	void from_json(const json& j, Vector3& v);
 
 private:
 	//ファイル保存関連
-	int chackOnlyNumber = 0;
+	int chackOnlyNumber_ = 0;
 
-	const std::string kDirectoryPath = "Resources/Stages/";
+	const std::string kDirectoryPath_ = "Resources/Stages/";
 
-	const std::string kDirectoryName = "Resources/Stages";
+	const std::string kDirectoryName_ = "Resources/Stages";
 
 	const std::string kItemName_ = "Floor";
 
@@ -87,7 +87,7 @@ private:
 
 	char ItemName_[256]{};
 
-	std::vector<std::string> fileName;
+	std::vector<std::string> fileName_;
 private:
 
 	//オブジェクトの情報

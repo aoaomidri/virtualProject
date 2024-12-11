@@ -7,9 +7,9 @@ void WholeGame::Initialize(){
 	imguiManager_ = std::make_unique<ImGuiManager>();
 	imguiManager_->Initialize();
 
-	adjustment_item = Adjustment_Item::GetInstance();
+	adjustment_item_ = Adjustment_Item::GetInstance();
 	//グローバル変数の読み込み
-	adjustment_item->LoadFiles();
+	adjustment_item_->LoadFiles();
 	textureManager_ = TextureManager::GetInstance();
 
 	directionalLight_ = DirectionalLight::GetInstance();
@@ -52,7 +52,7 @@ void WholeGame::Update(){
 	imguiManager_->Begin();
 	//ゲームの処理	
 
-	adjustment_item->Update();
+	adjustment_item_->Update();
 
 	GameTime::Update();
 
@@ -158,8 +158,8 @@ void WholeGame::DrawImgui(){
 	postEffect_->SetVignettingData(vignettingData_);
 
 	ImGui::Text("しきい値の設定");
-	ImGui::DragFloat("しきい値", &threshold, 0.001f, 0.0f, 1.0f);
-	postEffect_->SetThreshold(threshold);
+	ImGui::DragFloat("しきい値", &threshold_, 0.001f, 0.0f, 1.0f);
+	postEffect_->SetThreshold(threshold_);
 
 	ImGui::Text("HSVの値");
 	ImGui::DragFloat("hue", &hsv_.hue, 0.001f, -1.0f, 1.0f);

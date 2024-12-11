@@ -7,7 +7,7 @@ class StageObject{
 public:
 	//初期化
 	void Initialize();
-
+	//描画処理
 	void Draw(const ViewProjection& viewProjection);
 
 };

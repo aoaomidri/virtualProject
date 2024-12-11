@@ -37,13 +37,13 @@ private:
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_;
 
 	//グローバル変数関連
-	Adjustment_Item* adjustment_item = nullptr;
+	Adjustment_Item* adjustment_item_ = nullptr;
 
 	TextureManager* textureManager_ = nullptr;
 
 	PostEffect::Vignetting vignettingData_;
 	//閾値
-	float threshold = 0.0f;
+	float threshold_ = 0.0f;
 
 	PostEffect::HSVMaterial hsv_{};
 

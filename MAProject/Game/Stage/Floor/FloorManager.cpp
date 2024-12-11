@@ -71,12 +71,12 @@ void FloorManager::SaveFile(const std::vector<std::string>& stages) {
 				  (*it)->GetTransform().translate.y,
 				  (*it)->GetTransform().translate.z
 				});
-			std::filesystem::path dir(kDirectoryPath);
-			if (!std::filesystem::exists(kDirectoryName)) {
-				std::filesystem::create_directory(kDirectoryName);
+			std::filesystem::path dir(kDirectoryPath_);
+			if (!std::filesystem::exists(kDirectoryName_)) {
+				std::filesystem::create_directory(kDirectoryName_);
 			}
 			// 書き込むjsonファイルのフルパスを合成する
-			std::string filePath = kDirectoryPath + kItemName_ + ".json";
+			std::string filePath = kDirectoryPath_ + kItemName_ + ".json";
 			// 書き込み用ファイルストリーム
 			std::ofstream ofs;
 			// ファイルを書き込みように開く
@@ -99,7 +99,7 @@ void FloorManager::SaveFile(const std::vector<std::string>& stages) {
 
 void FloorManager::FileOverWrite(const std::string& stage) {
 	//読み込むjsonファイルのフルパスを合成する
-	std::string filePath = kDirectoryPath + kItemName_ + ".json";
+	std::string filePath = kDirectoryPath_ + kItemName_ + ".json";
 	//読み込み用のファイルストリーム
 	std::ifstream ifs;
 	//ファイルを読み込み用に開く
@@ -153,14 +153,14 @@ void FloorManager::FileOverWrite(const std::string& stage) {
 }
 
 void FloorManager::ChackFiles() {
-	if (!std::filesystem::exists(kDirectoryPath)) {
+	if (!std::filesystem::exists(kDirectoryPath_)) {
 		std::string message = "Failed open data file for write.";
 		MessageBoxA(nullptr, message.c_str(), "Box", 0);
 		assert(0);
 		return;
 	}
 
-	std::filesystem::directory_iterator dir_it(kDirectoryPath);
+	std::filesystem::directory_iterator dir_it(kDirectoryPath_);
 
 	for (const std::filesystem::directory_entry& entry : dir_it) {
 		//ファイルパスを取得
@@ -174,24 +174,24 @@ void FloorManager::ChackFiles() {
 		}
 
 		if (LoadChackItem(filePath.stem().string())) {
-			chackOnlyNumber = 1;
+			chackOnlyNumber_ = 1;
 		}
 
-		if (fileName.size() != 0) {
+		if (fileName_.size() != 0) {
 			bool noneFail = true;
-			for (size_t i = 0; i < fileName.size(); i++) {
-				if (fileName[i].c_str() == filePath.stem().string()) {
+			for (size_t i = 0; i < fileName_.size(); i++) {
+				if (fileName_[i].c_str() == filePath.stem().string()) {
 					noneFail = false;
 				}
 			}
 			if (noneFail) {
-				fileName.push_back(filePath.stem().string());
+				fileName_.push_back(filePath.stem().string());
 			}
 
 		}
 		else {
 			//ファイルの名前を取得
-			fileName.push_back(filePath.stem().string());
+			fileName_.push_back(filePath.stem().string());
 		}
 	}
 }
@@ -200,14 +200,14 @@ void FloorManager::LoadFiles(const std::string& stage) {
 
 	if (!LoadChackItem(kItemName_))
 		return;
-	if (!std::filesystem::exists(kDirectoryPath)) {
+	if (!std::filesystem::exists(kDirectoryPath_)) {
 		std::string message = "Failed open data file for write.";
 		MessageBoxA(nullptr, message.c_str(), "Animetion", 0);
 		assert(0);
 		return;
 	}
 
-	std::filesystem::directory_iterator dir_it(kDirectoryPath);
+	std::filesystem::directory_iterator dir_it(kDirectoryPath_);
 
 	for (const std::filesystem::directory_entry& entry : dir_it) {
 		//ファイルパスを取得
@@ -232,7 +232,7 @@ void FloorManager::LoadFiles(const std::string& stage) {
 
 void FloorManager::LoadFile(const std::string& groupName, const std::string& stage) {
 	//読み込むjsonファイルのフルパスを合成する
-	std::string filePath = kDirectoryPath + groupName + ".json";
+	std::string filePath = kDirectoryPath_ + groupName + ".json";
 	//読み込み用のファイルストリーム
 	std::ifstream ifs;
 	//ファイルを読み込み用に開く
@@ -297,7 +297,7 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 bool FloorManager::LoadChackItem(const std::string& itemName) {
 
 	// 書き込むjsonファイルのフルパスを合成する
-	std::string filePath = kDirectoryPath + itemName + ".json";
+	std::string filePath = kDirectoryPath_ + itemName + ".json";
 	//読み込み用のファイルストリーム
 	std::ifstream ifs;
 	//ファイルを読み込み用に開く

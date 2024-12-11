@@ -141,10 +141,10 @@ void Enemy::Initialize(const Vector3& position){
 	shadow_->color_.w = 0.5f;
 
 	if (serialNumber_ % 2 == 0) {
-		magnification = 1.0f;
+		magnification_ = 1.0f;
 	}
 	else {
-		magnification = -1.0f;
+		magnification_ = -1.0f;
 	}
 	
 
@@ -464,10 +464,10 @@ void Enemy::BehaviorRootInitialize(){
 	farTime_ = 0;
 	nearTime_ = 0;
 	if (serialNumber_ % 2 == 0) {
-		magnification = 1.0f;
+		magnification_ = 1.0f;
 	}
 	else {
-		magnification = -1.0f;
+		magnification_ = -1.0f;
 	}
 
 	isNearAttack_ = false;
@@ -486,7 +486,7 @@ void Enemy::BehaviorDeadInitialize(){
 void Enemy::RootMotion(){
 	frontVec_ = postureVec_;
 
-	Vector3 move = { moveSpeed_ * magnification ,0,0 };
+	Vector3 move = { moveSpeed_ * magnification_ ,0,0 };
 
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
@@ -625,13 +625,13 @@ void Enemy::BehaviorRunInitialize(){
 	frontVec_ = { 0.0f,0.0f,1.0f };
 	farTime_ = 0;
 	nearTime_ = 0;
-	magnification = 1.0f;
+	magnification_ = 1.0f;
 }
 
 void Enemy::EnemyRun(){
 	frontVec_ = postureVec_;
 
-	Vector3 move = { 0,0,(magnification * dashSpeed_) / 6.0f };
+	Vector3 move = { 0,0,(magnification_ * dashSpeed_) / 6.0f };
 
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
@@ -890,7 +890,7 @@ void Enemy::TripleAttack(){
 
 	frontVec_ = postureVec_;
 
-	Vector3 move = { 0,0,moveSpeed_ * magnification * dashSpeed_ * 5.0f };
+	Vector3 move = { 0,0,moveSpeed_ * magnification_ * dashSpeed_ * 5.0f };
 
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;

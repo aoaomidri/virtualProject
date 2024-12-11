@@ -31,9 +31,9 @@ public:
 	void Update();
 	//描画
 	void Draw(const ViewProjection& viewProjection);
-
+	//テクスチャの描画
 	void TexDraw(const Matrix4x4& viewProjection);
-
+	//パーティクルの描画
 	void ParticleDraw(const ViewProjection& viewProjection, const Vector3& color);
 
 	//Imgui描画
@@ -48,9 +48,9 @@ public:
 
 	//ガード中に当たったときの処理
 	void OnCollisionGuard();
-
+	//当たりの記憶に追加
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
-
+	//当たりの記憶をチェックする
 	bool RecordCheck(uint32_t number) { return hitRecord_.RecordCheck(number); }
 
 
@@ -171,7 +171,7 @@ private:
 	//自機のOBB
 	OBB bodyOBB_{};
 
-	Vector3 worldPos = {};
+	Vector3 worldPos_ = {};
 
 	Vector3 deadMove_ = { 0,0.02f,0.1f };
 
@@ -206,7 +206,7 @@ private:
 	/// <summary>
 	///倍率
 	/// </summary>
-	float magnification = 1.0f;
+	float magnification_ = 1.0f;
 	//移動スピード
 	float moveSpeed_ = 0.03f;
 	//ダッシュの時間

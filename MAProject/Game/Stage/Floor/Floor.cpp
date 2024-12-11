@@ -19,13 +19,13 @@ void Floor::Initialize(EulerTransform transform){
 
 void Floor::Update(){
 	if (isMove_){
-		floorTransform_.translate += moveSpeed_ * Magnification;
-		moveMax += moveSpeed_.x * Magnification;
-		if (moveMax <= -4.0f) {
-			Magnification *= -1.0f;
+		floorTransform_.translate += moveSpeed_ * magnification_;
+		moveMax_ += moveSpeed_.x * magnification_;
+		if (moveMax_ <= -4.0f) {
+			magnification_ *= -1.0f;
 		}
-		else if (moveMax >= 4.0f) {
-			Magnification *= -1.0f;
+		else if (moveMax_ >= 4.0f) {
+			magnification_ *= -1.0f;
 		}
 	}
 	floorOBB_.center = floorTransform_.translate;

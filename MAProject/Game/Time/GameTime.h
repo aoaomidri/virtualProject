@@ -73,7 +73,7 @@ public:
     static void ResetGameTimer() {
         inGameTime_ = 0.0f;
     }
-
+    //タイムの加算
     static void AddGameTime() {
         inGameTime_ += 3.0f;
     }

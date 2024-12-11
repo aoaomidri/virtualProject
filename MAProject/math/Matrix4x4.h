@@ -65,22 +65,22 @@ public:
 
 	//任意軸回転行列
 	Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
-
+	//方向ベクトルから行列を生成
 	Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 
 	//ベクトル変換
 	Vector3 TransformVec(const Vector3& v);
-
+	//3Dベクトルを行列で変換する
 	Vector3 TransformNormal(const Vector3& v);
-
+	//X軸の値を抽出
 	float RotateAngleXFromMatrix() const;
-
+	//Y軸の値を抽出
 	float RotateAngleYFromMatrix() const;
-
+	//Z軸の値を抽出
 	float RotateAngleZFromMatrix() const;
-
+	//XYZ軸の値を抽出
 	Vector3 RotateAngleFromMatrix() const;
-
+	//位置情報を抽出
 	const Vector3 GetTranslate()const {
 		Vector3 translate{};
 		translate = {

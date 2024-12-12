@@ -192,7 +192,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Camera\FollowCamera.cpp" />
     <ClCompile Include="Game\Camera\LockOn.cpp" />
     <ClCompile Include="Game\Character\Enemy\Enemy.cpp" />
-    <ClCompile Include="Game\Character\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Game\Character\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Game\Character\Player\Attack\IAttack.cpp" />
     <ClCompile Include="Game\Character\Player\Player.cpp" />
@@ -259,7 +258,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Camera\FollowCamera.h" />
     <ClInclude Include="Game\Camera\LockOn.h" />
     <ClInclude Include="Game\Character\Enemy\Enemy.h" />
-    <ClInclude Include="Game\Character\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Character\Enemy\EnemyManager.h" />
     <ClInclude Include="Game\Character\Player\Attack\IAttack.h" />
     <ClInclude Include="Game\Character\Player\Player.h" />

@@ -12,7 +12,6 @@
 #include<optional>
 #include <algorithm>
 #include"Ease/Ease.h"
-#include"EnemyBullet.h"
 #include"Sprite.h"
 #include "ParticleBase.h"
 /*敵キャラクターの更新描画*/
@@ -415,12 +414,6 @@ private:
 
 	Ease ease_{};
 
-
-	/*飛ぶ斬撃みたいなの*/
-
-	std::list<std::unique_ptr< EnemyBullet>> bullets_;
-
-	float bulletSpeed_ = 0.0f;
 
 	Vector3 slashAngle_{};
 

@@ -18,18 +18,8 @@ void Floor::Initialize(EulerTransform transform){
 }
 
 void Floor::Update(){
-	if (isMove_){
-		floorTransform_.translate += moveSpeed_ * magnification_;
-		moveMax_ += moveSpeed_.x * magnification_;
-		if (moveMax_ <= -4.0f) {
-			magnification_ *= -1.0f;
-		}
-		else if (moveMax_ >= 4.0f) {
-			magnification_ *= -1.0f;
-		}
-	}
+	
 	floorOBB_.center = floorTransform_.translate;
-	floorOBB_.size = { 1000.0f,1.0f,1000.0f };
 	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 

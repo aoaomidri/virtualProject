@@ -1,4 +1,5 @@
 #include "FollowCamera.h"
+#include"GameTime.h"
 #include"LockOn.h"
 void FollowCamera::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
@@ -17,11 +18,11 @@ void FollowCamera::ApplyGlobalVariables(){
 }
 
 void FollowCamera::ShakeUpdate(){
-	cameraShake_.elapsedTime += 1.0f / 60.0f;
+	cameraShake_.elapsedTime += GameTime::deltaTime_;
 
 	float progress = (cameraShake_.elapsedTime) / cameraShake_.duration;
 
-	cameraShake_.amplitude *= std::exp(-progress * 5.0f);
+	cameraShake_.amplitude *= std::exp(-progress * shakePower_);
 
 	// Perlinノイズや乱数に基づくオフセット
 	float offsetX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;

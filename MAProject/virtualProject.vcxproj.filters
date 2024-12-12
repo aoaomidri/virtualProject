@@ -189,9 +189,6 @@
     <ClCompile Include="Game\Character\Enemy\Enemy.cpp">
       <Filter>Game\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Character\Enemy\EnemyBullet.cpp">
-      <Filter>Game\Character\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.cpp">
       <Filter>Game\Character\Player\PlayerState\Manager</Filter>
     </ClCompile>
@@ -381,9 +378,6 @@
       <Filter>Game\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="Game\Character\Enemy\Enemy.h">
-      <Filter>Game\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Character\Enemy\EnemyBullet.h">
       <Filter>Game\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.h">

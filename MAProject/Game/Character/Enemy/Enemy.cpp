@@ -155,13 +155,6 @@ void Enemy::Update(){
 	bodyObj_->SetDissolve(threshold_);
 	partsObj_->SetDissolve(threshold_);
 
-	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
-		if (bullet->IsDead()) {
-			return true;
-		}
-		return false;
-	});
-
 	bodyObj_->SetColor(enemyColor_);
 	partsObj_->SetColor(enemyColor_);
 
@@ -185,10 +178,6 @@ void Enemy::Update(){
 	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
 	
 
-	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
-		(*it)->Update();
-	}
-
 	bodyOBB_.center = transform_.translate;
 	
 	attackOBB_.center = bodyOBB_.center;
@@ -202,10 +191,6 @@ void Enemy::Update(){
 
 void Enemy::Draw(const ViewProjection& viewProjection){
 
-	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
-		(*it)->Draw(viewProjection);
-	}
-	
 
 	if (isDead_) {
 		return;

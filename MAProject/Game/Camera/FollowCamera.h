@@ -167,5 +167,7 @@ private:
 	//カメラシェイクのデータ
 	CameraShake cameraShake_{};
 
+	float shakePower_ = 5.0f;
+
 };
 

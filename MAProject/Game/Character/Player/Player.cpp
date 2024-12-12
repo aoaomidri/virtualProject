@@ -882,6 +882,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 
 	}
 
+	PreBehaviorStrongAttackInitialize();
+
 	if (workAttack_.comboIndex == 1) {
 		BehaviorStrongAttackInitialize();		
 	}
@@ -902,6 +904,8 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		BehaviorSixthStrongAttackInitialize();
 
 	}
+
+	PostBehaviorStrongAttackInitialize();
 
 	particle_->SetIsDraw(true);
 	particle_->AddParticle(emitter_);
@@ -1430,78 +1434,64 @@ void Player::SixthAttackMotion(){
 	weaponCollisionTransform_.rotate.x = weapon_Rotate_ + baseRotate_.x;
 }
 
-void Player::BehaviorStrongAttackInitialize(){
+void Player::PreBehaviorStrongAttackInitialize(){
 	trail_->Reset();
-	type_ = KnockbackType::Center;
 	workAttack_.comboNext = false;
 	workAttack_.strongComboNext = false;
 	workAttack_.attackParameter = 0;
-	workAttack_.nextAttackTimer = 28;
-	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = -0.0f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 2.35f;
 	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_.y = 0.0f;
-	weapon_offset_Base_.z = 1.0f;
-	//addPosition_.y = 0.5f;
 
+	workAttack_.AttackTimer = 0;
+	hitRecord_.Clear();
+	waitTime_ = waitTimeBase_;
+	isEndAttack_ = false;
+
+}
+
+void Player::PostBehaviorStrongAttackInitialize(){
+
+}
+
+void Player::BehaviorStrongAttackInitialize(){
+	type_ = KnockbackType::Center;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[0];
+	weapon_offset_Base_ = weaponStrongAttackOffset_[0];
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
 
 
-	workAttack_.AttackTimer = 0;
-	hitRecord_.Clear();
-	waitTime_ = waitTimeBase_;
 	weapon_Rotate_ = 1.0f;
 	isTrail_ = false;
 	isShakeDown_ = true;
 	chargeEnd_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::BehaviorSecondStrongAttackInitialize(){
 
-	workAttack_.comboNext = false;
-	workAttack_.strongComboNext = false;
-	workAttack_.attackParameter = 0;
-	weaponTransform_.rotate.x = 1.57f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 0.0f;
-	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[1];
+	weapon_offset_Base_ = weaponStrongAttackOffset_[1];
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	hitRecord_.Clear();
-	workAttack_.AttackTimer = 0;
 	easeT_ = 0;
-	addEaseT_ = 0.08f;
+	addEaseT_ = addEaseSpeedStrong_;
 	waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
 	addPosition_.y = 0.0f;
-	trail_->Reset();
 	strongSecondAttackCount_ = 0;
 	isNextAttack_ = false;
 	isTrail_ = false;
 	isShakeDown_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::BehaviorThirdStrongAttackInitialize(){
 	type_ = KnockbackType::Strong;
-	trail_->Reset();
-	workAttack_.comboNext = false;
-	workAttack_.strongComboNext = false;
-	workAttack_.attackParameter = 0;
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 0.0f;
-	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[2];
+	weapon_offset_Base_ = weaponStrongAttackOffset_[2];
 	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
@@ -1510,146 +1500,104 @@ void Player::BehaviorThirdStrongAttackInitialize(){
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
 	
 
-	workAttack_.AttackTimer = 0;
-	hitRecord_.Clear();
-	waitTime_ = waitTimeBase_;
 	weapon_Rotate_ = -0.0f;
 	isTrail_ = false;
 	isShakeDown_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::BehaviorFourthStrongAttackInitialize(){
-	trail_->Reset();
-	workAttack_.comboNext = false;
-	workAttack_.strongComboNext = false;
-	workAttack_.attackParameter = 0;
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 1.85f;
-	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_.y = 1.5f;
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[3];
+	weapon_offset_Base_.y = weaponStrongAttackOffset_[3].y;
 	//addPosition_.y = 0.5f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
+	weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 
-	workAttack_.AttackTimer = 0;
-	hitRecord_.Clear();
 	weapon_Rotate_ = -0.0f;
-	waitTime_ = waitTimeBase_;
 	isTrail_ = true;
 	isShakeDown_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::BehaviorFifthStrongAttackInitialize(){
 	
 	type_ = KnockbackType::Few;
 	///
-	trail_->Reset();
-	workAttack_.comboNext = false;
-	workAttack_.strongComboNext = false;
-	workAttack_.attackParameter = 0;
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = -1.5f;
-	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
-
-	//addPosition_.y = 0.5f;
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[4];
+	weapon_offset_Base_ = weaponStrongAttackOffset_[4];
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
+	weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 
-	hitRecord_.Clear();
-	workAttack_.AttackTimer = 0;
-
-	waitTime_ = waitTimeBase_;
-	weapon_Rotate_ = 0.5f;
-	trail_->Reset();
+	weapon_Rotate_ = fifthWeapon_Rotate_;
 	strongSecondAttackCount_ = 0;
 	isFirstAttack_ = true;
 	isNextAttack_ = false;
 	isFinishAttack_ = false;
 	isTrail_ = false;
 	isShakeDown_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::BehaviorSixthStrongAttackInitialize(){
-	trail_->Reset();
-	workAttack_.comboNext = false;
-	workAttack_.strongComboNext = false;
-	workAttack_.attackParameter = 0;
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = 1.0f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 2.35f;
-	weaponTransform_.translate = playerTransform_.translate;
-	weapon_offset_Base_.y = 0.0f;
-	weapon_offset_Base_.z = 1.0f;
+	weaponTransform_.rotate = weaponStrongAttackTransformRotates_[5];
+	weapon_offset_Base_ = weaponStrongAttackOffset_[5];
 	addPosition_.y = 0.0f;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.rotate = { 0.0f,0.00f,weaponTransform_.rotate.z };
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
-	weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
+	weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 
 	easeT_ = 0;
-	addEaseT_ = 0.03f;
+	addEaseT_ = addEaseSpeed_;
 
-	workAttack_.AttackTimer = 0;
-	hitRecord_.Clear();
-	waitTime_ = waitTimeBase_;
 	weapon_Rotate_ = 1.0f;
 	isTrail_ = false;
 	isShakeDown_ = true;
 	chargeEnd_ = false;
-	isEndAttack_ = false;
 }
 
 void Player::StrongAttackMotion(){
 	if (!chargeEnd_){
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)){
 			isGuard_ = true;
-			weaponCollisionTransform_.scale = { 0.6f,2.0f,0.6f };
+			weaponCollisionTransform_.scale = collsionScaleGuade_;
 		}
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y) or isGuardHit_){
 			type_ = HitRecord::Strong;
 			isGuard_ = false;
 			chargeEnd_ = true;
-			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
-			weaponTransform_.rotate.z = 1.57f;
+			weapon_offset_Base_ = weaponStrongAttackOffset_[2];
+			weaponTransform_.rotate.z = strongAttackRotateZ_;
 			if (isGuardHit_) {
-				counterScale_ = Vector3(0.9f, 3.0f, 0.9f) * 5.0f;
+				counterScale_ = kWeaponCollisionBase_ * kGuadeMagnification_;
 			}
 			else {
-				counterScale_ = { 0.9f,3.0f,0.9f };
+				counterScale_ = kWeaponCollisionBase_;
 			}
 			//addPosition_.y = 0.5f;
 		}
 
 	}
 	else {
-		if (weapon_Rotate_ >= 9.2f) {
+		if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[0].y) {
 			waitTime_ -= 1;
-			weapon_Rotate_ = 9.2f;
+			weapon_Rotate_ = weapon_StrongRotatesMinMax_[0].y;
 		}
 		else {
-			move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+			move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 			if (!isCollisionEnemy_) {
@@ -1676,18 +1624,18 @@ void Player::StrongAttackMotion(){
 		}
 
 		if (isShakeDown_) {
-			if (weapon_Rotate_ < 4.5f){
+			if (weapon_Rotate_ < weapon_StrongRotatesMinMax_[0].x){
 				isTrail_ = false;
 				weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
-				weapon_Rotate_+= kMoveWeaponShakeDown_ * 0.5f * motionSpeed_ * timeScale_;
+				weapon_Rotate_+= kMoveWeaponShakeDown_ / kAttackDivisionMagnification_ * motionSpeed_ * timeScale_;
 			}
 			else {		
 				if (!isTrail_ and workAttack_.comboIndex != 2) {
-					audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+					audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				};
 				weaponCollisionTransform_.scale = counterScale_;
 				isTrail_ = true;
-				weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_ * timeScale_;
+				weapon_Rotate_ += kMoveWeaponShakeDown_ * kStrongAttackMagnification_ * motionSpeed_ * timeScale_;
 			}
 
 		}
@@ -1706,14 +1654,14 @@ void Player::SecondStrongAttackMotion(){
 	if (easeT_ > 1.0f) {
 		easeT_ = 1.0f;
 		addEaseT_ = 0.0f;
-		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 	}
 
 	if (easeT_ == 1.0f) {
 		waitTime_ -= 1.0f;
 	}
 
-	if (easeT_ >= 0.3f){
+	if (easeT_ >= easeSecondStrong_){
 		if (strongSecondAttackCount_ < kStrongSecondAttackCountMax_) {
 
 			if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
@@ -1726,7 +1674,7 @@ void Player::SecondStrongAttackMotion(){
 		if (isNextAttack_ && !isEndAttack_) {
 			waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
 			easeT_ = 0;
-			addEaseT_ = 0.08f;
+			addEaseT_ = addEaseSpeedStrong_;
 			strongSecondAttackCount_++;
 			isNextAttack_ = false;
 		}
@@ -1738,20 +1686,17 @@ void Player::SecondStrongAttackMotion(){
 	weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInBack, -0.5f, 0.0f, easeT_);
 	weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 4.0f, easeT_);
 
-	/*if (weapon_offset_Base_.x > -0.9f) {
-		addEaseT_ = 0.08f;
-	}*/
-	
+		
 }
 
 void Player::ThirdStrongAttackMotion(){
-	if (weapon_Rotate_ >= 1.35f) {
+	if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[2].y) {
 		waitTime_ -= 1;
 		weapon_Rotate_ = 1.35f;
 		SettingGroundCrushTex();
 	}
-	else if (weapon_Rotate_ <= -0.9f) {
-		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+	else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[2].x) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		isShakeDown_ = true;
 		isTrail_ = true;
 	}
@@ -1763,10 +1708,10 @@ void Player::ThirdStrongAttackMotion(){
 
 	if (!isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3();
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 5.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kGuadeMagnification_);
 	}
 	else if (isShakeDown_) {
-		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
+		weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 		weapon_Rotate_ += kMoveWeaponShakeDown_ * kAttackDivisionMagnification_ * motionSpeed_;
 	}
 
@@ -1776,16 +1721,16 @@ void Player::ThirdStrongAttackMotion(){
 }
 
 void Player::FourthStrongAttackMotion(){
-	if (weapon_Rotate_ >= 3.16f) {
+	if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[3].y) {
 		waitTime_ -= 1;
-		weapon_Rotate_ = 3.16f;
+		weapon_Rotate_ = weapon_StrongRotatesMinMax_[3].y;
 
 		
 	}
-	else if (weapon_Rotate_ <= -0.9f) {
-		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+	else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[3].x) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		isShakeDown_ = true;
-		downVector_.y += jumpPower_ / 3.0f;
+		downVector_.y += jumpPower_ / kStrongAttackMagnification_;
 	}
 	else {
 		
@@ -1800,12 +1745,12 @@ void Player::FourthStrongAttackMotion(){
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
-		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 3.0f * motionSpeed_;
+		weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
+		weapon_Rotate_ += kMoveWeaponShakeDown_ * kStrongAttackMagnification_ * motionSpeed_;
 
 		if (downVector_.y != 0.0f) {
 			
-			move_ = { 0.0f,0.0f,-(moveSpeed_ * 4.0f) };
+			move_ = { 0.0f,0.0f,-(moveSpeed_ * kStrongAttackMagnification_) };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 			if (!isCollisionEnemy_) {
@@ -1834,12 +1779,12 @@ void Player::FourthStrongAttackMotion(){
 void Player::FifthStrongAttackMotion(){
 	if (!isFinishAttack_){	
 		if (isFirstAttack_){
-			if (weapon_Rotate_ >= 3.0f) {
+			if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
 				waitTime_ -= 1;
-				weapon_Rotate_ = 3.0f;
+				weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
 			}
-			else if (weapon_Rotate_ <= -0.5f) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[4].x) {
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				isShakeDown_ = true;
 				isTrail_ = true;
 			}
@@ -1848,7 +1793,7 @@ void Player::FifthStrongAttackMotion(){
 			if (waitTime_ <= 0) {
 				isFirstAttack_ = false;
 				waitTime_ = waitTimeBase_;
-				weaponTransform_.rotate.z = -0.5f;
+				weaponTransform_.rotate.z = weapon_StrongRotatesMinMax_[4].x;
 				hitRecord_.Clear();
 			}
 
@@ -1857,18 +1802,18 @@ void Player::FifthStrongAttackMotion(){
 			}
 			else if (isShakeDown_) {
 
-				weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+				weapon_Rotate_ += kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
 			}
 		}
 		else {
 		
-			if (weapon_Rotate_ <= -0.3f) {
+			if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[5].y) {
 				waitTime_ -= 1;
-				weapon_Rotate_ = -0.3f;
+				weapon_Rotate_ = weapon_StrongRotatesMinMax_[5].y;
 			}
-			else if (weapon_Rotate_ >= 3.3f) {
+			else if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[5].x) {
 				
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				isShakeDown_ = true;
 			}
 
@@ -1882,13 +1827,13 @@ void Player::FifthStrongAttackMotion(){
 					isNextAttack_ = false;
 					isFirstAttack_ = true;
 					waitTime_ = waitTimeBase_;
-					weaponTransform_.rotate.z = -1.5f;
+					weaponTransform_.rotate.z = -kAttackMagnification_;
 					hitRecord_.Clear();
-					audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+					audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				}
 				else {
 					waitTime_ = waitTimeBase_;
-					weaponTransform_.rotate.z = 0.5f;
+					weaponTransform_.rotate.z = -weapon_StrongRotatesMinMax_[4].x;
 					weapon_Rotate_ = -0.0f;
 					isShakeDown_ = false;
 					isTrail_ = false;
@@ -1902,18 +1847,18 @@ void Player::FifthStrongAttackMotion(){
 			}
 			else if (isShakeDown_) {
 
-				weapon_Rotate_ -= kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+				weapon_Rotate_ -= kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
 			}
 		}
 	}
 	else {
-		if (weapon_Rotate_ >= 3.0f) {
+		if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
 			waitTime_ -= 1;
-			weapon_Rotate_ = 3.16f;
+			weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
 			SettingGroundCrushTex();
 		}
-		else if (weapon_Rotate_ <= -0.5f) {
-			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+		else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[4].x) {
+			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 			isTrail_ = true;
 			isShakeDown_ = true;
 		}
@@ -1927,8 +1872,8 @@ void Player::FifthStrongAttackMotion(){
 			weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 		}
 		else if (isShakeDown_) {
-			weaponCollisionTransform_.scale = Vector3(0.9f, 4.5f, 0.9f) * strongAddScale_;
-			weapon_Rotate_ += kMoveWeaponShakeDown_ * 1.5f * motionSpeed_;
+			weaponCollisionTransform_.scale = fifthWeaponCollisionScale_ * strongAddScale_;
+			weapon_Rotate_ += kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
 		}
 	}
 	
@@ -1945,29 +1890,28 @@ void Player::SixthStrongAttackMotion(){
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)) {
 			isGuard_ = true;
 			weaponTransform_.rotate.x += 0.01f;
-			if (weaponTransform_.rotate.x > 1.6f) {
-				weaponTransform_.rotate.x = 1.6f;
+			if (weaponTransform_.rotate.x > strongSixthAttackRotate_) {
+				weaponTransform_.rotate.x = strongSixthAttackRotate_;
 			}
 		}
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y)) {
 			isGuard_ = false;
 			chargeEnd_ = true;
 			isTrail_ = true;
-			weapon_offset_Base_ = { 0.0f,2.0f,0.0f };
-			weaponTransform_.rotate.z = 1.57f;
-			//addPosition_.y = 0.5f;
+			weapon_offset_Base_ = { 0.0f,kWeapon_offset_,0.0f };
+			weaponTransform_.rotate.z = strongAttackRotateZ_;
 		}
 
 	}
 	else {
-		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
+		weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 		easeT_ += addEaseT_;
 
 		if (easeT_ > 1.0f) {
 			easeT_ = 1.0f;
 			
 			addEaseT_ = 0.0f;
-			audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 			SettingGroundCrushTex();
 		}
 

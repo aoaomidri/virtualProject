@@ -226,6 +226,11 @@ private:
 private:
 	//強攻撃関連
 
+	//強行動共通の初期化
+	void PreBehaviorStrongAttackInitialize();
+	//強行動共通の初期化
+	void PostBehaviorStrongAttackInitialize();
+
 	//強1攻撃行動初期化
 	void BehaviorStrongAttackInitialize();
 	//強2攻撃行動初期化
@@ -418,11 +423,25 @@ private:
 
 	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
 
+	Vector3 collsionScaleGuade_ = { 0.6f,2.0f,0.6f };
+
+	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
+
 	//加算する武器の回転
 	float weapon_Rotate_ = 0.0f;
 
 	std::array<Vector3, conboNum_> weaponAttackTransformRotates_ = { {
 		{0.0f,0.0f,-0.5f},{-0.3f,0.0f,2.0f},{-0.3f,0.0f,-1.7f},{0.0f,0.0f,-2.2f},{-0.3f,0.0f,2.5f},{-0.3f,0.0f,-0.0f}
+		}
+	};
+
+	std::array<Vector3, conboNum_> weaponStrongAttackTransformRotates_ = { {
+		{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
+		}
+	};
+
+	std::array<Vector3, conboNum_> weaponStrongAttackOffset_ = { {
+		{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
 		}
 	};
 
@@ -433,10 +452,19 @@ private:
 		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{1.65f,-0.6f}
 		}
 	};
+	
+	std::array<Vector2, conboNum_> weapon_StrongRotatesMinMax_ = { {
+		{4.5f,9.2f},{3.16f,-0.9f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
+		}
+	};
 
 	const float kAttackMagnification_ = 1.5f;
 	
 	const float kAttackDivisionMagnification_ = 2.0f;
+
+	const float kStrongAttackMagnification_ = 3.0f;
+
+	const float kGuadeMagnification_ = 5.0f;
 
 	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数
@@ -455,6 +483,10 @@ private:
 	const int32_t kStrongSecondAttackCountMax_ = 2;
 	//強2攻撃での追撃回数カウント
 	int32_t strongSecondAttackCount_ = 0;
+
+	float strongAttackRotateZ_ = 1.57f;
+
+	float strongSixthAttackRotate_ = 1.6f;
 
 	uint32_t enemyNumber_ = 100;
 
@@ -485,9 +517,13 @@ private:
 
 	float easeT_ = 0.0f;
 
+	float easeSecondStrong_ = 0.3f;
+
 	float addEaseT_ = 0.0f;
 
 	float addEaseSpeed_ = 0.04f;
+
+	float addEaseSpeedStrong_ = 0.08f;
 
 	float motionSpeed_ = 1.0f;
 
@@ -520,6 +556,10 @@ private:
 	bool isFirstAttack_ = false;
 	//最後のきめ技を行うかどうか
 	bool isFinishAttack_ = false;
+
+	float fifthWeapon_Rotate_ = 0.5f;
+
+	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
 	////////
 	//落下するかどうか
 	bool isDown_ = false;

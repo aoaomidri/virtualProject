@@ -89,8 +89,7 @@ void GameScene::Initialize(){
 	
 	TextureLoad();
 	SoundLoad();
-	
-	/*敵の彩度外部に吐き出す事を忘れずに*/
+
 	
 
 	SpriteInitialize();

@@ -17,6 +17,7 @@
 #include"Audio.h"
 #include"GameTime.h"
 /*プレイヤーが操作する自機の更新描画*/
+/*現在全処理をまとめてしまっているのでステートパターンによる実装を目指し作成中です*/
 //前方宣言
 class LockOn;
 
@@ -50,8 +51,6 @@ public:
 	//床と当たった時のonCollision
 	void OnFlootCollision(OBB obb);
 
-	//リスポーン
-	void Respawn();
 	//ヒットバックのタイプが強いものの場合
 	bool ChackStrongBack() const {
 		if (type_ == HitRecord::Center || type_ == HitRecord::Strong){
@@ -189,6 +188,11 @@ public:
 	static const int conboNum_ = 6;
 
 private:
+	//弱行動共通の初期化
+	void PreBehaviorAttackInitialize();
+	//弱行動共通の初期化
+	void PostBehaviorAttackInitialize();
+
 	//弱1攻撃行動初期化
 	void BehaviorAttackInitialize();
 	//弱2攻撃行動初期化
@@ -271,7 +275,9 @@ private:
 	EulerTransform weaponTransform_{};
 	EulerTransform weaponCollisionTransform_{};
 
-	
+	const float kWeaponRootTranslate_ = 10000.0f;
+
+	const Vector3 kWeaponCollisionBase_ = { 0.9f,3.0f,0.9f };
 
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
@@ -296,6 +302,9 @@ private:
 
 	//自機の移動
 	Vector3 move_{};
+
+	float moveLimitMinimum_ = 0.0005f;
+
 	//移動限界 xが+側、yが-側
 	Vector2 limitPos_{ 70.0f,-70.0f };
 
@@ -329,12 +338,17 @@ private:
 	//移動スピード
 	float moveSpeed_ = 0.1f;
 
+	float moveCorrection_ = 3.0f;
+
 	//ダッシュ時のスピード倍率
 	float dashSpeed_ = 10.0f;
 	//ダッシュのクールタイムのベース
 	int dashCoolTimeBase_ = 20;
 	//被弾時の無敵時間
 	int hitTimer_ = 0;
+
+	int hitTimerBase_ = 30;
+
 	//代入用ダッシュのクールタイム
 	int dashCoolTime_ = 0;
 
@@ -378,6 +392,10 @@ private:
 	//ジャスト回避したときの値
 	float justAvoidT_ = 0.0f;
 
+	float justAvoidSlowTime_ = 10.0f;
+
+	float slowTimeScale_ = 0.2f;
+
 	//////*攻撃に関連するもの*///////
 	//ヒットストップの時間
 	float hitStop_ = 0.0f;
@@ -393,6 +411,7 @@ private:
 	//武器開店に関連する変数
 	Vector3 weapon_offset_{};
 	Vector3 weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
+	Vector3 weapon_offset_RootBase_ = { 0.4f,-1.8f,1.0f };
 
 	const float kMoveWeapon_ = 0.1f;
 	const float kMoveWeaponShakeDown_ = 0.2f;
@@ -400,6 +419,7 @@ private:
 	const float kMaxRotateY_ = -1.55f;
 	const float kMinRotate_ = -0.6f;
 	const float kFloatHeight_ = 0.1f;
+	const float kWeapon_offset_ = 2.0f;
 	//強2攻撃での追撃回数の最大値
 	const int32_t kStrongSecondAttackCountMax_ = 2;
 	//強2攻撃での追撃回数カウント
@@ -437,6 +457,9 @@ private:
 
 	//ディゾルブ関係
 	float weaponThreshold_ = 0.0f;
+
+	float addThresholdSpeed_ = 0.03f;
+	float minusThresholdSpeed_ = 0.01f;
 	//取得する頂点座標を調整する
 	Vector2 trailPosData_ = { 0.0f,3.0f };
 
@@ -507,6 +530,8 @@ private:
 	//音関係
 	Audio* audio_ = nullptr;
 
+	float seVolume_ = 0.5f;
+
 	//回避の時の音
 	uint32_t avoidSE_;
 	//武器を振るときの音
@@ -538,7 +563,15 @@ private:
 
 	float shadowScaleBase_ = 0.9f;
 
+	float shadowScaleCulcBase_ = 2.5f;
+
+	float shadowHeight_ = 1.11f;
+
 	std::unique_ptr<Sprite> groundCrush_;
+
+	float crushColorMinus_ = 0.02f;
+
+	float crushPosBase_ = 1.1f;
 
 	Vector3 groundOffsetBase_;
 	//破壊跡を固定するかどうか

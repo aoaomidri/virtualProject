@@ -1157,15 +1157,15 @@ void Player::BehaviorJustAvoidUpdate(){
 }
 
 void Player::AttackMotion(){
-	if (weapon_Rotate_ >= 2.4f) {
-		waitTime_ -= 1 * timeScale_;
-		weapon_Rotate_ = 3.16f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[0].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[0].x * kAttackMagnification_;
 	}
-	else if (weapon_Rotate_ <= -1.0f) {
+	else if (weapon_Rotate_ <= weapon_RotatesMinMax_[0].y) {
 		isShakeDown_ = true;
 	}
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1189,11 +1189,11 @@ void Player::AttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1203,15 +1203,15 @@ void Player::AttackMotion(){
 
 void Player::SecondAttackMotion(){	
 	
-	if (weapon_Rotate_ >= 3.16f) {
-		waitTime_ -= 1;
-		weapon_Rotate_ = 3.16f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[1].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[1].x;
 	}
-	else if (weapon_Rotate_ <= -0.9f) {
+	else if (weapon_Rotate_ <= weapon_RotatesMinMax_[1].y) {
 		isShakeDown_ = true;
 	}
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1235,35 +1235,30 @@ void Player::SecondAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f) ;
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_) ;
 	}
 	else if (isShakeDown_) {
 		
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 	
 
 	weaponTransform_.rotate.x = weapon_Rotate_ + baseRotate_.x;
 	weaponCollisionTransform_.rotate.x = weapon_Rotate_ + baseRotate_.x;
 
-	//Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-	//Weapon_offset = Matrix::TransformNormal(weapon_offset_Base, weaponCollisionRotateMatrix);
-
-	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 }
 
-void Player::ThirdAttackMotion(){
+void Player::ThirdAttackMotion(){	
 	
-	
-	if (weapon_Rotate_ >= 3.16f) {
-		waitTime_ -= 1;
-		weapon_Rotate_ = 3.16f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[2].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[2].x;
 	}
-	else if (weapon_Rotate_ <= -0.9f) {
+	else if (weapon_Rotate_ <= weapon_RotatesMinMax_[2].y) {
 		isShakeDown_ = true;
 	}
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1287,11 +1282,11 @@ void Player::ThirdAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1300,13 +1295,13 @@ void Player::ThirdAttackMotion(){
 }
 
 void Player::FourthAttackMotion(){
-	if (weapon_Rotate_ >= 3.16f + 6.28f) {
-		waitTime_ -= 1;
-		weapon_Rotate_ = 3.16f + 6.28f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[3].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[3].x;
 	}
 	
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1330,11 +1325,11 @@ void Player::FourthAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1343,15 +1338,15 @@ void Player::FourthAttackMotion(){
 }
 
 void Player::FifthAttackMotion(){
-	if (weapon_Rotate_ >= 3.16f) {
-		waitTime_ -= 1;
-		weapon_Rotate_ = 3.16f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[4].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[4].x;
 	}
-	else if (weapon_Rotate_ <= -0.9f) {
+	else if (weapon_Rotate_ <= weapon_RotatesMinMax_[4].y) {
 		isShakeDown_ = true;
 	}
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1375,11 +1370,11 @@ void Player::FifthAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1389,17 +1384,17 @@ void Player::FifthAttackMotion(){
 }
 
 void Player::SixthAttackMotion(){
-	if (weapon_Rotate_ >= 1.65f) {
-		waitTime_ -= 1;
-		weapon_Rotate_ = 1.65f;
+	if (weapon_Rotate_ >= weapon_RotatesMinMax_[5].x) {
+		waitTime_ -= timeScale_;
+		weapon_Rotate_ = weapon_RotatesMinMax_[5].x;
 		SettingGroundCrushTex();
 	}
-	else if (weapon_Rotate_ <= -0.6f) {
-		audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+	else if (weapon_Rotate_ <= weapon_RotatesMinMax_[5].y) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		isShakeDown_ = true;
 	}
 	else {
-		move_ = { 0.0f,0.0f,moveSpeed_ * 1.5f };
+		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
 		if (!isCollisionEnemy_) {
@@ -1423,11 +1418,11 @@ void Player::SixthAttackMotion(){
 	}
 
 	if (!isShakeDown_) {
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 3.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / (kAttackDivisionMagnification_ * kAttackMagnification_));
 	}
 	else if (isShakeDown_) {
 
-		weapon_Rotate_ += (kMoveWeaponShakeDown_ * 1.5f * motionSpeed_) * timeScale_;
+		weapon_Rotate_ += (kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * timeScale_;
 	}
 
 
@@ -1484,7 +1479,7 @@ void Player::BehaviorSecondStrongAttackInitialize(){
 	workAttack_.AttackTimer = 0;
 	easeT_ = 0;
 	addEaseT_ = 0.08f;
-	waitTime_ = waitTimeBase_ * 2.0f;
+	waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
 	addPosition_.y = 0.0f;
 	trail_->Reset();
 	strongSecondAttackCount_ = 0;
@@ -1729,7 +1724,7 @@ void Player::SecondStrongAttackMotion(){
 	
 	if (waitTime_ <= 0) {
 		if (isNextAttack_ && !isEndAttack_) {
-			waitTime_ = waitTimeBase_ * 2.0f;
+			waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
 			easeT_ = 0;
 			addEaseT_ = 0.08f;
 			strongSecondAttackCount_++;
@@ -1772,7 +1767,7 @@ void Player::ThirdStrongAttackMotion(){
 	}
 	else if (isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
-		weapon_Rotate_ += kMoveWeaponShakeDown_ * 2.0f * motionSpeed_;
+		weapon_Rotate_ += kMoveWeaponShakeDown_ * kAttackDivisionMagnification_ * motionSpeed_;
 	}
 
 
@@ -1802,7 +1797,7 @@ void Player::FourthStrongAttackMotion(){
 
 	if (!isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3();
-		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
 	else if (isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3(0.9f, 3.0f, 0.9f) * strongAddScale_;
@@ -1858,7 +1853,7 @@ void Player::FifthStrongAttackMotion(){
 			}
 
 			if (!isShakeDown_) {
-				weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+				weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 			}
 			else if (isShakeDown_) {
 
@@ -1903,7 +1898,7 @@ void Player::FifthStrongAttackMotion(){
 				}
 			}
 			else if (!isShakeDown_) {
-				weapon_Rotate_ += (kMoveWeapon_ * motionSpeed_ / 2.0f);
+				weapon_Rotate_ += (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 			}
 			else if (isShakeDown_) {
 
@@ -1929,7 +1924,7 @@ void Player::FifthStrongAttackMotion(){
 		}
 
 		if (!isShakeDown_) {
-			weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / 2.0f);
+			weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 		}
 		else if (isShakeDown_) {
 			weaponCollisionTransform_.scale = Vector3(0.9f, 4.5f, 0.9f) * strongAddScale_;

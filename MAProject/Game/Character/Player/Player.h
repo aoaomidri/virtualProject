@@ -414,6 +414,8 @@ private:
 	/*当たり関係*/
 	float strongAddScale_ = 3.0f;
 
+
+
 	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
 
 	//加算する武器の回転
@@ -427,8 +429,14 @@ private:
 	std::array<float, conboNum_> weapon_Rotates_ = { 
 		-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f
 	};
+	std::array<Vector2, conboNum_> weapon_RotatesMinMax_ = { {
+		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{1.65f,-0.6f}
+		}
+	};
 
+	const float kAttackMagnification_ = 1.5f;
 	
+	const float kAttackDivisionMagnification_ = 2.0f;
 
 	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数

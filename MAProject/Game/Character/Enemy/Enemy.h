@@ -39,8 +39,6 @@ public:
 	//Imgui描画
 	void DrawImgui();
 
-	//リスポーン
-	void Respawn(const Vector3& position);
 	//被弾時の処理
 	void OnCollision();
 	//被弾時の処理
@@ -111,6 +109,10 @@ private:
 
 	int enemyLife_ = 0;
 
+	int damege_ = 1;
+
+	int strongDamege_ = 3;
+
 	//自機のモデル
 	std::unique_ptr<Object3D> bodyObj_;
 	std::unique_ptr<Object3D> partsObj_;
@@ -162,6 +164,10 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	Vector3 parts_offset_Base_ = { 0.0f, 1.5f, 0.0f };
+
+	Vector3 parts_offset_ = { 0.0f, 1.5f, 0.0f };
+
 	//カメラの情報
 	const ViewProjection* viewProjection_ = nullptr;
 
@@ -173,7 +179,13 @@ private:
 
 	Vector3 worldPos_ = {};
 
+	Vector3 deadMoveBase_ = { 0,0.02f,0.1f };
+
 	Vector3 deadMove_ = { 0,0.02f,0.1f };
+
+	float deadMoveSpeed_ = 0.5f;
+
+	float deadRotateSpeed_ = 0.3f;
 
 	//移動限界 xが+側、yが-側
 	Vector2 limitPos_{ 70.0f,-70.0f };
@@ -203,10 +215,14 @@ private:
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
 
+	const float kTranslateHeight_ = 2.5f;
+
 	/// <summary>
 	///倍率
 	/// </summary>
 	float magnification_ = 1.0f;
+	float runMagnification_ = 6.0f;
+
 	//移動スピード
 	float moveSpeed_ = 0.03f;
 	//ダッシュの時間
@@ -270,8 +286,6 @@ private:
 		kAttack,			//攻撃
 		kSelectAttack,		//確定行動攻撃
 		kRoot,				//様子見中
-		kBack,				//後ろにジャンプ
-		kDash,				//ダッシュ
 		kRun,				//走り
 		kFree,				//遊びの時間
 		kDead,				//やられた
@@ -302,14 +316,6 @@ private:
 
 	//死んだときのモーション
 	void DeadMotion();
-	//後退行動初期化
-	void BehaviorBackInitialize();
-	//後ろに下がるモーション
-	void BackStep();
-	//前進行動初期化
-	void BehaviorDashInitialize();
-	//ダッシュモーション
-	void Dash();
 
 	//前進行動初期化
 	void BehaviorRunInitialize();
@@ -337,13 +343,7 @@ private:
 	//攻撃関係の関数群
 	
 	enum class AttackBehavior {
-		kTriple,		//三連撃.OK
-		kCharge,		//近づいて溜めて一撃(X字で剣を振る)
-		kBeam,			//ビーム攻撃(保留)
 		kTackle,		//突進攻撃.OK
-		kRotateAttack,	//回転して追尾しながらの攻撃
-		kChargeStrong,	//溜めて剣を大きくして攻撃(縦振り)
-		kXAttack,		//その場でX字を書いて攻撃(斬撃は飛ぶ)
 		kNone,			//何もしない
 	};
 
@@ -357,25 +357,11 @@ private:
 	//形態ごとにとる行動
 	void AttackMotion();
 
-	//三連攻撃初期化
-	void AttackBehaviorTripleInitialize();
-	//三連攻撃の更新処理
-	void TripleAttack();
-
 	//突進攻撃初期化
 	void AttackBehaviorTackleInitialize();
 	//突進攻撃
 	void Tackle();
 
-	//回転突進攻撃初期化
-	void AttackBehaviorRotateAttackInitialize();
-	//回転突進攻撃
-	void RotateAttack();
-
-	//飛ぶ斬撃の初期化
-	void AttackBehaviorDoubleSlashInitialize();
-	//二つの斬撃を飛ばす
-	void DoubleSlash();
 
 private:
 	//攻撃関係の変数群
@@ -400,13 +386,19 @@ private:
 
 	/*突進攻撃*/
 	//突進の向き決めの時間
+	uint32_t directionTimeBase_ = 90;
+	//突進の向き決めの時間
 	uint32_t directionTime_ = 0;
 
 	//突進攻撃の範囲
 	float collisionScale_ = 1.3f;
 
 	//突進への移行時間
+	uint32_t attackTransitionTimeBase_ = 30;
+
 	uint32_t attackTransitionTime_ = 0;
+
+	const int32_t kDashTime_ = 30;
 
 	/*回転突進攻撃*/
 
@@ -435,9 +427,15 @@ private:
 private:
 	Vector4 enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
+	float colorSpeed_ = 0.02f;
+
+	float colorLimit_ = 0.2f;
+
 	//ディゾルブ関係
 	float threshold_ = 0.0f;
 	
+	float thresholdSpeed_ = 0.0075f;
+
 	//シリアルナンバー
 	uint32_t serialNumber_ = 0;
 	//次のシリアルナンバー

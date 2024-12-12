@@ -425,8 +425,6 @@ private:
 
 	Vector3 collsionScaleGuade_ = { 0.6f,2.0f,0.6f };
 
-	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
-
 	//加算する武器の回転
 	float weapon_Rotate_ = 0.0f;
 

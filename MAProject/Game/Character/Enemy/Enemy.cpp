@@ -184,25 +184,15 @@ void Enemy::Update(){
 
 	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
 	
-	/*for (int i = 0; i < particleNum_; i++) {
-		particleMatrix_[i] = Matrix::MakeAffineMatrix(particleTransform_[i].scale, particleTransform_[i].rotate, particleTransform_[i].translate);
-		
-	}*/
 
 	for (auto it = bullets_.begin(); it != bullets_.end(); ++it) {
 		(*it)->Update();
 	}
 
 	bodyOBB_.center = transform_.translate;
-	if (isNearAttack_){
-		Vector3 attackOffset = { 0.0f, 0.0f, 4.0f };
-		attackOffset = Matrix::TransformNormal(attackOffset, rotateMatrix_);
-
-		attackOBB_.center = bodyOBB_.center + attackOffset;
-	}
-	else{
-		attackOBB_.center = bodyOBB_.center;
-	}
+	
+	attackOBB_.center = bodyOBB_.center;
+	
 
 	SetOridentatios(bodyOBB_, rotateMatrix_);
 	SetOridentatios(attackOBB_, rotateMatrix_);
@@ -270,58 +260,16 @@ void Enemy::DrawImgui() {
 #endif
 }
 
-void Enemy::Respawn(const Vector3& position){
-	auto levelLoader = LevelLoader::GetInstance();
-
-	transform_ = {
-		levelLoader->GetLevelObjectTransform("Enemy").scale,
-		{0.0f,3.14f,0.0f},
-		position
-	};
-	collisionTransform_ = transform_;
-
-	partsTransform_ = {
-		{0.9f,0.9f,0.9f},
-		{0.0f,0.0f,1.57f},
-		{0.0f,1.7f,7.0f}
-	};
-
-	isDead_ = false;
-	isNoLife_ = false;
-	isParticle_ = true;
-	enemyLife_ = enemyLifeMax_;
-	threshold_ = 0.0f;
-
-	freeTime_ = 0;
-
-	bodyOBB_.center = transform_.translate;
-	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
-	collisionTransform_.translate = bodyOBB_.center;
-	collisionTransform_.scale = bodyOBB_.size;
-
-	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
-	SetOridentatios(bodyOBB_, enemyRotateMatrix);
-	SetOridentatios(attackOBB_, enemyRotateMatrix);
-
-	behaviorRequest_ = Behavior::kRoot;
-
-	behavior_ = Behavior::kRoot;
-
-	postureVec_ = { 0.0f,0.0f,-1.0f };
-	frontVec_ = { 0.0f,0.0f,-1.0f };
-
-}
-
 void Enemy::OnCollision(){
 	particle_->SetIsDraw(true);
-	enemyLife_--;
+	enemyLife_ -= damege_;
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
 void Enemy::OnCollisionStrong(){
 	particle_->SetIsDraw(true);
-	enemyLife_ -= 3;
+	enemyLife_ -= strongDamege_;
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
@@ -354,12 +302,6 @@ void Enemy::MotionUpdate(){
 		case Behavior::kRoot:
 			BehaviorRootInitialize();
 			break;
-		case Behavior::kBack:
-			BehaviorBackInitialize();
-			break;
-		case Behavior::kDash:
-			BehaviorDashInitialize();
-			break;
 		case Behavior::kRun:
 			BehaviorRunInitialize();
 			break;
@@ -386,12 +328,6 @@ void Enemy::MotionUpdate(){
 	switch (behavior_) {
 	case Behavior::kRoot:
 		RootMotion();
-		break;
-	case Behavior::kBack:
-		BackStep();
-		break;
-	case Behavior::kDash:
-		Dash();
 		break;
 	case Behavior::kRun:
 		EnemyRun();
@@ -441,10 +377,9 @@ void Enemy::MotionUpdate(){
 	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 
 	/*エネミーのパーツ*/
-	Vector3 parts_offset = { 0.0f, 1.5f, 0.0f };
-	parts_offset = Matrix::TransformNormal(parts_offset, resultRotateMat);
+	parts_offset_ = Matrix::TransformNormal(parts_offset_Base_, resultRotateMat);
 
-	partsTransform_.translate = transform_.translate + parts_offset;
+	partsTransform_.translate = transform_.translate + parts_offset_;
 
 	//partsTransform_.rotate.x += 0.3f;
 
@@ -454,8 +389,6 @@ void Enemy::MotionUpdate(){
 		behaviorRequest_ = Behavior::kDead;
 	}
 }
-
-
 
 void Enemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::MakeIdentity4x4();
@@ -474,9 +407,9 @@ void Enemy::BehaviorRootInitialize(){
 }
 
 void Enemy::BehaviorDeadInitialize(){
-	Vector3 deadMoveBase = { 0,0.02f,0.1f };
-	deadMove_ = Matrix::TransformNormal(deadMoveBase, rotateMatrix_);
-	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), 0.5f);
+	
+	deadMove_ = Matrix::TransformNormal(deadMoveBase_, rotateMatrix_);
+	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), deadMoveSpeed_);
 	deadMove_.y *= -1.00f;
 	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
 	transform_.rotate.Clear();
@@ -552,72 +485,6 @@ void Enemy::RootMotion(){
 	
 }
 
-void Enemy::BehaviorBackInitialize(){
-	dashTimer_ = 0;
-}
-
-void Enemy::BackStep(){
-	Matrix4x4 newRotateMatrix_ = rotateMatrix_;
-	move_ = { 0, 0, backSpeed_ };
-
-	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
-
-	/*敵の移動*/
-	Vector3 NextPos = transform_.translate + move_;
-
-	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
-		move_.x = 0;
-	}
-	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-		move_.z = 0;
-	}
-
-	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 8;
-
-	
-	transform_.translate += move_ * timeScale_;
-	
-
-	//既定の時間経過で通常状態に戻る
-	if (++dashTimer_ >= behaviorDashTime) {
-		behaviorRequest_ = Behavior::kFree;
-	}
-}
-
-void Enemy::BehaviorDashInitialize(){
-	dashRotateMatrix_ = rotateMatrix_;
-	dashTimer_ = 0;
-}
-
-void Enemy::Dash(){
-	move_ = { 0, 0, dashSpeed_ };
-
-	move_ = Matrix::TransformNormal(move_, dashRotateMatrix_);
-
-	/*敵の移動*/
-	Vector3 NextPos = transform_.translate + move_;
-
-	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
-		move_.x = 0;
-	}
-	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-		move_.z = 0;
-	}
-
-	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 30;	
-	
-	attackOBB_.size = bodyOBB_.size * collisionScale_;
-	transform_.translate += move_ * timeScale_;
-	
-
-	//既定の時間経過で通常状態に戻る
-	if (++dashTimer_ >= behaviorDashTime) {
-		attackOBB_.size = { 0,0,0 };
-		behaviorRequest_ = Behavior::kFree;
-	}
-}
 
 void Enemy::BehaviorRunInitialize(){
 	rotateMatrix_ = Matrix::MakeIdentity4x4();
@@ -631,7 +498,7 @@ void Enemy::BehaviorRunInitialize(){
 void Enemy::EnemyRun(){
 	frontVec_ = postureVec_;
 
-	Vector3 move = { 0,0,(magnification_ * dashSpeed_) / 6.0f };
+	Vector3 move = { 0,0,(magnification_ * dashSpeed_) / runMagnification_ };
 
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
@@ -660,7 +527,7 @@ void Enemy::EnemyRun(){
 
 		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
-	if (playerLength_ < 15.0f) {
+	if (playerLength_ < nearPlayer_) {
 		int i = 0;
 		
 		if (i == 0) {
@@ -763,8 +630,8 @@ void Enemy::LeaningBack(){
 		
 	transform_.translate.y += downVector_.y * timeScale_;
 
-	if (transform_.translate.y < 2.5f){
-		transform_.translate.y = 2.5f;
+	if (transform_.translate.y < kTranslateHeight_){
+		transform_.translate.y = kTranslateHeight_;
 	}
 
 	transform_.translate += move_;
@@ -778,7 +645,7 @@ void Enemy::LeaningBack(){
 	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.x, 0.0f, rotateEaseT_);
 	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.z, 0.0f, rotateEaseT_);
 
-	if (rotateEaseT_ >= 1.0f && transform_.translate.y == 2.5f) {
+	if (rotateEaseT_ >= 1.0f && transform_.translate.y == kTranslateHeight_) {
 		bodyObj_->SetTexture(enemyTexPath_);
 		behaviorRequest_ = Behavior::kRoot;
 	}
@@ -787,18 +654,17 @@ void Enemy::LeaningBack(){
 
 void Enemy::DeadMotion(){
 	transform_.translate -= deadMove_ * timeScale_;
-	transform_.rotate.x += 0.3f*timeScale_;	
+	transform_.rotate.x += deadRotateSpeed_ * timeScale_;
 	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
-	Vector3 parts_offset = { 0.0f, 2.7f, 0.0f };
-	//Vector3 R_parts_offset = { -7.0f, 7.0f, 0.0f };
-	parts_offset = Matrix::TransformNormal(parts_offset, newRotateMatrix);
+	
+	parts_offset_ = Matrix::TransformNormal(parts_offset_Base_, newRotateMatrix);
 
-	partsTransform_.translate = transform_.translate + parts_offset;
+	partsTransform_.translate = transform_.translate + parts_offset_;
 	
 	//partsTransform_.rotate.x += 0.3f;
 	
 	if (threshold_ < 1.0f) {
-		threshold_ += 0.0075f * timeScale_;
+		threshold_ += thresholdSpeed_ * timeScale_;
 	}
 	else {
 		isDead_ = true;
@@ -821,40 +687,20 @@ void Enemy::AttackMotion() {
 		ATBehavior_ = ATBehaviorRequest_.value();
 		// 各振る舞いごとの初期化を実行
 		switch (ATBehavior_) {
-		case AttackBehavior::kTriple:
-			AttackBehaviorTripleInitialize();
-			break;
 		case AttackBehavior::kTackle:
 			AttackBehaviorTackleInitialize();
 			break;
-		case AttackBehavior::kRotateAttack:
-			AttackBehaviorRotateAttackInitialize();
-			break;
-		case AttackBehavior::kXAttack:
-			AttackBehaviorDoubleSlashInitialize();
-			break;
 		case AttackBehavior::kNone:
 			BehaviorRootInitialize();
-			break;
-
-	
+			break;	
 		}
 	}
 	// 振る舞いリクエストをリセット
 	ATBehaviorRequest_ = std::nullopt;
 
 	switch (ATBehavior_) {
-	case AttackBehavior::kTriple:
-		TripleAttack();
-		break;
 	case AttackBehavior::kTackle:
 		Tackle();
-		break;
-	case AttackBehavior::kRotateAttack:
-		RotateAttack();
-		break;
-	case AttackBehavior::kXAttack:
-		DoubleSlash();
 		break;
 	case AttackBehavior::kNone:
 		behaviorRequest_ = Behavior::kFree;
@@ -862,88 +708,10 @@ void Enemy::AttackMotion() {
 	}
 }
 
-void Enemy::AttackBehaviorTripleInitialize(){
-	posContainer_.fill(Vector3());
-
-	attackDistance_ = distanceTime_;
-
-	isAttackEnd_ = true;
-
-	isMaxContext_ = false;
-
-	attackCount_ = 0;
-
-}
-
-void Enemy::TripleAttack(){
-	if (isAttackEnd_ and !isMaxContext_) {
-		if (target_) {
-			Vector3 lockOnPos = target_->translate;
-
-			posContainer_[attackCount_] = lockOnPos;
-
-			isMaxContext_ = std::all_of(posContainer_.begin(), posContainer_.end(), [](Vector3 i) { return i.isNotIdentity(); });
-
-			isAttackEnd_ = false;
-		}
-	}
-
-	frontVec_ = postureVec_;
-
-	Vector3 move = { 0,0,moveSpeed_ * magnification_ * dashSpeed_ * 5.0f };
-
-	move = Matrix::TransformNormal(move, rotateMatrix_);
-	move.y = 0;
-	
-	Vector3 lockOnPos = posContainer_[attackCount_];
-	Vector3 sub = lockOnPos - transform_.translate;
-	sub.y = 0;
-	float PELength = Vector3::Length(sub);
-	sub = Vector3::Normalize(sub);
-	postureVec_ = sub;
-
-	Matrix4x4 directionTodirection_;
-	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-
-	rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
-	if (PELength < 15.0f) {
-		move = { 0 };
-		isNearAttack_ = true;
-		if (attackDistance_ == 0) {
-			attackOBB_.size = { 0,0,0 };
-			attackCount_++;
-			isAttackEnd_ = true;
-			attackDistance_ = distanceTime_;
-		}
-		else {
-			attackOBB_.size = bodyOBB_.size * 2.4f;
-			attackDistance_ -= 1;
-		}
-
-	}
-	else {
-		/*敵の移動*/
-		Vector3 NextPos = transform_.translate + move_;
-
-		if (NextPos.x >= 95.0f or NextPos.x <= -95.0f) {
-			move_.x = 0;
-		}
-		if (NextPos.z >= 95.0f or NextPos.z <= -95.0f) {
-			move_.z = 0;
-		}
-		transform_.translate += move * timeScale_;
-	}
-
-	if (isMaxContext_ and isAttackEnd_){
-		behaviorRequest_ = Behavior::kFree;
-	}
-
-}
-
 void Enemy::AttackBehaviorTackleInitialize(){
-	directionTime_ = 90;
+	directionTime_ = directionTimeBase_;
 
-	attackTransitionTime_ = 30;
+	attackTransitionTime_ = attackTransitionTimeBase_;
 
 	dashTimer_ = 0;
 }
@@ -963,7 +731,7 @@ void Enemy::Tackle(){
 
 	}
 
-	if (enemyColor_.y <= 0.2f) {
+	if (enemyColor_.y <= colorLimit_) {
 		if (attackTransitionTime_ <= 0) {
 			move_ = { 0, 0, dashSpeed_ };
 
@@ -979,14 +747,11 @@ void Enemy::Tackle(){
 				move_.z = 0;
 			}
 
-			//ダッシュの時間<frame>
-			const uint32_t behaviorDashTime = 30;
-
 			transform_.translate += move_* timeScale_;
 			attackOBB_.size = bodyOBB_.size * collisionScale_;
 			
 			//既定の時間経過で通常状態に戻る
-			if (++dashTimer_ >= behaviorDashTime) {
+			if (++dashTimer_ >= kDashTime_) {
 				attackOBB_.size = { 0,0,0 };
 				behaviorRequest_ = Behavior::kFree;
 			}
@@ -999,7 +764,7 @@ void Enemy::Tackle(){
 		
 		dashRotateMatrix_ = rotateMatrix_;
 
-		enemyColor_.y -= 0.02f * timeScale_;
+		enemyColor_.y -= colorSpeed_ * timeScale_;
 		enemyColor_.z = enemyColor_.y;
 
 		//directionTime_--;
@@ -1007,112 +772,3 @@ void Enemy::Tackle(){
 	
 }
 
-void Enemy::AttackBehaviorRotateAttackInitialize(){
-	posContainer_.fill(Vector3());
-
-	attackBasePos_ = Vector3();
-
-	attackDistance_ = distanceTime_;
-
-	isAttackEnd_ = true;
-
-	isMaxContext_ = false;
-
-	attackCount_ = 0;
-
-	easeT_ = 0;
-}
-
-void Enemy::RotateAttack(){
-	if (isAttackEnd_ and !isMaxContext_) {
-		if (target_) {
-			Vector3 lockOnPos = target_->translate;
-
-			Vector3 sub = lockOnPos - transform_.translate;
-			sub.y = 0;
-			sub = Vector3::Normalize(sub);
-
-			sub *= attackLength_;
-
-			posContainer_[attackCount_] = transform_.translate + sub;
-
-			isMaxContext_ = std::all_of(posContainer_.begin(), posContainer_.end(), [](Vector3 i) { return i.isNotIdentity(); });
-
-			attackBasePos_ = transform_.translate;
-
-
-			isAttackEnd_ = false;
-		}
-	}
-
-	frontVec_ = postureVec_;
-
-	Vector3 lockOnPos = posContainer_[attackCount_];
-	Vector3 sub = lockOnPos - attackBasePos_;
-	sub.y = 0;
-	sub = Vector3::Normalize(sub);
-	postureVec_ = sub;
-
-	Matrix4x4 rotateMat;
-	rotateMat.MakeRotateMatrixY({ 0.0f,attackRotate_,0.0f });
-
-	rotateMatrix_ = Matrix::Multiply(rotateMatrix_, rotateMat);
-
-	transform_.translate = ease_.Easing(Ease::EaseName::EaseOutQuart, attackBasePos_, posContainer_[attackCount_], easeT_);
-
-	attackRotate_ = ease_.Easing(Ease::EaseName::EaseOutQuart, 0.0f, (3.14f * 4.0f), easeT_);
-
-	if (easeT_ < 1.0f) {		
-		easeT_ += (1.0f / 60.0f) * timeScale_;
-		attackOBB_.size = bodyOBB_.size * 2.4f;
-	}
-	else {
-		attackOBB_.size = { 0.0f,0.0f,0.0f };
-		attackCount_++;
-		isAttackEnd_ = true;
-		attackDistance_ = distanceTime_;
-		easeT_ = 0;
-	}
-	
-
-	if (isMaxContext_ and isAttackEnd_) {
-		behaviorRequest_ = Behavior::kBack;
-	}
-}
-
-void Enemy::AttackBehaviorDoubleSlashInitialize(){
-	Vector3 lockOnPos = target_->translate;
-
-	Vector3 sub = lockOnPos - transform_.translate;
-	sub.y = 0;
-	sub = Vector3::Normalize(sub);
-
-	bulletSpeed_ = 1.0f;
-
-	sub *= bulletSpeed_;
-
-	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-
-	EulerTransform trans{};
-
-	float y = rotateMatrix_.RotateAngleYFromMatrix();	
-
-	trans = transform_;
-
-	trans.rotate.y = y;
-
-	//trans.rotate.z = (3.14f / 4.0f);
-
-	trans.rotate.x = 0;
-
-	trans.scale.y *= 5.0f;
-	newBullet->Initialize(trans, sub);
-
-	bullets_.emplace_back(std::move(newBullet));
-
-	
-}
-
-void Enemy::DoubleSlash(){
-	behaviorRequest_ = Behavior::kFree;
-}

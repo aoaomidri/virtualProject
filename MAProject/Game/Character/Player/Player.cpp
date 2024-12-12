@@ -47,6 +47,8 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "AddPostT", addPostT_);
 	adjustment_item->AddItem(groupName, "JustAvoidT", justAvoidT_);
 	adjustment_item->AddItem(groupName, "ScaleValue", scaleValue_);
+
+	
 	
 	input_ = Input::GetInstance();
 
@@ -644,64 +646,56 @@ void Player::PostBehaviorAttackInitialize(){
 
 void Player::BehaviorAttackInitialize(){
 	type_ = KnockbackType::Left;
-	workAttack_.nextAttackTimer = 21;
+	workAttack_.nextAttackTimer = nextAttackTimerFirst_;
 	//baseRotate_.y = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
-	weaponTransform_.rotate.x = 0.0f;
-	weaponTransform_.rotate.z = -0.5f;
+	weaponTransform_.rotate.x = weaponAttackTransformRotates_[0].x;
+	weaponTransform_.rotate.z = weaponAttackTransformRotates_[0].z;
 
-	weapon_Rotate_ = -0.5f;
+	weapon_Rotate_ = weapon_Rotates_[0];
 	
 }
 
 void Player::BehaviorSecondAttackInitialize(){
 	type_ = KnockbackType::Right;
 
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 2.0f;
+	weaponTransform_.rotate = weaponAttackTransformRotates_[1];
 
-	weapon_Rotate_ = -0.4f;
+	weapon_Rotate_ = weapon_Rotates_[1];
 }
 
 void Player::BehaviorThirdAttackInitialize(){
 	type_ = KnockbackType::Left;
 
-	workAttack_.nextAttackTimer = 28;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
 
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = -1.7f;
+	weaponTransform_.rotate = weaponAttackTransformRotates_[2];
 
-	weapon_Rotate_ = -0.4f;
+	weapon_Rotate_ = weapon_Rotates_[2];
 }
 
 void Player::BehaviorFourthAttackInitialize(){
 	type_ = KnockbackType::Left;
-	workAttack_.nextAttackTimer = 28;
-	weaponTransform_.rotate.z = -2.2f;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
+	weaponTransform_.rotate.z = weaponAttackTransformRotates_[3].z;
 
 }
 
 void Player::BehaviorFifthAttackInitialize(){
 	type_ = KnockbackType::Right;
-	workAttack_.nextAttackTimer = 28;
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 2.5f;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
+	weaponTransform_.rotate = weaponAttackTransformRotates_[4];
 
-	weapon_Rotate_ = -0.4f;
+	weapon_Rotate_ = weapon_Rotates_[4];
 }
 
 void Player::BehaviorSixthAttackInitialize(){
 	type_ = KnockbackType::Strong;
-	workAttack_.nextAttackTimer = 28;
-	weaponTransform_.rotate.x = -0.3f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 0.0f;
+	workAttack_.nextAttackTimer = nextAttackTimer_;
+	weaponTransform_.rotate = weaponAttackTransformRotates_[5];
 
-	weapon_Rotate_ = -0.0f;
+	weapon_Rotate_ = weapon_Rotates_[5];
 }
 
 void Player::BehaviorAttackUpdate(){
@@ -742,19 +736,19 @@ void Player::BehaviorAttackUpdate(){
 				BehaviorAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 2) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				BehaviorSecondAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 3) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				BehaviorThirdAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 4) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				BehaviorFourthAttackInitialize();
 			}
 			else if (workAttack_.comboIndex == 5) {
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 
 				BehaviorFifthAttackInitialize();
 			}
@@ -777,7 +771,7 @@ void Player::BehaviorAttackUpdate(){
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
 				}
-				if (input_->GetIsPushedLStick() and (workAttack_.attackParameter * 4.0f >= ((float)(workAttack_.nextAttackTimer) / motionSpeed_))) {
+				if (input_->GetIsPushedLStick() and (workAttack_.attackParameter * kAttackParameterCorection_ >= ((float)(workAttack_.nextAttackTimer) / motionSpeed_))) {
 					behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
@@ -988,7 +982,7 @@ void Player::BehaviorStrongAttackUpdate(){
 
 void Player::BehaviorDashInitialize(){
 	isAvoidAttack_ = false;
-	audio_->PlayAudio(avoidSE_, 0.5f, false);
+	audio_->PlayAudio(avoidSE_, seVolume_, false);
 
 	workDash_.dashParameter_ = 0;
 
@@ -1020,9 +1014,7 @@ void Player::BehaviorJustAvoidInitialize(){
 	/*武器や攻撃関連の初期化*/
 	/*剣を引いて突くような動作*/
 	workAttack_.attackParameter = 0;
-	weaponTransform_.rotate.x = 1.57f;
-	weaponTransform_.rotate.y = 0.0f;
-	weaponTransform_.rotate.z = 0.0f;
+	weaponTransform_.rotate = justAvoidWeaponRotate_;
 	weaponTransform_.translate = playerTransform_.translate;
 	weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
@@ -1031,7 +1023,7 @@ void Player::BehaviorJustAvoidInitialize(){
 	hitRecord_.Clear();
 	workAttack_.AttackTimer = 0;
 	easeT_ = 1.0f;
-	addEaseT_ = 0.04f;
+	addEaseT_ = addEaseSpeed_;
 	waitTime_ = waitTimeBase_;
 	addPosition_.y = 0.0f;
 	trail_->Reset();
@@ -1053,18 +1045,7 @@ void Player::BehaviorDashUpdate(){
 	//ジャスト回避していたら追撃ができるように
 	if (isJustAvoid_) {
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-			//isAvoidAttack_ = true;
-			/*Vector3 lockOnPos = lockOn_->GetTargetPosition();
-			Vector3 sub = lockOnPos - playerTransform_.translate;
-			sub.y = 0;
-			Vector3 subNorm = Vector3::Normalize(sub);
-			postureVec_ = subNorm;
-
-			Matrix4x4 directionTodirection_;
-			directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-			playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
-			move_ = subNorm * dashSpeed_;
-			move_.y = 0;*/
+			
 
 			behaviorRequest_ = Behavior::kJustAvoid;
 			dashCoolTime_ = dashCoolTimeBase_;
@@ -1100,40 +1081,36 @@ void Player::BehaviorJustAvoidUpdate(){
 	frontVec_ = postureVec_;
 	if (!isAvoidAttack_){
 
-		if (!isThrust_){
-			
-
-			easeT_ -= (addEaseT_ / 2.0f) ;
+		if (!isThrust_){	
+			easeT_ -= (addEaseT_ * justAvoidEaseMagnification_.x) ;
 			if (easeT_ < 0.0f) {
 				easeT_ = 0.0f;
 				isThrust_ = true;
 			}
-
-			weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInBack, 1.5f, 0.0f, easeT_);
-			weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 4.0f, easeT_);
+			
 		}
 		else {
 			
-			easeT_ += (addEaseT_ * 4.0f);
+			easeT_ += (addEaseT_ * justAvoidEaseMagnification_.y);
 			if (easeT_ > 1.0f) {
 				GameTime::ReverseTimeChange();
 				easeT_ = 1.0f;
 				waitTime_ -= 1;
 				addEaseT_ = 0.0f;
-				audio_->PlayAudio(attackMotionSE_, 0.5f, false);
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				justAvoidAttackTimer_ = 0;
 				isJustAvoid_ = false;
 				isAvoidAttack_ = true;
 			}
 
-			weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInExpo, 1.5f, 0.0f, easeT_);
-			weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInExpo, 0.0f, 4.0f, easeT_);
 		}
 		
+		weapon_offset_Base_.x = Ease::Easing(Ease::EaseName::EaseInExpo, justAvoidEaseStart_.x, justAvoidEaseEnd_.x, easeT_);
+		weapon_offset_Base_.y = Ease::Easing(Ease::EaseName::EaseInExpo, justAvoidEaseStart_.y, justAvoidEaseEnd_.y, easeT_);
 		
 	}
 	else {
-		weaponCollisionTransform_.scale = { 0.9f,3.0f,0.9f };
+		weaponCollisionTransform_.scale = kWeaponCollisionBase_;
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - playerTransform_.translate;
 
@@ -1176,16 +1153,7 @@ void Player::BehaviorJustAvoidUpdate(){
 	weaponCollisionTransform_.translate.y += (addPosition_.y + 1.0f);
 
 	weaponTransform_.translate = weaponCollisionTransform_.translate;
-	
-	/*audio_->PlayAudio(attackMotionSE_, 0.5f, false);
-	workAttack_.comboIndex = 1;
-	behaviorRequest_ = Behavior::kAttack;
-	isDissolve_ = false;
-	dashCoolTime_ = dashCoolTimeBase_;
-	isDash_ = false;
-	weaponThreshold_ = 0.0f;*/
-
-	
+		
 }
 
 void Player::AttackMotion(){

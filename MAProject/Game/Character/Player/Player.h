@@ -175,6 +175,7 @@ public:
 		float AttackTimer = 0;
 		float nextAttackTimer = 0;
 	};
+	const float kAttackParameterCorection_ = 4.0f;
 
 	WorkAttack workAttack_;
 
@@ -186,6 +187,10 @@ public:
 
 	//コンボの数
 	static const int conboNum_ = 6;
+
+	
+
+	std::array<Vector3, conboNum_> nextAttackRotates_;
 
 private:
 	//弱行動共通の初期化
@@ -327,8 +332,6 @@ private:
 	//ジャスト回避用のOBB
 	OBB justAvoidOBB_{};
 
-
-
 	//武器のOBB
 	OBB weaponOBB_{};
 
@@ -395,6 +398,14 @@ private:
 	float justAvoidSlowTime_ = 10.0f;
 
 	float slowTimeScale_ = 0.2f;
+	//引きと押し
+	Vector2 justAvoidEaseMagnification_ = { 0.5f,4.0f };
+
+	Vector2 justAvoidEaseStart_ = { 1.5f,0.0f };
+
+	Vector2 justAvoidEaseEnd_ = { 0.0f,4.0f };
+
+	Vector3 justAvoidWeaponRotate_ = { 1.57f,0.0f,0.0f };
 
 	//////*攻撃に関連するもの*///////
 	//ヒットストップの時間
@@ -405,8 +416,20 @@ private:
 
 	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
 
-	//武器の回転
+	//加算する武器の回転
 	float weapon_Rotate_ = 0.0f;
+
+	std::array<Vector3, conboNum_> weaponAttackTransformRotates_ = { {
+		{0.0f,0.0f,-0.5f},{-0.3f,0.0f,2.0f},{-0.3f,0.0f,-1.7f},{0.0f,0.0f,-2.2f},{-0.3f,0.0f,2.5f},{-0.3f,0.0f,-0.0f}
+		}
+	};
+
+	std::array<float, conboNum_> weapon_Rotates_ = { 
+		-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f
+	};
+
+	
+
 	float arm_Rotate_ = -3.15f;
 	//武器開店に関連する変数
 	Vector3 weapon_offset_{};
@@ -437,6 +460,11 @@ private:
 	//カウンター時の判定の大きさ
 	Vector3 counterScale_{};
 
+	//次の攻撃に映るまでの時間
+	//初回
+	float nextAttackTimerFirst_ = 21.0f;
+	//それ以外
+	float nextAttackTimer_ = 28.0f;
 
 	//武器の高さ補正
 	Vector3 addPosition_ = {};
@@ -450,6 +478,8 @@ private:
 	float easeT_ = 0.0f;
 
 	float addEaseT_ = 0.0f;
+
+	float addEaseSpeed_ = 0.04f;
 
 	float motionSpeed_ = 1.0f;
 

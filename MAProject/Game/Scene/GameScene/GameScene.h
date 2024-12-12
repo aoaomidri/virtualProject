@@ -88,7 +88,11 @@ private:
 	//テクスチャマネージャー
 	PostEffect* postEffect_ = nullptr;
 
-	std::unique_ptr<FollowCamera> followCamera_;	
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	Vector2 playerAttackShake_ = { 1.0f,3.0f };
+
+	Vector2 enemyAttackShake_ = { 0.5f,1.5f };
 	
 	//std::unique_ptr<ParticleBase> particle_;
 
@@ -141,6 +145,8 @@ private:
 
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
+
+	float seVolume_ = 0.3f;
 
 	bool isFade_ = false;
 

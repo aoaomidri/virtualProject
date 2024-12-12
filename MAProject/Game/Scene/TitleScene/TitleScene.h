@@ -100,9 +100,10 @@ private:
 
 	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
+	float fadeSpeed_ = 0.01f;
 	bool isFade_ = false;
 
-
+	Vector2 selectPosY_ = { 390.0f,550.0f };
 
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;

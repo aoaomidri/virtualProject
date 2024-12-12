@@ -42,6 +42,15 @@ void ResultScene::SpriteInitialize(){
 		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
 		timerTexs_[i]->position_ = { 500.0f,400.0f,0.0f };
 	}
+
+	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
+	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
+	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
+
+	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
+	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
+	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
+	timerTexs_[0]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutesTens());
 }
 
 void ResultScene::ObjectInitialize(){
@@ -87,14 +96,7 @@ void ResultScene::Finalize(){
 
 void ResultScene::Update(){
 
-	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
-	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
-	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
-
-	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
-	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
-	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
-	timerTexs_[0]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutesTens());
+	
 
 
 	followCamera_->Update();

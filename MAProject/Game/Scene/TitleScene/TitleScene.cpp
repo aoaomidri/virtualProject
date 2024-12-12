@@ -177,10 +177,10 @@ void TitleScene::Update() {
 			backSprite_->isDraw_ = false;
 		}
 		if (isStart_ == false) {
-			selectSprite_->position_.y = 550.0f;
+			selectSprite_->position_.y = selectPosY_.y;
 		}
 		else {
-			selectSprite_->position_.y = 390.0f;
+			selectSprite_->position_.y = selectPosY_.x;
 		}
 
 		if (controlSprite_->isDraw_ == true) {
@@ -202,10 +202,10 @@ void TitleScene::Update() {
 
 	}
 	if (isFade_) {
-		fadeAlpha_ += 0.01f;
+		fadeAlpha_ += fadeSpeed_;
 	}
 	else {
-		fadeAlpha_ -= 0.01f;
+		fadeAlpha_ -= fadeSpeed_;
 	}
 	if (fadeAlpha_ >= 1.0f && isFade_) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Game);

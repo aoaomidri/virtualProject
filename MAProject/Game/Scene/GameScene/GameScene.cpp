@@ -61,6 +61,9 @@ void GameScene::SpriteInitialize(){
 		textureHandle = textureManager_->Load("resources/texture/number/number.png");
 		timerTexs_[i]->Initialize(textureHandle);
 	}
+	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
+	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
+	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
 }
 
@@ -165,11 +168,6 @@ void GameScene::Update(){
 
 	TimeTexUpdate();
 
-	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
-	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
-	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
-
-	
 	
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
@@ -197,13 +195,7 @@ void GameScene::Update(){
 		enemyManager_->SetTimeScale(GameTime::timeScale_);
 		enemyManager_->Update();
 	}
-	/*if (player_->GetIsJustAvoid()){
-		
-		postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
-	}
-	else if (postEffect_->GetEffectType() != PostEffect::EffectType::None and player_->GetHitTimer() == 0 ) {
-		postEffect_->SetPostEffect(PostEffect::EffectType::None);
-	}*/
+	
 		
 
 	if (input_->Trigerkey(DIK_C) && input_->Trigerkey(DIK_L)) {
@@ -388,7 +380,7 @@ void GameScene::AllCollision(){
 				//ノックバックの種類を指定
 				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
 				//ヒット音の再生
-				audio_->PlayAudio(enemyHitSE_, 0.3f, false);
+				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//当たったときの処理
 				enemy->OnCollisionGuard();
 				
@@ -408,12 +400,12 @@ void GameScene::AllCollision(){
 				//接触履歴に登録
 				player_->AddRecord(serialNumber);
 				//ヒット音の再生
-				audio_->PlayAudio(enemyHitSE_, 0.3f, false);
+				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//ヒットストップ
 				GameTime::StopTime(player_->GetHitStop());
 				//当たったときの処理
 				if (player_->ChackStrongBack()){
-					followCamera_->StartShake(1.0f, 3.0f);
+					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
 					enemy->OnCollisionStrong();
 				}
 				else {
@@ -443,7 +435,7 @@ void GameScene::AllCollision(){
 			if (!player_->GetIsGuard()) {
 				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
 					GameTime::AddGameTime();
-					followCamera_->StartShake(0.5f, 1.5f);
+					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
 					player_->OnCollisionEnemyAttack();
 
 				}

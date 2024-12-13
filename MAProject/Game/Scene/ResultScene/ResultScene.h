@@ -63,6 +63,7 @@ private:
 	PostEffect* postEffect_ = nullptr;
 	//カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+	const Vector3 kFirstCameraPos_{ 0.0f,20.0f,0.0f };
 	//床
 	std::unique_ptr<FloorManager> floorManager_;
 

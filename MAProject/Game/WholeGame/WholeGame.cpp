@@ -28,7 +28,6 @@ void WholeGame::Initialize(){
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Title);
 
-
 	vignettingData_ = {
 		.scale = 16.0f,
 		.pow = 0.8f,
@@ -51,11 +50,8 @@ void WholeGame::Update(){
 
 	imguiManager_->Begin();
 	//ゲームの処理	
-
 	adjustment_item_->Update();
-
 	GameTime::Update();
-
 	sceneManager_->Update();
 	DrawImgui();
 

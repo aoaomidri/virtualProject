@@ -65,6 +65,46 @@ void TitleScene::SpriteInitialize() {
 	fadeSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/Black.png");
 	fadeSprite_->Initialize(textureHandle);
+
+
+	titleSprite_->position_ = { 640.0f,175.0f };
+	titleSprite_->scale_.x = 850.0f;
+	titleSprite_->scale_.y = 150.0f;
+	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
+	titleSprite_->color_ = { 0.529f, 0.808f, 0.922f,1.0f };
+
+	startSprite_->position_ = { 640.0f,390.0f };
+	startSprite_->anchorPoint_ = { 0.5f,0.5f };
+	startSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
+	startSprite_->isDraw_ = true;
+
+	selectSprite_->position_ = { 380.0f,390.0f };
+	selectSprite_->rotation_.z = -1.57f;
+	selectSprite_->anchorPoint_ = { 0.5f,0.5f };
+	selectSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+	selectSprite_->isDraw_ = true;
+
+	comboSprite_->position_ = { 640.0f,550.0f };
+	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
+	comboSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
+	comboSprite_->isDraw_ = true;
+
+	controlSprite_->position_ = { 640.0f,360.0f };
+	controlSprite_->anchorPoint_ = { 0.5f,0.5f };
+	controlSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	backSprite_->position_ = { 640.0f,360.0f };
+	backSprite_->anchorPoint_ = { 0.5f,0.5f };
+	backSprite_->scale_.x = 1280.0f;
+	backSprite_->scale_.y = 720.0f;
+	backSprite_->color_ = { 0.0f,0.0f,0.0f,0.85f };
+
+	fadeSprite_->position_ = { 640.0f,360.0f };
+	fadeSprite_->scale_.x = 1280.0f;
+	fadeSprite_->scale_.y = 720.0f;
+	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
+	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
+
 }
 
 void TitleScene::ObjectInitialize() {
@@ -111,44 +151,6 @@ void TitleScene::Initialize() {
 	followCamera_->Initialize();
 	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));
 
-	titleSprite_->position_ = { 640.0f,175.0f };
-	titleSprite_->scale_.x = 850.0f;
-	titleSprite_->scale_.y = 150.0f;
-	titleSprite_->anchorPoint_ = { 0.5f,0.5f };
-	titleSprite_->color_ = { 0.529f, 0.808f, 0.922f,1.0f };
-
-	startSprite_->position_ = { 640.0f,390.0f };
-	startSprite_->anchorPoint_ = { 0.5f,0.5f };
-	startSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
-	startSprite_->isDraw_ = true;
-
-	selectSprite_->position_ = { 380.0f,390.0f };
-	selectSprite_->rotation_.z = -1.57f;
-	selectSprite_->anchorPoint_ = { 0.5f,0.5f };
-	selectSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-	selectSprite_->isDraw_ = true;
-
-	comboSprite_->position_ = { 640.0f,550.0f };
-	comboSprite_->anchorPoint_ = { 0.5f,0.5f };
-	comboSprite_->color_ = { 0.3f,0.3f,0.3f,1.0f };
-	comboSprite_->isDraw_ = true;
-
-	controlSprite_->position_ = { 640.0f,360.0f };
-	controlSprite_->anchorPoint_ = { 0.5f,0.5f };
-	controlSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	backSprite_->position_ = { 640.0f,360.0f };
-	backSprite_->anchorPoint_ = { 0.5f,0.5f };
-	backSprite_->scale_.x = 1280.0f;
-	backSprite_->scale_.y = 720.0f;
-	backSprite_->color_ = { 0.0f,0.0f,0.0f,0.85f };
-
-	fadeSprite_->position_ = { 640.0f,360.0f };
-	fadeSprite_->scale_.x = 1280.0f;
-	fadeSprite_->scale_.y = 720.0f;
-	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
-	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
-
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
@@ -157,11 +159,10 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
-
+	//カメラの更新
 	followCamera_->Update();
-	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
-	//audio_->PauseWave(gameBGM);
 	followCamera_->SetIsMove(false);
+	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 
 	if (fadeAlpha_ <= 0.0f) {
 		//上下ボタンでアローの移動
@@ -181,7 +182,7 @@ void TitleScene::Update() {
 		else {
 			selectSprite_->position_.y = selectPosY_.x;
 		}
-		//説明から抜ける
+		//説明画面から抜ける
 		if (controlSprite_->isDraw_ == true) {
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
 				controlSprite_->isDraw_ = false;

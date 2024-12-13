@@ -89,7 +89,7 @@ void FollowCamera::Update(){
 		destinationAngleX_ = lockOnAngle_;
 	}
 	else {
-
+		//スティック操作でカメラを動かす
 		if (input_->GetConnectPad() && isMove_) {
 			cameraMove_ = { -input_->GetPadRStick().y * moveMagnification_,input_->GetPadRStick().x * moveMagnification_,0.0f };
 			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_.rotation_);
@@ -102,24 +102,22 @@ void FollowCamera::Update(){
 			}
 		}
 	}
-	
-	/*if (input_->GetConnectPad()) {*/
-		destinationAngleX_ += cameraMove_.x;
-		destinationAngleY_ += cameraMove_.y;
+	//回転を加算
+	destinationAngleX_ += cameraMove_.x;
+	destinationAngleY_ += cameraMove_.y;
 
-		//カメラの限度
-		if (destinationAngleX_ <= minRotate_) {
-			destinationAngleX_ = minRotate_;
-		}
-		else if (destinationAngleX_ >= maxRotate_) {
-			destinationAngleX_ = maxRotate_;
-		}
-		//回転角の補完
-		viewProjection_.rotation_.y =
-			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
-		viewProjection_.rotation_.x =
-			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
-	//}
+	//カメラの限度
+	if (destinationAngleX_ <= minRotate_) {
+		destinationAngleX_ = minRotate_;
+	}
+	else if (destinationAngleX_ >= maxRotate_) {
+		destinationAngleX_ = maxRotate_;
+	}
+	//回転角の補完
+	viewProjection_.rotation_.y =
+		Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
+	viewProjection_.rotation_.x =
+		Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	rootOffset_ = { 0.0f, height_, distance_ };
 	//カメラシェイク
 	ShakeUpdate();

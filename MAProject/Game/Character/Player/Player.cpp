@@ -909,7 +909,6 @@ void Player::BehaviorStrongAttackUpdate(){
 			behaviorRequest_ = Behavior::kRoot;
 			workAttack_.attackParameter = 0;
 		}	
-
 	}
 
 	//各強攻撃の更新
@@ -1592,7 +1591,6 @@ void Player::StrongAttackMotion(){
 			else {
 				counterScale_ = kWeaponCollisionBase_;
 			}
-			//addPosition_.y = 0.5f;
 		}
 
 	}

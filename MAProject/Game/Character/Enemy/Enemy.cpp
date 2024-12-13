@@ -327,7 +327,7 @@ void Enemy::MotionUpdate(){
 
 	/*敵の移動*/
 	Vector3 NowPos = transform_.translate;
-
+	//移動の制限
 	if (NowPos.x >= limitPos_.x or NowPos.x <= limitPos_.y) {
 		if (NowPos.x > 0){
 			transform_.translate.x = positionCoordinate_;
@@ -398,7 +398,7 @@ void Enemy::RootMotion(){
 	move.y = 0;
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
-
+	//移動の制限
 	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 		move_.x = 0;
 	}
@@ -477,7 +477,7 @@ void Enemy::EnemyRun(){
 	move.y = 0;
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
-
+	//移動の制限
 	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 		move_.x = 0;
 	}
@@ -592,7 +592,7 @@ void Enemy::LeaningBack(){
 	move_.y = 0;
 	/*敵の移動*/
 	Vector3 NextPos = transform_.translate + move_;
-
+	//移動の制限
 	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 		move_.x = 0;
 	}
@@ -717,7 +717,7 @@ void Enemy::Tackle(){
 
 			/*敵の移動*/
 			Vector3 NextPos = transform_.translate + move_;
-
+			//移動の制限
 			if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
 				move_.x = 0;
 			}

@@ -60,9 +60,6 @@ void ResultScene::ObjectInitialize(){
 void ResultScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
-
-
-
 	textureManager_ = TextureManager::GetInstance();
 
 	postEffect_ = PostEffect::GetInstance();
@@ -83,7 +80,7 @@ void ResultScene::Initialize(){
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
-	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));	
+	followCamera_->SetPosition(kFirstCameraPos_);
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();

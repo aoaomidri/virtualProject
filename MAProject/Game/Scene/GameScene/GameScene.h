@@ -85,7 +85,7 @@ private:
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
-	//テクスチャマネージャー
+	//ポストエフェクト
 	PostEffect* postEffect_ = nullptr;
 
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -94,8 +94,6 @@ private:
 
 	Vector2 enemyAttackShake_ = { 0.5f,1.5f };
 	
-	//std::unique_ptr<ParticleBase> particle_;
-
 	std::unique_ptr<FloorManager> floorManager_;
 
 	EulerTransform firstFloor_ = {
@@ -109,8 +107,6 @@ private:
 	std::unique_ptr<Player> player_;
 	//敵
 	std::unique_ptr<EnemyManager> enemyManager_;
-
-
 
 	int chackCollision = 0;
 

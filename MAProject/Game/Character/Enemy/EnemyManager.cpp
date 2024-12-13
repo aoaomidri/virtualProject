@@ -3,48 +3,6 @@
 void EnemyManager::Initialize(){
 	RandomMaker* random = RandomMaker::GetInstance();
 
-	/*enemysPos_ = {
-		Vector3(0.0f,2.5f,20.0f),
-		Vector3(-5.0f,2.5f,25.0f),
-		Vector3(5.0f,2.5f,25.0f),
-		Vector3(-10.0f,2.5f,30.0f),
-		Vector3(0.0f,2.5f,30.0f),
-		Vector3(10.0f,2.5f,30.0f),
-		Vector3(-15.0f,2.5f,35.0f),
-		Vector3(-5.0f,2.5f,35.0f),
-		Vector3(5.0f,2.5f,35.0f),
-		Vector3(15.0f,2.5f,35.0f),
-		Vector3(0.0f,2.5f,-20.0f),
-		Vector3(-5.0f,2.5f,-25.0f),
-		Vector3(5.0f,2.5f,-25.0f),
-		Vector3(-10.0f,2.5f,-30.0f),
-		Vector3(0.0f,2.5f,-30.0f),
-		Vector3(10.0f,2.5f,-30.0f),
-		Vector3(-15.0f,2.5f,-35.0f),
-		Vector3(-5.0f,2.5f,-35.0f),
-		Vector3(5.0f,2.5f,-35.0f),
-		Vector3(15.0f,2.5f,-35.0f),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-		Vector3(random->Distribution(-50.0f,50.0f),2.5f,random->Distribution(-50.0f,50.0f)),
-	};*/
 
 	for (size_t i = 0; i < enemyNum_; i++){
 		enemysPos_[i] = Vector3(random->Distribution(-50.0f, 50.0f), 2.5f, random->Distribution(-50.0f, 50.0f));
@@ -61,6 +19,7 @@ void EnemyManager::Initialize(){
 }
 
 void EnemyManager::Update(){
+	//条件が合致したらリストから排除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->GetIsDead()) {
 			return true;

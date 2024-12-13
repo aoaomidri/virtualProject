@@ -74,7 +74,7 @@ void FollowCamera::Update(){
 	
 	ApplyGlobalVariables();
 
-
+	//ロックオンしている場合はターゲットに向くように
 	if (lockOn_ && lockOn_->target_) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - target_->translate;
@@ -105,25 +105,25 @@ void FollowCamera::Update(){
 		destinationAngleX_ += cameraMove_.x;
 		destinationAngleY_ += cameraMove_.y;
 
-
+		//カメラの限度
 		if (destinationAngleX_ <= minRotate_) {
 			destinationAngleX_ = minRotate_;
 		}
 		else if (destinationAngleX_ >= maxRotate_) {
 			destinationAngleX_ = maxRotate_;
 		}
-
+		//回転角の補完
 		viewProjection_.rotation_.y =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
 		viewProjection_.rotation_.x =
 			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
 	//}
 	rootOffset_ = { 0.0f, height_, distance_ };
-
+	//カメラシェイク
 	ShakeUpdate();
 
 	baseOffset_ = rootOffset_;
-
+	//カメラが外に行ってしまわないように簡単な補正
 	if (target_) {
 		//追従対象からカメラまでのオフセット
 		Vector3 offset = offsetCalculation(baseOffset_);
@@ -155,7 +155,7 @@ void FollowCamera::Update(){
 
 	}
 
-
+	//視錐台に値を代入
 	viewingFrustum_.translation_ = viewProjection_.translation_;
 	viewingFrustum_.rotate_ = viewProjection_.rotation_;
 	

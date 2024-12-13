@@ -516,6 +516,7 @@ void Player::BehaviorRootUpdate(){
 	move_.y = 0.0f;
 	
 	if (move_.x != 0.0f || move_.z != 0.0f) {
+		//移動ベクトルがあれば
 		postureVec_ = move_;
 		
 		Matrix4x4 directionTodirection_;
@@ -524,6 +525,7 @@ void Player::BehaviorRootUpdate(){
 		
 	}
 	else if(lockOn_&&lockOn_->ExistTarget()){
+		//対象がいれば注目する
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - playerTransform_.translate;
 		sub.y = 0;
@@ -558,12 +560,13 @@ void Player::BehaviorRootUpdate(){
 	if (dashCoolTime_ != 0) {
 		dashCoolTime_--;
 	}
-
+	/*武器の浮遊*/
 	floatSin_ += floatSpeed_ * timeScale_;
 	if (floatSin_ >= (std::numbers::pi * 2.0f)) {
 		floatSin_ = 0.0f;
 	}
 	playerTransform_.translate.y += downVector_.y * timeScale_;
+	//武器の消滅処理をしていなければ武器のSRTを更新
 	if (!isDissolve_ ) {
 
 		if (!isWeaponDebugFlug_) {
@@ -591,10 +594,11 @@ void Player::BehaviorRootUpdate(){
 	if (timeScale_ != 0.0f) {
 		trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 	}
+	//ダッシュを発動
 	if (input_->GetPadButtonTriger(Input::GamePad::RB) && dashCoolTime_ <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
-
+	//弱攻撃を発動
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		workAttack_.comboIndex = 1;
@@ -602,6 +606,7 @@ void Player::BehaviorRootUpdate(){
 		isDissolve_ = false;
 		weaponThreshold_ = 0.0f;
 	}
+	//強攻撃を発動
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
 		workAttack_.comboIndex = 1;
 		behaviorRequest_ = Behavior::kStrongAttack;
@@ -700,11 +705,12 @@ void Player::BehaviorSixthAttackInitialize(){
 
 void Player::BehaviorAttackUpdate(){
 	frontVec_ = postureVec_;
-
+	//技が終わったか
 	if (isEndAttack_) {
+		//次の攻撃を発動するか
 		if (workAttack_.comboNext) {
 			workAttack_.comboIndex++;
-
+			//攻撃の方向を決定
 			if (input_->GetPadLStick().x != 0 || input_->GetPadLStick().y != 0) {
 				postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
 				Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
@@ -730,6 +736,8 @@ void Player::BehaviorAttackUpdate(){
 
 
 			}
+			//各攻撃行動の初期化処理
+
 			PreBehaviorAttackInitialize();
 			if (workAttack_.comboIndex == 1) {
 				
@@ -759,18 +767,20 @@ void Player::BehaviorAttackUpdate(){
 			PostBehaviorAttackInitialize();
 		}
 		else {
-			
+			//強攻撃を行うか
 			if (workAttack_.strongComboNext) {
 				workAttack_.comboIndex++;
 				behaviorRequest_ = Behavior::kStrongAttack;
 			}
 			else {
 				workAttack_.attackParameter += timeScale_;
+				//通常状態に戻る処理
 				if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 					behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
 				}
+				//スティックを倒しているときは少しだけ早く抜けるように
 				if (input_->GetIsPushedLStick() and (workAttack_.attackParameter * kAttackParameterCorection_ >= ((float)(workAttack_.nextAttackTimer) / motionSpeed_))) {
 					behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
@@ -782,10 +792,11 @@ void Player::BehaviorAttackUpdate(){
 		
 	}
 	
-
+	//強攻撃に派生する場合はここで帰る
 	if (behaviorRequest_==Behavior::kStrongAttack){
 		return;
 	}
+	//各行動の処理
 	switch (workAttack_.comboIndex){
 	case 1:
 		AttackMotion();
@@ -825,7 +836,7 @@ void Player::BehaviorAttackUpdate(){
 
 	playerTransform_.translate.y += downVector_.y * timeScale_;
 	
-
+	//コリジョン用のtransform等を更新
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, playerRotateMatrix_);
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -835,6 +846,7 @@ void Player::BehaviorAttackUpdate(){
 	weaponTransform_.translate = weaponCollisionTransform_.translate;
 
 	if (workAttack_.comboIndex != 0) {
+		//トレイルのために少し早く情報を更新
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
@@ -856,7 +868,7 @@ void Player::BehaviorAllStrongAttackInitialize(){
 	chargeEnd_ = false;
 
 	weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
-
+	//攻撃方向の指定
 	if (input_->GetPadLStick().x != 0 || input_->GetPadLStick().y != 0) {
 		postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
 		Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
@@ -881,7 +893,7 @@ void Player::BehaviorAllStrongAttackInitialize(){
 		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
 
 	}
-
+	//各強攻撃の初期化
 	PreBehaviorStrongAttackInitialize();
 
 	if (workAttack_.comboIndex == 1) {
@@ -913,7 +925,7 @@ void Player::BehaviorAllStrongAttackInitialize(){
 
 void Player::BehaviorStrongAttackUpdate(){
 	frontVec_ = postureVec_;
-
+	//攻撃が終わったら通常状態へ
 	if (isEndAttack_) {
 		workAttack_.attackParameter += timeScale_;
 		if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
@@ -924,7 +936,7 @@ void Player::BehaviorStrongAttackUpdate(){
 
 	}
 
-
+	//各強攻撃の更新
 	switch (workAttack_.comboIndex) {
 	case 1:
 		StrongAttackMotion();
@@ -947,6 +959,7 @@ void Player::BehaviorStrongAttackUpdate(){
 	default:
 		break;
 	}
+	//SRT等情報を更新
 	downVector_.y += downSpeed_;
 	playerTransform_.translate.y += downVector_.y;
 	weaponTransform_.translate = playerTransform_.translate;
@@ -957,8 +970,9 @@ void Player::BehaviorStrongAttackUpdate(){
 	weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponCollisionRotateMatrix);
 	weaponCollisionTransform_.translate = playerTransform_.translate + weapon_offset_;
 	weaponCollisionTransform_.translate.y += addPosition_.y;
-
+	//バグって入ってしまった時対策
 	if (workAttack_.comboIndex != 0) {
+		//トレイルの更新
 		weaponCollisionTransform_.translate.y += 1.0f;
 		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
@@ -977,7 +991,7 @@ void Player::BehaviorStrongAttackUpdate(){
 			}
 		}
 	}
-
+	//ダッシュが入力されたら即中断
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
 		behaviorRequest_ = Behavior::kDash;
 	}
@@ -1086,6 +1100,7 @@ void Player::BehaviorJustAvoidUpdate(){
 	if (!isAvoidAttack_){
 
 		if (!isThrust_){	
+			//突く前の予備動作
 			easeT_ -= (addEaseT_ * justAvoidEaseMagnification_.x) ;
 			if (easeT_ < 0.0f) {
 				easeT_ = 0.0f;
@@ -1094,9 +1109,10 @@ void Player::BehaviorJustAvoidUpdate(){
 			
 		}
 		else {
-			
+			//突きのeaseの更新
 			easeT_ += (addEaseT_ * justAvoidEaseMagnification_.y);
 			if (easeT_ > 1.0f) {
+				//構え終わったら攻撃に移る
 				GameTime::ReverseTimeChange();
 				easeT_ = 1.0f;
 				waitTime_ -= 1;
@@ -1114,6 +1130,7 @@ void Player::BehaviorJustAvoidUpdate(){
 		
 	}
 	else {
+		//突き攻撃の動作処理
 		weaponCollisionTransform_.scale = kWeaponCollisionBase_;
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockOnPos - playerTransform_.translate;
@@ -1128,7 +1145,7 @@ void Player::BehaviorJustAvoidUpdate(){
 		}
 
 		workAvoidAttack_.tackleHitTimer_ += GameTime::deltaTime_;
-
+		//連続ヒットの調整
 		if (workAvoidAttack_.tackleHitTimer_ > workAvoidAttack_.tackleHitTimerBase_){
 			workAvoidAttack_.tackleHitTimer_ = 0.0f;
 			hitRecord_.Clear();
@@ -1144,7 +1161,7 @@ void Player::BehaviorJustAvoidUpdate(){
 			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
-
+	//座標や回転の更新
 	Matrix4x4 directionTodirection_;
 	directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
 	playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
@@ -1161,6 +1178,7 @@ void Player::BehaviorJustAvoidUpdate(){
 }
 
 void Player::AttackMotion(){
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[0].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[0].x * kAttackMagnification_;
@@ -1169,6 +1187,7 @@ void Player::AttackMotion(){
 		isShakeDown_ = true;
 	}
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1187,11 +1206,11 @@ void Player::AttackMotion(){
 		weaponTransform_.translate = playerTransform_.translate;
 		workAttack_.AttackTimer += timeScale_;
 	}
-
+	//動作が終わったら待機
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
@@ -1206,7 +1225,7 @@ void Player::AttackMotion(){
 }
 
 void Player::SecondAttackMotion(){	
-	
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[1].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[1].x;
@@ -1215,6 +1234,7 @@ void Player::SecondAttackMotion(){
 		isShakeDown_ = true;
 	}
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1237,7 +1257,7 @@ void Player::SecondAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_) ;
 	}
@@ -1253,7 +1273,7 @@ void Player::SecondAttackMotion(){
 }
 
 void Player::ThirdAttackMotion(){	
-	
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[2].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[2].x;
@@ -1262,6 +1282,7 @@ void Player::ThirdAttackMotion(){
 		isShakeDown_ = true;
 	}
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1284,7 +1305,7 @@ void Player::ThirdAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
@@ -1299,12 +1320,13 @@ void Player::ThirdAttackMotion(){
 }
 
 void Player::FourthAttackMotion(){
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[3].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[3].x;
-	}
-	
+	}	
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1327,7 +1349,7 @@ void Player::FourthAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
@@ -1342,6 +1364,7 @@ void Player::FourthAttackMotion(){
 }
 
 void Player::FifthAttackMotion(){
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[4].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[4].x;
@@ -1350,6 +1373,7 @@ void Player::FifthAttackMotion(){
 		isShakeDown_ = true;
 	}
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1372,7 +1396,7 @@ void Player::FifthAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
@@ -1388,6 +1412,7 @@ void Player::FifthAttackMotion(){
 }
 
 void Player::SixthAttackMotion(){
+	//振っている現在の角度で処理を変更
 	if (weapon_Rotate_ >= weapon_RotatesMinMax_[5].x) {
 		waitTime_ -= timeScale_;
 		weapon_Rotate_ = weapon_RotatesMinMax_[5].x;
@@ -1398,6 +1423,7 @@ void Player::SixthAttackMotion(){
 		isShakeDown_ = true;
 	}
 	else {
+		//攻撃時に移動
 		move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 		move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1420,7 +1446,7 @@ void Player::SixthAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//フラグによって振る方向を分岐
 	if (!isShakeDown_) {
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / (kAttackDivisionMagnification_ * kAttackMagnification_));
 	}
@@ -1570,11 +1596,14 @@ void Player::BehaviorSixthStrongAttackInitialize(){
 }
 
 void Player::StrongAttackMotion(){
+	
 	if (!chargeEnd_){
+		//長押ししている間は構え
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)){
 			isGuard_ = true;
 			weaponCollisionTransform_.scale = collsionScaleGuade_;
 		}
+		//ボタンを離すかガード中に攻撃がヒットした場合派生
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y) or isGuardHit_){
 			type_ = HitRecord::Strong;
 			isGuard_ = false;
@@ -1592,11 +1621,15 @@ void Player::StrongAttackMotion(){
 
 	}
 	else {
+		//攻撃動作
+		//限界まで振ったら終わり
 		if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[0].y) {
 			waitTime_ -= 1;
 			weapon_Rotate_ = weapon_StrongRotatesMinMax_[0].y;
 		}
 		else {
+
+			//移動
 			move_ = { 0.0f,0.0f,moveSpeed_ * kAttackMagnification_ };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1617,13 +1650,12 @@ void Player::StrongAttackMotion(){
 		
 		}
 
-		if (waitTime_ <= 0) {
-			
-			
+		if (waitTime_ <= 0) {		
 			isEndAttack_ = true;
 		}
 
 		if (isShakeDown_) {
+			//角度によってトレイルや当たり判定が働くように
 			if (weapon_Rotate_ < weapon_StrongRotatesMinMax_[0].x){
 				isTrail_ = false;
 				weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
@@ -1649,7 +1681,7 @@ void Player::StrongAttackMotion(){
 }
 
 void Player::SecondStrongAttackMotion(){
-
+	//突き攻撃
 	easeT_ += addEaseT_;
 	if (easeT_ > 1.0f) {
 		easeT_ = 1.0f;
@@ -1660,7 +1692,7 @@ void Player::SecondStrongAttackMotion(){
 	if (easeT_ == 1.0f) {
 		waitTime_ -= 1.0f;
 	}
-
+	//追加攻撃入力受付時間
 	if (easeT_ >= easeSecondStrong_){
 		if (strongSecondAttackCount_ < kStrongSecondAttackCountMax_) {
 
@@ -1671,6 +1703,7 @@ void Player::SecondStrongAttackMotion(){
 	}
 	
 	if (waitTime_ <= 0) {
+		//フラグがたっていたら追加攻撃
 		if (isNextAttack_ && !isEndAttack_) {
 			waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
 			easeT_ = 0;
@@ -1690,12 +1723,16 @@ void Player::SecondStrongAttackMotion(){
 }
 
 void Player::ThirdStrongAttackMotion(){
+	//シンプルな縦振り
+	//限度によって行う処理を変更
 	if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[2].y) {
+		//振り切った後
 		waitTime_ -= 1;
 		weapon_Rotate_ = 1.35f;
 		SettingGroundCrushTex();
 	}
 	else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[2].x) {
+		//振りかぶった後
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		isShakeDown_ = true;
 		isTrail_ = true;
@@ -1705,7 +1742,7 @@ void Player::ThirdStrongAttackMotion(){
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//振り下ろしているかどうかで処理を変更
 	if (!isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3();
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kGuadeMagnification_);
@@ -1721,25 +1758,26 @@ void Player::ThirdStrongAttackMotion(){
 }
 
 void Player::FourthStrongAttackMotion(){
+	//斬りはらって後退
+	//限度によって行う処理を変更
 	if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[3].y) {
+		//振り切った後
 		waitTime_ -= 1;
 		weapon_Rotate_ = weapon_StrongRotatesMinMax_[3].y;
-
 		
 	}
 	else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[3].x) {
+		//振りかぶったあと
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		isShakeDown_ = true;
 		downVector_.y += jumpPower_ / kStrongAttackMagnification_;
 	}
-	else {
-		
-	}
+	
 
 	if (waitTime_ <= 0) {
 		isEndAttack_ = true;
 	}
-
+	//振り下ろしているかどうかで処理を変更
 	if (!isShakeDown_) {
 		weaponCollisionTransform_.scale = Vector3();
 		weapon_Rotate_ -= (kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
@@ -1749,7 +1787,7 @@ void Player::FourthStrongAttackMotion(){
 		weapon_Rotate_ += kMoveWeaponShakeDown_ * kStrongAttackMagnification_ * motionSpeed_;
 
 		if (downVector_.y != 0.0f) {
-			
+			//後退処理
 			move_ = { 0.0f,0.0f,-(moveSpeed_ * kStrongAttackMagnification_) };
 			move_ = Matrix::TransformNormal(move_, playerRotateMatrix_);
 
@@ -1777,8 +1815,12 @@ void Player::FourthStrongAttackMotion(){
 }
 
 void Player::FifthStrongAttackMotion(){
+	//ボタン連打で連続切り、後にフィニッシュ攻撃
+
 	if (!isFinishAttack_){	
+		//連続切り
 		if (isFirstAttack_){
+			//一段目
 			if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
 				waitTime_ -= 1;
 				weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
@@ -1789,7 +1831,7 @@ void Player::FifthStrongAttackMotion(){
 				isTrail_ = true;
 			}
 
-
+			//攻撃が終わったら二段目に派生
 			if (waitTime_ <= 0) {
 				isFirstAttack_ = false;
 				waitTime_ = waitTimeBase_;
@@ -1806,7 +1848,7 @@ void Player::FifthStrongAttackMotion(){
 			}
 		}
 		else {
-		
+			//二段目
 			if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[5].y) {
 				waitTime_ -= 1;
 				weapon_Rotate_ = weapon_StrongRotatesMinMax_[5].y;
@@ -1818,12 +1860,15 @@ void Player::FifthStrongAttackMotion(){
 			}
 
 			if (!isNextAttack_) {			
+				//ボタンを押したら連続攻撃を継続
 				if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
 					isNextAttack_ = true;
 				}			
 			}
 			if (waitTime_ <= 0) {
+				//攻撃が終わったときにフラグによってとる行動を分岐
 				if (isNextAttack_){
+					//一段目に戻り連続攻撃を継続
 					isNextAttack_ = false;
 					isFirstAttack_ = true;
 					waitTime_ = waitTimeBase_;
@@ -1832,6 +1877,7 @@ void Player::FifthStrongAttackMotion(){
 					audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				}
 				else {
+					//連続攻撃をやめ、フィニッシュ攻撃を行う
 					waitTime_ = waitTimeBase_;
 					weaponTransform_.rotate.z = -weapon_StrongRotatesMinMax_[4].x;
 					weapon_Rotate_ = -0.0f;
@@ -1852,18 +1898,21 @@ void Player::FifthStrongAttackMotion(){
 		}
 	}
 	else {
+		//フィニッシュ攻撃
 		if (weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
+			//振り切った後
 			waitTime_ -= 1;
 			weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
 			SettingGroundCrushTex();
 		}
 		else if (weapon_Rotate_ <= weapon_StrongRotatesMinMax_[4].x) {
+			//振りかぶった後
 			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 			isTrail_ = true;
 			isShakeDown_ = true;
 		}
 		
-
+		//一連行動終わり
 		if (waitTime_ <= 0) {
 			isEndAttack_ = true;
 		}
@@ -1885,8 +1934,12 @@ void Player::FifthStrongAttackMotion(){
 }
 
 void Player::SixthStrongAttackMotion(){
+	//ガード反撃
+	//構え中
 	if (!chargeEnd_) {
 		weaponCollisionTransform_.scale = Vector3();
+
+		//ガード
 		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)) {
 			isGuard_ = true;
 			weaponTransform_.rotate.x += 0.01f;
@@ -1894,6 +1947,7 @@ void Player::SixthStrongAttackMotion(){
 				weaponTransform_.rotate.x = strongSixthAttackRotate_;
 			}
 		}
+		//ボタンを離したら派生
 		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y)) {
 			isGuard_ = false;
 			chargeEnd_ = true;
@@ -1904,22 +1958,24 @@ void Player::SixthStrongAttackMotion(){
 
 	}
 	else {
+		//攻撃振り
 		weaponCollisionTransform_.scale = kWeaponCollisionBase_ * strongAddScale_;
 		easeT_ += addEaseT_;
 
 		if (easeT_ > 1.0f) {
+			//振り切った
 			easeT_ = 1.0f;
 			
 			addEaseT_ = 0.0f;
 			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 			SettingGroundCrushTex();
 		}
-
+		//最後まで行ったら待機
 		if (easeT_ == 1.0f) {
 			waitTime_ -= 1;
 		}
 		
-
+		//待機時間が終わったら終了
 		if (waitTime_ <= 0) {			
 			isEndAttack_ = true;
 		}

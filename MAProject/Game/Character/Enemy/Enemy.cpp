@@ -152,18 +152,19 @@ void Enemy::Initialize(const Vector3& position){
 
 void Enemy::Update(){
 	ApplyGlobalVariables();
+	//オブジェの内部の値をセット
 	bodyObj_->SetDissolve(threshold_);
 	partsObj_->SetDissolve(threshold_);
 
 	bodyObj_->SetColor(enemyColor_);
 	partsObj_->SetColor(enemyColor_);
-
+	//行動の更新
 	MotionUpdate();
-
+	//影の座標更新
 	shadow_->position_ = transform_.translate;
 	shadow_->position_.y = 1.11f;
 
-
+	//行列やobbの更新
 	collisionTransform_ = transform_;
 
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
@@ -353,7 +354,7 @@ void Enemy::MotionUpdate(){
 			transform_.translate.z = -positionCoordinate_;
 		}
 	}
-
+	//プレイヤーに顔を向けるように
 	Vector3 lockOnPos = target_->translate;
 	Vector3 sub = lockOnPos - transform_.translate;
 
@@ -402,6 +403,7 @@ void Enemy::BehaviorDeadInitialize(){
 
 
 void Enemy::RootMotion(){
+	//方向ベクトルの更新
 	frontVec_ = postureVec_;
 
 	Vector3 move = { moveSpeed_ * magnification_ ,0,0 };
@@ -420,7 +422,7 @@ void Enemy::RootMotion(){
 
 	transform_.translate += move * timeScale_;
 
-	
+	//ターゲットに顔を向ける
 	if (target_){
 		Vector3 lockOnPos = target_->translate;
 		Vector3 sub = lockOnPos - transform_.translate;
@@ -499,7 +501,7 @@ void Enemy::EnemyRun(){
 
 	transform_.translate += move * timeScale_;
 
-
+	//ターゲットに顔を向ける
 	if (target_) {
 		Vector3 lockOnPos = target_->translate;
 		Vector3 sub = lockOnPos - transform_.translate;
@@ -512,6 +514,7 @@ void Enemy::EnemyRun(){
 
 		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 	}
+	//一定距離近づいたら別の行動
 	if (playerLength_ < nearPlayer_) {
 		int i = 0;
 		
@@ -589,6 +592,7 @@ void Enemy::BehaviorLeaningBackInitialize(){
 }
 
 void Enemy::LeaningBack(){
+	//ヒットバックのタイプによって距離を分岐
 	if (type_ == HitRecord::Center || type_ == HitRecord::Strong) {
 		move_ = { 0, 0, backSpeed_ * strongHitBackSpeed_ };
 	}
@@ -610,7 +614,7 @@ void Enemy::LeaningBack(){
 		move_.z = 0;
 	}
 
-	
+	//重力系の処理
 	downVector_.y += downSpeed_ * timeScale_;
 		
 	transform_.translate.y += downVector_.y * timeScale_;
@@ -626,10 +630,10 @@ void Enemy::LeaningBack(){
 	if (rotateEaseT_ >= 1.0f) {
 		rotateEaseT_ = 1.0f;
 	}
-
+	//敵自体の回転をイージング
 	transform_.rotate.x = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.x, 0.0f, rotateEaseT_);
 	transform_.rotate.z = ease_.Easing(Ease::EaseName::EaseInBack, knockBackEaseStart_.z, 0.0f, rotateEaseT_);
-
+	//元の体勢かつ地面についていたら次の行動へ
 	if (rotateEaseT_ >= 1.0f && transform_.translate.y == kTranslateHeight_) {
 		bodyObj_->SetTexture(enemyTexPath_);
 		behaviorRequest_ = Behavior::kRoot;
@@ -638,6 +642,8 @@ void Enemy::LeaningBack(){
 }
 
 void Enemy::DeadMotion(){
+
+	//回転しながら吹っ飛ぶ動き
 	transform_.translate -= deadMove_ * timeScale_;
 	transform_.rotate.x += deadRotateSpeed_ * timeScale_;
 	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
@@ -647,7 +653,7 @@ void Enemy::DeadMotion(){
 	partsTransform_.translate = transform_.translate + parts_offset_;
 	
 	//partsTransform_.rotate.x += 0.3f;
-	
+	//ディゾルブを掛けて消滅完全に消えたら死亡フラグを立てる
 	if (threshold_ < 1.0f) {
 		threshold_ += thresholdSpeed_ * timeScale_;
 	}
@@ -703,6 +709,7 @@ void Enemy::AttackBehaviorTackleInitialize(){
 
 void Enemy::Tackle(){
 	frontVec_ = postureVec_;
+	//ターゲットに顔を向ける
 	if (target_) {
 		Vector3 lockOnPos = target_->translate;
 		Vector3 sub = lockOnPos - transform_.translate;
@@ -715,7 +722,7 @@ void Enemy::Tackle(){
 		rotateMatrix_ = Matrix::Multiply(rotateMatrix_, directionTodirection_);
 
 	}
-
+	//敵の色が真っ赤になったら突進開始
 	if (enemyColor_.y <= colorLimit_) {
 		if (attackTransitionTime_ <= 0) {
 			move_ = { 0, 0, dashSpeed_ };
@@ -746,7 +753,7 @@ void Enemy::Tackle(){
 		}		
 	}
 	else {
-		
+		//突進準備中
 		dashRotateMatrix_ = rotateMatrix_;
 
 		enemyColor_.y -= colorSpeed_ * timeScale_;

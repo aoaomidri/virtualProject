@@ -31,6 +31,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	}
 
 	if (target_){
+		//ロックオンしていたらの処理群
+
+		//解除する
 		if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_L)) {
 			target_ = nullptr;
 			isLockOn_ = false;
@@ -39,6 +42,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = nullptr;
 		}
 		else if (!autoLockOn_ && input->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_RIGHT) || input->Trigerkey(DIK_L)) {
+			//次の対象へ移る
 			++it_;
 			if (it_ == targets_.end()) {
 				it_ = targets_.begin();
@@ -50,24 +54,13 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		}
 	}	
 	else {
+		//ジャスト回避したときサーチする
 		if (isAvoid){
 			avoidSearch(enemies, viewprojection, serialNumber);
 		}
-
-		/*if (!autoLockOn_){
-			if (input->GetPadButtonTriger(XINPUT_GAMEPAD_LEFT_SHOULDER) || input->Trigerkey(DIK_L)) {
-				search(enemies, viewprojection, viewingFrustum);
-			}
-		}
-		else if(autoLockOn_){
-			if (isLockOn_){
-				search(enemies, viewprojection, viewingFrustum);
-			}
-			
-		}*/
 		
 	}
-
+	//レティクルの更新
 	if (target_){
 		lockOnTransfrom_.translate = target_->GetCenterPos();
 
@@ -137,6 +130,7 @@ void LockOn::avoidSearch(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	}
 	target_ = nullptr;
 	if (!targets_.empty()) {
+		//ナンバーと比較し一致していたらそいつをロックオンする
 		for (const std::unique_ptr<Enemy>& enemy : enemies) {
 			if (enemy->GetIsDead()) {
 				continue;

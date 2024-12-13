@@ -102,7 +102,7 @@ void ResultScene::Update(){
 	followCamera_->Update();
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 	followCamera_->SetIsMove(false);
-	
+	//ボタンを押したらタイトルに
 	if (input_->GetPadButtonTriger(Input::GamePad::A) || input_->GetPadButtonTriger(Input::GamePad::B)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Title);
 

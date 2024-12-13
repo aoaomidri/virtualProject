@@ -6,6 +6,7 @@ void HitRecord::AddRecord(uint32_t number){
 }
 
 bool HitRecord::RecordCheck(uint32_t number){
+	//同じものがいるか確認
 	return std::any_of(record_.begin(), record_.end(), [number](uint32_t value) {
 		return value == number;
 	});

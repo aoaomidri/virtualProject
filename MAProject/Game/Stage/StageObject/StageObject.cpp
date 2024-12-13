@@ -2,9 +2,9 @@
 
 void StageObject::Initialize(){}
 
-void StageObject::Draw(const ViewProjection& viewProjection){
+void StageObject::Draw(const ViewProjection& viewProjection) const{
 	const auto objs = LevelLoader::GetInstance()->GetStationaryObject();
-
+	//全オブジェを更新
 	for (size_t i = 0; i < objs.size(); i++){
 		objs[i]->SetIsLighting(true);
 		objs[i]->SetShininess(shininess_);

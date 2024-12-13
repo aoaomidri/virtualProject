@@ -130,10 +130,6 @@ private:
 	//プレイヤーの攻撃が当たったときのSE
 	uint32_t enemyHitSE_{};
 	
-
-	/*スカイボックス*/
-	std::unique_ptr<SkyBox> skyBox_;	
-
 	//スプライト関連
 
 	bool isReset_ = false;
@@ -143,12 +139,9 @@ private:
 
 	std::unique_ptr<Sprite> backSprite_;
 
-	std::unique_ptr<Sprite> fadeSprite_;
-	float fadeAlpha_ = 0.0f;
 
 	float seVolume_ = 0.3f;
 
-	bool isFade_ = false;
 
 	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
 

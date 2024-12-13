@@ -3,6 +3,7 @@
 
 #include <cassert>
 void GameScene::TextureLoad() {
+	//テクスチャ読み込み
 	textureManager_->Load("resources/texture/rock.png");
 	textureManager_->SetDissolveTex(textureManager_->Load("resources/texture/PostEffect/noise0.png"));
 	textureManager_->Load("resources/texture/uvChecker.png");
@@ -29,24 +30,19 @@ void GameScene::TextureLoad() {
 }
 
 void GameScene::SoundLoad(){
-	
+	//音源読み込み
 	enemyHitSE_ = audio_->LoadAudio("SE/enemyHitSE.mp3");
 
 }
 
 void GameScene::SpriteInitialize(){
+	//テクスチャの初期化
 	uint32_t textureHandle = 0;
 
-	//////ここから修正
 	backSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/Whitex64.png");
 	backSprite_->Initialize(textureHandle);
 	backSprite_->isDraw_ = false;
-
-
-	fadeSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/Black.png");
-	fadeSprite_->Initialize(textureHandle);
 
 	actionTextSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/actionText.png");
@@ -65,15 +61,30 @@ void GameScene::SpriteInitialize(){
 	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
 	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
+	backSprite_->position_ = { 640.0f,360.0f };
+	backSprite_->anchorPoint_ = { 0.5f,0.5f };
+	backSprite_->scale_.x = 1280.0f;
+	backSprite_->scale_.y = 720.0f;
+	backSprite_->color_ = { 0.0f,0.0f,0.0f,0.85f };
+
+	actionTextSprite_->position_ = { 1072.0f,500.0f };
+	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
+	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	attackSprite_->position_ = { 1072.0f,650.0f };
+	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
+	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	for (size_t i = 0; i < timerTexs_.size(); i++) {
+		timerTexs_[i]->scale_ = { 96.0f,96.0f };
+		timerTexs_[i]->anchorPoint_ = { 0.5f,0.5f };
+		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
+		timerTexs_[i]->position_ = { 500.0f,80.0f,0.0f };
+	}
+
 }
 
 void GameScene::ObjectInitialize() {
-	
-
-	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize("resources/DDS/rostock_laage_airport_4k.dds");
-
-	skyBox_->transform_.scale = { 1000.0f,1000.0f,1000.0f };
 
 	stageObject_->Initialize();
 
@@ -123,32 +134,7 @@ void GameScene::Initialize(){
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
 
-	backSprite_->position_ = { 640.0f,360.0f };
-	backSprite_->anchorPoint_ = { 0.5f,0.5f };
-	backSprite_->scale_.x = 1280.0f;
-	backSprite_->scale_.y = 720.0f;
-	backSprite_->color_ = {0.0f,0.0f,0.0f,0.85f };
-
-	actionTextSprite_->position_ = { 1072.0f,500.0f };
-	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
-	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	attackSprite_->position_ = { 1072.0f,650.0f };
-	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
-	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	fadeSprite_->position_ = { 640.0f,360.0f };
-	fadeSprite_->scale_.x = 1280.0f;
-	fadeSprite_->scale_.y = 720.0f;
-	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
-	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
-
-	for (size_t i = 0; i < timerTexs_.size(); i++){
-		timerTexs_[i]->scale_ = { 96.0f,96.0f };
-		timerTexs_[i]->anchorPoint_ = { 0.5f,0.5f };
-		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
-		timerTexs_[i]->position_ = { 500.0f,80.0f,0.0f };
-	}
+	
 
 	
 	lockOn_ = std::make_unique<LockOn>();
@@ -163,9 +149,9 @@ void GameScene::Initialize(){
 void GameScene::Update(){
 	bool frontFlag = false;
 	DrawImgui();
-
+	//インゲーム用の時間更新
 	GameTime::InGameUpdate();
-
+	//時間のテクスチャの更新
 	TimeTexUpdate();
 
 	
@@ -174,55 +160,33 @@ void GameScene::Update(){
 		
 	followCamera_->SetIsMove(true);		
 		
-	fadeAlpha_ -= 0.01f;
-	if (fadeAlpha_<=0.0f){
-			
-			
-		isFade_ = false;
-		fadeAlpha_ = 0.0f;
 
-		frontFlag = player_->GetIsJustAvoid();
-		player_->SetTimeScale(GameTime::timeScale_);
-		player_->Update();
-		lockOn_->Update(enemyManager_->GetEnemies(), followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
-
-		if (!player_->GetIsJustAvoid() and frontFlag){
-			lockOn_->TargetReset();
-		}
-		if (enemyManager_->GetEnemyNum() == 0) {
-			SceneManager::GetInstance()->ChangeScene(SceneName::Result);
-		}
-		enemyManager_->SetTimeScale(GameTime::timeScale_);
-		enemyManager_->Update();
+	frontFlag = player_->GetIsJustAvoid();
+	player_->SetTimeScale(GameTime::timeScale_);
+	player_->Update();
+	lockOn_->Update(enemyManager_->GetEnemies(), followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
+	//フラグが切れた瞬間だけリセットする
+	if (!player_->GetIsJustAvoid() and frontFlag){
+		lockOn_->TargetReset();
 	}
+	//現状は倒しきったら遷移
+	if (enemyManager_->GetEnemyNum() == 0) {
+		SceneManager::GetInstance()->ChangeScene(SceneName::Result);
+	}
+	enemyManager_->SetTimeScale(GameTime::timeScale_);
+	enemyManager_->Update();
 	
-		
-
-	if (input_->Trigerkey(DIK_C) && input_->Trigerkey(DIK_L)) {
-
-	}
 #ifdef _DEBUG
-
+	//再読み込み
 	if (input_->Trigerkey(DIK_R)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
 	}
 
 #endif // _DEBUG	
 	
-
 	AllCollision();
 
-
 	floorManager_->Update();
-	fadeSprite_->color_.w = fadeAlpha_;
-	
-
-	if (fadeAlpha_>=1.0f){
-		fadeAlpha_ = 1.0f;
-	}
-	else if (fadeAlpha_ <= 0.0f) {
-		fadeAlpha_ = 0.0f;
-	}
 }
 
 void GameScene::Debug(){
@@ -285,7 +249,6 @@ void GameScene::Draw2D(){
 	///*ここから下に描画処理を書き込む*/
 	actionTextSprite_->Draw();
 	attackSprite_->Draw();
-	fadeSprite_->Draw();
 
 	for (size_t i = 0; i < timerTexs_.size(); i++){
 		timerTexs_[i]->Draw();
@@ -333,6 +296,7 @@ void GameScene::DrawImgui(){
 }
 
 void GameScene::TimeTexUpdate(){
+	//分と秒を描画するための更新
 	timerTexs_[3]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsOnes());
 	timerTexs_[2]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetSecondsTens());
 	timerTexs_[1]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutes());
@@ -342,6 +306,7 @@ void GameScene::TimeTexUpdate(){
 
 
 void GameScene::AllCollision(){
+	//床の当たり判定
 	for (const auto& floor : floorManager_->GetFloors()) {
 		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
 			chackCollision = 1;
@@ -354,27 +319,27 @@ void GameScene::AllCollision(){
 			player_->SetIsDown(true);
 		}
 	}
-
+	//敵との当たり判定
 	for (const auto& enemy : enemyManager_->GetEnemies()) {
 		uint32_t serialNumber = enemy->GetSerialNumber();
+		//敵がカメラに写っているか
 		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
 			enemy->SetIsOnScreen(true);
 		}
 		else {
 			enemy->SetIsOnScreen(false);
 		}
-
+		//敵が映っていなかったらこの後は処理しない
 		if (!enemy->GetIsOnScreen()) {
 			continue;
 		} 
-
+		//ガード判定と敵の攻撃判定との処理
 		if (player_->GetIsGuard()){
 			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
 				
 				if (player_->RecordCheck(serialNumber)) {
 					return;
 				}
-
 				
 				player_->OnCollisionEnemyAttack();
 				//ノックバックの種類を指定
@@ -386,7 +351,7 @@ void GameScene::AllCollision(){
 				
 			}
 		}
-		
+		//武器の判定と敵の体の判定との処理
 		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
 			if (player_->RecordCheck(serialNumber)) {
 				return;
@@ -416,7 +381,7 @@ void GameScene::AllCollision(){
 			}
 		}
 		
-
+		//プレイヤー自身と敵の体の判定
 		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
 			player_->SetCollisionEnemy(true);
 			break;
@@ -424,7 +389,7 @@ void GameScene::AllCollision(){
 		else {
 			player_->SetCollisionEnemy(false);
 		}
-
+		//回避と敵の攻撃との判定
 		if (player_->GetIsDash()){
 			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
 				
@@ -433,6 +398,7 @@ void GameScene::AllCollision(){
 		}
 		else {
 			if (!player_->GetIsGuard()) {
+				//ガードをしていなかったら敵の攻撃とプレイヤーとの判定
 				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
 					GameTime::AddGameTime();
 					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);

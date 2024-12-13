@@ -18,7 +18,7 @@ void Floor::Initialize(EulerTransform transform){
 }
 
 void Floor::Update(){
-	
+	//obbの設定
 	floorOBB_.center = floorTransform_.translate;
 	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);

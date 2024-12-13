@@ -162,10 +162,9 @@ void TitleScene::Update() {
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 	//audio_->PauseWave(gameBGM);
 	followCamera_->SetIsMove(false);
-	
-
 
 	if (fadeAlpha_ <= 0.0f) {
+		//上下ボタンでアローの移動
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_UP) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_DOWN)) {
 			if (isStart_ == false) {
 				isStart_ = true;
@@ -182,7 +181,7 @@ void TitleScene::Update() {
 		else {
 			selectSprite_->position_.y = selectPosY_.x;
 		}
-
+		//説明から抜ける
 		if (controlSprite_->isDraw_ == true) {
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
 				controlSprite_->isDraw_ = false;

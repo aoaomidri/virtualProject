@@ -8,7 +8,7 @@ public:
 	//初期化
 	void Initialize();
 	//描画処理
-	void Draw(const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection) const;
 private:
 	float shininess_ = 2.0f;
 };

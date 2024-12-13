@@ -1,4 +1,5 @@
 [![DebugBuild](https://github.com/aoaomidri/virtualProject/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/aoaomidri/virtualProject/actions/workflows/DebugBuild.yml)
+
 [![ReleaseBuild](https://github.com/aoaomidri/virtualProject/actions/workflows/ReleaseBuild.yml/badge.svg)](https://github.com/aoaomidri/virtualProject/actions/workflows/ReleaseBuild.yml)
 # エンジン
 ## 概要

@@ -10,13 +10,13 @@ void TrailEffect::Initialize(int bufferSize, const std::string& texturePath){
     maxSegment_ = bufferSize;
 	posArray_.resize(bufferSize);
     if (divisionNumber_ > 0) {
-        max_ = bufferSize * 2 * (int)(divisionNumber_ * 1.5f);
+        max_ = bufferSize * addBuffer_ * (int)(divisionNumber_ * addDivision_);
     }
     else {
-        max_ = bufferSize * 2;
+        max_ = bufferSize * addBuffer_;
     }
    
-    indexCount_ = (max_) * 3;
+    indexCount_ = (max_) * addIndexCount_;
     textureHandle_ = TextureManager::GetInstance()->Load(texturePath);
     vertex_.resize(max_);
     indices_.resize(indexCount_);

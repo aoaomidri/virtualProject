@@ -142,5 +142,11 @@ private:
 
 	//利用しているバッファの数
 	size_t bufferSize_ = 0;
+
+	const int32_t addBuffer_ = 2;
+
+	const int32_t addIndexCount_ = 3;
+
+	const float addDivision_ = 1.5f;
 };
 

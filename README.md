@@ -1,3 +1,4 @@
+[![DebugBuild](https://github.com/aoaomidri/virtualProject/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/aoaomidri/virtualProject/actions/workflows/DebugBuild.yml)
 # エンジン
 ## 概要
 ### 環境はDirectX12、言語はC++で制作をしています。  

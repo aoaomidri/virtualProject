@@ -115,22 +115,12 @@ void Player::Initialize(){
 	particleTrans_ = playerTransform_;
 	particleTransCenter_ = playerTransform_;
 
-	weaponTransform_ = {
-		.scale = {0.15f,0.15f,0.15f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.0f,0.0f}
-	};
-
-	weaponCollisionTransform_ = {
-		.scale = {0.9f,3.0f,0.9f},
-		.rotate = {0.0f,0.0f,0.0f},
-		.translate = {0.0f,0.8f,0.0f}
-	};
+	weaponTransform_.scale = kWeaponScale_;
+	weaponCollisionTransform_.scale = kWeaponCollisionBase_;
 
 	dashCoolTime_ = dashCoolTimeBase_;
 
 	playerRotateMatrix_ = Matrix::MakeIdentity4x4();
-
 
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
@@ -168,6 +158,7 @@ void Player::Update(){
 	if (isDissolve_){
 		weaponThreshold_ += addThresholdSpeed_ * timeScale_;
 		if (weaponThreshold_ > 1.0f) {
+			//完全に消えたら
 			weaponThreshold_ = 1.0f;
 			addPosition_.y = 0.0f;
 			trail_->Reset();
@@ -175,9 +166,9 @@ void Player::Update(){
 		}
 	}
 	else {
+		//徐々に元に戻す
 		weaponThreshold_ -= minusThresholdSpeed_;
-		if (weaponThreshold_ < 0.0f) {
-			
+		if (weaponThreshold_ < 0.0f) {			
 			weaponThreshold_ = 0.0f;
 		}		
 	}
@@ -301,30 +292,24 @@ void Player::Update(){
 	playerScaleMatrix_ = Matrix::MakeScaleMatrix(playerTransform_.scale);
 	playerTransformMatrix_ = Matrix::MakeTranslateMatrix(playerTransform_.translate);
 
-	
+	//プレイヤーのobbの更新
 	playerOBB_.center = playerTransform_.translate + obbPoint_;
-
 	playerOBB_.size = playerTransform_.scale + obbAddScale_;
-
 	SetOridentatios(playerOBB_, playerRotateMatrix_);
-
+	//回避用のobbの更新
 	justAvoidOBB_ = playerOBB_;
-
 	justAvoidObbScale_ = { scaleValue_,scaleValue_,scaleValue_ };
-
 	justAvoidOBB_.size = playerOBB_.size + justAvoidObbScale_;
-
-	
+	//武器のobbの更新
 	weaponOBB_.center = weaponCollisionTransform_.translate;
 	weaponOBB_.size = weaponCollisionTransform_.scale;
 	Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
-
+	//プレイヤー行列更新
 	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
-
+	//当たり描画用の行列更新
 	playerOBBScaleMatrix_.MakeScaleMatrix(playerOBB_.size);
 	playerOBBTransformMatrix_.MakeTranslateMatrix(playerOBB_.center);
-
 	playerOBBMatrix_ = Matrix::MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTransformMatrix_);
 	/*通常時かそれ以外かで武器の行列の処理を変更*/
 	if (behavior_ != Behavior::kRoot) {
@@ -333,28 +318,19 @@ void Player::Update(){
 			weaponRotateVec *= (playerRotateMatrix_);
 			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
 		}
-		
-		
 	}
 	else {
-		//Matrix4x4 scaleinverse = Matrix::Multiply(debugMatrix_[rightHandNumber_].ScaleInverce(), debugMatrix_[rightHandNumber_]);
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 		if (!isDissolve_) {
 			weaponRotateVec *= (playerRotateMatrix_);
 			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
 		}
-		
-		//weaponMatrix_ = Matrix::Multiply(weaponMatrix_,playerRotateMatrix_);
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
-
-
 	//トレイルの更新処理
 	if (timeScale_ != 0.0f){
 		trail_->Update();
 	}
-	
-
 	
 }
 

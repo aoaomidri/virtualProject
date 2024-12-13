@@ -79,13 +79,11 @@ private:
 	//音関係
 	Audio* audio_ = nullptr;
 
-
 	//スプライト関連
 	//クリア
 	std::unique_ptr<Sprite> clearSprite_;
 	//プレス
 	std::unique_ptr<Sprite> pressSprite_;
-
 	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
 
 	/*ロックオン*/

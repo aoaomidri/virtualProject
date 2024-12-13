@@ -4,6 +4,7 @@
 #include"TitleScene/TitleScene.h"
 #include"GameScene/GameScene.h"
 #include"ResultScene/ResultScene.h"
+/*シーンを生成する*/
 
 class SceneFactory : public AbstractSceneFactory{
 public:

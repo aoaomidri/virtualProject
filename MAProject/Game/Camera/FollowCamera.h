@@ -83,6 +83,8 @@ private:
 
 	Vector3 cameraMove_{};
 
+	const float moveMagnification_ = 0.05f;
+
 	const Vector3 kBaseCameraOffset_ = { 0.0f,1.0f,-8.0f };
 
 	Vector3 cameraOffset_{};
@@ -136,6 +138,9 @@ private:
 	// 目標角度
 	float destinationAngleY_ = 0.0f;
 	float destinationAngleX_ = 0.0f;
+
+	const float lockOnAngle_ = 0.15f;
+	const float resetAngle_ = 0.2f;
 	//基準のオフセット
 	Vector3 baseOffset_;
 

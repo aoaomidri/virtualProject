@@ -86,11 +86,8 @@ void Enemy::Initialize(const Vector3& position){
 	};
 	collisionTransform_ = transform_;
 
-	partsTransform_ = {
-		{0.9f,0.9f,0.9f},
-		{0.0f,0.0f,1.57f},
-		{0.0f,1.7f,7.0f}
-	};
+	partsTransform_.scale = kPartsScaleBase_;
+	partsTransform_.rotate.z = kPartsRotateZ_;
 
 	emitter_.count = 10;
 	emitter_.transform = {
@@ -120,7 +117,7 @@ void Enemy::Initialize(const Vector3& position){
 	collisionTransform_.translate = attackOBB_.center;
 	collisionTransform_.scale = attackOBB_.size;
 	bodyOBB_.center = transform_.translate;
-	bodyOBB_.size = { transform_.scale.x + 3.0f,transform_.scale.y + 2.0f,transform_.scale.z + 3.0f };
+	bodyOBB_.size = transform_.scale + addOBBSize_;
 
 	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
@@ -162,31 +159,24 @@ void Enemy::Update(){
 	MotionUpdate();
 	//影の座標更新
 	shadow_->position_ = transform_.translate;
-	shadow_->position_.y = 1.11f;
+	shadow_->position_.y = kShadowHeightBase_;
 
 	//行列やobbの更新
 	collisionTransform_ = transform_;
-
+	//体の部分の更新
 	scaleMatrix_ = Matrix::MakeScaleMatrix(transform_.scale);
 	transformMatrix_ = Matrix::MakeTranslateMatrix(transform_.translate);
-
 	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
-
 	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, resultRotateMat, transformMatrix_);
-
+	//パーツ部分の更新
 	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * resultRotateMat;
-
 	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
-	
-
-	bodyOBB_.center = transform_.translate;
-	
-	attackOBB_.center = bodyOBB_.center;
-	
-
+	//obb更新
+	bodyOBB_.center = transform_.translate;	
+	attackOBB_.center = bodyOBB_.center;	
 	SetOridentatios(bodyOBB_, rotateMatrix_);
 	SetOridentatios(attackOBB_, rotateMatrix_);
-
+	//当たり描画用の更新
 	collisionMatrix_ = Matrix::MakeAffineMatrix(attackOBB_.size, rotateMatrix_, attackOBB_.center);
 }
 
@@ -364,14 +354,10 @@ void Enemy::MotionUpdate(){
 
 	/*エネミーのパーツ*/
 	parts_offset_ = Matrix::TransformNormal(parts_offset_Base_, resultRotateMat);
-
 	partsTransform_.translate = transform_.translate + parts_offset_;
-
-	//partsTransform_.rotate.x += 0.3f;
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
-		//PostEffect::GetInstance()->SetPostEffect(PostEffect::EffectType::GrayVignetting);
 		behaviorRequest_ = Behavior::kDead;
 	}
 }

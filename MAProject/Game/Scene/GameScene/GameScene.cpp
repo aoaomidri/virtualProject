@@ -153,18 +153,23 @@ void GameScene::Update(){
 	GameTime::InGameUpdate();
 	//時間のテクスチャの更新
 	TimeTexUpdate();
-
-	
-	followCamera_->Update();
-	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
-		
-	followCamera_->SetIsMove(true);		
-		
-
-	frontFlag = player_->GetIsJustAvoid();
+	//timeScaleをそれぞれに渡す
+	enemyManager_->SetTimeScale(GameTime::timeScale_);
 	player_->SetTimeScale(GameTime::timeScale_);
+
+	//カメラの更新
+	followCamera_->Update();
+	followCamera_->SetIsMove(true);	
+	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
+
+	frontFlag = player_->GetIsJustAvoid();	
 	player_->Update();
+	enemyManager_->Update();
 	lockOn_->Update(enemyManager_->GetEnemies(), followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
+	//当たり判定
+	AllCollision();
+
+	floorManager_->Update();
 	//フラグが切れた瞬間だけリセットする
 	if (!player_->GetIsJustAvoid() and frontFlag){
 		lockOn_->TargetReset();
@@ -172,9 +177,7 @@ void GameScene::Update(){
 	//現状は倒しきったら遷移
 	if (enemyManager_->GetEnemyNum() == 0) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Result);
-	}
-	enemyManager_->SetTimeScale(GameTime::timeScale_);
-	enemyManager_->Update();
+	}	
 	
 #ifdef _DEBUG
 	//再読み込み
@@ -184,9 +187,7 @@ void GameScene::Update(){
 
 #endif // _DEBUG	
 	
-	AllCollision();
-
-	floorManager_->Update();
+	
 }
 
 void GameScene::Debug(){

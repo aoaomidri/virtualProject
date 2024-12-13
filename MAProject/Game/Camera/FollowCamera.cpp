@@ -18,15 +18,17 @@ void FollowCamera::ApplyGlobalVariables(){
 }
 
 void FollowCamera::ShakeUpdate(){
+	const float minusOffset = 0.5f;
+
 	cameraShake_.elapsedTime += GameTime::deltaTime_;
 
 	float progress = (cameraShake_.elapsedTime) / cameraShake_.duration;
 
 	cameraShake_.amplitude *= std::exp(-progress * shakePower_);
 
-	// Perlinノイズや乱数に基づくオフセット
-	float offsetX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;
-	float offsetY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * cameraShake_.amplitude;
+	// 乱数に基づくオフセット
+	float offsetX = (static_cast<float>(rand()) / RAND_MAX - minusOffset) * cameraShake_.amplitude;
+	float offsetY = (static_cast<float>(rand()) / RAND_MAX - minusOffset) * cameraShake_.amplitude;
 	float offsetZ = 0.0f;  // Z軸方向は揺れないようにする
 
 	rootOffset_.x += offsetX;
@@ -84,19 +86,19 @@ void FollowCamera::Update(){
 		Matrix4x4 newMatrix;
 		newMatrix.DirectionToDirection(Vector3::Normalize(Vec_), Vector3::Normalize(postureVec_));
 		destinationAngleY_ = Matrix::RotateAngleYFromMatrix(newMatrix);
-		destinationAngleX_ = 0.15f;
+		destinationAngleX_ = lockOnAngle_;
 	}
 	else {
 
 		if (input_->GetConnectPad() && isMove_) {
-			cameraMove_ = { -input_->GetPadRStick().y * 0.05f,input_->GetPadRStick().x * 0.05f,0.0f };
+			cameraMove_ = { -input_->GetPadRStick().y * moveMagnification_,input_->GetPadRStick().x * moveMagnification_,0.0f };
 			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_.rotation_);
 			postureVec_ = Matrix::TransformNormal(Vec_, newRotateMatrix);
 			postureVec_.y = 0.0f;
 			postureVec_ = Vector3::Normalize(postureVec_);
 			if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_THUMB)) {
 				destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
-				destinationAngleX_ = 0.2f;
+				destinationAngleX_ = resetAngle_;
 			}
 		}
 	}

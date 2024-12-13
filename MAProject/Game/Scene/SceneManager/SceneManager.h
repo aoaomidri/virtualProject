@@ -3,6 +3,8 @@
 #include"SceneFactory/AbstractSceneFactory.h"
 #include <memory>
 #include"Sprite.h"
+
+/*シーンを管理するクラス*/
 class SceneManager{
 
 public:

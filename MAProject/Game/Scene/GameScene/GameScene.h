@@ -107,9 +107,7 @@ private:
 	std::unique_ptr<Player> player_;
 	//敵
 	std::unique_ptr<EnemyManager> enemyManager_;
-
 	int chackCollision = 0;
-
 
 	EulerTransform particleTrnadform_ = {
 		.scale = {1.0f,1.0f,1.0f},
@@ -125,27 +123,15 @@ private:
 	uint32_t gameBGM_{};
 	//プレイヤーの攻撃が当たったときのSE
 	uint32_t enemyHitSE_{};
+	float seVolume_ = 0.3f;
 	
 	//スプライト関連
-
 	bool isReset_ = false;
-
 	bool isStart_ = true;
-
-
 	std::unique_ptr<Sprite> backSprite_;
-
-
-	float seVolume_ = 0.3f;
-
-
 	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
-
 	std::unique_ptr<Sprite> slushTex_;
-
-
 	std::unique_ptr<Sprite> actionTextSprite_;
-
 	std::unique_ptr<Sprite> attackSprite_;
 
 	/*ロックオン*/

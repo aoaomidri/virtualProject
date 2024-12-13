@@ -43,7 +43,6 @@ class TitleScene : public BaseScene {
 	//ゲーム全体にかかわるImgui
 	void Debug() override;
 
-
 	void DrawParticle();
 	void DrawSkin3D();
 	void Draw3D();
@@ -83,22 +82,15 @@ private:
 	//スプライト関連
 	//タイトル
 	std::unique_ptr<Sprite> titleSprite_;
-
 	std::unique_ptr<Sprite> startSprite_;
-
 	std::unique_ptr<Sprite> selectSprite_;
+	std::unique_ptr<Sprite> comboSprite_;
+	std::unique_ptr<Sprite> controlSprite_;
+	std::unique_ptr<Sprite> backSprite_;
+	std::unique_ptr<Sprite> fadeSprite_;
 
 	bool isReset_ = false;
-
 	bool isStart_ = true;
-
-	std::unique_ptr<Sprite> comboSprite_;
-
-	std::unique_ptr<Sprite> controlSprite_;
-
-	std::unique_ptr<Sprite> backSprite_;
-
-	std::unique_ptr<Sprite> fadeSprite_;
 	float fadeAlpha_ = 0.0f;
 	float fadeSpeed_ = 0.01f;
 	bool isFade_ = false;

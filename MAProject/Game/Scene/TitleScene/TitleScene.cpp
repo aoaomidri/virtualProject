@@ -196,9 +196,6 @@ void TitleScene::Update() {
 			controlSprite_->isDraw_ = true;
 			backSprite_->isDraw_ = true;
 		}
-
-
-
 	}
 	if (isFade_) {
 		fadeAlpha_ += fadeSpeed_;
@@ -211,8 +208,6 @@ void TitleScene::Update() {
 		
 	}
 	
-	
-
 	floorManager_->Update();
 	fadeSprite_->color_.w = fadeAlpha_;
 
@@ -256,10 +251,7 @@ void TitleScene::Draw3D() {
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
 
-	//textureManager_->PreDrawSkyBox();
-
-	//skyBox_->Update(followCamera_->GetViewProjection());
-	//skyBox_->Draw();
+	textureManager_->PreDrawSkyBox();
 
 	textureManager_->PreDrawWorld2D();
 
@@ -276,7 +268,6 @@ void TitleScene::Draw2D() {
 	backSprite_->Draw();
 	controlSprite_->Draw();
 	fadeSprite_->Draw();
-	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
 
 	/*描画処理はここまで*/
 	/*描画後処理*/

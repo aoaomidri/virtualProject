@@ -163,9 +163,11 @@ private:
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
 
+	//パーツ関連
 	Vector3 parts_offset_Base_ = { 0.0f, 1.5f, 0.0f };
-
 	Vector3 parts_offset_ = { 0.0f, 1.5f, 0.0f };
+	const Vector3 kPartsScaleBase_ = { 0.9f,0.9f,0.9f };
+	const float kPartsRotateZ_ = 1.57f;
 
 	//カメラの情報
 	const ViewProjection* viewProjection_ = nullptr;
@@ -176,14 +178,13 @@ private:
 	//自機のOBB
 	OBB bodyOBB_{};
 
+	const Vector3 addOBBSize_ = { 3.0f,2.0f,3.0f };
+
 	Vector3 worldPos_ = {};
 
 	Vector3 deadMoveBase_ = { 0,0.02f,0.1f };
-
 	Vector3 deadMove_ = { 0,0.02f,0.1f };
-
 	float deadMoveSpeed_ = 0.5f;
-
 	float deadRotateSpeed_ = 0.3f;
 
 	//移動限界 xが+側、yが-側
@@ -234,7 +235,7 @@ private:
 	float fewHitBackSpeed_ = 0.015f;
 	//強ヒットバックの速度
 	float strongHitBackSpeed_ = 1.0f;
-	//ゲー無の時間
+	//ゲームの時間
 	float timeScale_ = 0.0f;
 	//パーティクルの速度
 	float particleSpeed_ = 0.0f;	
@@ -301,6 +302,8 @@ private:
 	std::unique_ptr<Sprite> shadow_;
 
 	float shadowScaleBase_ = 0.9f;
+
+	const float kShadowHeightBase_ = 1.11f;
 
 private:
 	//行動全体を制御する

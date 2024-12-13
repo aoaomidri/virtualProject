@@ -25,7 +25,6 @@ class Player {
 public:
 	using KnockbackType = HitRecord::KnockbackType;
 
-
 	~Player();
 
 	//調整項目
@@ -286,7 +285,7 @@ private:
 	EulerTransform weaponCollisionTransform_{};
 
 	const float kWeaponRootTranslate_ = 10000.0f;
-
+	const Vector3 kWeaponScale_ = { 0.15f,0.15f ,0.15f };
 	const Vector3 kWeaponCollisionBase_ = { 0.9f,3.0f,0.9f };
 
 	//プレイヤーのマトリックス

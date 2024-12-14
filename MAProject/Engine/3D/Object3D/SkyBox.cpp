@@ -29,9 +29,6 @@ void SkyBox::Update(const ViewProjection& viewProjection) {
 	if (!isDraw_) {
 		return;
 	}
-
-	//rotate_.y += 0.01f;
-
 	worldMatrix_.MakeAffineMatrix(transform_);
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * (*parent_);
@@ -42,7 +39,6 @@ void SkyBox::Update(const ViewProjection& viewProjection) {
 
 	wvpData_->WVP = worldViewProjectionMatrix;
 	materialDate_->enableLighting = isUseLight_;
-
 	wvpData_->World = worldMatrix_;
 	wvpData_->WorldInverseTranspose = Matrix::Inverce(Matrix::Transpose(worldMatrix_));
 

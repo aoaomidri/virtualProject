@@ -56,13 +56,11 @@ void Player::Initialize(){
 	playerObj_->Initialize("PlayerFace");
 	playerObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 	playerObj_->SetIsLighting(true);
-
-	//playerObj_->SetTexture("resources/DDS/uvCheck.dds");
+	playerObj_->SetTexture("resources/DDS/uvCheck.dds");
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
-	weaponObj_->SetIsGetTop(true);
-	
+	weaponObj_->SetIsGetTop(true);	
 	weaponObj_->SetIsLighting(false);
 
 	collisionObj_ = std::make_unique<Object3D>();
@@ -82,14 +80,11 @@ void Player::Initialize(){
 	groundCrush_->scale_ = { 3.0f,3.0f };
 	groundCrush_->anchorPoint_ = { 0.5f,0.5f };
 	groundCrush_->color_.w = 1.0f;
-
 	groundOffsetBase_ = { 0.0f,0.1f,6.0f };
-
 	isStopCrush_ = false;
 
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("box");
-
 
 	emitter_.count = 27;
 	emitter_.transform = {

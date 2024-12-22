@@ -1,8 +1,14 @@
 #include "PlayerRoot.h"
+#include"LockOn.h"
 
 void PlayerRoot::Initialize(){
 	IPlayerState::Initialize();
+	//context_.isDash_ = false;
+	//GameTime::ReverseTimeChange();
+	//context_.move_ = { 0.0f,0.0f,0.0f };
+	//context_.workAttack_.comboIndex = 0;
 
+	//weaponCollisionTransform_.translate.y = kWeaponRootTranslate_;
 
 }
 
@@ -19,7 +25,6 @@ void PlayerRoot::Update(){
 	//}
 
 	//if (viewProjection_) {
-
 	//	Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
 	//	context_.move_ = Matrix::TransformNormal(context_.move_, newRotateMatrix);
 	//	context_.move_.y = 0.0f;
@@ -30,17 +35,10 @@ void PlayerRoot::Update(){
 
 	//if (context_.move_.x != 0.0f || context_.move_.z != 0.0f) {
 	//	context_.postureVec_ = context_.move_;
-
-	//	//particleSword_->SetAcceleration(Vector3::Normalize(postureVec_) * 0.0f);
-
 	//	Matrix4x4 directionTodirection_;
 	//	directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
 	//	context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
-	//	/*if (!isDown_) {
-	//		playerObj_->SetAnimSpeed(1.0f);
-	//		playerObj_->ChangeAnimation("walk");
-	//		playerObj_->SetChangeAnimSpeed(3.0f);
-	//	}*/
+	//	
 	//}
 	//else if (lockOn_ && lockOn_->ExistTarget()) {
 	//	Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -108,18 +106,18 @@ void PlayerRoot::Update(){
 	//trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 
 	//if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
-	//	behaviorRequest_ = Behavior::kDash;
+	//	PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
 	//}
 
 	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X) && !context_.isDown_) {
 	//	context_.workAttack_.comboIndex = 1;
-	//	behaviorRequest_ = Behavior::kAttack;
+	//	PlayerStateManager::GetInstance()->ChangeState(StateName::Attack);
 	//	context_.isDissolve_ = false;
 	//	weaponThreshold_ = 0.0f;
 	//}
 	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) && !context_.isDown_) {
 	//	context_.workAttack_.comboIndex = 1;
-	//	
+	//	PlayerStateManager::GetInstance()->ChangeState(StateName::StrongAttack);
 	//	context_.isDissolve_ = false;
 	//	weaponThreshold_ = 0.0f;
 	//}

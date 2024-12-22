@@ -14,6 +14,8 @@
 #include"ParticleBase.h"
 #include<optional>
 #include"Effect/TrailRender.h"
+#include"Audio.h"
+#include"GameTime.h"
 
 /*プレイヤーの状態の基本設定*/
 //前方宣言
@@ -35,7 +37,7 @@ public:
 		uint32_t AttackTimer = 0;
 		uint32_t nextAttackTimer = 0;
 	};
-
+	/*状態で共通する変数群*/
 	struct PlayerContext {
 		//自機のトランスフォーム
 		EulerTransform playerTransform_ = {};
@@ -103,9 +105,9 @@ protected:
 
 	//キー入力
 	Input* input_ = nullptr;
+private:
 	//ステートマネージャー
 	PlayerStateManager* stateManager_ = nullptr;
-private:
 
 	
 };

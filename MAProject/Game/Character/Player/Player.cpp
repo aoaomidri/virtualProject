@@ -56,7 +56,7 @@ void Player::Initialize(){
 	playerObj_->Initialize("PlayerFace");
 	playerObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 	playerObj_->SetIsLighting(true);
-	playerObj_->SetTexture("resources/DDS/uvCheck.dds");
+
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
@@ -561,7 +561,6 @@ void Player::BehaviorRootUpdate(){
 		weaponTransform_.translate += addPosRotate * timeScale_;
 	}
 	
-	//weaponCollisionTransform_.translate = playerTransform_.translate + Weapon_offset;
 	if (timeScale_ != 0.0f) {
 		trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 	}
@@ -586,7 +585,6 @@ void Player::BehaviorRootUpdate(){
 	}
 	
 }
-
 
 void Player::PreBehaviorAttackInitialize(){
 	trail_->Reset();

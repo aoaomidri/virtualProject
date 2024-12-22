@@ -20,7 +20,7 @@ public:
 	// 垂直方向視野角
 	float fovAngleY_ = 0.45f;
 	// ビューポートのアスペクト比
-	float aspectRatio_ = (float)1280 / 720;
+	float aspectRatio_ = (1280.0f / 720.0f);
 	// 深度限界（手前側）
 	float nearZ_ = 0.1f;
 	// 深度限界（奥側）

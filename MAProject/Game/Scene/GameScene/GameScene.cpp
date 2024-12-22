@@ -9,7 +9,6 @@ void GameScene::TextureLoad() {
 	textureManager_->Load("resources/texture/uvChecker.png");
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
-	//textureManager_->Load("resources/texture/Sky.png");
 	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");
 	textureManager_->Load("resources/Model/Enemy/EnemyHitTex.png");
 	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
@@ -57,9 +56,6 @@ void GameScene::SpriteInitialize(){
 		textureHandle = textureManager_->Load("resources/texture/number/number.png");
 		timerTexs_[i]->Initialize(textureHandle);
 	}
-	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
-	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
-	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
 	backSprite_->position_ = { 640.0f,360.0f };
 	backSprite_->anchorPoint_ = { 0.5f,0.5f };
@@ -81,6 +77,9 @@ void GameScene::SpriteInitialize(){
 		timerTexs_[i]->uvTransform_.scale.x = 0.1f;
 		timerTexs_[i]->position_ = { 500.0f,80.0f,0.0f };
 	}
+	timerTexs_[1]->position_.x = timerTexs_[0]->position_.x + 80.0f;
+	timerTexs_[2]->position_.x = timerTexs_[0]->position_.x + 200.0f;
+	timerTexs_[3]->position_.x = timerTexs_[0]->position_.x + 280.0f;
 
 }
 

@@ -1,5 +1,9 @@
 #pragma once
 #include"IPlayerState.h"
+#include"PlayerStateManager.h"
+
+//前方宣言
+class LockOn;
 
 /*プレイヤーの通常時の行動*/
 

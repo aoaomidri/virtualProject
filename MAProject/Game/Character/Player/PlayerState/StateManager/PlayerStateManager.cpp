@@ -2,6 +2,7 @@
 #include<assert.h>
 void PlayerStateManager::ChangeState(const StateName nextState){
 	assert(nextState_ == nullptr);
+	/*次の状態を生成*/
 	if (nextState == StateName::Root){
 		nextState_ = std::make_unique<PlayerRoot>(context_);
 	}

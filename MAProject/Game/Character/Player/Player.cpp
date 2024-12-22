@@ -52,11 +52,15 @@ void Player::Initialize(){
 	
 	input_ = Input::GetInstance();
 
+	stateManager_ = PlayerStateManager::GetInstance();
+	stateManager_->ChangeState(BasePlayerState::StateName::Root);
+	stateManager_->InitGlobalVariables();
+	stateManager_->InitState();
+
 	playerObj_ = std::make_unique<Object3D>();
 	playerObj_->Initialize("PlayerFace");
 	playerObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 	playerObj_->SetIsLighting(true);
-
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
@@ -179,9 +183,9 @@ void Player::Update(){
 	
 	//ジャスト回避時間経過処理
 	if (justAvoidAttackTimer_ > 0) {
-		if (behavior_ != Behavior::kJustAvoid){
+		/*if (behavior_ != Behavior::kJustAvoid){
 			justAvoidAttackTimer_--;
-		}
+		}*/
 		postT_ = 0.9f;
 		
 	}
@@ -209,53 +213,16 @@ void Player::Update(){
 		isHitEnemyAttack_ = false;
 	}
 	
-	/*リクエストに応じて変更*/
-	if (behaviorRequest_) {
-		// 振る舞いを変更する
-		behavior_ = behaviorRequest_.value();
-		// 各振る舞いごとの初期化を実行
-		switch (behavior_) {
-		case Behavior::kRoot:
-			BehaviorRootInitialize();
-			break;
-		case Behavior::kAttack:
-			PreBehaviorAttackInitialize();
-			BehaviorAttackInitialize();
-			PostBehaviorAttackInitialize();
-			break;
-		case Behavior::kStrongAttack:
-			BehaviorAllStrongAttackInitialize();
-			break;
-		case Behavior::kDash:
-			BehaviorDashInitialize();
-			break;		
-		case Behavior::kJustAvoid:
-			BehaviorJustAvoidInitialize();
-			break;
-		}
+	/*状態によっての処理をここに記述する*/
+	//playerStateManagerなど
+	stateManager_->Update(viewProjection_->rotation_);
 
-	}
-	// 振る舞いリクエストをリセット
-	behaviorRequest_ = std::nullopt;
-	//値によって処理を変更
-	switch (behavior_) {
-	case Behavior::kRoot:
-	default:
-		BehaviorRootUpdate();
-		break;
-	case Behavior::kAttack:
-		BehaviorAttackUpdate();
-		break;
-	case Behavior::kStrongAttack:
-		BehaviorStrongAttackUpdate();
-		break;
-	case Behavior::kDash:
-		BehaviorDashUpdate();
-		break;
-	case Behavior::kJustAvoid:
-		BehaviorJustAvoidUpdate();
-		break;
-	}
+	//Stateによって変更が生じた値を代入する
+	playerTransform_.translate = stateManager_->GetPlayerTrnaform().translate;
+	weaponTransform_.translate = stateManager_->GetWeaponTrnaform().translate;
+	weaponCollisionTransform_.translate = stateManager_->GetWeaponCollisionTrnaform().translate;
+	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
+
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
 	shadow_->position_.y = shadowHeight_;
@@ -307,7 +274,7 @@ void Player::Update(){
 	playerOBBTransformMatrix_.MakeTranslateMatrix(playerOBB_.center);
 	playerOBBMatrix_ = Matrix::MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTransformMatrix_);
 	/*通常時かそれ以外かで武器の行列の処理を変更*/
-	if (behavior_ != Behavior::kRoot) {
+	if (stateManager_->GetStateName() != BasePlayerState::StateName::Root) {
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 		if (!isDissolve_){
 			weaponRotateVec *= (playerRotateMatrix_);
@@ -422,6 +389,25 @@ void Player::OnFlootCollision(OBB obb){
 	downVector_ = { 0.0f,0.0f,0.0f };
 }
 
+const float Player::GetHitStop() {
+	if (stateManager_->GetStateName() == BasePlayerState::StateName::StrongAttack) {
+		if (workAttack_.comboIndex != 5) {
+			return strongHitStop_;
+		}
+		else {
+			return hitStop_;
+		}
+	}
+
+	if (workAttack_.comboIndex == 6) {
+		return strongHitStop_;
+	}
+	else {
+		return hitStop_;
+	}
+
+}
+
 void Player::OnCollisionEnemyAttack(){
 	
 	//既に被弾していたら処理を飛ばす
@@ -453,137 +439,6 @@ void Player::OnCollisionEnemyAttackAvoid(const uint32_t serialNumber){
 void Player::SetIsDown(bool isDown){
 	
 	isDown_ = isDown;
-}
-
-void Player::BehaviorRootInitialize(){
-	isDash_ = false;
-	GameTime::ReverseTimeChange();
-	move_ = { 0.0f,0.0f,0.0f };
-	workAttack_.comboIndex = 0;
-	
-	weaponCollisionTransform_.translate.y = kWeaponRootTranslate_;
-}
-
-void Player::BehaviorRootUpdate(){
-	frontVec_ = postureVec_;
-	/*自機の移動*/	
-	move_.z = input_->GetPadLStick().y * moveSpeed_;
-	if (abs(move_.z) < moveLimitMinimum_) {
-		move_.z = 0;
-	}	
-	move_.x = input_->GetPadLStick().x * moveSpeed_;
-	if (abs(move_.x) < moveLimitMinimum_) {
-		move_.x = 0;
-	}
-	//カメラによってmoveの値を補正
-	if (viewProjection_){
-
-		Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(viewProjection_->rotation_);
-		move_ = Matrix::TransformNormal(move_, newRotateMatrix);
-		move_.y = 0.0f;
-	}
-	
-	move_ = Vector3::Mutiply(Vector3::Normalize(move_), moveSpeed_ * moveCorrection_);
-	move_.y = 0.0f;
-	
-	if (move_.x != 0.0f || move_.z != 0.0f) {
-		//移動ベクトルがあれば
-		postureVec_ = move_;
-		
-		Matrix4x4 directionTodirection_;
-		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
-		
-	}
-	else if(lockOn_&&lockOn_->ExistTarget()){
-		//対象がいれば注目する
-		Vector3 lockOnPos = lockOn_->GetTargetPosition();
-		Vector3 sub = lockOnPos - playerTransform_.translate;
-		sub.y = 0;
-		sub = Vector3::Normalize(sub);
-		postureVec_ = sub;
-
-		Matrix4x4 directionTodirection_;
-		directionTodirection_.DirectionToDirection(Vector3::Normalize(frontVec_), Vector3::Normalize(postureVec_));
-		playerRotateMatrix_ = Matrix::Multiply(playerRotateMatrix_, directionTodirection_);
-	}
-	//Aを押してジャンプ
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_A) && !isDown_) {
-		downVector_.y += jumpPower_ * timeScale_;
-		
-	}
-	//次のフレームを仮に計算し制御
-	Vector3 NextPos = playerTransform_.translate + move_;
-
-	if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y){
-		move_.x = 0;
-	}
-	if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-		move_.z = 0;
-	}
-
-	playerTransform_.translate += move_ * timeScale_;
-	
-	if (isDown_) {
-		downVector_.y += downSpeed_ * timeScale_;
-	}
-	
-	if (dashCoolTime_ != 0) {
-		dashCoolTime_--;
-	}
-	/*武器の浮遊*/
-	floatSin_ += floatSpeed_ * timeScale_;
-	if (floatSin_ >= (std::numbers::pi * 2.0f)) {
-		floatSin_ = 0.0f;
-	}
-	playerTransform_.translate.y += downVector_.y * timeScale_;
-	//武器の消滅処理をしていなければ武器のSRTを更新
-	if (!isDissolve_ ) {
-
-		if (!isWeaponDebugFlug_) {
-			addPosition_.y = kFloatHeight_ * std::sinf(floatSin_);
-			weapon_offset_Base_ = weapon_offset_RootBase_;
-
-			weaponTransform_.rotate.x = (float)(std::numbers::pi);
-			weaponTransform_.rotate.y = 0;
-			weaponTransform_.rotate.z = 0;
-		}
-		weaponCollisionTransform_.scale = kWeaponCollisionBase_;
-
-		Vector3 weaponRotateVec = weaponTransform_.rotate;
-		Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponRotateVec);
-		weaponRotateMatrix = Matrix::Multiply(weaponRotateMatrix, playerRotateMatrix_);
-		weapon_offset_ = Matrix::TransformNormal(weapon_offset_Base_, weaponRotateMatrix);
-		weaponTransform_.translate = playerTransform_.translate + weapon_offset_;
-		Vector3 addPosRotate{};
-		addPosRotate = Matrix::TransformNormal(addPosition_, playerRotateMatrix_);
-
-		weaponTransform_.translate += addPosRotate * timeScale_;
-	}
-	
-	if (timeScale_ != 0.0f) {
-		trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
-	}
-	//ダッシュを発動
-	if (input_->GetPadButtonTriger(Input::GamePad::RB) && dashCoolTime_ <= 0) {
-		behaviorRequest_ = Behavior::kDash;
-	}
-	//弱攻撃を発動
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
-		workAttack_.comboIndex = 1;
-		behaviorRequest_ = Behavior::kAttack;
-		isDissolve_ = false;
-		weaponThreshold_ = 0.0f;
-	}
-	//強攻撃を発動
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
-		workAttack_.comboIndex = 1;
-		behaviorRequest_ = Behavior::kStrongAttack;
-		isDissolve_ = false;
-		weaponThreshold_ = 0.0f;
-	}
-	
 }
 
 void Player::PreBehaviorAttackInitialize(){
@@ -739,19 +594,19 @@ void Player::BehaviorAttackUpdate(){
 			//強攻撃を行うか
 			if (workAttack_.strongComboNext) {
 				workAttack_.comboIndex++;
-				behaviorRequest_ = Behavior::kStrongAttack;
+				//behaviorRequest_ = Behavior::kStrongAttack;
 			}
 			else {
 				workAttack_.attackParameter += timeScale_;
 				//通常状態に戻る処理
 				if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
-					behaviorRequest_ = Behavior::kRoot;
+					//behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
 				}
 				//スティックを倒しているときは少しだけ早く抜けるように
 				if (input_->GetIsPushedLStick() and (workAttack_.attackParameter * kAttackParameterCorection_ >= ((float)(workAttack_.nextAttackTimer) / motionSpeed_))) {
-					behaviorRequest_ = Behavior::kRoot;
+					//behaviorRequest_ = Behavior::kRoot;
 					isDissolve_ = true;
 					workAttack_.attackParameter = 0;
 				}
@@ -762,9 +617,9 @@ void Player::BehaviorAttackUpdate(){
 	}
 	
 	//強攻撃に派生する場合はここで帰る
-	if (behaviorRequest_==Behavior::kStrongAttack){
+	/*if (behaviorRequest_==Behavior::kStrongAttack){
 		return;
-	}
+	}*/
 	//各行動の処理
 	switch (workAttack_.comboIndex){
 	case 1:
@@ -826,7 +681,7 @@ void Player::BehaviorAttackUpdate(){
 	}
 	
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
-		behaviorRequest_ = Behavior::kDash;
+		//behaviorRequest_ = Behavior::kDash;
 	}
 
 	
@@ -899,7 +754,7 @@ void Player::BehaviorStrongAttackUpdate(){
 		workAttack_.attackParameter += timeScale_;
 		if (workAttack_.attackParameter >= ((float)(workAttack_.nextAttackTimer + motionDistance_) / motionSpeed_)) {
 			isDissolve_ = true;
-			behaviorRequest_ = Behavior::kRoot;
+			//behaviorRequest_ = Behavior::kRoot;
 			workAttack_.attackParameter = 0;
 		}	
 	}
@@ -961,7 +816,7 @@ void Player::BehaviorStrongAttackUpdate(){
 	}
 	//ダッシュが入力されたら即中断
 	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
-		behaviorRequest_ = Behavior::kDash;
+		//behaviorRequest_ = Behavior::kDash;
 	}
 
 }
@@ -1033,7 +888,7 @@ void Player::BehaviorDashUpdate(){
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 			
 
-			behaviorRequest_ = Behavior::kJustAvoid;
+			//behaviorRequest_ = Behavior::kJustAvoid;
 			dashCoolTime_ = dashCoolTimeBase_;
 		}
 	}
@@ -1059,7 +914,7 @@ void Player::BehaviorDashUpdate(){
 	if (workDash_.dashParameter_ >= behaviorDashTime) {
 		dashCoolTime_ = dashCoolTimeBase_;
 		isDash_ = false;
-		behaviorRequest_ = Behavior::kRoot;
+		//behaviorRequest_ = Behavior::kRoot;
 	}
 }
 
@@ -1126,7 +981,7 @@ void Player::BehaviorJustAvoidUpdate(){
 		
 
 		if (workAvoidAttack_.tackleTimerBase_ < workAvoidAttack_.tackleTimer_) {
-			behaviorRequest_ = Behavior::kRoot;
+			//behaviorRequest_ = Behavior::kRoot;
 		}
 	}
 	//座標や回転の更新

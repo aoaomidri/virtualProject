@@ -192,7 +192,7 @@
     <ClCompile Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.cpp">
       <Filter>Game\Character\Player\PlayerState\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.cpp">
+    <ClCompile Include="Game\Character\Player\PlayerState\BaseState\BasePlayerState.cpp">
       <Filter>Game\Character\Player\PlayerState\Base</Filter>
     </ClCompile>
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerRoot.cpp">
@@ -383,7 +383,7 @@
     <ClInclude Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.h">
       <Filter>Game\Character\Player\PlayerState\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.h">
+    <ClInclude Include="Game\Character\Player\PlayerState\BaseState\BasePlayerState.h">
       <Filter>Game\Character\Player\PlayerState\Base</Filter>
     </ClInclude>
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerRoot.h">

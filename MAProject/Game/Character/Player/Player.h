@@ -15,6 +15,7 @@
 #include<optional>
 #include"Effect/TrailRender.h"
 #include"Audio.h"
+#include"PlayerStateManager.h"
 #include"GameTime.h"
 /*プレイヤーが操作する自機の更新描画*/
 /*現在全処理をまとめてしまっているのでステートパターンによる実装を目指し作成中です*/
@@ -100,24 +101,7 @@ public:
 
 	const HitRecord::KnockbackType GetKnockbackType()const { return type_; }
 
-	const float GetHitStop()const {
-		if (behavior_ == Behavior::kStrongAttack){
-			if (workAttack_.comboIndex != 5) {
-				return strongHitStop_;
-			}
-			else {
-				return hitStop_;
-			}
-		} 
-
-		if (workAttack_.comboIndex == 6){
-			return strongHitStop_;
-		}
-		else {
-			return hitStop_;
-		}
-
-	}
+	const float GetHitStop();
 
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 
@@ -140,17 +124,10 @@ public:
 
 private:
 	//クラス内関数
-
-	//通常行動初期化
-	void BehaviorRootInitialize();
-	
 	//ダッシュ行動初期化
 	void BehaviorDashInitialize();
 	//ジャスト回避行動初期化
 	void BehaviorJustAvoidInitialize();
-
-	// 通常行動更新
-	void BehaviorRootUpdate();
 	//攻撃行動更新
 	void BehaviorAttackUpdate();
 	//強攻撃全体の初期化
@@ -159,7 +136,6 @@ private:
 	void BehaviorStrongAttackUpdate();
 	//ダッシュ行動更新
 	void BehaviorDashUpdate();
-
 	//ジャスト回避行動初期化
 	void BehaviorJustAvoidUpdate();
 
@@ -259,7 +235,8 @@ private:
 	void SettingGroundCrushTex();
 
 private:
-
+	//状態を管理
+	PlayerStateManager* stateManager_ = nullptr;
 
 	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
@@ -573,19 +550,6 @@ private:
 	bool isAvoidAttack_ = false;
 	//突きを行うかどうか
 	bool isThrust_ = false;
-
-	/*振る舞い系*/
-	enum class Behavior {
-		kRoot,			//通常状態
-		kAttack,		//攻撃中
-		kStrongAttack,  //強攻撃中
-		kDash,			//ダッシュ中
-		kJustAvoid,		//ジャスト回避中
-	};
-
-	Behavior behavior_ = Behavior::kRoot;
-
-	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
 
 private:
 	//敵と衝突しているか

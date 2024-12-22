@@ -195,7 +195,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Character\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Game\Character\Player\Attack\IAttack.cpp" />
     <ClCompile Include="Game\Character\Player\Player.cpp" />
-    <ClCompile Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.cpp" />
+    <ClCompile Include="Game\Character\Player\PlayerState\BaseState\BasePlayerState.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerAttack.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerDash.cpp" />
@@ -261,7 +261,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Character\Enemy\EnemyManager.h" />
     <ClInclude Include="Game\Character\Player\Attack\IAttack.h" />
     <ClInclude Include="Game\Character\Player\Player.h" />
-    <ClInclude Include="Game\Character\Player\PlayerState\BaseState\IPlayerState.h" />
+    <ClInclude Include="Game\Character\Player\PlayerState\BaseState\BasePlayerState.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\StateManager\PlayerStateManager.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerAttack.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerDash.h" />

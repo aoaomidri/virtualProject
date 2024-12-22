@@ -103,8 +103,6 @@ void GameScene::Initialize(){
 	TextureLoad();
 	SoundLoad();
 
-	
-
 	SpriteInitialize();
 	ObjectInitialize();
 
@@ -117,7 +115,6 @@ void GameScene::Initialize(){
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->Update();
 
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->SetTarget(&player_->GetTransform());

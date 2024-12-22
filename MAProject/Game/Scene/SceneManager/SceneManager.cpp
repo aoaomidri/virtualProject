@@ -15,9 +15,7 @@ void SceneManager::Update(){
 		//旧シーンの終了
 		if (scane_){
 			scane_->Finalize();
-
 		}
-
 		//シーン切り替え
 		scane_ = std::move(nextScane_);
 		nextScane_ = nullptr;

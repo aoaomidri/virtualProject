@@ -6,6 +6,6 @@ void PlayerDash::Initialize()
 {
 }
 
-void PlayerDash::Update()
-{
+void PlayerDash::Update(const Vector3& cameraRotate){
+	cameraRotate;
 }

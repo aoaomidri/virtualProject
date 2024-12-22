@@ -6,6 +6,6 @@ void PlayerStrongAttack::Initialize()
 {
 }
 
-void PlayerStrongAttack::Update()
-{
+void PlayerStrongAttack::Update(const Vector3& cameraRotate){
+	cameraRotate;
 }

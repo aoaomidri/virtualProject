@@ -3,12 +3,7 @@
 
 
 Matrix4x4::Matrix4x4(){
-	for (int y = 0; y < 4; y++){
-		for (int x = 0; x < 4; x++){
-			//base[y][x] = 0;
-			m[y][x] = 0;
-		}
-	}
+	MatInit();
 }
 
 Matrix4x4::Matrix4x4(const Matrix4x4& mat){
@@ -36,6 +31,24 @@ Matrix4x4::Matrix4x4(std::initializer_list<std::initializer_list<float>> list){
 Matrix4x4 Matrix4x4::Identity(){
 	for (int i = 0; i < 4; i++) {
 		m[i][i] = 1.0f;
+	}
+	return *this;
+}
+
+Matrix4x4 Matrix4x4::StaticIdentity(){
+	Matrix4x4 result{};
+
+	for (int i = 0; i < 4; i++) {
+		result.m[i][i] = 1.0f;
+	}
+	return result;
+}
+
+Matrix4x4 Matrix4x4::MatInit(){
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			m[i][j] = 0.0f;
+		}
 	}
 	return *this;
 }

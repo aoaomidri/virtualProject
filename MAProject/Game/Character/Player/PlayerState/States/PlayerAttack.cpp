@@ -6,6 +6,6 @@ void PlayerAttack::Initialize()
 {
 }
 
-void PlayerAttack::Update()
-{
+void PlayerAttack::Update(const Vector3& cameraRotate){
+	cameraRotate;
 }

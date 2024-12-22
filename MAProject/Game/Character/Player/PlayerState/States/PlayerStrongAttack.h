@@ -1,18 +1,18 @@
 #pragma once
-#include"IPlayerState.h"
+#include"BasePlayerState.h"
 #include"PlayerStateManager.h"
 
 //前方宣言
 class LockOn; 
 
-class PlayerStrongAttack : public IPlayerState{
+class PlayerStrongAttack : public BasePlayerState {
 public:
 
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="ctx"></param>
-	PlayerStrongAttack(PlayerContext& ctx) : IPlayerState(ctx) {}
+	PlayerStrongAttack(PlayerContext& ctx) : BasePlayerState(ctx) {}
 
 	/// <summary>
 	/// 初期化
@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	void Update()override;
+	void Update(const Vector3& cameraRotate)override;
 
 };
 

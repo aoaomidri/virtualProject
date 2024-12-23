@@ -10,6 +10,7 @@ void PlayerStateManager::ApplyGlobalVariables(){
 	context_.jumpPower_ = adjustment_item->GetfloatValue(groupName, "JumpPower");
 	context_.downSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
 	context_.moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
+	context_.floatSpeed_ = adjustment_item->GetfloatValue(groupName, "floatSpeed");
 }
 void PlayerStateManager::InitGlobalVariables() const{
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
@@ -20,6 +21,7 @@ void PlayerStateManager::InitGlobalVariables() const{
 	adjustment_item->AddItem(groupName, "JumpPower", context_.jumpPower_);
 	adjustment_item->AddItem(groupName, "DownSpeed", context_.downSpeed_);
 	adjustment_item->AddItem(groupName, "MoveSpeed", context_.moveSpeed_);
+	adjustment_item->AddItem(groupName, "floatSpeed", context_.floatSpeed_);
 }
 void PlayerStateManager::InitState() {
 	context_.postureVec_ = { 0.0f,0.0f,1.0f };

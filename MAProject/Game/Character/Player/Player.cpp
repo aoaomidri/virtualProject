@@ -217,7 +217,7 @@ void Player::Update(){
 	//Stateによって変更が生じた値を代入する
 	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
 	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
-	weaponTransform_.translate = stateManager_->GetWeaponTrnaform().translate;
+	weaponTransform_ = stateManager_->GetWeaponTrnaform();
 	weaponCollisionTransform_.translate = stateManager_->GetWeaponCollisionTrnaform().translate;
 	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
 	/*落下処理*/
@@ -225,6 +225,8 @@ void Player::Update(){
 		downVector_.y += downSpeed_ * timeScale_;
 	}	
 	playerTransform_.translate.y += downVector_.y * timeScale_;
+	//落下処理による修正後の値を代入
+	stateManager_->SetPlayerTranslateY(playerTransform_.translate.y);
 
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;

@@ -37,6 +37,7 @@ public:
 	void Update(const Vector3& cameraRotate);
 
 public:
+	//Getter
 	const StateName& GetStateName()const { return nowStateName_; }
 	
 	const EulerTransform& GetPlayerTrnaform()const { return context_.playerTransform_; }
@@ -44,6 +45,10 @@ public:
 	const EulerTransform& GetWeaponCollisionTrnaform()const { return context_.weaponParameter_.weaponCollisionTransform_; }
 
 	const Matrix4x4& GetPlayerRotateMatrix()const { return context_.playerRotateMatrix_; }
+
+	//Setter
+	void SetPlayerTranslateY(float posY) { context_.playerTransform_.translate.y = posY; }
+
 private:
 	//今の状態の名前
 	StateName nowStateName_{};

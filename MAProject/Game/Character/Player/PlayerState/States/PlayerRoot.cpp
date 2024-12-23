@@ -67,10 +67,6 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 
 	context_.playerTransform_.translate += context_.move_ * GameTime::timeScale_;
 
-	if (context_.isDown_) {
-		context_.downVector_.y += context_.downSpeed_ * GameTime::timeScale_;
-	}
-
 	if (context_.dashCoolTime_ != 0) {
 		context_.dashCoolTime_--;
 	}
@@ -79,7 +75,6 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 	if (context_.floatSin_ >= (std::numbers::pi * 2.0f)) {
 		context_.floatSin_ = 0.0f;
 	}
-	context_.playerTransform_.translate.y += context_.downVector_.y * GameTime::timeScale_;
 	//武器の消滅処理をしていなければ武器のSRTを更新
 	if (!context_.isDissolve_) {
 

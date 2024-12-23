@@ -107,10 +107,7 @@ void Player::Initialize(){
 	particle_->SetLifeTime(0.4f);
 	particle_->SetVelocityRange(Vector2(-10.0f, 10.0f));
 
-	playerTransform_ = playerObj_->transform_;
-	playerTransform_.translate.y = 5.0f;
-	playerTransform_.scale.z = 0.7f;
-	playerTransform_.scale.y = 0.5f;
+	playerTransform_ = stateManager_->GetPlayerTrnaform();
 	particleTrans_ = playerTransform_;
 	particleTransCenter_ = playerTransform_;
 
@@ -218,10 +215,16 @@ void Player::Update(){
 	stateManager_->Update(viewProjection_->rotation_);
 
 	//Stateによって変更が生じた値を代入する
-	playerTransform_.translate = stateManager_->GetPlayerTrnaform().translate;
+	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
+	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
 	weaponTransform_.translate = stateManager_->GetWeaponTrnaform().translate;
 	weaponCollisionTransform_.translate = stateManager_->GetWeaponCollisionTrnaform().translate;
 	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
+	/*落下処理*/
+	if (isDown_) {
+		downVector_.y += downSpeed_ * timeScale_;
+	}	
+	playerTransform_.translate.y += downVector_.y * timeScale_;
 
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
@@ -343,6 +346,7 @@ void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
 	ImGui::DragFloat("easeT", &easeT_, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("DownVector", &downVector_.x, 0.01f);
 	ImGui::DragFloat("移動限界", &limitPos_.x, 0.01f);
 	limitPos_.y = -limitPos_.x;
 	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);

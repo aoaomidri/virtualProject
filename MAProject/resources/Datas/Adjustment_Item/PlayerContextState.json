@@ -1,7 +1,7 @@
 {
     "PlayerContextState": {
-        "DownSpeed": 0.0,
-        "JumpPower": 0.0,
-        "MoveSpeed": 0.10000000149011612
+        "DownSpeed": -0.009999999776482582,
+        "JumpPower": 0.20000000298023224,
+        "MoveSpeed": 0.07000000029802322
     }
 }

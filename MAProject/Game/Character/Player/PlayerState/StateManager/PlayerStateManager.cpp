@@ -1,6 +1,7 @@
 #include "PlayerStateManager.h"
 #include<assert.h>
 #include"Adjustment_Item.h"
+#include"LevelLoader/LevelLoader.h"
 
 void PlayerStateManager::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
@@ -23,6 +24,11 @@ void PlayerStateManager::InitGlobalVariables() const{
 void PlayerStateManager::InitState() {
 	context_.postureVec_ = { 0.0f,0.0f,1.0f };
 	context_.frontVec_ = { 0.0f,0.0f,1.0f };
+	context_.playerTransform_.translate.y = 5.0f;
+	context_.playerTransform_.scale = { 1.0f,0.5f,0.7f };
+
+	context_.weaponParameter_.weaponTransform_.scale = context_.weaponParameter_.kWeaponScale_;
+	context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_;
 
 	context_.playerRotateMatrix_ = Matrix4x4::StaticIdentity();
 	context_.weaponParameter_.weaponMatrix_ = Matrix4x4::StaticIdentity();

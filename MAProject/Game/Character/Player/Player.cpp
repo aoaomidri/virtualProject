@@ -222,6 +222,8 @@ void Player::Update(){
 	//落下処理による修正後の値を代入
 	stateManager_->SetPlayerTranslateY(playerTransform_.translate.y);
 
+	
+
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
 	shadow_->position_.y = shadowHeight_;
@@ -290,11 +292,8 @@ void Player::Update(){
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
 	//トレイルの更新処理
-
 	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack) {
 		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		//トレイルのために少し早く情報を更新
-		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
 		if (timeScale_ != 0.0f) {

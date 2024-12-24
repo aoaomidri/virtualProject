@@ -36,8 +36,6 @@ void PlayerAttack::PostAttackInitialize(){
 	context_.workAttack_.AttackTimer_ = 0;
 	context_.workAttack_.hitRecordRestFlug_ = true;
 	waitTime_ = waitTimeBase_;
-
-
 	isEndAttack_ = false;
 }
 
@@ -209,9 +207,7 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 
 	context_.weaponParameter_.weaponTransform_.translate = context_.weaponParameter_.weaponCollisionTransform_.translate;
 
-	
 
-	cameraRotate;
 }
 
 void PlayerAttack::AttackMotion(){

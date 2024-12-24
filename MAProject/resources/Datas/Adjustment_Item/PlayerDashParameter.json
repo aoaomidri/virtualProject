@@ -1,0 +1,6 @@
+{
+    "PlayerDashParameter": {
+        "DashCoolTimeBase": 5,
+        "DashSpeed": 10.0
+    }
+}

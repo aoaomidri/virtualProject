@@ -68,4 +68,13 @@ void PlayerStateManager::Update(const Vector3& cameraRotate){
 	ApplyGlobalVariables();
 	//実行中の状態を更新する
 	nowState_->Update(cameraRotate);
+	//制限時間等の状態推移に関する変数を更新
+	ContextStateUpdate();
+}
+
+void PlayerStateManager::ContextStateUpdate(){
+	//contextから始まるもの以外の物は配置しない
+	if (context_.dashCoolTime_ != 0) {
+		context_.dashCoolTime_--;
+	}
 }

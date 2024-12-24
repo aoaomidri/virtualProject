@@ -178,8 +178,17 @@ public:
 		float moveLimitMinimum_ = 0.0005f;
 		float moveCorrection_ = 3.0f;
 
+
 		//落下するかどうか
 		bool isDown_ = false;
+		//ダッシュしてるかどうか
+		bool isDash_ = false;
+		//攻撃に回避を合わせたか(ジャスト回避をしているか)
+		bool isJustAvoid_ = false;
+		//回避反撃を行うかどうか
+		bool isAvoidAttack_ = false;
+
+
 		//ディゾルブするかどうか
 		bool isDissolve_ = false;
 		//武器の動きをデバックする

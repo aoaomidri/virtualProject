@@ -11,8 +11,6 @@ void Player::ApplyGlobalVariables() {
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 
-	dashSpeed_ = adjustment_item->GetfloatValue(groupName, "DashSpeed");
-	dashCoolTimeBase_ = adjustment_item->GetIntValue(groupName, "DashCoolTime");
 	jumpPower_ = adjustment_item->GetfloatValue(groupName, "JumpPower");
 	downSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
 	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
@@ -33,8 +31,6 @@ void Player::Initialize(){
 	//グループを追加
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
-	adjustment_item->AddItem(groupName, "DashCoolTime", dashCoolTime_);
-	adjustment_item->AddItem(groupName, "DashSpeed", dashSpeed_);
 	adjustment_item->AddItem(groupName, "JumpPower", jumpPower_);
 	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed_);
 	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
@@ -113,8 +109,6 @@ void Player::Initialize(){
 
 	weaponTransform_.scale = kWeaponScale_;
 	weaponCollisionTransform_.scale = kWeaponCollisionBase_;
-
-	dashCoolTime_ = dashCoolTimeBase_;
 
 	playerRotateMatrix_ = Matrix::MakeIdentity4x4();
 
@@ -313,11 +307,13 @@ void Player::Draw(const ViewProjection& viewProjection){
 	playerObj_->SetMatrix(playerMatrix_);
 	playerObj_->Update(viewProjection);
 	playerObj_->Draw();
+	if (!stateManager_->GetIsDash()){
+		weaponObj_->SetMatrix(weaponMatrix_);
+		weaponObj_->SetShininess(shiness_);
+		weaponObj_->Update(viewProjection);
+		weaponObj_->Draw();
 
-	weaponObj_->SetMatrix(weaponMatrix_);
-	weaponObj_->SetShininess(shiness_);
-	weaponObj_->Update(viewProjection);
-	weaponObj_->Draw();
+	}
 
 #ifdef _DEBUG
 	/*collisionObj_->SetMatrix(playerOBBMatrix_);
@@ -359,7 +355,6 @@ void Player::DrawImgui(){
 	ImGui::Text("ロックオンしている敵 = %d", enemyNumber_);
 	ImGui::Text("おちているかどうか = %d", isDown_);
 	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
-	ImGui::Text("ダッシュのクールタイム = %d", dashCoolTime_);
 	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer);
 	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex);
 	ImGui::Text("敵に当たっているか = %d", isCollisionEnemy_);
@@ -685,12 +680,7 @@ void Player::BehaviorAttackUpdate(){
 		}
 		
 	}
-	
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
-		//behaviorRequest_ = Behavior::kDash;
-	}
-
-	
+		
 }
 
 void Player::BehaviorAllStrongAttackInitialize(){
@@ -821,19 +811,10 @@ void Player::BehaviorStrongAttackUpdate(){
 		}
 	}
 	//ダッシュが入力されたら即中断
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
-		//behaviorRequest_ = Behavior::kDash;
-	}
+	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_RIGHT_SHOULDER) && dashCoolTime_ <= 0) {
+	//	//behaviorRequest_ = Behavior::kDash;
+	//}
 
-}
-
-void Player::BehaviorDashInitialize(){
-	isAvoidAttack_ = false;
-	audio_->PlayAudio(avoidSE_, seVolume_, false);
-
-	workDash_.dashParameter_ = 0;
-
-	isDash_ = true;
 }
 
 void Player::BehaviorJustAvoidInitialize(){
@@ -881,47 +862,6 @@ void Player::BehaviorJustAvoidInitialize(){
 	isShakeDown_ = false;
 	isEndAttack_ = false;
 	weaponCollisionTransform_.scale = { 0.0f,0.0f,0.0f };
-}
-
-void Player::BehaviorDashUpdate(){
-	frontVec_ = postureVec_;
-	Matrix4x4 newRotateMatrix_ = playerRotateMatrix_;
-	move_ = { 0, 0, moveSpeed_ * dashSpeed_ };
-
-	move_ = Matrix::TransformNormal(move_, newRotateMatrix_);
-	//ジャスト回避していたら追撃ができるように
-	if (isJustAvoid_) {
-		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-			
-
-			//behaviorRequest_ = Behavior::kJustAvoid;
-			dashCoolTime_ = dashCoolTimeBase_;
-		}
-	}
-	
-	//ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 15;
-
-	if (!isAvoidAttack_) {
-		Vector3 NextPos = playerTransform_.translate + (move_ * timeScale_);
-
-		if (NextPos.x >= limitPos_.x or NextPos.x <= limitPos_.y) {
-			move_.x = 0;
-		}
-		if (NextPos.z >= limitPos_.x or NextPos.z <= limitPos_.y) {
-			move_.z = 0;
-		}
-		playerTransform_.translate += move_ * timeScale_;
-	}
-	
-
-	//既定の時間経過で通常状態に戻る
-	workDash_.dashParameter_ += timeScale_;
-	if (workDash_.dashParameter_ >= behaviorDashTime) {
-		dashCoolTime_ = dashCoolTimeBase_;
-		isDash_ = false;
-		//behaviorRequest_ = Behavior::kRoot;
-	}
 }
 
 void Player::BehaviorJustAvoidUpdate(){

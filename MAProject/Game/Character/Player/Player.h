@@ -83,7 +83,7 @@ public:
 
 	const bool GetIsGuard()const { return isGuard_; }
 
-	const bool GetIsDash() const { return isDash_; }
+	const bool GetIsDash() const { return stateManager_->GetIsDash(); }
 
 	const OBB& GetOBB()const { return playerOBB_; }
 
@@ -124,8 +124,6 @@ public:
 
 private:
 	//クラス内関数
-	//ダッシュ行動初期化
-	void BehaviorDashInitialize();
 	//ジャスト回避行動初期化
 	void BehaviorJustAvoidInitialize();
 	//攻撃行動更新
@@ -134,8 +132,6 @@ private:
 	void BehaviorAllStrongAttackInitialize();
 	//強攻撃全体の更新
 	void BehaviorStrongAttackUpdate();
-	//ダッシュ行動更新
-	void BehaviorDashUpdate();
 	//ジャスト回避行動初期化
 	void BehaviorJustAvoidUpdate();
 
@@ -324,24 +320,11 @@ private:
 
 	float moveCorrection_ = 3.0f;
 
-	//ダッシュ時のスピード倍率
-	float dashSpeed_ = 10.0f;
-	//ダッシュのクールタイムのベース
-	int dashCoolTimeBase_ = 20;
 	//被弾時の無敵時間
 	int hitTimer_ = 0;
 
 	int hitTimerBase_ = 30;
 
-	//代入用ダッシュのクールタイム
-	int dashCoolTime_ = 0;
-
-	struct WorkDash {
-		//ダッシュ用の媒介変数
-		float dashParameter_ = 0;
-	};
-
-	WorkDash workDash_;
 
 	float timeScale_ = 0.0f;
 	/*応刀用の構造体*/
@@ -539,8 +522,6 @@ private:
 	bool isDown_ = false;
 	//武器の振りに対して調整をしたいかどうか
 	bool isWeaponDebugFlug_ = false;
-	//ダッシュしてるかどうか
-	bool isDash_ = false;
 	//強攻撃一段目で守っているかどうか
 	bool isGuard_ = false;
 	//強攻撃中に攻撃を受けたかどうか

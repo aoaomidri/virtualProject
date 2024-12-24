@@ -67,9 +67,6 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 
 	context_.playerTransform_.translate += context_.move_ * GameTime::timeScale_;
 
-	if (context_.dashCoolTime_ != 0) {
-		context_.dashCoolTime_--;
-	}
 	/*武器の浮遊*/
 	context_.floatSin_ += context_.floatSpeed_ * GameTime::timeScale_;
 	if (context_.floatSin_ >= (std::numbers::pi * 2.0f)) {
@@ -102,10 +99,10 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 	if (GameTime::timeScale_ != 0.0f) {
 		context_.trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 	}
-	////ダッシュを発動
-	//if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
-	//	PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
-	//}
+	//ダッシュを発動
+	if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
+	}
 	////弱攻撃を発動
 	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
 	//	audio_->PlayAudio(attackMotionSE_, seVolume_, false);

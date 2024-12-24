@@ -163,6 +163,10 @@ void Player::Update(){
 		}		
 	}
 
+	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack) {
+		weaponThreshold_ = 0.0f;
+	}
+
 	//カウンター時間経過処理
 	if (counterTime_ > counterTimeBase_){
 		isGuardHit_ = false;
@@ -277,14 +281,14 @@ void Player::Update(){
 	/*通常時かそれ以外かで武器の行列の処理を変更*/
 	if (stateManager_->GetStateName() != BasePlayerState::StateName::Root) {
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		if (!isDissolve_){
+		if (!stateManager_->GetIsDissolve()){
 			weaponRotateVec *= (playerRotateMatrix_);
 			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
 		}
 	}
 	else {
 		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		if (!isDissolve_) {
+		if (!stateManager_->GetIsDissolve()) {
 			weaponRotateVec *= (playerRotateMatrix_);
 			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
 		}

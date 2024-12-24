@@ -28,16 +28,19 @@ class BasePlayerState{
 public:
 	//攻撃に関連するパラメーター
 	struct  WorkAttack {
-		uint32_t attackParameter_ = 0;
-		int32_t comboIndex_ = 0;
-		int32_t inComboPhase_ = 0;
 		bool comboNext_ = false;
 		bool strongComboNext_ = false;
-		uint32_t AttackTimer_ = 0;
-		uint32_t nextAttackTimer_ = 0;
-
+		bool trailResetFlug_ = false;
+		bool hitRecordRestFlug_ = false;
+		int32_t comboIndex_ = 0;
+		int32_t inComboPhase_ = 0;
+		float attackParameter_ = 0;
+		float AttackTimer_ = 0;
+		float nextAttackTimer_ = 0;
 		//コンボの数
 		static const int conboNum_ = 6;
+		//攻撃ののけぞりの種類
+		HitRecord::KnockbackType type_;
 	};
 	//ダッシュに関するパラメーター
 	struct WorkDash {
@@ -86,10 +89,6 @@ public:
 		//武器のOBB
 		OBB weaponOBB_{};
 
-		std::array<Vector3, WorkAttack::conboNum_> weaponAttackTransformRotates_ = { {
-		{0.0f,0.0f,-0.5f},{-0.3f,0.0f,2.0f},{-0.3f,0.0f,-1.7f},{0.0f,0.0f,-2.2f},{-0.3f,0.0f,2.5f},{-0.3f,0.0f,-0.0f}
-		}
-		};
 
 		std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackTransformRotates_ = { {
 			{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
@@ -98,14 +97,6 @@ public:
 
 		std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackOffset_ = { {
 			{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
-			}
-		};
-
-		std::array<float, WorkAttack::conboNum_> weapon_Rotates_ = {
-			-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f
-		};
-		std::array<Vector2, WorkAttack::conboNum_> weapon_RotatesMinMax_ = { {
-			{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{1.65f,-0.6f}
 			}
 		};
 
@@ -178,7 +169,6 @@ public:
 		float moveLimitMinimum_ = 0.0005f;
 		float moveCorrection_ = 3.0f;
 
-
 		//落下するかどうか
 		bool isDown_ = false;
 		//ダッシュしてるかどうか
@@ -187,8 +177,8 @@ public:
 		bool isJustAvoid_ = false;
 		//回避反撃を行うかどうか
 		bool isAvoidAttack_ = false;
-
-
+		//敵と衝突しているか
+		bool isCollisionEnemy_ = false;
 		//ディゾルブするかどうか
 		bool isDissolve_ = false;
 		//武器の動きをデバックする

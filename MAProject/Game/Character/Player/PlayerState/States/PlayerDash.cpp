@@ -42,8 +42,6 @@ void PlayerDash::Update(const Vector3& cameraRotate){
 	//ジャスト回避していたら追撃ができるように
 	if (context_.isJustAvoid_) {
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-
-
 			PlayerStateManager::GetInstance()->ChangeState(StateName::kJustAvoid);
 			context_.dashCoolTime_ = dashCoolTimeBase_;
 		}

@@ -112,7 +112,7 @@ public:
 	void OnCollisionEnemyAttackAvoid(const uint32_t serialNumber);
 
 	//Setter
-	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; }
+	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; stateManager_->SetIsCollisionEnemy(collisionEnemy); }
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
@@ -500,7 +500,7 @@ private:
 	bool isDissolve_ = false;
 	//武器を振り下ろしかどうか
 	bool isShakeDown_ = false;
-	//
+	//攻撃が終わったかどうか
 	bool isEndAttack_ = false;
 	//トレイルを描画するかどうか
 	bool isTrail_ = false;

@@ -103,14 +103,14 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 	if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
 		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
 	}
-	////弱攻撃を発動
-	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-	//	audio_->PlayAudio(attackMotionSE_, seVolume_, false);
-	//	context_.workAttack_.comboIndex_ = 1;
-	//	PlayerStateManager::GetInstance()->ChangeState(StateName::Attack);
-	//	context_.isDissolve_ = false;
-	//	context_.weaponParameter_.weaponThreshold_ = 0.0f;
-	//}
+	//弱攻撃を発動
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		context_.workAttack_.comboIndex_ = 1;
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Attack);
+		context_.isDissolve_ = false;
+		context_.weaponParameter_.weaponThreshold_ = 0.0f;
+	}
 	////強攻撃を発動
 	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
 	//	context_.workAttack_.comboIndex_ = 1;

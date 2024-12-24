@@ -52,9 +52,15 @@ public:
 	const Matrix4x4& GetPlayerRotateMatrix()const { return context_.playerRotateMatrix_; }
 
 	const bool GetIsDash()const { return context_.workDash_.isDash_; }
+	const bool GetTrailResetFlug()const { return context_.workAttack_.trailResetFlug_; }
+	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 
 	//Setter
-	void SetPlayerTranslateY(float posY) { context_.playerTransform_.translate.y = posY; }
+	void SetPlayerTranslateY(const float posY) { context_.playerTransform_.translate.y = posY; }
+
+	void SetTrailResetFlug(const bool flug) { context_.workAttack_.trailResetFlug_ = flug; }
+	void SetHitRecordResetFlug(const bool flug) { context_.workAttack_.hitRecordRestFlug_ = flug; }
+	void SetIsCollisionEnemy(const bool flug){context_.isCollisionEnemy_ = flug; }
 
 private:
 	//今の状態の名前

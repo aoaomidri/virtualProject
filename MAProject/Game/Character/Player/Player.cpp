@@ -212,7 +212,7 @@ void Player::Update(){
 	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
 	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
 	weaponTransform_ = stateManager_->GetWeaponTrnaform();
-	weaponCollisionTransform_.translate = stateManager_->GetWeaponCollisionTrnaform().translate;
+	weaponCollisionTransform_ = stateManager_->GetWeaponCollisionTrnaform();
 	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
 	/*落下処理*/
 	if (isDown_) {
@@ -288,7 +288,21 @@ void Player::Update(){
 		}
 	}
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
+
 	//トレイルの更新処理
+
+	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack) {
+		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+		//トレイルのために少し早く情報を更新
+		weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponCollisionRotateMatrix, weaponCollisionTransform_.translate);
+		weaponObj_->SetMatrix(weaponMatrix_);
+		weaponObj_->UniqueUpdate();
+		if (timeScale_ != 0.0f) {
+			trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
+		}
+
+	}
+
 	if (timeScale_ != 0.0f){
 		trail_->Update();
 	}
@@ -477,7 +491,6 @@ void Player::PostBehaviorAttackInitialize(){
 void Player::BehaviorAttackInitialize(){
 	type_ = KnockbackType::Left;
 	workAttack_.nextAttackTimer = nextAttackTimerFirst_;
-	//baseRotate_.y = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
 	weaponTransform_.rotate.x = weaponAttackTransformRotates_[0].x;
 	weaponTransform_.rotate.z = weaponAttackTransformRotates_[0].z;
 

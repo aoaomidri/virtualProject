@@ -145,14 +145,14 @@ void Player::Update(){
 	weaponObj_->SetTrailPos(trailPosData_);
 
 
-	if (isDissolve_){
+	if (stateManager_->GetIsDissolve()){
 		weaponThreshold_ += addThresholdSpeed_ * timeScale_;
 		if (weaponThreshold_ > 1.0f) {
 			//完全に消えたら
 			weaponThreshold_ = 1.0f;
 			addPosition_.y = 0.0f;
 			trail_->Reset();
-			isDissolve_ = false;
+			stateManager_->SetIsDissolve(false);
 		}
 	}
 	else {

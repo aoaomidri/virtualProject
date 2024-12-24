@@ -54,6 +54,7 @@ public:
 	const bool GetIsDash()const { return context_.workDash_.isDash_; }
 	const bool GetTrailResetFlug()const { return context_.workAttack_.trailResetFlug_; }
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
+	const bool GetIsDissolve()const { return context_.isDissolve_; }
 
 	//Setter
 	void SetPlayerTranslateY(const float posY) { context_.playerTransform_.translate.y = posY; }
@@ -61,6 +62,7 @@ public:
 	void SetTrailResetFlug(const bool flug) { context_.workAttack_.trailResetFlug_ = flug; }
 	void SetHitRecordResetFlug(const bool flug) { context_.workAttack_.hitRecordRestFlug_ = flug; }
 	void SetIsCollisionEnemy(const bool flug){context_.isCollisionEnemy_ = flug; }
+	void SetIsDissolve(const bool flug) { context_.isDissolve_ = flug; }
 
 private:
 	//今の状態の名前

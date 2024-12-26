@@ -89,22 +89,6 @@ public:
 		//武器のOBB
 		OBB weaponOBB_{};
 
-
-		std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackTransformRotates_ = { {
-			{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
-			}
-		};
-
-		std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackOffset_ = { {
-			{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
-			}
-		};
-
-		std::array<Vector2, WorkAttack::conboNum_> weapon_StrongRotatesMinMax_ = { {
-			{4.5f,9.2f},{3.16f,-0.9f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
-			}
-		};
-
 		Vector3 weapon_offset_{};
 		Vector3 weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
 		Vector3 weapon_offset_RootBase_ = { 0.4f,-1.8f,1.0f };
@@ -168,6 +152,8 @@ public:
 		float floatSpeed_ = 0.0f; 
 		float moveLimitMinimum_ = 0.0005f;
 		float moveCorrection_ = 3.0f;
+		//ヒビテクスチャの透明度
+		float groundCrushTexAlpha_ = 1.0f;
 
 		//落下するかどうか
 		bool isDown_ = false;
@@ -183,6 +169,8 @@ public:
 		bool isDissolve_ = false;
 		//武器の動きをデバックする
 		bool isWeaponDebugFlug_ = false;
+		//地面テクスチャを固定するかどうか
+		bool isStopCrush_ = false;
 
 		std::unique_ptr<TrailEffect> trail_;
 	};

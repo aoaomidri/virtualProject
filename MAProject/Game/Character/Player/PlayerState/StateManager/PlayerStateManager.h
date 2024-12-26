@@ -51,10 +51,16 @@ public:
 
 	const Matrix4x4& GetPlayerRotateMatrix()const { return context_.playerRotateMatrix_; }
 
+	const int GetComboIndex()const { return context_.workAttack_.comboIndex_; }
+
+	const float GetGroundCrushTexAlpha()const { return context_.groundCrushTexAlpha_; }
+
 	const bool GetIsDash()const { return context_.workDash_.isDash_; }
 	const bool GetTrailResetFlug()const { return context_.workAttack_.trailResetFlug_; }
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 	const bool GetIsDissolve()const { return context_.isDissolve_; }
+	const bool GetIsStopCrush()const { return context_.isStopCrush_; }
+	
 
 	//Setter
 	void SetPlayerTranslateY(const float posY) { context_.playerTransform_.translate.y = posY; }
@@ -63,6 +69,7 @@ public:
 	void SetHitRecordResetFlug(const bool flug) { context_.workAttack_.hitRecordRestFlug_ = flug; }
 	void SetIsCollisionEnemy(const bool flug){context_.isCollisionEnemy_ = flug; }
 	void SetIsDissolve(const bool flug) { context_.isDissolve_ = flug; }
+	void SetIsStopCrush(const bool flug) { context_.isStopCrush_ = flug; }
 
 private:
 	//今の状態の名前
@@ -74,6 +81,9 @@ private:
 	std::unique_ptr<BasePlayerState> nextState_;
 
 	PLContext context_;
+
+	//ヒビの透明化速度
+	float crushColorMinus_ = 0.02f;
 
 };
 

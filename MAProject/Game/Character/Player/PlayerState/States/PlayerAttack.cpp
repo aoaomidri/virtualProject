@@ -1,9 +1,34 @@
 #include "PlayerAttack.h"
 #include"LockOn.h"
 
+bool PlayerAttack::isLoad_ = false;
+
+void PlayerAttack::ApplyGlobalVariables(){
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "PlayerAttackParameter";
+
+	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
+	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
+	waitTimeBase_ = adjustment_item->GetfloatValue(groupName, "WaitTimeBase");
+}
+
+void PlayerAttack::InitGlobalVariables() const{
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "PlayerAttackParameter";
+	//グループを追加
+	adjustment_item->CreateGroup(groupName);
+	//アイテムの追加
+	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
+	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
+	adjustment_item->AddItem(groupName, "WaitTimeBase", waitTimeBase_);
+}
 
 void PlayerAttack::Initialize(){
 	BasePlayerState::Initialize();
+	if (!isLoad_) {
+		InitGlobalVariables();
+		isLoad_ = true;
+	}
 	PreAttackInitialize();
 	AttackInitialize();
 	PostAttackInitialize();
@@ -44,31 +69,46 @@ void PlayerAttack::AttackInitialize(){
 	context_.workAttack_.nextAttackTimer_ = nextAttackTimerFirst_;
 	context_.weaponParameter_.weaponTransform_.rotate.x = weaponAttackTransformRotates_[0].x;
 	context_.weaponParameter_.weaponTransform_.rotate.z = weaponAttackTransformRotates_[0].z;
-
 	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[0];
 }
 
 void PlayerAttack::SecondAttackInitialize(){
-
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Right;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[1];
+	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[1];
 }
 
 void PlayerAttack::ThirdAttackInitialize(){
-
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Left;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[2];
+	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[2];
 }
 
 void PlayerAttack::FourthAttackInitialize(){
-
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Left;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate.z = weaponAttackTransformRotates_[3].z;
 }
 
 void PlayerAttack::FifthAttackInitialize(){
-
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Right;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[4];
+	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[4];
 }
 
 void PlayerAttack::SixthAttackInitialize(){
-
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Strong;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[5];
+	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[5];
 }
 
 void PlayerAttack::Update(const Vector3& cameraRotate){
+	ApplyGlobalVariables();
+
 	context_.frontVec_ = context_.postureVec_;
 	//技が終わったか
 	if (isEndAttack_) {
@@ -94,11 +134,9 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 				sub = Vector3::Normalize(sub);
 				context_.postureVec_ = sub;
 
-
 				Matrix4x4 directionTodirection_;
 				directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
 				context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
-
 
 			}
 			//各攻撃行動の初期化処理
@@ -122,11 +160,9 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 			}
 			else if (context_.workAttack_.comboIndex_ == 5) {
 				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
-
 				FifthAttackInitialize();
 			}
 			else if (context_.workAttack_.comboIndex_ == 6) {
-
 				SixthAttackInitialize();
 			}
 			PostAttackInitialize();
@@ -198,6 +234,10 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 		}
 	}
 
+	if (input_->GetPadButtonTriger(Input::GamePad::RB)) {
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
+	}
+
 	//コリジョン用のtransform等を更新
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
 	weaponCollisionRotateMatrix = Matrix::Multiply(weaponCollisionRotateMatrix, context_.playerRotateMatrix_);
@@ -258,21 +298,240 @@ void PlayerAttack::AttackMotion(){
 }
 
 void PlayerAttack::SecondAttackMotion(){
+	//振っている現在の角度で処理を変更
+	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_RotatesMinMax_[1].x) {
+		waitTime_ -= GameTime::timeScale_;
+		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[1].x;
+	}
+	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[1].y) {
+		isShakeDown_ = true;
+	}
+	else {
+		//攻撃時に移動
+		context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
+		context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
 
+		if (!context_.isCollisionEnemy_) {
+			Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
+
+			if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
+				context_.move_.x = 0;
+			}
+			if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
+				context_.move_.z = 0;
+			}
+
+			context_.playerTransform_.translate += (context_.move_ * motionSpeed_) * GameTime::timeScale_;
+		}
+		context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
+		context_.workAttack_.AttackTimer_ += GameTime::timeScale_;
+	}
+
+	if (waitTime_ <= 0) {
+		isEndAttack_ = true;
+	}
+	//フラグによって振る方向を分岐
+	if (!isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+	}
+	else if (isShakeDown_) {
+
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+
+
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
 void PlayerAttack::ThirdAttackMotion(){
+	//振っている現在の角度で処理を変更
+	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_RotatesMinMax_[2].x) {
+		waitTime_ -= GameTime::timeScale_;
+		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[2].x;
+	}
+	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[2].y) {
+		isShakeDown_ = true;
+	}
+	else {
+		//攻撃時に移動
+		context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
+		context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
 
+		if (!context_.isCollisionEnemy_) {
+			Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
+
+			if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
+				context_.move_.x = 0;
+			}
+			if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
+				context_.move_.z = 0;
+			}
+
+			context_.playerTransform_.translate += (context_.move_ * motionSpeed_) * GameTime::timeScale_;
+		}
+		context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
+		context_.workAttack_.AttackTimer_ += GameTime::timeScale_;
+	}
+
+	if (waitTime_ <= 0) {
+		isEndAttack_ = true;
+	}
+	//フラグによって振る方向を分岐
+	if (!isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+	}
+	else if (isShakeDown_) {
+
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+
+
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
 void PlayerAttack::FourthAttackMotion(){
+	//振っている現在の角度で処理を変更
+	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_RotatesMinMax_[3].x) {
+		waitTime_ -= GameTime::timeScale_;
+		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[3].x;
+	}
+	else {
+		//攻撃時に移動
+		context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
+		context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
 
+		if (!context_.isCollisionEnemy_) {
+			Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
+
+			if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
+				context_.move_.x = 0;
+			}
+			if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
+				context_.move_.z = 0;
+			}
+
+			context_.playerTransform_.translate += (context_.move_ * motionSpeed_) * GameTime::timeScale_;
+		}
+		context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
+		context_.workAttack_.AttackTimer_ += GameTime::timeScale_;
+	}
+
+	if (waitTime_ <= 0) {
+		isEndAttack_ = true;
+	}
+	//フラグによって振る方向を分岐
+	if (!isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+	}
+	else if (isShakeDown_) {
+
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+
+
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
 void PlayerAttack::FifthAttackMotion(){
+	//振っている現在の角度で処理を変更
+	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_RotatesMinMax_[4].x) {
+		waitTime_ -= GameTime::timeScale_;
+		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[4].x;
+	}
+	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[4].y) {
+		isShakeDown_ = true;
+	}
+	else {
+		//攻撃時に移動
+		context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
+		context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
 
+		if (!context_.isCollisionEnemy_) {
+			Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
+
+			if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
+				context_.move_.x = 0;
+			}
+			if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
+				context_.move_.z = 0;
+			}
+
+			context_.playerTransform_.translate += (context_.move_ * motionSpeed_) * GameTime::timeScale_;
+		}
+		context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
+		context_.workAttack_.AttackTimer_ += GameTime::timeScale_;
+	}
+
+	if (waitTime_ <= 0) {
+		isEndAttack_ = true;
+	}
+	//フラグによって振る方向を分岐
+	if (!isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+	}
+	else if (isShakeDown_) {
+
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+
+
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
 void PlayerAttack::SixthAttackMotion(){
+	//振っている現在の角度で処理を変更
+	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_RotatesMinMax_[5].x) {
+		waitTime_ -= GameTime::timeScale_;
+		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[5].x;
+		SettingGroundCrushTex();
+	}
+	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[5].y) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		isShakeDown_ = true;
+	}
+	else {
+		//攻撃時に移動
+		context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
+		context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
 
+		if (!context_.isCollisionEnemy_) {
+			Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
+
+			if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
+				context_.move_.x = 0;
+			}
+			if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
+				context_.move_.z = 0;
+			}
+
+			context_.playerTransform_.translate += (context_.move_ * motionSpeed_) * GameTime::timeScale_;
+		}
+		context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
+		context_.workAttack_.AttackTimer_ += GameTime::timeScale_;
+	}
+
+	if (waitTime_ <= 0) {
+		isEndAttack_ = true;
+	}
+	//フラグによって振る方向を分岐
+	if (!isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / (kAttackDivisionMagnification_ * kAttackMagnification_));
+	}
+	else if (isShakeDown_) {
+
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+
+
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+}
+
+void PlayerAttack::SettingGroundCrushTex(){
+	context_.isStopCrush_ = true;
+	context_.groundCrushTexAlpha_ = 1.0f;
 }

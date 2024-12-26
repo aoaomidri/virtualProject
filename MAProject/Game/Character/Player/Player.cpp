@@ -43,8 +43,6 @@ void Player::Initialize(){
 	adjustment_item->AddItem(groupName, "AddPostT", addPostT_);
 	adjustment_item->AddItem(groupName, "JustAvoidT", justAvoidT_);
 	adjustment_item->AddItem(groupName, "ScaleValue", scaleValue_);
-
-	
 	
 	input_ = Input::GetInstance();
 
@@ -235,17 +233,9 @@ void Player::Update(){
 	shadow_->scale_.x = shadowScaleBase_ + (shadowScaleCulcBase_ - playerTransform_.translate.y);
 	shadow_->scale_.y = shadowScaleBase_ + (shadowScaleCulcBase_ - playerTransform_.translate.y);
 
+	groundCrush_->color_.w = stateManager_->GetGroundCrushTexAlpha();
 	//地面のヒビの処理
-	if (isStopCrush_){
-		groundCrush_->color_.w -= crushColorMinus_;
-
-		if (groundCrush_->color_.w <= 0.0f) {
-			isStopCrush_ = false;
-		}
-	}
-	else {
-		groundCrush_->color_.w = 0.0f;
-
+	if (not stateManager_->GetIsStopCrush()) {
 		groundCrush_->position_ = playerTransform_.translate + Matrix::TransformNormal(groundOffsetBase_, playerRotateMatrix_);
 		groundCrush_->position_.y = crushPosBase_;
 	}
@@ -314,7 +304,7 @@ void Player::Update(){
 
 void Player::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
-	if (isStopCrush_) {
+	if (stateManager_->GetIsStopCrush()) {
 		groundCrush_->Draw(viewProjection);
 	}
 	trailRender_->Draw(trail_.get(), viewProjection);
@@ -409,7 +399,7 @@ void Player::OnFlootCollision(OBB obb){
 
 const float Player::GetHitStop() {
 	if (stateManager_->GetStateName() == BasePlayerState::StateName::StrongAttack) {
-		if (workAttack_.comboIndex != 5) {
+		if (stateManager_->GetComboIndex() != 5) {
 			return strongHitStop_;
 		}
 		else {
@@ -417,7 +407,7 @@ const float Player::GetHitStop() {
 		}
 	}
 
-	if (workAttack_.comboIndex == 6) {
+	if (stateManager_->GetComboIndex() == 6) {
 		return strongHitStop_;
 	}
 	else {

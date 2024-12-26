@@ -14,6 +14,11 @@ public:
 	/// <param name="ctx"></param>
 	PlayerAttack(PlayerContext& ctx) : BasePlayerState(ctx) {}
 
+	//ファイルから読み込み代入する
+	void ApplyGlobalVariables();
+	//変数をImguiやファイルに書き出す
+	void InitGlobalVariables() const;
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -55,7 +60,14 @@ public:
 	//弱6攻撃のモーション
 	void SixthAttackMotion();
 
+private:
+	//地面のヒビを出現させる
+	void SettingGroundCrushTex();
 
+
+public:
+	//InitGlobalVariablesを行ったかどうか
+	static bool isLoad_;
 private:
 	bool isShakeDown_ = false;
 	//攻撃が終わったかどうか

@@ -126,8 +126,6 @@ private:
 	//クラス内関数
 	//ジャスト回避行動初期化
 	void BehaviorJustAvoidInitialize();
-	//攻撃行動更新
-	void BehaviorAttackUpdate();
 	//強攻撃全体の初期化
 	void BehaviorAllStrongAttackInitialize();
 	//強攻撃全体の更新
@@ -159,40 +157,7 @@ public:
 	//コンボの数
 	static const int conboNum_ = 6;
 
-	
-
 	std::array<Vector3, conboNum_> nextAttackRotates_;
-
-private:
-	//弱行動共通の初期化
-	void PreBehaviorAttackInitialize();
-	//弱行動共通の初期化
-	void PostBehaviorAttackInitialize();
-
-	//弱1攻撃行動初期化
-	void BehaviorAttackInitialize();
-	//弱2攻撃行動初期化
-	void BehaviorSecondAttackInitialize();
-	//弱3攻撃行動初期化
-	void BehaviorThirdAttackInitialize();
-	//弱4攻撃行動初期化
-	void BehaviorFourthAttackInitialize();
-	//弱5攻撃行動初期化
-	void BehaviorFifthAttackInitialize();
-	//弱6攻撃行動初期化
-	void BehaviorSixthAttackInitialize();
-	//弱1攻撃のモーション
-	void AttackMotion();
-	//弱2攻撃のモーション
-	void SecondAttackMotion();
-	//弱3攻撃のモーション
-	void ThirdAttackMotion();
-	//弱4攻撃のモーション
-	void FourthAttackMotion();
-	//弱5攻撃のモーション
-	void FifthAttackMotion();
-	//弱6攻撃のモーション
-	void SixthAttackMotion();
 
 private:
 	//強攻撃関連

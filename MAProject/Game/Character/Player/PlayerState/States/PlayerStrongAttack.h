@@ -69,6 +69,12 @@ public:
 	static bool isLoad_;
 
 private:
+	//追撃を出すかどうか
+	bool isNextAttack_ = false;
+	//初回の攻撃かどうか
+	bool isFirstAttack_ = false;
+	//最後のきめ技を行うかどうか
+	bool isFinishAttack_ = false;
 	bool chargeEnd_ = false;
 
 	//強2攻撃での追撃回数の最大値
@@ -87,6 +93,7 @@ private:
 	float motionSpeed_ = 1.0f;
 	float strongAttackRotateZ_ = 1.57f;
 	float strongSixthAttackRotate_ = 1.6f;
+	float fifthWeapon_Rotate_ = 0.5f;
 	/*当たり関係*/
 	float strongAddScale_ = 3.0f;
 	//次の攻撃に映るまでの時間
@@ -99,35 +106,21 @@ private:
 	const float kAttackMagnification_ = 1.5f;
 	const float kAttackDivisionMagnification_ = 2.0f;
 	const float kGuadeMagnification_ = 5.0f;
-	const float kStrongAttackMagnification_ = 3.0f;
-
-	//追撃を出すかどうか
-	bool isNextAttack_ = false;
-
-
-	/*強5攻撃のみ*/
-	//初回の攻撃かどうか
-	bool isFirstAttack_ = false;
-	//最後のきめ技を行うかどうか
-	bool isFinishAttack_ = false;
-	float fifthWeapon_Rotate_ = 0.5f;
+	const float kStrongAttackMagnification_ = 3.0f;	
+	
 	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
-
 	//カウンター時の判定の大きさ
 	Vector3 counterScale_{};
-
 	Vector3 collsionScaleGuade_ = { 0.6f,2.0f,0.6f };
 
 	std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackTransformRotates_ = { {
 			{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
 			}
 	};
-
 	std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackOffset_ = { {
 		{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
 		}
 	};
-
 	std::array<Vector2, WorkAttack::conboNum_> weapon_StrongRotatesMinMax_ = { {
 		{4.5f,9.2f},{3.16f,-0.9f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
 		}

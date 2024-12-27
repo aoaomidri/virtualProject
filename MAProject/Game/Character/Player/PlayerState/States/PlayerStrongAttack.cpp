@@ -98,6 +98,9 @@ void PlayerStrongAttack::AllStrongAttackInitialize(){
 void PlayerStrongAttack::PreStrongAttackInitialize(){
 	context_.workAttack_.comboNext_ = false;
 	context_.workAttack_.strongComboNext_ = false;
+	context_.workAttack_.trailResetFlug_ = true;
+	context_.workAttack_.hitRecordRestFlug_ = true;
+
 	context_.workAttack_.attackParameter_ = 0;
 	context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
 	context_.workAttack_.AttackTimer_ = 0;
@@ -315,8 +318,6 @@ void PlayerStrongAttack::StrongAttackMotion(){
 				context_.playerTransform_.translate += context_.move_ * motionSpeed_ * GameTime::timeScale_;
 			}
 			context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
-
-
 		}
 
 		if (waitTime_ <= 0) {
@@ -361,13 +362,167 @@ void PlayerStrongAttack::FourthStrongAttackMotion(){
 }
 
 void PlayerStrongAttack::FifthStrongAttackMotion(){
+	//ボタン連打で連続切り、後にフィニッシュ攻撃
 
+	if (!isFinishAttack_) {
+		//連続切り
+		if (isFirstAttack_) {
+			//一段目
+			if (context_.weaponParameter_.weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
+				waitTime_ -= 1;
+				context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
+			}
+			else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_StrongRotatesMinMax_[4].x) {
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+				context_.workAttack_.isShakeDown_ = true;
+				context_.isTrail_ = true;
+			}
+
+			//攻撃が終わったら二段目に派生
+			if (waitTime_ <= 0) {
+				isFirstAttack_ = false;
+				waitTime_ = waitTimeBase_;
+				context_.weaponParameter_.weaponTransform_.rotate.z = weapon_StrongRotatesMinMax_[4].x;
+				context_.workAttack_.hitRecordRestFlug_ = true;
+			}
+
+			if (!context_.workAttack_.isShakeDown_) {
+				context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+			}
+			else{
+				context_.weaponParameter_.weapon_Rotate_ += context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
+			}
+		}
+		else {
+			//二段目
+			if (context_.weaponParameter_.weapon_Rotate_ <= weapon_StrongRotatesMinMax_[5].y) {
+				waitTime_ -= 1;
+				context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[5].y;
+			}
+			else if (context_.weaponParameter_.weapon_Rotate_ >= weapon_StrongRotatesMinMax_[5].x) {
+				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+				context_.workAttack_.isShakeDown_ = true;
+			}
+
+			if (!isNextAttack_) {
+				//ボタンを押したら連続攻撃を継続
+				if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
+					isNextAttack_ = true;
+				}
+			}
+			if (waitTime_ <= 0) {
+				//攻撃が終わったときにフラグによってとる行動を分岐
+				if (isNextAttack_) {
+					//一段目に戻り連続攻撃を継続
+					isNextAttack_ = false;
+					isFirstAttack_ = true;
+					waitTime_ = waitTimeBase_;
+					context_.weaponParameter_.weaponTransform_.rotate.z = -kAttackMagnification_;
+					context_.workAttack_.hitRecordRestFlug_ = true;
+					audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+				}
+				else {
+					//連続攻撃をやめ、フィニッシュ攻撃を行う
+					waitTime_ = waitTimeBase_;
+					context_.weaponParameter_.weaponTransform_.rotate.z = -weapon_StrongRotatesMinMax_[4].x;
+					context_.weaponParameter_.weapon_Rotate_ = -0.0f;
+					context_.workAttack_.isShakeDown_ = false;
+					context_.isTrail_ = false;
+					isFinishAttack_ = true;
+					context_.workAttack_.type_ = HitRecord::Strong;
+					context_.workAttack_.hitRecordRestFlug_ = true;
+				}
+			}
+			else if (!context_.workAttack_.isShakeDown_) {
+				context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+			}
+			else{
+				context_.weaponParameter_.weapon_Rotate_ -= context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
+			}
+		}
+	}
+	else {
+		//フィニッシュ攻撃
+		if (context_.weaponParameter_.weapon_Rotate_ >= weapon_StrongRotatesMinMax_[4].y) {
+			//振り切った後
+			waitTime_ -= 1;
+			context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[4].y;
+			SettingGroundCrushTex();
+		}
+		else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_StrongRotatesMinMax_[4].x) {
+			//振りかぶった後
+			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+			context_.isTrail_ = true;
+			context_.workAttack_.isShakeDown_ = true;
+		}
+		//一連行動終わり
+		if (waitTime_ <= 0) {
+			context_.workAttack_.isEndAttack_ = true;
+		}
+
+		if (!context_.workAttack_.isShakeDown_) {
+			context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+		}
+		else{
+			context_.weaponParameter_.weaponCollisionTransform_.scale = fifthWeaponCollisionScale_ * strongAddScale_;
+			context_.weaponParameter_.weapon_Rotate_ += context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_;
+		}
+	}
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
 void PlayerStrongAttack::SixthStrongAttackMotion(){
+	//ガード反撃
+	//構え中
+	if (!chargeEnd_) {
+		context_.weaponParameter_.weaponCollisionTransform_.scale = Vector3();
+		//ガード
+		if (input_->GetPadButton(XINPUT_GAMEPAD_Y)) {
+			context_.isGuard_ = true;
+			context_.weaponParameter_.weaponTransform_.rotate.x += 0.01f;
+			if (context_.weaponParameter_.weaponTransform_.rotate.x > strongSixthAttackRotate_) {
+				context_.weaponParameter_.weaponTransform_.rotate.x = strongSixthAttackRotate_;
+			}
+		}
+		//ボタンを離したら派生
+		if (input_->GetPadButtonRelease(XINPUT_GAMEPAD_Y)) {
+			context_.isGuard_ = false;
+			chargeEnd_ = true;
+			context_.isTrail_ = true;
+			context_.weaponParameter_.weapon_offset_Base_ = { 0.0f,context_.weaponParameter_.kWeapon_offset_,0.0f };
+			context_.weaponParameter_.weaponTransform_.rotate.z = strongAttackRotateZ_;
+		}
+	}
+	else {
+		//攻撃振り
+		context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_ * strongAddScale_;
+		easeT_ += addEaseT_;
+		if (easeT_ > 1.0f) {
+			//振り切った
+			easeT_ = 1.0f;
+			addEaseT_ = 0.0f;
+			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+			SettingGroundCrushTex();
+		}
+		//最後まで行ったら待機
+		if (easeT_ == 1.0f) {
+			waitTime_ -= 1;
+		}
 
+		//待機時間が終わったら終了
+		if (waitTime_ <= 0) {
+			context_.workAttack_.isEndAttack_ = true;
+		}
+
+		context_.weaponParameter_.weapon_Rotate_ = Ease::Easing(Ease::EaseName::EaseInCubic, 2.3f, -5.5f, easeT_);
+		context_.weaponParameter_.weaponTransform_.rotate.z = Ease::Easing(Ease::EaseName::EaseInCubic, 1.57f, 2.8f, easeT_);
+		context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+		context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	}
 }
 
 void PlayerStrongAttack::SettingGroundCrushTex(){
-
+	context_.isStopCrush_ = true;
+	context_.groundCrushTexAlpha_ = 1.0f;
 }

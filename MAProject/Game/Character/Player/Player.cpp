@@ -133,15 +133,12 @@ void Player::Initialize(){
 
 void Player::Update(){
 	ApplyGlobalVariables();
-
 	if (isGuardHit_){
 		trailPosData_ = trailPosDataGuard_;
 	}
-
 	//武器のディゾルブ関連
 	weaponObj_->SetDissolve(weaponThreshold_);
 	weaponObj_->SetTrailPos(trailPosData_);
-
 
 	if (stateManager_->GetIsDissolve()){
 		weaponThreshold_ += addThresholdSpeed_ * timeScale_;
@@ -164,26 +161,21 @@ void Player::Update(){
 	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
 		weaponThreshold_ = 0.0f;
 	}
-
 	//カウンター時間経過処理
 	if (counterTime_ > counterTimeBase_){
 		isGuardHit_ = false;
 	}
-
 	if (isGuardHit_){
 		counterTime_ += timeScale_;
-	}
-	
+	}	
 	//ジャスト回避時間経過処理
 	if (justAvoidAttackTimer_ > 0) {
 		/*if (behavior_ != Behavior::kJustAvoid){
 			justAvoidAttackTimer_--;
 		}*/
-		postT_ = 0.9f;
-		
+		postT_ = 0.9f;		
 	}
-	else if (justAvoidAttackTimer_ <= 0) {
-		
+	else if (justAvoidAttackTimer_ <= 0) {		
 		postT_ -= addPostT_;
 		isJustAvoid_ = false;
 	}
@@ -218,6 +210,17 @@ void Player::Update(){
 	weaponTransform_ = stateManager_->GetWeaponTrnaform();
 	weaponCollisionTransform_ = stateManager_->GetWeaponCollisionTrnaform();
 	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
+	//当たりの記憶を削除する
+	if (stateManager_->GetHitRecordResetFlug()){
+		hitRecord_.Clear();
+		stateManager_->SetHitRecordResetFlug(false);
+	}
+	//trailの頂点情報を削除する
+	if (stateManager_->GetTrailResetFlug()) {
+		trail_->Reset();
+		stateManager_->SetTrailResetFlug(false);
+	}
+
 	/*落下処理*/
 	if (isDown_) {
 		downVector_.y += downSpeed_ * timeScale_;

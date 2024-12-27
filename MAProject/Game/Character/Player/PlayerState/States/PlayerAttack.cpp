@@ -171,19 +171,19 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 			//強攻撃を行うか
 			if (context_.workAttack_.strongComboNext_) {
 				context_.workAttack_.comboIndex_++;
-				//Request_ = ::kStrongAttack;
+				stateManager_->ChangeState(StateName::StrongAttack);
 			}
 			else {
 				context_.workAttack_.attackParameter_ += GameTime::timeScale_;
 				//通常状態に戻る処理
 				if (context_.workAttack_.attackParameter_ >= ((float)(context_.workAttack_.nextAttackTimer_ + motionDistance_) / motionSpeed_)) {
-					PlayerStateManager::GetInstance()->ChangeState(StateName::Root);
+					stateManager_->ChangeState(StateName::Root);
 					context_.isDissolve_ = true;
 					context_.workAttack_.attackParameter_ = 0;
 				}
 				//スティックを倒しているときは少しだけ早く抜けるように
 				if (input_->GetIsPushedLStick() and (context_.workAttack_.attackParameter_ * kAttackParameterCorection_ >= ((float)(context_.workAttack_.nextAttackTimer_) / motionSpeed_))) {
-					PlayerStateManager::GetInstance()->ChangeState(StateName::Root);
+					stateManager_->ChangeState(StateName::Root);
 					context_.isDissolve_ = true;
 					context_.workAttack_.attackParameter_ = 0;
 				}
@@ -194,9 +194,9 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 	}
 
 	//強攻撃に派生する場合はここで帰る
-	/*if (Request_==::kStrongAttack){
+	if (stateManager_->GetStateName() == StateName::StrongAttack){
 		return;
-	}*/
+	}
 	//各行動の処理
 	switch (context_.workAttack_.comboIndex_) {
 	case 1:
@@ -235,7 +235,7 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 	}
 
 	if (input_->GetPadButtonTriger(Input::GamePad::RB)) {
-		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
+		stateManager_->ChangeState(StateName::Dash);
 	}
 
 	//コリジョン用のtransform等を更新

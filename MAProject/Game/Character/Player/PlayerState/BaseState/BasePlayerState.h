@@ -223,9 +223,9 @@ protected:
 	uint32_t attackMotionSE_{};
 	//被弾時の音
 	uint32_t playerHitSE_{};
-private:
 	//ステートマネージャー
 	PlayerStateManager* stateManager_ = nullptr;
+private:
 
 	
 };

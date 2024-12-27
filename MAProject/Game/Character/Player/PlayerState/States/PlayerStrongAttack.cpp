@@ -289,7 +289,6 @@ void PlayerStrongAttack::StrongAttackMotion(){
 				counterScale_ = context_.weaponParameter_.kWeaponCollisionBase_;
 			}
 		}
-
 	}
 	else {
 		//攻撃動作
@@ -299,21 +298,17 @@ void PlayerStrongAttack::StrongAttackMotion(){
 			context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[0].y;
 		}
 		else {
-
 			//移動
 			context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
 			context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
-
 			if (!context_.isCollisionEnemy_) {
 				Vector3 NextPos = context_.playerTransform_.translate + context_.move_ * motionSpeed_;
-
 				if (NextPos.x >= context_.limitPos_.x or NextPos.x <= context_.limitPos_.y) {
 					context_.move_.x = 0;
 				}
 				if (NextPos.z >= context_.limitPos_.x or NextPos.z <= context_.limitPos_.y) {
 					context_.move_.z = 0;
 				}
-
 				context_.playerTransform_.translate += context_.move_ * motionSpeed_ * GameTime::timeScale_;
 			}
 			context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;
@@ -338,14 +333,10 @@ void PlayerStrongAttack::StrongAttackMotion(){
 				context_.isTrail_ = true;
 				context_.weaponParameter_.weapon_Rotate_ += context_.weaponParameter_.kMoveWeaponShakeDown_ * kStrongAttackMagnification_ * motionSpeed_ * GameTime::timeScale_;
 			}
-
 		}
-
 		context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 		context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
-
 	}
-
 }
 
 void PlayerStrongAttack::SecondStrongAttackMotion(){
@@ -466,7 +457,6 @@ void PlayerStrongAttack::FourthStrongAttackMotion(){
 
 void PlayerStrongAttack::FifthStrongAttackMotion(){
 	//ボタン連打で連続切り、後にフィニッシュ攻撃
-
 	if (!isFinishAttack_) {
 		//連続切り
 		if (isFirstAttack_) {
@@ -480,7 +470,6 @@ void PlayerStrongAttack::FifthStrongAttackMotion(){
 				context_.workAttack_.isShakeDown_ = true;
 				context_.isTrail_ = true;
 			}
-
 			//攻撃が終わったら二段目に派生
 			if (waitTime_ <= 0) {
 				isFirstAttack_ = false;
@@ -488,7 +477,6 @@ void PlayerStrongAttack::FifthStrongAttackMotion(){
 				context_.weaponParameter_.weaponTransform_.rotate.z = weapon_StrongRotatesMinMax_[4].x;
 				context_.workAttack_.hitRecordRestFlug_ = true;
 			}
-
 			if (!context_.workAttack_.isShakeDown_) {
 				context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 			}
@@ -506,7 +494,6 @@ void PlayerStrongAttack::FifthStrongAttackMotion(){
 				audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 				context_.workAttack_.isShakeDown_ = true;
 			}
-
 			if (!isNextAttack_) {
 				//ボタンを押したら連続攻撃を継続
 				if (input_->GetPadButtonTriger(Input::GamePad::Y)) {
@@ -612,12 +599,10 @@ void PlayerStrongAttack::SixthStrongAttackMotion(){
 		if (easeT_ == 1.0f) {
 			waitTime_ -= 1;
 		}
-
 		//待機時間が終わったら終了
 		if (waitTime_ <= 0) {
 			context_.workAttack_.isEndAttack_ = true;
 		}
-
 		context_.weaponParameter_.weapon_Rotate_ = Ease::Easing(Ease::EaseName::EaseInCubic, 2.3f, -5.5f, easeT_);
 		context_.weaponParameter_.weaponTransform_.rotate.z = Ease::Easing(Ease::EaseName::EaseInCubic, 1.57f, 2.8f, easeT_);
 		context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;

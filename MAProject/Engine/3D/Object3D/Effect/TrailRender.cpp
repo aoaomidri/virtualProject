@@ -12,7 +12,9 @@ void TrailRender::Draw(const TrailEffect* trail, const Matrix4x4& viewPro){
 	if (trail == nullptr || trail->GetVertexSize() < 5) {
 		return; // trailがnullptrまたは頂点サイズが不足している場合
 	}
-
+	if (!isDraw_) {
+		return; // 描画しないと宣言しているとき
+	}
 
 	switch (selectTrail_) {
 	case EffectType::Water:

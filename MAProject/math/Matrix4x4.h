@@ -18,14 +18,15 @@ public:
 	Matrix4x4();
 	Matrix4x4(const Matrix4x4& mat);
 	Matrix4x4(std::initializer_list<std::initializer_list<float>> list);
-
-	static Matrix4x4* GetInstance(){
-		static Matrix4x4 instance;
-		return &instance;
-	}
 	
 	//単位行列化
 	Matrix4x4 Identity();
+	//単位行列化
+    static Matrix4x4 StaticIdentity();
+
+	//0で初期化
+	Matrix4x4 MatInit();
+
 	//Matrixの引き算
 	Matrix4x4 Minus(const Matrix4x4& right) const;
 	//Matrixの掛け算

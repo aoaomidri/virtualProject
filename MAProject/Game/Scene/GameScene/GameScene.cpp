@@ -103,8 +103,6 @@ void GameScene::Initialize(){
 	TextureLoad();
 	SoundLoad();
 
-	
-
 	SpriteInitialize();
 	ObjectInitialize();
 
@@ -117,7 +115,6 @@ void GameScene::Initialize(){
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->Update();
 
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->SetTarget(&player_->GetTransform());
@@ -303,8 +300,6 @@ void GameScene::TimeTexUpdate(){
 	timerTexs_[0]->uvTransform_.translate.x = (float)(0.1f * GameTime::GetMinutesTens());
 }
 
-
-
 void GameScene::AllCollision(){
 	//床の当たり判定
 	for (const auto& floor : floorManager_->GetFloors()) {
@@ -335,20 +330,17 @@ void GameScene::AllCollision(){
 		} 
 		//ガード判定と敵の攻撃判定との処理
 		if (player_->GetIsGuard()){
-			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
-				
+			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {				
 				if (player_->RecordCheck(serialNumber)) {
 					return;
-				}
-				
+				}				
 				player_->OnCollisionEnemyAttack();
 				//ノックバックの種類を指定
 				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
 				//ヒット音の再生
 				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//当たったときの処理
-				enemy->OnCollisionGuard();
-				
+				enemy->OnCollisionGuard();				
 			}
 		}
 		//武器の判定と敵の体の判定との処理
@@ -375,9 +367,7 @@ void GameScene::AllCollision(){
 				}
 				else {
 					enemy->OnCollision();
-				}
-				
-				
+				}				
 			}
 		}
 		

@@ -11,17 +11,12 @@ void Player::ApplyGlobalVariables() {
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Player";
 
-	jumpPower_ = adjustment_item->GetfloatValue(groupName, "JumpPower");
 	downSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
-	moveSpeed_ = adjustment_item->GetfloatValue(groupName, "MoveSpeed");
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
-	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
-	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
 	trailPosData_ = adjustment_item->GetVector2Value(groupName, "TrailPosData");
 	hitStop_ = adjustment_item->GetfloatValue(groupName, "HitStop");
 	strongHitStop_ = adjustment_item->GetfloatValue(groupName, "StrongHitStop");
 	addPostT_ = adjustment_item->GetfloatValue(groupName, "AddPostT");
-	justAvoidT_ = adjustment_item->GetfloatValue(groupName, "JustAvoidT");
 	scaleValue_ = adjustment_item->GetfloatValue(groupName, "ScaleValue");
 }
 
@@ -31,12 +26,8 @@ void Player::Initialize(){
 	//グループを追加
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
-	adjustment_item->AddItem(groupName, "JumpPower", jumpPower_);
 	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed_);
-	adjustment_item->AddItem(groupName, "MoveSpeed", moveSpeed_);
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
-	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
-	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
 	adjustment_item->AddItem(groupName, "TrailPosData", trailPosData_);
 	adjustment_item->AddItem(groupName, "HitStop", hitStop_);
 	adjustment_item->AddItem(groupName, "StrongHitStop", strongHitStop_);
@@ -104,17 +95,8 @@ void Player::Initialize(){
 	particleTrans_ = playerTransform_;
 	particleTransCenter_ = playerTransform_;
 
-	weaponTransform_.scale = kWeaponScale_;
-	weaponCollisionTransform_.scale = kWeaponCollisionBase_;
-
 	playerRotateMatrix_ = Matrix::MakeIdentity4x4();
-
-	postureVec_ = { 0.0f,0.0f,1.0f };
-	frontVec_ = { 0.0f,0.0f,1.0f };
-
 	isDown_ = true;
-
-	addPosition_ = { 0.0f };
 
 	trail_ = std::make_unique<TrailEffect>();
 	trail_->Initialize(12, "resources/texture/TrailEffect/whiteTrail.png");
@@ -144,7 +126,6 @@ void Player::Update(){
 		if (weaponThreshold_ > 1.0f) {
 			//完全に消えたら
 			weaponThreshold_ = 1.0f;
-			addPosition_.y = 0.0f;
 			trail_->Reset();
 			stateManager_->SetIsDissolve(false);
 		}
@@ -351,10 +332,7 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
-	ImGui::DragFloat("easeT", &easeT_, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat3("DownVector", &downVector_.x, 0.01f);
-	ImGui::DragFloat("移動限界", &limitPos_.x, 0.01f);
-	limitPos_.y = -limitPos_.x;
 	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);
 	ImGui::Text("スティックの横 = %.4f", input_->GetPadLStick().x);
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
@@ -363,19 +341,12 @@ void Player::DrawImgui(){
 	ImGui::Text("ロックオンしている敵 = %d", enemyNumber_);
 	ImGui::Text("おちているかどうか = %d", isDown_);
 	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
-	ImGui::Text("攻撃時間 = %d", workAttack_.AttackTimer);
-	ImGui::Text("今のコンボ段階 = %d", workAttack_.comboIndex);
 	ImGui::Text("敵に当たっているか = %d", isCollisionEnemy_);
 	ImGui::Text("敵に攻撃に当たっているか = %d", isHitEnemyAttack_);
-	ImGui::DragFloat("武器判定の回転", &weapon_Rotate_, 0.01f);
 	ImGui::DragFloat3("武器の回転", &weaponTransform_.rotate.x, 0.01f);
 	ImGui::DragFloat3("武器攻撃判定の回転", &weaponCollisionTransform_.rotate.x, 0.1f);	
-	ImGui::DragFloat3("オフセットのベース", &weapon_offset_Base_.x, 0.1f);
-	ImGui::DragFloat3("オフセット", &weapon_offset_.x, 0.1f);
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
-	ImGui::DragFloat3("武器の高さ補正", &addPosition_.x, 0.01f);
 	ImGui::Checkbox("武器のしきい値", &isDissolve_);
-	ImGui::Checkbox("武器の振りの調整", &isWeaponDebugFlug_);
 	ImGui::DragFloat2("武器のトレイル表示座標", &trailPosData_.x, 0.01f);
 	ImGui::End();
 

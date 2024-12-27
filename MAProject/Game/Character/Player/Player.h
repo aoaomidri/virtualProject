@@ -77,7 +77,6 @@ public:
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }
 	const bool GetIsGuard()const { return stateManager_->GetIsGuard(); }
 	const bool GetIsDash() const { return stateManager_->GetIsDash(); }
-	const bool GetIsAvoidAttack()const { return isAvoidAttack_; }
 
 	const OBB& GetOBB()const { return playerOBB_; }
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
@@ -112,257 +111,78 @@ public:
 
 	void SetTimeScale(const float scale) { timeScale_ = scale; }
 
-public:
-	
-	struct  WorkAttack{
-		float attackParameter = 0;
-		int32_t comboIndex = 0;
-		int32_t inComboPhase = 0;
-		bool comboNext = false;
-		bool strongComboNext = false;
-		float AttackTimer = 0;
-		float nextAttackTimer = 0;
-	};
-	const float kAttackParameterCorection_ = 4.0f;
-
-	WorkAttack workAttack_;
-
-	bool endCombo_ = false;
-
-	bool chargeEnd_ = false;
-
-	Vector3 baseRotate_ = { 0 };
-
-	//コンボの数
-	static const int conboNum_ = 6;
-
-	std::array<Vector3, conboNum_> nextAttackRotates_;
 private:
 	//状態を管理
 	PlayerStateManager* stateManager_ = nullptr;
 
 	//自機のモデル
 	std::unique_ptr<Object3D> playerObj_;
-
-	//std::vector<std::unique_ptr<Object3D>> debugSphere_;
-
-	std::vector<std::string> animetionNames_;
-
-	//std::vector<Model::Joint> debugJoints_;
-
 	//武器のモデル
 	std::unique_ptr<Object3D> weaponObj_;
 	std::unique_ptr<Object3D> weaponCollisionObj_;
-
 	//当たりを見るためのオブジェ
 	std::unique_ptr<Object3D> collisionObj_;
 
 	//自機のSRT
 	EulerTransform playerTransform_{};
-	
 	//武器のSRT
 	EulerTransform weaponTransform_{};
 	EulerTransform weaponCollisionTransform_{};
-
-	const float kWeaponRootTranslate_ = 10000.0f;
-	const Vector3 kWeaponScale_ = { 0.15f,0.15f ,0.15f };
-	const Vector3 kWeaponCollisionBase_ = { 0.9f,3.0f,0.9f };
-
 	//プレイヤーのマトリックス
 	Matrix4x4 playerMatrix_{};
-
-	//std::vector<Matrix4x4> debugMatrix_;
-
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};
 	Matrix4x4 playerTransformMatrix_{};
-
 	Matrix4x4 playerOBBTransformMatrix_{};
 	Matrix4x4 playerOBBScaleMatrix_{};
 	Matrix4x4 playerOBBMatrix_{};
-
 	//武器のマトリックス
 	Matrix4x4 weaponMatrix_{};
 	Matrix4x4 weaponScaleMatrix_{};
 	Matrix4x4 weaponCollisionMatrix_{};
-
 	//スケールを無視したマトリックス
 	Matrix4x4 playerMoveMatrix_{};
-
-	//自機の移動
-	Vector3 move_{};
-
-	float moveLimitMinimum_ = 0.0005f;
-
-	//移動限界 xが+側、yが-側
-	Vector2 limitPos_{ 70.0f,-70.0f };
-
-	//ジャンプ
-	float jumpPower_ = 0.2f;
 
 	//落下関連
 	float downSpeed_ = -0.01f;
 	Vector3 downVector_ = { 0 };
 
-	//姿勢ベクトル
-	Vector3 postureVec_{};
-	Vector3 frontVec_{};
-
 	const ViewProjection* viewProjection_ = nullptr;
 
 	//自機のOBB
 	OBB playerOBB_{};
-
 	//ジャスト回避用のOBB
 	OBB justAvoidOBB_{};
-
 	//武器のOBB
 	OBB weaponOBB_{};
-
 	//プレイヤーの基礎攻撃力
 	int baseAttackPower_ = 3;
-
-	//移動スピード
-	float moveSpeed_ = 0.1f;
-
-	float moveCorrection_ = 3.0f;
-
 	//被弾時の無敵時間
 	int hitTimer_ = 0;
-
 	int hitTimerBase_ = 30;
 
-
 	float timeScale_ = 0.0f;
-	/*応刀用の構造体*/
-	struct WorkAvoidAttack {
-		//突進攻撃のタイマー
-		float tackleTimer_ = 0.0f;
-		//突進攻撃のタイマーの最大値
-		float tackleTimerBase_ = 0.5f;
-		//突進のスピード
-		float tackleSpeed_ = 1.0f;
-		//突進攻撃の判定のタイマー
-		float tackleHitTimer_ = 0.0f;
-		//突進攻撃の判定のタイマーの最大値
-		float tackleHitTimerBase_ = 0.05f;
-
-		//派生用フラグ
-		bool isChangeEndAttack_ = false;
-	};
-
-	WorkAvoidAttack workAvoidAttack_;
-
-	//応刀受付時間のベース
-	int justAvoidAttackTimerBase_ = 60;
-	//応刀受付時間
-	int justAvoidAttackTimer_ = 0;
 	//ジャスト回避時のエフェクトの補正値
 	float postBlend_ = 0.0f;
 	//上記の補正値を補正するための値
 	float postT_ = 0.0f;
 	//補正値の加算量
 	float addPostT_ = 0.0f;
-	//ジャスト回避したときの値
-	float justAvoidT_ = 0.0f;
-
 	float justAvoidSlowTime_ = 10.0f;
-
 	float slowTimeScale_ = 0.2f;
-	//引きと押し
-	Vector2 justAvoidEaseMagnification_ = { 0.5f,4.0f };
-
-	Vector2 justAvoidEaseStart_ = { 1.5f,0.0f };
-
-	Vector2 justAvoidEaseEnd_ = { 0.0f,4.0f };
-
-	Vector3 justAvoidWeaponRotate_ = { 1.57f,0.0f,0.0f };
 
 	//////*攻撃に関連するもの*///////
 	//ヒットストップの時間
 	float hitStop_ = 0.0f;
 	float strongHitStop_ = 0.0f;
-	/*当たり関係*/
-	float strongAddScale_ = 3.0f;
-
-
-
-	Vector3 collsionScale_ = { 0.9f,3.0f,0.9f };
-
-	Vector3 collsionScaleGuade_ = { 0.6f,2.0f,0.6f };
-
-	//加算する武器の回転
-	float weapon_Rotate_ = 0.0f;
-
-	const float kAttackMagnification_ = 1.5f;
-	
-	const float kAttackDivisionMagnification_ = 2.0f;
-
-	const float kStrongAttackMagnification_ = 3.0f;
-
-	const float kGuadeMagnification_ = 5.0f;
-
-	float arm_Rotate_ = -3.15f;
-	//武器開店に関連する変数
-	Vector3 weapon_offset_{};
-	Vector3 weapon_offset_Base_ = { 0.0f,4.0f, 0.0f };
-	Vector3 weapon_offset_RootBase_ = { 0.4f,-1.8f,1.0f };
-
-	const float kMoveWeapon_ = 0.1f;
-	const float kMoveWeaponShakeDown_ = 0.2f;
-	const float kMaxRotate_ = 2.0f;
-	const float kMaxRotateY_ = -1.55f;
-	const float kMinRotate_ = -0.6f;
-	const float kFloatHeight_ = 0.1f;
-	const float kWeapon_offset_ = 2.0f;
-	//強2攻撃での追撃回数の最大値
-	const int32_t kStrongSecondAttackCountMax_ = 2;
-	//強2攻撃での追撃回数カウント
-	int32_t strongSecondAttackCount_ = 0;
-
-	float strongAttackRotateZ_ = 1.57f;
-
-	float strongSixthAttackRotate_ = 1.6f;
 
 	uint32_t enemyNumber_ = 100;
-
-	float waitTimeBase_ = 7.0f;
-	float waitTime_ = 0;
 
 	//強攻撃強化時間
 	float counterTimeBase_ = 60.0f;
 	float counterTime_ = 0;
 
 	//カウンター時の判定の大きさ
-	Vector3 counterScale_{};
-
-	//次の攻撃に映るまでの時間
-	//初回
-	float nextAttackTimerFirst_ = 21.0f;
-	//それ以外
-	float nextAttackTimer_ = 28.0f;
-
-	//武器の高さ補正
-	Vector3 addPosition_ = {};
-
-	float floatSin_ = 0.0f;
-
-	float floatSpeed_ = (float)(std::numbers::pi / 45.0f);
-
-	float motionDistance_ = 3.0f;
-
-	float easeT_ = 0.0f;
-
-	float easeSecondStrong_ = 0.3f;
-
-	float addEaseT_ = 0.0f;
-
-	float addEaseSpeed_ = 0.04f;
-
-	float addEaseSpeedStrong_ = 0.08f;
-
-	float motionSpeed_ = 1.0f;
-
 	float shiness_ = 0.0f;
 
 	//ディゾルブ関係
@@ -377,35 +197,13 @@ private:
 	Vector2 trailPosDataGuard_ = { 7.0f,0.5f };
 
 	bool isDissolve_ = false;
-	//武器を振り下ろしかどうか
-	bool isShakeDown_ = false;
-	//攻撃が終わったかどうか
-	bool isEndAttack_ = false;
 	//トレイルを描画するかどうか
 	bool isTrail_ = false;
 	//追撃を出すかどうか
 	bool isNextAttack_ = false;
-	
-
-	/*強5攻撃のみ*/
-	//初回の攻撃かどうか
-	bool isFirstAttack_ = false;
-	//最後のきめ技を行うかどうか
-	bool isFinishAttack_ = false;
-
-	float fifthWeapon_Rotate_ = 0.5f;
-
-	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
 	////////
 	//落下するかどうか
 	bool isDown_ = false;
-	//武器の振りに対して調整をしたいかどうか
-	bool isWeaponDebugFlug_ = false;
-
-	//回避反撃を行うかどうか
-	bool isAvoidAttack_ = false;
-	//突きを行うかどうか
-	bool isThrust_ = false;
 
 private:
 	//敵と衝突しているか
@@ -445,10 +243,6 @@ private:
 	std::unique_ptr<TrailEffect> trail_;
 
 	std::unique_ptr<TrailRender> trailRender_;
-
-	size_t leftHandNumber_;
-
-	size_t rightHandNumber_;
 
 	EulerTransform particleTrans_;
 

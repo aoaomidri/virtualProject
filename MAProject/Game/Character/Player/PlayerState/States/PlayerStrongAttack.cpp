@@ -6,7 +6,7 @@ bool PlayerStrongAttack::isLoad_ = false;
 
 void PlayerStrongAttack::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "PlayerAttackParameter";
+	const char* groupName = "PlayerStrongAttackParameter";
 
 	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
 	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
@@ -15,7 +15,7 @@ void PlayerStrongAttack::ApplyGlobalVariables(){
 
 void PlayerStrongAttack::InitGlobalVariables() const{
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "PlayerAttackParameter";
+	const char* groupName = "PlayerStrongAttackParameter";
 	//グループを追加
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
@@ -125,26 +125,96 @@ void PlayerStrongAttack::StrongAttackInitialize(){
 }
 
 void PlayerStrongAttack::SecondStrongAttackInitialize(){
-
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[1];
+	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[1];
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	easeT_ = 0;
+	addEaseT_ = addEaseSpeedStrong_;
+	waitTime_ = waitTimeBase_ * kAttackDivisionMagnification_;
+	context_.weaponParameter_.addPosition_.y = 0.0f;
+	strongSecondAttackCount_ = 0;
+	isNextAttack_ = false;
+	context_.isTrail_ = false;
+	context_.workAttack_.isShakeDown_ = false;
 }
 
 void PlayerStrongAttack::ThirdStrongAttackInitialize(){
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Strong;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[2];
+	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[2];
 
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.00f,context_.weaponParameter_.weaponTransform_.rotate.z };
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	context_.weaponParameter_.weapon_Rotate_ = -0.0f;
+	context_.isTrail_ = false;
+	context_.workAttack_.isShakeDown_ = false;
 }
 
 void PlayerStrongAttack::FourthStrongAttackInitialize(){
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[3];
+	context_.weaponParameter_.weapon_offset_Base_.y = weaponStrongAttackOffset_[3].y;
 
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.00f,context_.weaponParameter_.weaponTransform_.rotate.z };
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_ * strongAddScale_;
+	context_.weaponParameter_.weapon_Rotate_ = -0.0f;
+	context_.isTrail_ = true;
+	context_.workAttack_.isShakeDown_ = false;
 }
 
 void PlayerStrongAttack::FifthStrongAttackInitialize(){
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Few;
+	///
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[4];
+	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[4];
 
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.00f,context_.weaponParameter_.weaponTransform_.rotate.z };
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_ * strongAddScale_;
+
+	context_.weaponParameter_.weapon_Rotate_ = fifthWeapon_Rotate_;
+	strongSecondAttackCount_ = 0;
+	isFirstAttack_ = true;
+	isNextAttack_ = false;
+	isFinishAttack_ = false;
+	context_.isTrail_ = false;
+	context_.workAttack_.isShakeDown_ = false;
 }
 
 void PlayerStrongAttack::SixthStrongAttackInitialize(){
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
+	//baseRotate_.x = Matrix::RotateAngleYFromMatrix(playerRotateMatrix_);
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[5];
+	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[5];
+	context_.weaponParameter_.addPosition_.y = 0.0f;
 
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.00f,context_.weaponParameter_.weaponTransform_.rotate.z };
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_ * strongAddScale_;
+
+	easeT_ = 0;
+	addEaseT_ = addEaseSpeed_;
+	context_.weaponParameter_.weapon_Rotate_ = 1.0f;
+	context_.isTrail_ = false;
+	context_.workAttack_.isShakeDown_ = true;
+	chargeEnd_ = false;
 }
 
 void PlayerStrongAttack::Update(const Vector3& cameraRotate){
+	ApplyGlobalVariables();
 	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
 	//攻撃が終わったら通常状態へ

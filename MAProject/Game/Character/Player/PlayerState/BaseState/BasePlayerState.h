@@ -106,10 +106,6 @@ public:
 		//ディゾルブ関係
 		float weaponThreshold_ = 0.0f;
 
-		float fifthWeapon_Rotate_ = 0.5f;
-
-		Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
-
 	};
 	
 	/*どの状態でも共通する変数群*/

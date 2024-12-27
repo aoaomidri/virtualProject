@@ -161,7 +161,7 @@ void Player::Update(){
 		}		
 	}
 
-	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack) {
+	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
 		weaponThreshold_ = 0.0f;
 	}
 
@@ -229,7 +229,6 @@ void Player::Update(){
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
 	shadow_->position_.y = shadowHeight_;
-
 	shadow_->scale_.x = shadowScaleBase_ + (shadowScaleCulcBase_ - playerTransform_.translate.y);
 	shadow_->scale_.y = shadowScaleBase_ + (shadowScaleCulcBase_ - playerTransform_.translate.y);
 
@@ -347,7 +346,6 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 	particle_->Draw();
 
 }
-
 
 void Player::DrawImgui(){
 #ifdef _DEBUG

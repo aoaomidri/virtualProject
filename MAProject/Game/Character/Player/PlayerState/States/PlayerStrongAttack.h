@@ -82,10 +82,13 @@ private:
 	float easeT_ = 0.0f;
 	float easeSecondStrong_ = 0.3f;
 	float addEaseT_ = 0.0f;
+	float addEaseSpeed_ = 0.04f;
 	float addEaseSpeedStrong_ = 0.08f;
 	float motionSpeed_ = 1.0f;
 	float strongAttackRotateZ_ = 1.57f;
 	float strongSixthAttackRotate_ = 1.6f;
+	/*当たり関係*/
+	float strongAddScale_ = 3.0f;
 	//次の攻撃に映るまでの時間
 	//初回
 	float nextAttackTimerFirst_ = 21.0f;
@@ -97,6 +100,18 @@ private:
 	const float kAttackDivisionMagnification_ = 2.0f;
 	const float kGuadeMagnification_ = 5.0f;
 	const float kStrongAttackMagnification_ = 3.0f;
+
+	//追撃を出すかどうか
+	bool isNextAttack_ = false;
+
+
+	/*強5攻撃のみ*/
+	//初回の攻撃かどうか
+	bool isFirstAttack_ = false;
+	//最後のきめ技を行うかどうか
+	bool isFinishAttack_ = false;
+	float fifthWeapon_Rotate_ = 0.5f;
+	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
 
 	//カウンター時の判定の大きさ
 	Vector3 counterScale_{};

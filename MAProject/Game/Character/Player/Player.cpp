@@ -132,7 +132,7 @@ void Player::Initialize(){
 
 void Player::Update(){
 	ApplyGlobalVariables();
-	if (isGuardHit_){
+	if (stateManager_->GetIsGuardHit()){
 		trailPosData_ = trailPosDataGuard_;
 	}
 	//武器のディゾルブ関連
@@ -162,9 +162,9 @@ void Player::Update(){
 	}
 	//カウンター時間経過処理
 	if (counterTime_ > counterTimeBase_){
-		isGuardHit_ = false;
+		stateManager_->SetIsGuardHit(false);
 	}
-	if (isGuardHit_){
+	if (stateManager_->GetIsGuardHit()){
 		counterTime_ += timeScale_;
 	}	
 	//ジャスト回避時間経過処理
@@ -375,8 +375,6 @@ void Player::DrawImgui(){
 	ImGui::DragFloat("武器の反射", &shiness_, 0.01f, 0.0f, 100.0f);
 	ImGui::DragFloat3("武器の高さ補正", &addPosition_.x, 0.01f);
 	ImGui::Checkbox("武器のしきい値", &isDissolve_);
-	ImGui::Checkbox("ガード中かどうか", &isGuard_);
-	ImGui::Checkbox("ガード中に攻撃受けたかどうか", &isGuardHit_);
 	ImGui::Checkbox("武器の振りの調整", &isWeaponDebugFlug_);
 	ImGui::DragFloat2("武器のトレイル表示座標", &trailPosData_.x, 0.01f);
 	ImGui::End();
@@ -417,14 +415,13 @@ const float Player::GetHitStop() {
 
 }
 
-void Player::OnCollisionEnemyAttack(){
-	
+void Player::OnCollisionEnemyAttack(){	
 	//既に被弾していたら処理を飛ばす
 	if (isHitEnemyAttack_)
 		return;
 	//カウンター判定
-	if (isGuard_){
-		isGuardHit_ = true;
+	if (stateManager_->GetIsGuard()){
+		stateManager_->SetIsGuardHit(true);
 		counterTime_ = 0;
 	}
 	else {	

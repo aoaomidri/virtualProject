@@ -35,6 +35,7 @@ void PlayerAttack::Initialize(){
 }
 
 void PlayerAttack::PreAttackInitialize(){
+	context_.isTrail_ = true;
 	context_.workAttack_.trailResetFlug_ = true;
 	context_.workAttack_.comboNext_ = false;
 	context_.workAttack_.strongComboNext_ = false;

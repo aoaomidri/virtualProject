@@ -75,7 +75,7 @@ public:
 	const bool GetIsDown() const { return isDown_; }
 	const bool GetIsHitEnemyAttack() const { return isHitEnemyAttack_; }
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }
-	const bool GetIsGuard()const { return isGuard_; }
+	const bool GetIsGuard()const { return stateManager_->GetIsGuard(); }
 	const bool GetIsDash() const { return stateManager_->GetIsDash(); }
 	const bool GetIsAvoidAttack()const { return isAvoidAttack_; }
 
@@ -401,10 +401,6 @@ private:
 	bool isDown_ = false;
 	//武器の振りに対して調整をしたいかどうか
 	bool isWeaponDebugFlug_ = false;
-	//強攻撃一段目で守っているかどうか
-	bool isGuard_ = false;
-	//強攻撃中に攻撃を受けたかどうか
-	bool isGuardHit_ = false;
 
 	//回避反撃を行うかどうか
 	bool isAvoidAttack_ = false;

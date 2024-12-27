@@ -64,9 +64,9 @@ public:
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 	const bool GetIsDissolve()const { return context_.isDissolve_; }
 	const bool GetIsStopCrush()const { return context_.isStopCrush_; }
+	const bool GetIsGuard()const { return context_.isGuard_; }
+	const bool GetIsGuardHit()const { return context_.isGuardHit_; }
 	const bool GetIsDrawTrail()const { return context_.isTrail_; }
-	
-
 	//Setter
 	void SetJustAvoidTimer() { context_.workAvoidAttack_.justAvoidAttackTimer_ = context_.workAvoidAttack_.justAvoidAttackTimerBase_; }
 
@@ -78,6 +78,7 @@ public:
 	void SetIsJustAvoid(const bool flug) { context_.isJustAvoid_ = flug; }
 	void SetIsDissolve(const bool flug) { context_.isDissolve_ = flug; }
 	void SetIsStopCrush(const bool flug) { context_.isStopCrush_ = flug; }
+	void SetIsGuardHit(const bool flug) { context_.isGuardHit_ = flug; }
 
 	void SetLockOnPos(const Vector3& pos) { context_.lockOnPos_ = pos; }
 

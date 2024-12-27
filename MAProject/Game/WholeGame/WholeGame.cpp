@@ -26,7 +26,7 @@ void WholeGame::Initialize(){
 
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
-	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Game);
+	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Title);
 
 	vignettingData_ = {
 		.scale = 16.0f,

@@ -4,6 +4,7 @@
 #include"PlayerDash.h"
 #include"PlayerAttack.h"
 #include"PlayerStrongAttack.h"
+#include"PlayerJustAvoid.h"
 #include<memory>
 
 class PlayerStateManager{
@@ -54,6 +55,7 @@ public:
 	const Matrix4x4& GetPlayerRotateMatrix()const { return context_.playerRotateMatrix_; }
 
 	const int GetComboIndex()const { return context_.workAttack_.comboIndex_; }
+	const int GetJustAvoidTimer()const { return context_.workAvoidAttack_.justAvoidAttackTimer_; }
 
 	const float GetGroundCrushTexAlpha()const { return context_.groundCrushTexAlpha_; }
 
@@ -66,13 +68,18 @@ public:
 	
 
 	//Setter
+	void SetJustAvoidTimer() { context_.workAvoidAttack_.justAvoidAttackTimer_ = context_.workAvoidAttack_.justAvoidAttackTimerBase_; }
+
 	void SetPlayerTranslateY(const float posY) { context_.playerTransform_.translate.y = posY; }
 
 	void SetTrailResetFlug(const bool flug) { context_.workAttack_.trailResetFlug_ = flug; }
 	void SetHitRecordResetFlug(const bool flug) { context_.workAttack_.hitRecordRestFlug_ = flug; }
 	void SetIsCollisionEnemy(const bool flug){context_.isCollisionEnemy_ = flug; }
+	void SetIsJustAvoid(const bool flug) { context_.isJustAvoid_ = flug; }
 	void SetIsDissolve(const bool flug) { context_.isDissolve_ = flug; }
 	void SetIsStopCrush(const bool flug) { context_.isStopCrush_ = flug; }
+
+	void SetLockOnPos(const Vector3& pos) { context_.lockOnPos_ = pos; }
 
 private:
 	//今の状態の名前

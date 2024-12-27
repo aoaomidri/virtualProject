@@ -68,10 +68,8 @@ private:
 public:
 	//InitGlobalVariablesを行ったかどうか
 	static bool isLoad_;
-private:
-	
+private:	
 	//トレイルを描画するかどうか
-
 	float waitTimeBase_ = 7.0f;
 	float waitTime_ = 0;
 	float motionDistance_ = 3.0f;

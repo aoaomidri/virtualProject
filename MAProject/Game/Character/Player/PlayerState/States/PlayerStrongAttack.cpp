@@ -419,7 +419,6 @@ void PlayerStrongAttack::FourthStrongAttackMotion(){
 		//振りかぶったあと
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		context_.workAttack_.isShakeDown_ = true;
-		//downVector_.y += jumpPower_ / kStrongAttackMagnification_;
 	}
 
 	if (waitTime_ <= 0) {

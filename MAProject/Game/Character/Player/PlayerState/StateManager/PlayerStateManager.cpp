@@ -53,6 +53,9 @@ void PlayerStateManager::ChangeState(const StateName nextState){
 	else if (nextState == StateName::Dash){
 		nextState_ = std::make_unique<PlayerDash>(context_);
 	}
+	else if (nextState == StateName::kJustAvoid){
+		nextState_ = std::make_unique<PlayerJustAvoid>(context_);
+	}
 
 	nowStateName_ = nextState;
 }

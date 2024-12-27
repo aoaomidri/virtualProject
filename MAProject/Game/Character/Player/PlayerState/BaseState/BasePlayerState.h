@@ -54,6 +54,10 @@ public:
 	};	
 	//回避に関連するパラメーター
 	struct WorkAvoidAttack {
+		//応刀受付時間のベース
+		int justAvoidAttackTimerBase_ = 60;
+		//応刀受付時間
+		int justAvoidAttackTimer_ = 0;
 		//突進攻撃のタイマー
 		float avoidTimer_ = 0.0f;
 		//突進攻撃のタイマーの最大値
@@ -123,6 +127,8 @@ public:
 		Vector3 frontVec_{};
 		//カメラの回転
 		Vector3 cameraRotate_{};
+		//ロックオン対象の座標
+		Vector3 lockOnPos_{};
 		//落下ベクトル
 		Vector3 downVector_{};
 

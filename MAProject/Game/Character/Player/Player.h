@@ -65,30 +65,22 @@ public:
 	//Getter
 	const EulerTransform& GetTransform() const { return playerTransform_; }
 
-	const Vector3& GetTranslate() const { return playerTransform_.translate; }
-
+	const Vector3& GetTranslate() const { return playerTransform_.translate;}
 	const Vector3& GetRotate() const { return playerTransform_.rotate; }
-
 	const Vector3& GetScale() const { return playerTransform_.scale; }
-
 	const Vector3& GetTrailColor() const { return trailRender_->GetTrailColor(); }
 
 	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
 
 	const bool GetIsDown() const { return isDown_; }
-
 	const bool GetIsHitEnemyAttack() const { return isHitEnemyAttack_; }
-
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }
-
 	const bool GetIsGuard()const { return isGuard_; }
-
 	const bool GetIsDash() const { return stateManager_->GetIsDash(); }
+	const bool GetIsAvoidAttack()const { return isAvoidAttack_; }
 
 	const OBB& GetOBB()const { return playerOBB_; }
-
 	const OBB& GetWeaponOBB()const { return weaponOBB_; }
-
 	const OBB& GetJustAvoidOBB()const { return justAvoidOBB_; }
 
 	const ParticleBase* GetParticle()const { return particle_.get(); }
@@ -96,8 +88,6 @@ public:
 	const int GetHitTimer()const { return hitTimer_; }
 
 	const uint32_t GetSerialNumber()const { return enemyNumber_; }
-
-	const bool GetIsAvoidAttack()const { return isAvoidAttack_; }
 
 	const HitRecord::KnockbackType GetKnockbackType()const { return type_; }
 
@@ -121,17 +111,6 @@ public:
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
 	void SetTimeScale(const float scale) { timeScale_ = scale; }
-
-private:
-	//クラス内関数
-	//ジャスト回避行動初期化
-	void BehaviorJustAvoidInitialize();
-	//強攻撃全体の初期化
-	void BehaviorAllStrongAttackInitialize();
-	//強攻撃全体の更新
-	void BehaviorStrongAttackUpdate();
-	//ジャスト回避行動初期化
-	void BehaviorJustAvoidUpdate();
 
 public:
 	
@@ -158,43 +137,6 @@ public:
 	static const int conboNum_ = 6;
 
 	std::array<Vector3, conboNum_> nextAttackRotates_;
-
-private:
-	//強攻撃関連
-
-	//強行動共通の初期化
-	void PreBehaviorStrongAttackInitialize();
-	//強行動共通の初期化
-	void PostBehaviorStrongAttackInitialize();
-
-	//強1攻撃行動初期化
-	void BehaviorStrongAttackInitialize();
-	//強2攻撃行動初期化
-	void BehaviorSecondStrongAttackInitialize();
-	//強3攻撃行動初期化
-	void BehaviorThirdStrongAttackInitialize();
-	//強4攻撃行動初期化
-	void BehaviorFourthStrongAttackInitialize();
-	//強5攻撃行動初期化
-	void BehaviorFifthStrongAttackInitialize();
-	//強6攻撃行動初期化
-	void BehaviorSixthStrongAttackInitialize();
-	//強1攻撃のモーション
-	void StrongAttackMotion();
-	//強2攻撃のモーション
-	void SecondStrongAttackMotion();
-	//強3攻撃のモーション
-	void ThirdStrongAttackMotion();
-	//強4攻撃のモーション
-	void FourthStrongAttackMotion();
-	//強5攻撃のモーション
-	void FifthStrongAttackMotion();
-	//強6攻撃のモーション
-	void SixthStrongAttackMotion();
-
-	/*地面破壊のテクスチャの配置*/
-	void SettingGroundCrushTex();
-
 private:
 	//状態を管理
 	PlayerStateManager* stateManager_ = nullptr;
@@ -351,21 +293,6 @@ private:
 
 	//加算する武器の回転
 	float weapon_Rotate_ = 0.0f;
-
-	std::array<Vector3, conboNum_> weaponStrongAttackTransformRotates_ = { {
-		{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
-		}
-	};
-
-	std::array<Vector3, conboNum_> weaponStrongAttackOffset_ = { {
-		{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
-		}
-	};
-	
-	std::array<Vector2, conboNum_> weapon_StrongRotatesMinMax_ = { {
-		{4.5f,9.2f},{3.16f,-0.9f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
-		}
-	};
 
 	const float kAttackMagnification_ = 1.5f;
 	

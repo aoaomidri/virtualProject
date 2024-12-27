@@ -7,6 +7,7 @@ void PlayerRoot::Initialize(){
 	GameTime::ReverseTimeChange();
 	context_.move_ = { 0.0f,0.0f,0.0f };
 	context_.workAttack_.comboIndex_ = 0;
+	context_.workAvoidAttack_.justAvoidAttackTimer_ = 0;
 	context_.weaponParameter_.weaponCollisionTransform_.translate.y = kWeaponRootTranslate_;
 
 }

@@ -53,15 +53,15 @@ void PlayerAttack::PostAttackInitialize(){
 		context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
 		context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.0f,context_.weaponParameter_.weaponTransform_.rotate.z };
 		context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_;
-		isShakeDown_ = false;
+		context_.workAttack_.isShakeDown_ = false;
 	}
 	else {
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	context_.workAttack_.AttackTimer_ = 0;
 	context_.workAttack_.hitRecordRestFlug_ = true;
 	waitTime_ = waitTimeBase_;
-	isEndAttack_ = false;
+	context_.workAttack_.isEndAttack_ = false;
 }
 
 void PlayerAttack::AttackInitialize(){
@@ -108,10 +108,10 @@ void PlayerAttack::SixthAttackInitialize(){
 
 void PlayerAttack::Update(const Vector3& cameraRotate){
 	ApplyGlobalVariables();
-
+	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
 	//技が終わったか
-	if (isEndAttack_) {
+	if (context_.workAttack_.isEndAttack_) {
 		//次の攻撃を発動するか
 		if (context_.workAttack_.comboNext_) {
 			context_.workAttack_.comboIndex_++;
@@ -257,7 +257,7 @@ void PlayerAttack::AttackMotion(){
 		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[0].x * kAttackMagnification_;
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[0].y) {
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
 		//攻撃時に移動
@@ -281,13 +281,13 @@ void PlayerAttack::AttackMotion(){
 	}
 	//動作が終わったら待機
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}
@@ -304,7 +304,7 @@ void PlayerAttack::SecondAttackMotion(){
 		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[1].x;
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[1].y) {
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
 		//攻撃時に移動
@@ -328,13 +328,13 @@ void PlayerAttack::SecondAttackMotion(){
 	}
 
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}
@@ -351,7 +351,7 @@ void PlayerAttack::ThirdAttackMotion(){
 		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[2].x;
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[2].y) {
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
 		//攻撃時に移動
@@ -375,13 +375,13 @@ void PlayerAttack::ThirdAttackMotion(){
 	}
 
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}
@@ -419,13 +419,13 @@ void PlayerAttack::FourthAttackMotion(){
 	}
 
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}
@@ -442,7 +442,7 @@ void PlayerAttack::FifthAttackMotion(){
 		context_.weaponParameter_.weapon_Rotate_ = weapon_RotatesMinMax_[4].x;
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[4].y) {
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
 		//攻撃時に移動
@@ -466,13 +466,13 @@ void PlayerAttack::FifthAttackMotion(){
 	}
 
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}
@@ -491,7 +491,7 @@ void PlayerAttack::SixthAttackMotion(){
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[5].y) {
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
-		isShakeDown_ = true;
+		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
 		//攻撃時に移動
@@ -515,13 +515,13 @@ void PlayerAttack::SixthAttackMotion(){
 	}
 
 	if (waitTime_ <= 0) {
-		isEndAttack_ = true;
+		context_.workAttack_.isEndAttack_ = true;
 	}
 	//フラグによって振る方向を分岐
-	if (!isShakeDown_) {
+	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / (kAttackDivisionMagnification_ * kAttackMagnification_));
 	}
-	else if (isShakeDown_) {
+	else if (context_.workAttack_.isShakeDown_) {
 
 		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
 	}

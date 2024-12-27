@@ -34,6 +34,7 @@ void PlayerDash::Initialize(){
 
 void PlayerDash::Update(const Vector3& cameraRotate){
 	ApplyGlobalVariables();
+	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
 	Matrix4x4 newRotateMatrix_ = context_.playerRotateMatrix_;
 	context_.move_ = { 0, 0, context_.moveSpeed_ * dashSpeed_ };
@@ -71,6 +72,6 @@ void PlayerDash::Update(const Vector3& cameraRotate){
 		PlayerStateManager::GetInstance()->ChangeState(StateName::Root);
 	}
 
-	cameraRotate;
+	
 }
 

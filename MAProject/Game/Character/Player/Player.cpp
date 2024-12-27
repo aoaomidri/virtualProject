@@ -211,6 +211,8 @@ void Player::Update(){
 	stateManager_->Update(viewProjection_->rotation_);
 
 	//Stateによって変更が生じた値を代入する
+	type_ = stateManager_->GetKnockbackType();
+
 	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
 	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
 	weaponTransform_ = stateManager_->GetWeaponTrnaform();
@@ -223,8 +225,6 @@ void Player::Update(){
 	playerTransform_.translate.y += downVector_.y * timeScale_;
 	//落下処理による修正後の値を代入
 	stateManager_->SetPlayerTranslateY(playerTransform_.translate.y);
-
-	
 
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
@@ -286,7 +286,7 @@ void Player::Update(){
 	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 
 	//トレイルの更新処理
-	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack) {
+	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
 		Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
 		weaponObj_->SetMatrix(weaponMatrix_);
 		weaponObj_->UniqueUpdate();
@@ -298,6 +298,7 @@ void Player::Update(){
 
 	if (timeScale_ != 0.0f){
 		trail_->Update();
+
 	}
 	
 }
@@ -307,6 +308,7 @@ void Player::TexDraw(const Matrix4x4& viewProjection){
 	if (stateManager_->GetIsStopCrush()) {
 		groundCrush_->Draw(viewProjection);
 	}
+	trailRender_->SetIsDraw(stateManager_->GetIsDrawTrail());
 	trailRender_->Draw(trail_.get(), viewProjection);
 }
 

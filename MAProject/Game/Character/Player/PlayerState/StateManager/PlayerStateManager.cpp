@@ -35,6 +35,8 @@ void PlayerStateManager::InitState() {
 	context_.playerRotateMatrix_ = Matrix4x4::StaticIdentity();
 	context_.weaponParameter_.weaponMatrix_ = Matrix4x4::StaticIdentity();
 	context_.weaponParameter_.weaponCollisionMatrix_ = Matrix4x4::StaticIdentity();
+
+	context_.isTrail_ = true;
 }
 void PlayerStateManager::ChangeState(const StateName nextState){
 	assert(nextState_ == nullptr);

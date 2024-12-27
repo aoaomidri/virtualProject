@@ -33,10 +33,13 @@ public:
 		selectTrail_ = name;
 	}
 
+	void SetIsDraw(const bool flug) {
+		isDraw_ = flug;
+	}
+
 
 private:
 	std::unique_ptr<GraphicsPipeline> GraphicsPipelineTrail_;
-
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
 
@@ -45,9 +48,12 @@ private:
 
 	HRESULT hr_;
 
-
+	//どの型を選択しているか
+	uint32_t selectTrail_ = 0;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+	bool isDraw_ = true;
 
 	TrailEffect* trail_ = nullptr;
 
@@ -55,14 +61,10 @@ private:
 	//マテリアルにデータを書き込む
 	Model::Material* materialDate_ = nullptr;
 
-	//どの型を選択しているか
-	uint32_t selectTrail_ = 0;
-
 	Vector3 trailColor_ = {};
 
 	/*型ごとの色を指定*/
 	const Vector4 groundColor_ = { 0.8039f, 0.3608f, 0.0f,1.0f };
-
 	const Vector4 waterColor_ = { 0.678f, 0.847f, 0.902f,1.0f };
 	
 };

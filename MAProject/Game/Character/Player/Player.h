@@ -352,11 +352,6 @@ private:
 	//加算する武器の回転
 	float weapon_Rotate_ = 0.0f;
 
-	std::array<Vector3, conboNum_> weaponAttackTransformRotates_ = { {
-		{0.0f,0.0f,-0.5f},{-0.3f,0.0f,2.0f},{-0.3f,0.0f,-1.7f},{0.0f,0.0f,-2.2f},{-0.3f,0.0f,2.5f},{-0.3f,0.0f,-0.0f}
-		}
-	};
-
 	std::array<Vector3, conboNum_> weaponStrongAttackTransformRotates_ = { {
 		{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
 		}
@@ -364,14 +359,6 @@ private:
 
 	std::array<Vector3, conboNum_> weaponStrongAttackOffset_ = { {
 		{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
-		}
-	};
-
-	std::array<float, conboNum_> weapon_Rotates_ = { 
-		-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f
-	};
-	std::array<Vector2, conboNum_> weapon_RotatesMinMax_ = { {
-		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{1.65f,-0.6f}
 		}
 	};
 	
@@ -471,7 +458,7 @@ private:
 	bool isTrail_ = false;
 	//追撃を出すかどうか
 	bool isNextAttack_ = false;
-
+	
 
 	/*強5攻撃のみ*/
 	//初回の攻撃かどうか

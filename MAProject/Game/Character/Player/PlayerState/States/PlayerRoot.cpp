@@ -12,6 +12,7 @@ void PlayerRoot::Initialize(){
 }
 
 void PlayerRoot::Update(const Vector3& cameraRotate){
+	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
 	/*自機の移動*/	
 	context_.move_.z = input_->GetPadLStick().y * context_.moveSpeed_;
@@ -111,12 +112,12 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 		context_.isDissolve_ = false;
 		context_.weaponParameter_.weaponThreshold_ = 0.0f;
 	}
-	////強攻撃を発動
-	//if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
-	//	context_.workAttack_.comboIndex_ = 1;
-	//	PlayerStateManager::GetInstance()->ChangeState(StateName::StrongAttack);
-	//	context_.isDissolve_ = false;
-	//	context_.weaponParameter_.weaponThreshold_ = 0.0f;
-	//}
+	//強攻撃を発動
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
+		context_.workAttack_.comboIndex_ = 1;
+		PlayerStateManager::GetInstance()->ChangeState(StateName::StrongAttack);
+		context_.isDissolve_ = false;
+		context_.weaponParameter_.weaponThreshold_ = 0.0f;
+	}
 	
 }

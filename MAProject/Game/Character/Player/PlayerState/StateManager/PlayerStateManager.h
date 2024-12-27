@@ -44,6 +44,8 @@ public:
 public:
 	//Getter
 	const StateName& GetStateName()const { return nowStateName_; }
+
+	const HitRecord::KnockbackType GetKnockbackType()const { return context_.workAttack_.type_; }
 	
 	const EulerTransform& GetPlayerTrnaform()const { return context_.playerTransform_; }
 	const EulerTransform& GetWeaponTrnaform()const { return context_.weaponParameter_.weaponTransform_; }
@@ -60,6 +62,7 @@ public:
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 	const bool GetIsDissolve()const { return context_.isDissolve_; }
 	const bool GetIsStopCrush()const { return context_.isStopCrush_; }
+	const bool GetIsDrawTrail()const { return context_.isTrail_; }
 	
 
 	//Setter

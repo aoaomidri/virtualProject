@@ -69,9 +69,7 @@ public:
 	//InitGlobalVariablesを行ったかどうか
 	static bool isLoad_;
 private:
-	bool isShakeDown_ = false;
-	//攻撃が終わったかどうか
-	bool isEndAttack_ = false;
+	
 	//トレイルを描画するかどうか
 
 	float waitTimeBase_ = 7.0f;

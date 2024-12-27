@@ -32,6 +32,9 @@ public:
 		bool strongComboNext_ = false;
 		bool trailResetFlug_ = false;
 		bool hitRecordRestFlug_ = false;
+		bool isShakeDown_ = false;
+		//攻撃が終わったかどうか
+		bool isEndAttack_ = false;
 		int32_t comboIndex_ = 0;
 		int32_t inComboPhase_ = 0;
 		float attackParameter_ = 0;
@@ -122,8 +125,10 @@ public:
 		//向きベクトル
 		Vector3 postureVec_{};
 		Vector3 frontVec_{};
+		//カメラの回転
+		Vector3 cameraRotate_{};
 		//落下ベクトル
-		Vector3 downVector_ = {};
+		Vector3 downVector_{};
 
 		//自機の回転行列
 		Matrix4x4 playerRotateMatrix_{};
@@ -171,6 +176,12 @@ public:
 		bool isWeaponDebugFlug_ = false;
 		//地面テクスチャを固定するかどうか
 		bool isStopCrush_ = false;
+		//トレイルを描画するかどうか
+		bool isTrail_ = false;
+		//強攻撃一段目で守っているかどうか
+		bool isGuard_ = false;
+		//強攻撃中に攻撃を受けたかどうか
+		bool isGuardHit_ = false;
 
 		std::unique_ptr<TrailEffect> trail_;
 	};

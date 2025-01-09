@@ -8,6 +8,7 @@ void PlayerRoot::Initialize(){
 	context_.move_ = { 0.0f,0.0f,0.0f };
 	context_.workAttack_.comboIndex_ = 0;
 	context_.workAvoidAttack_.justAvoidAttackTimer_ = 0;
+	context_.workAttack_.trailResetFlug_ = true;
 	context_.weaponParameter_.weaponCollisionTransform_.translate.y = kWeaponRootTranslate_;
 
 }
@@ -15,6 +16,30 @@ void PlayerRoot::Initialize(){
 void PlayerRoot::Update(const Vector3& cameraRotate){
 	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
+
+	//ダッシュを発動
+	if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
+		return;
+	}
+	//弱攻撃を発動
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		context_.workAttack_.comboIndex_ = 1;
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Attack);
+		context_.isDissolve_ = false;
+		context_.weaponParameter_.weaponThreshold_ = 0.0f;
+		return;
+	}
+	//強攻撃を発動
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
+		context_.workAttack_.comboIndex_ = 1;
+		PlayerStateManager::GetInstance()->ChangeState(StateName::StrongAttack);
+		context_.isDissolve_ = false;
+		context_.weaponParameter_.weaponThreshold_ = 0.0f;
+		return;
+	}
+
 	/*自機の移動*/	
 	context_.move_.z = input_->GetPadLStick().y * context_.moveSpeed_;
 	if (abs(context_.move_.z) < context_.moveLimitMinimum_) {
@@ -101,24 +126,6 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 	if (GameTime::timeScale_ != 0.0f) {
 		context_.trail_->SetPos(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 	}
-	//ダッシュを発動
-	if (input_->GetPadButtonTriger(Input::GamePad::RB) && context_.dashCoolTime_ <= 0) {
-		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
-	}
-	//弱攻撃を発動
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
-		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
-		context_.workAttack_.comboIndex_ = 1;
-		PlayerStateManager::GetInstance()->ChangeState(StateName::Attack);
-		context_.isDissolve_ = false;
-		context_.weaponParameter_.weaponThreshold_ = 0.0f;
-	}
-	//強攻撃を発動
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
-		context_.workAttack_.comboIndex_ = 1;
-		PlayerStateManager::GetInstance()->ChangeState(StateName::StrongAttack);
-		context_.isDissolve_ = false;
-		context_.weaponParameter_.weaponThreshold_ = 0.0f;
-	}
+
 	
 }

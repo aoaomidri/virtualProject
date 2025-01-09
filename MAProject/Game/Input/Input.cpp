@@ -1,5 +1,5 @@
 #include "Input.h"
-
+#include <cmath>
 #include<cassert>
 
 Input* Input::GetInstance()
@@ -66,6 +66,7 @@ void Input::Update() {
 			xinputState_.Gamepad.sThumbRX = 0;
 			xinputState_.Gamepad.sThumbRY = 0;
 		}
+
 	}
 
 }

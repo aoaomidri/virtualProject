@@ -106,7 +106,7 @@ private:
 	BYTE key_[256] = {};
 	BYTE prekey_[256] = {};
 
-	const float DeadZone_ = 2.0f;
+	const float DeadZone_ = 3.0f;
 
 	bool isConnectPad_ = false;
 

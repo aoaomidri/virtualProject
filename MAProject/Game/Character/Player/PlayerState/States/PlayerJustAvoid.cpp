@@ -33,6 +33,7 @@ void PlayerJustAvoid::InitializeMove(){
 	context_.move_.y = 0;
 	context_.workAvoidAttack_.avoidTimer_ = 0.0f;
 	context_.workAvoidAttack_.isChangeEndAttack_ = false;
+	context_.workDash_.isDash_ = false;
 }
 
 void PlayerJustAvoid::InitializeAttack(){

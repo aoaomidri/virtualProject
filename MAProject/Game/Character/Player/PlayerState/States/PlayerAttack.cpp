@@ -118,15 +118,16 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 			context_.workAttack_.comboIndex_++;
 			//攻撃の方向を決定
 			if (input_->GetPadLStick().x != 0 || input_->GetPadLStick().y != 0) {
-				context_.postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
-				Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(cameraRotate);
-				context_.postureVec_ = Matrix::TransformNormal(context_.postureVec_, newRotateMatrix);
-				context_.postureVec_.y = 0;
-				context_.postureVec_ = Vector3::Normalize(context_.postureVec_);
-				Matrix4x4 directionTodirection_;
-				directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
-				context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
-
+				if (GameTime::timeScale_ != 0.0f) {
+					context_.postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
+					Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(cameraRotate);
+					context_.postureVec_ = Matrix::TransformNormal(context_.postureVec_, newRotateMatrix);
+					context_.postureVec_.y = 0;
+					context_.postureVec_ = Vector3::Normalize(context_.postureVec_);
+					Matrix4x4 directionTodirection_;
+					directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
+					context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
+				}
 			}
 			else if (lockOn_ && lockOn_->ExistTarget()) {
 				Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -180,12 +181,14 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 				if (context_.workAttack_.attackParameter_ >= ((float)(context_.workAttack_.nextAttackTimer_ + motionDistance_) / motionSpeed_)) {
 					stateManager_->ChangeState(StateName::Root);
 					context_.isDissolve_ = true;
+					context_.workAttack_.trailResetFlug_ = true;
 					context_.workAttack_.attackParameter_ = 0;
 				}
 				//スティックを倒しているときは少しだけ早く抜けるように
 				if (input_->GetIsPushedLStick() and (context_.workAttack_.attackParameter_ * kAttackParameterCorection_ >= ((float)(context_.workAttack_.nextAttackTimer_) / motionSpeed_))) {
 					stateManager_->ChangeState(StateName::Root);
 					context_.isDissolve_ = true;
+					context_.workAttack_.trailResetFlug_ = true;
 					context_.workAttack_.attackParameter_ = 0;
 				}
 			}
@@ -229,13 +232,14 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 			//コンボ有効
 			context_.workAttack_.comboNext_ = true;
 		}
-		else if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y)) {
+		else if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_Y) ) {
 			//強コンボ派生有効
 			context_.workAttack_.strongComboNext_ = true;
 		}
 	}
 
 	if (input_->GetPadButtonTriger(Input::GamePad::RB)) {
+		context_.workAttack_.trailResetFlug_ = true;
 		stateManager_->ChangeState(StateName::Dash);
 	}
 

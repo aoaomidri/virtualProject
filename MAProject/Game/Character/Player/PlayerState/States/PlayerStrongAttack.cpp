@@ -41,16 +41,17 @@ void PlayerStrongAttack::AllStrongAttackInitialize(){
 	context_.weaponParameter_.weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
 	//攻撃方向の指定
 	if (input_->GetPadLStick().x != 0 || input_->GetPadLStick().y != 0) {
-		context_.postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
-		Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(context_.cameraRotate_);
-		context_.postureVec_ = Matrix::TransformNormal(context_.postureVec_, newRotateMatrix);
-		context_.postureVec_.y = 0;
-		context_.postureVec_ = Vector3::Normalize(context_.postureVec_);
+		if (GameTime::timeScale_ != 0.0f) {
+			context_.postureVec_ = { input_->GetPadLStick().x ,0,input_->GetPadLStick().y };
+			Matrix4x4 newRotateMatrix = Matrix::MakeRotateMatrix(context_.cameraRotate_);
+			context_.postureVec_ = Matrix::TransformNormal(context_.postureVec_, newRotateMatrix);
+			context_.postureVec_.y = 0;
+			context_.postureVec_ = Vector3::Normalize(context_.postureVec_);
 
-		Matrix4x4 directionTodirection_;
-		directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
-		context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
-
+			Matrix4x4 directionTodirection_;
+			directionTodirection_.DirectionToDirection(Vector3::Normalize(context_.frontVec_), Vector3::Normalize(context_.postureVec_));
+			context_.playerRotateMatrix_ = Matrix::Multiply(context_.playerRotateMatrix_, directionTodirection_);
+		}
 	}
 	else if (lockOn_ && lockOn_->ExistTarget()) {
 		Vector3 lockOnPos = lockOn_->GetTargetPosition();
@@ -218,7 +219,7 @@ void PlayerStrongAttack::SixthStrongAttackInitialize(){
 void PlayerStrongAttack::Update(const Vector3& cameraRotate){
 	ApplyGlobalVariables();
 	context_.cameraRotate_ = cameraRotate;
-	context_.frontVec_ = context_.postureVec_;
+	
 	//攻撃が終わったら通常状態へ
 	if (context_.workAttack_.isEndAttack_) {
 		context_.workAttack_.attackParameter_ += GameTime::timeScale_;

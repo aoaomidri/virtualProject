@@ -91,9 +91,11 @@ private:
 
 	bool isReset_ = false;
 	bool isStart_ = true;
+	bool isStickUpDown_ = false;
+	bool isFade_ = false;
+
 	float fadeAlpha_ = 0.0f;
 	float fadeSpeed_ = 0.01f;
-	bool isFade_ = false;
 
 	Vector2 selectPosY_ = { 390.0f,550.0f };
 

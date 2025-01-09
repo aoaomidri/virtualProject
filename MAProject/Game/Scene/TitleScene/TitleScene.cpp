@@ -158,13 +158,25 @@ void TitleScene::Initialize() {
 
 }
 
-void TitleScene::Update() {
+void TitleScene::Update() {	
 	//カメラの更新
 	followCamera_->Update();
 	followCamera_->SetIsMove(false);
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 
 	if (fadeAlpha_ <= 0.0f) {
+		if ((input_->GetPadLStick().y > 0.8f || input_->GetPadLStick().y < -0.8f) && isStickUpDown_ == false) {
+			isStickUpDown_ = true;
+			if (isStart_ == false) {
+				isStart_ = true;
+			}
+			else {
+				isStart_ = false;
+			}
+		}
+		else if (input_->GetPadLStick().y == 0.0f) {
+			isStickUpDown_ = false;
+		}
 		//上下ボタンでアローの移動
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_UP) || input_->GetPadButtonTriger(XINPUT_GAMEPAD_DPAD_DOWN)) {
 			if (isStart_ == false) {

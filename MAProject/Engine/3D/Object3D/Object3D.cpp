@@ -5,7 +5,7 @@
 #include<sstream>
 
 
-void Object3D::Initialize(const std::string fileName) {
+void Object3D::Initialize(const std::string& fileName) {
 	makeResource();
 
 	isDraw_ = true;

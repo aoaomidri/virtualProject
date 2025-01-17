@@ -106,8 +106,6 @@ void Player::Initialize(){
 
 	audio_ = Audio::GetInstance();
 	
-	avoidSE_ = audio_->LoadAudio("SE/avoidSE.mp3");
-	attackMotionSE_ = audio_->LoadAudio("SE/attackMotionSE.mp3");
 	playerHitSE_ = audio_->LoadAudio("SE/playerHitSE.mp3");
 
 }
@@ -227,44 +225,7 @@ void Player::Update(){
 	}
 
 	/*行列やobbの更新処理*/
-	playerScaleMatrix_ = Matrix::MakeScaleMatrix(playerTransform_.scale);
-	playerTransformMatrix_ = Matrix::MakeTranslateMatrix(playerTransform_.translate);
-
-	//プレイヤーのobbの更新
-	playerOBB_.center = playerTransform_.translate + obbPoint_;
-	playerOBB_.size = playerTransform_.scale + obbAddScale_;
-	SetOridentatios(playerOBB_, playerRotateMatrix_);
-	//回避用のobbの更新
-	justAvoidOBB_ = playerOBB_;
-	justAvoidObbScale_ = { scaleValue_,scaleValue_,scaleValue_ };
-	justAvoidOBB_.size = playerOBB_.size + justAvoidObbScale_;
-	//武器のobbの更新
-	weaponOBB_.center = weaponCollisionTransform_.translate;
-	weaponOBB_.size = weaponCollisionTransform_.scale;
-	Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponCollisionTransform_.rotate);
-	SetOridentatios(weaponOBB_, weaponRotateMatrix);
-	//プレイヤー行列更新
-	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTransformMatrix_);
-	//当たり描画用の行列更新
-	playerOBBScaleMatrix_.MakeScaleMatrix(playerOBB_.size);
-	playerOBBTransformMatrix_.MakeTranslateMatrix(playerOBB_.center);
-	playerOBBMatrix_ = Matrix::MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTransformMatrix_);
-	/*通常時かそれ以外かで武器の行列の処理を変更*/
-	if (stateManager_->GetStateName() != BasePlayerState::StateName::Root) {
-		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		if (!stateManager_->GetIsDissolve()){
-			weaponRotateVec *= (playerRotateMatrix_);
-			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
-		}
-	}
-	else {
-		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
-		if (!stateManager_->GetIsDissolve()) {
-			weaponRotateVec *= (playerRotateMatrix_);
-			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
-		}
-	}
-	weaponCollisionMatrix_= Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
+	PlayerCalculation();
 
 	//トレイルの更新処理
 	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
@@ -279,7 +240,6 @@ void Player::Update(){
 
 	if (timeScale_ != 0.0f){
 		trail_->Update();
-
 	}
 	
 }
@@ -306,9 +266,7 @@ void Player::Draw(const ViewProjection& viewProjection){
 	}
 
 #ifdef _DEBUG
-	/*collisionObj_->SetMatrix(playerOBBMatrix_);
-	collisionObj_->Update(viewProjection);
-	collisionObj_->Draw();*/
+	
 
 #endif
 		
@@ -365,6 +323,47 @@ void Player::DrawImgui(){
 void Player::OnFlootCollision(OBB obb){
 	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
 	downVector_ = { 0.0f,0.0f,0.0f };
+}
+
+void Player::PlayerCalculation(){
+	playerScaleMatrix_ = Matrix::MakeScaleMatrix(playerTransform_.scale);
+	playerTranslateMatrix_ = Matrix::MakeTranslateMatrix(playerTransform_.translate);
+
+	//プレイヤーのobbの更新
+	playerOBB_.center = playerTransform_.translate + obbPoint_;
+	playerOBB_.size = playerTransform_.scale + obbAddScale_;
+	SetOridentatios(playerOBB_, playerRotateMatrix_);
+	//回避用のobbの更新
+	justAvoidOBB_ = playerOBB_;
+	justAvoidObbScale_ = { scaleValue_,scaleValue_,scaleValue_ };
+	justAvoidOBB_.size = playerOBB_.size + justAvoidObbScale_;
+	//武器のobbの更新
+	weaponOBB_.center = weaponCollisionTransform_.translate;
+	weaponOBB_.size = weaponCollisionTransform_.scale;
+	Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponCollisionTransform_.rotate);
+	SetOridentatios(weaponOBB_, weaponRotateMatrix);
+	//プレイヤー行列更新
+	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTranslateMatrix_);
+	//当たり描画用の行列更新
+	playerOBBScaleMatrix_.MakeScaleMatrix(playerOBB_.size);
+	playerOBBTranslateMatrix_.MakeTranslateMatrix(playerOBB_.center);
+	playerOBBMatrix_ = Matrix::MakeAffineMatrix(playerOBBScaleMatrix_, playerRotateMatrix_, playerOBBTranslateMatrix_);
+	/*通常時かそれ以外かで武器の行列の処理を変更*/
+	if (stateManager_->GetStateName() != BasePlayerState::StateName::Root) {
+		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+		if (!stateManager_->GetIsDissolve()) {
+			weaponRotateVec *= (playerRotateMatrix_);
+			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponCollisionTransform_.translate);
+		}
+	}
+	else {
+		Matrix4x4 weaponRotateVec = Matrix::MakeRotateMatrix(weaponTransform_.rotate);
+		if (!stateManager_->GetIsDissolve()) {
+			weaponRotateVec *= (playerRotateMatrix_);
+			weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_.scale, weaponRotateVec, weaponTransform_.translate);
+		}
+	}
+	weaponCollisionMatrix_ = Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
 }
 
 const float Player::GetHitStop() {

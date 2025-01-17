@@ -40,8 +40,6 @@ private:
 	//次のシーン
 	std::unique_ptr<BaseScene> nextScane_;
 
-	
-
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 

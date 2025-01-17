@@ -90,11 +90,28 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
+	std::unique_ptr<Sprite> backSprite_;
+	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
+	std::unique_ptr<Sprite> slushTex_;
+	std::unique_ptr<Sprite> actionTextSprite_;
+	std::unique_ptr<Sprite> attackSprite_;
+
+	/*ロックオン*/
+	std::unique_ptr<LockOn> lockOn_;
+
+	std::unique_ptr<StageObject> stageObject_;
+
+	std::unique_ptr<FloorManager> floorManager_;
+
+	//プレイヤー
+	std::unique_ptr<Player> player_;
+	//敵
+	std::unique_ptr<EnemyManager> enemyManager_;
+
 	Vector2 playerAttackShake_ = { 1.0f,3.0f };
 
 	Vector2 enemyAttackShake_ = { 0.5f,1.5f };
 	
-	std::unique_ptr<FloorManager> floorManager_;
 
 	EulerTransform firstFloor_ = {
 		.scale = {1.0f,0.5f,1.0f},
@@ -102,11 +119,6 @@ private:
 		.translate = {0.0,0.f,0.0f}
 	};
 
-	bool isFloorMove_ = false;
-	//プレイヤー
-	std::unique_ptr<Player> player_;
-	//敵
-	std::unique_ptr<EnemyManager> enemyManager_;
 	int chackCollision = 0;
 
 	EulerTransform particleTrnadform_ = {
@@ -125,19 +137,11 @@ private:
 	uint32_t enemyHitSE_{};
 	float seVolume_ = 0.3f;
 	
+	bool isFloorMove_ = false;
 	//スプライト関連
 	bool isReset_ = false;
 	bool isStart_ = true;
-	std::unique_ptr<Sprite> backSprite_;
-	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
-	std::unique_ptr<Sprite> slushTex_;
-	std::unique_ptr<Sprite> actionTextSprite_;
-	std::unique_ptr<Sprite> attackSprite_;
-
-	/*ロックオン*/
-	std::unique_ptr<LockOn> lockOn_;
-
-	std::unique_ptr<StageObject> stageObject_;
+	
 
 };
 

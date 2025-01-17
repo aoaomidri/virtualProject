@@ -61,6 +61,10 @@ public:
 		}
 	}
 
+private:
+	//Matrix等の計算処理
+	void PlayerCalculation();
+
 public:
 	//Getter
 	const EulerTransform& GetTransform() const { return playerTransform_; }
@@ -132,8 +136,8 @@ private:
 	Matrix4x4 playerMatrix_{};
 	Matrix4x4 playerScaleMatrix_{};
 	Matrix4x4 playerRotateMatrix_{};
-	Matrix4x4 playerTransformMatrix_{};
-	Matrix4x4 playerOBBTransformMatrix_{};
+	Matrix4x4 playerTranslateMatrix_{};
+	Matrix4x4 playerOBBTranslateMatrix_{};
 	Matrix4x4 playerOBBScaleMatrix_{};
 	Matrix4x4 playerOBBMatrix_{};
 	//武器のマトリックス
@@ -225,10 +229,6 @@ private:
 
 	float seVolume_ = 0.5f;
 
-	//回避の時の音
-	uint32_t avoidSE_;
-	//武器を振るときの音
-	uint32_t attackMotionSE_;
 	//被弾時の音
 	uint32_t playerHitSE_{};
 

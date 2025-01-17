@@ -367,11 +367,6 @@ private:
 
 private:
 	//攻撃関係の変数群
-
-	/*三連切り*/
-	//三連切りの移動座標用
-	std::array<Vector3, 3> posContainer_;
-
 	//間の待ちの時間
 	uint32_t attackDistance_ = 0;
 
@@ -380,9 +375,6 @@ private:
 
 	//移動のコンテナがすべて埋まったかどうか
 	bool isMaxContext_ = false;
-
-	//現在の攻撃回数
-	uint32_t attackCount_ = 0;
 
 	const uint32_t distanceTime_ = 20;
 

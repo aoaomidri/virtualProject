@@ -84,7 +84,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;$(ProjectDir)Game\Time\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine\math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;$(ProjectDir)Game\Time\;$(ProjectDir)Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\HitRecord\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;$(ProjectDir)Game\Time\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Engine\math\;$(ProjectDir)externals\;$(ProjectDir)Game\Audio\;$(ProjectDir)Game\Camera\;$(ProjectDir)Game\Character\;$(ProjectDir)Game\Input\;$(ProjectDir)Game\Item\;$(ProjectDir)Game\random\;$(ProjectDir)Game\Scene\;$(ProjectDir)Game\Stage\Floor\;$(ProjectDir)Game\Stage\Goal\;$(ProjectDir)Engine\2D\;$(ProjectDir)Engine\3D\Object3D\;$(ProjectDir)Engine\3D\Shape\;$(ProjectDir)Engine\Base\;$(ProjectDir)Engine\3D\;$(ProjectDir)Game\Light\;$(ProjectDir)Game\WholeGame\;$(ProjectDir)Engine\3D\Object3D\Manager\;$(ProjectDir)Engine\3D\Object3D\Particle\;$(ProjectDir)Game\;$(ProjectDir)externals\assimp\include;$(ProjectDir)Game\Stage\;$(ProjectDir)Game\Stage\StageObject\;$(ProjectDir)Game\Character\Player\;$(ProjectDir)Game\Character\Enemy\;$(ProjectDir)Game\Character\Player\Attack\;$(ProjectDir)Game\Character\Player\PlayerState\;$(ProjectDir)Game\Character\Player\PlayerState\States\;$(ProjectDir)Game\Character\Player\PlayerState\BaseState\;$(ProjectDir)Game\Character\Player\PlayerState\StateManager\;$(ProjectDir)Game\Time\;$(ProjectDir)Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -187,6 +187,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\GraphicsPipeline.cpp" />
     <ClCompile Include="Engine\Base\ResourceObject.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\math\Ease\Ease.cpp" />
+    <ClCompile Include="Engine\math\Matrix.cpp" />
+    <ClCompile Include="Engine\math\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\math\Quaternion.cpp" />
+    <ClCompile Include="Engine\math\Vector3.cpp" />
+    <ClCompile Include="Engine\math\Vector4.cpp" />
     <ClCompile Include="externals\ImGuiManager.cpp" />
     <ClCompile Include="Game\Audio\Audio.cpp" />
     <ClCompile Include="Game\Camera\FollowCamera.cpp" />
@@ -223,12 +229,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\WholeGame\MAFramework.cpp" />
     <ClCompile Include="Game\WholeGame\WholeGame.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="math\Ease\Ease.cpp" />
-    <ClCompile Include="math\Matrix.cpp" />
-    <ClCompile Include="math\Matrix4x4.cpp" />
-    <ClCompile Include="math\Quaternion.cpp" />
-    <ClCompile Include="math\Vector3.cpp" />
-    <ClCompile Include="math\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\PostEffect.h" />
@@ -254,6 +254,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\Log.h" />
     <ClInclude Include="Engine\Base\ResourceObject.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
+    <ClInclude Include="Engine\math\Ease\Ease.h" />
+    <ClInclude Include="Engine\math\Matrix.h" />
+    <ClInclude Include="Engine\math\Matrix4x4.h" />
+    <ClInclude Include="Engine\math\Quaternion.h" />
+    <ClInclude Include="Engine\math\Vector2.h" />
+    <ClInclude Include="Engine\math\Vector3.h" />
+    <ClInclude Include="Engine\math\Vector4.h" />
     <ClInclude Include="externals\ImGuiManager.h" />
     <ClInclude Include="Game\Audio\Audio.h" />
     <ClInclude Include="Game\Camera\FollowCamera.h" />
@@ -290,13 +297,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Time\GameTime.h" />
     <ClInclude Include="Game\WholeGame\MAFramework.h" />
     <ClInclude Include="Game\WholeGame\WholeGame.h" />
-    <ClInclude Include="math\Ease\Ease.h" />
-    <ClInclude Include="math\Matrix.h" />
-    <ClInclude Include="math\Matrix4x4.h" />
-    <ClInclude Include="math\Quaternion.h" />
-    <ClInclude Include="math\Vector2.h" />
-    <ClInclude Include="math\Vector3.h" />
-    <ClInclude Include="math\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

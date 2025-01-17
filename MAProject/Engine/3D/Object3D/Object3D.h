@@ -20,7 +20,7 @@ public:
 		Vector3 worldPosition;
 	};
 	//初期化処理
-	void Initialize(const std::string fileName);
+	void Initialize(const std::string& fileName);
 	//更新処理
 	void Update(const ViewProjection& viewProjection);
 	//オブジェの場所が必要な時などの特殊な時に掛ける更新処理
@@ -30,11 +30,11 @@ public:
 	//imgui描画処理
 	void DrawImgui(std::string name);
 	/*Setter*/
-	void SetIsDraw(const bool& isDraw) { isDraw_ = isDraw; }
+	void SetIsDraw(const bool isDraw) { isDraw_ = isDraw; }
 
-	void SetIsLighting(const bool& isLighting) { isUseLight_ = isLighting; }
+	void SetIsLighting(const bool isLighting) { isUseLight_ = isLighting; }
 
-	void SetIsGetTop(const bool& isGetTop) { isGetTop_ = isGetTop; }
+	void SetIsGetTop(const bool isGetTop) { isGetTop_ = isGetTop; }
 
 	void SetShininess(const float data) { shininess_ = data; }
 
@@ -42,7 +42,7 @@ public:
 
 	void SetPointLight(const PointLight::PointLightData* pLight);
 
-	void SetTexture(const std::string fileName) {
+	void SetTexture(const std::string& fileName) {
 		texHandle_ = TextureManager::GetInstance()->Load(fileName);
 	}
 

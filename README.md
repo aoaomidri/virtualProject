@@ -9,15 +9,13 @@
 デバック用に**imgui**、画像読み込みに**DirectXTex**、Jsonファイルの読み書きに**nlohmannJson**、3Dモデルの読み込みに**assimp**を利用しています。
     -  MAEngine/externalsのフォルダにまとめられています。  
 
- - 表層のファイル説明(MAEngine/)  
+ - ファイル説明(MAEngine/)  
     - [Engine](https://github.com/aoaomidri/virtualProject/tree/master/MAProject/Engine)
        - ウィンドウ表示やテクスチャ、モデル描画などのコア部分をまとめています。
     - [externals](https://github.com/aoaomidri/virtualProject/tree/master/MAProject/externals) 
       - 上記の外部機能のファイルをまとめています。
     - [Game](https://github.com/aoaomidri/virtualProject/tree/master/MAProject/Game) 
       - SceneやPlayerなどのゲームの制作に必要なファイルをまとめています。
-    - [math](https://github.com/aoaomidri/virtualProject/tree/master/MAProject/math) 
-      - vector3、matrix4x4などの数字や計算に関係するファイルをまとめています。
     - [resource](https://github.com/aoaomidri/virtualProject/tree/master/MAProject/resources)
       - 3Dモデルやテクスチャ、音源などをまとめているファイルです。
 

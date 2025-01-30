@@ -8,8 +8,15 @@
 
 class Adjustment_Item final {
 public:
+	//コンストラクタ
+	Adjustment_Item() = default;
+	//デストラクタ
+	~Adjustment_Item() = default;
+	//コピーコンストラクタ
+	Adjustment_Item(const Adjustment_Item& adjustment_item) = delete;
+	//コピー代入演算子
+	Adjustment_Item& operator=(const Adjustment_Item&) = delete;public:
 	static Adjustment_Item* GetInstance();
-
 	//グループの作成
 	void CreateGroup(const std::string& groupName);
 
@@ -44,24 +51,12 @@ public:
 
 	//ファイルに書き出し
 	void SaveFile(const std::string& groupName);
-
 	//ディレクトリの全ファイル読み込み
 	void LoadFiles();
-
 	void LoadFile(const std::string& groupName);
-
 	//毎フレーム処理
 	void Update();
 
-public:
-	//コンストラクタ
-	Adjustment_Item() = default;
-	//デストラクタ
-	~Adjustment_Item() = default;
-	//コピーコンストラクタ
-	Adjustment_Item(const Adjustment_Item& adjustment_item) = delete;
-	//コピー代入演算子
-	Adjustment_Item& operator=(const Adjustment_Item&) = delete;
 
 private:
 	//imguiの操作をそのまま続けるかどうかのメッセージボックスを表示

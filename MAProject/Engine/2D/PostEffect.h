@@ -5,6 +5,7 @@
 
 //namespace省略
 template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+using namespace MAEngine;
 
 class PostEffect{
 public:

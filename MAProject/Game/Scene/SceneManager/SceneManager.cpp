@@ -3,8 +3,7 @@
 
 void SceneManager::ChangeScene(const AbstractSceneFactory::SceneName nextScene){
 	assert(sceneFactory_);
-	assert(nextScane_ == nullptr);
-
+	assert(nextScane_ == nullptr)
 	//次のシーンを生成
 	nextScane_ = sceneFactory_->CreateScene(nextScene);
 }
@@ -23,10 +22,8 @@ void SceneManager::Update(){
 		//次のシーンを初期化する
 		scane_->Initialize();
 	}
-
 	//実行中のシーンを更新する
 	scane_->Update();
-
 }
 
 void SceneManager::Draw3D(){

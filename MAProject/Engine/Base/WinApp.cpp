@@ -7,6 +7,8 @@
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"winmm.lib")
 
+using namespace MAEngine;
+
 WinApp* WinApp::GetInstance(){
 	static WinApp instance;
 	return &instance;

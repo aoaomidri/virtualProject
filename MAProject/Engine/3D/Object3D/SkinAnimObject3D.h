@@ -44,18 +44,13 @@ public:
 	void SetDissolve(const float data) {
 		dissolveData_->threshold = data;
 	}
-
-
 	/*アニメーション関連の関数*/
-
 	void SetAnimation(const std::string fileName, const std::string& modelName, const bool isLoop) {
 		Model::Animation animation;
 
 		animation = Model::LoadAnimationFile(fileName, modelName);
 		animation.isAnimLoop = isLoop;
-
 		animations_.push_back({ modelName, animation });
-
 		animationName_.push_back(modelName);
 	}
 
@@ -64,9 +59,7 @@ public:
 
 		animation = Model::LoadAnimationFile(fileName, fileName);
 		animation.isAnimLoop = isLoop;
-
 		animations_.push_back({ fileName, animation });
-
 		animationName_.push_back(fileName);
 	}
 	//アニメーションの変更

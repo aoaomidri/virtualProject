@@ -7,6 +7,7 @@
 //#include<iostream>
 //#include<algorithm>
 
+using namespace MAEngine;
 
 void ParticleBase::Initialize(const ParticleBase::Emitter& emitter, const bool isLoop) {
 

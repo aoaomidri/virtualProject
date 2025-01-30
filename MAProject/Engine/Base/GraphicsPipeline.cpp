@@ -3,6 +3,8 @@
 #include <cassert>
 #pragma warning(disable : 6387)
 
+using namespace MAEngine;
+
 GraphicsPipeline::~GraphicsPipeline(){
 	
 }

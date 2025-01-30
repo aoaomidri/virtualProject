@@ -3,10 +3,10 @@
 #include<fstream>
 #include"WinApp.h"
 
+using namespace MAEngine;
+
 Adjustment_Item* Adjustment_Item::GetInstance() {
 	static Adjustment_Item inst;
-
-
 	return &inst;
 }
 

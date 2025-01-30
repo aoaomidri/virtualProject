@@ -3,6 +3,7 @@
 //#include"Log.h"
 #include <thread>
 
+using namespace MAEngine;
 
 DirectXCommon* DirectXCommon::GetInstance(){
 	static DirectXCommon instance;
@@ -11,11 +12,7 @@ DirectXCommon* DirectXCommon::GetInstance(){
 
 void DirectXCommon::Initialize(){
 	winapp_ = WinApp::GetInstance();
-
 	assert(winapp_);
-
-	
-
 	InitializeFixFPS();
 
 	DeviceInitialize();

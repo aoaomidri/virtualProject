@@ -19,22 +19,15 @@ private:
 	using json = nlohmann::json;
 public:
 	static LevelLoader* GetInstance();
-
-
-
 	/// <summary>
 	/// レベルデータを読み込む
 	/// </summary>
 	void LoadLevelData();
-
 	/// <summary>
 	/// 再帰的に呼び出せるように
 	/// </summary>
 	void LoadJson(json jData);
-
-
 	std::vector<Object3D*> GetStationaryObject()const;
-
 	/// <summary>
 	/// 読み込んだレベルデータから3Dオブジェを取得する
 	/// </summary>
@@ -67,13 +60,9 @@ private:
 	std::vector<EulerTransform> boneTransforms_;
 
 	//静止しているオブジェ
-	std::vector <std::unique_ptr<Object3D>>
-		stationaryObjects_;
-
-
+	std::vector <std::unique_ptr<Object3D>> stationaryObjects_;
 	/*ファイル制御関連*/
-private:
-	
+private:	
 	//ファイルが存在するか確認する
 	void ChackFiles();
 
@@ -92,7 +81,6 @@ private:
 	inline static const std::string kDirectoryName_ = "resources/Datas";
 	//名前
 	inline static const std::string kfileName_ = "StageData";
-
 	//名前
 	inline static const std::string kExtexsion_ = ".json";
 

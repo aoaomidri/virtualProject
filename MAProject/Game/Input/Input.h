@@ -11,6 +11,7 @@
 #pragma comment(lib,"xinput.lib")
 /*キーボード、マウス、コントローラーの入力を取得する*/
 
+using namespace MAEngine;
 
 class Input
 {
@@ -19,8 +20,6 @@ public:
 	~Input() = default;
 	Input(const Input& input) = delete;
 	Input& operator=(const Input&) = delete;
-
-
 public:
 	enum GamePad {
 		A = XINPUT_GAMEPAD_A,
@@ -40,27 +39,19 @@ public:
 		L_THUMB = XINPUT_GAMEPAD_RIGHT_THUMB,//Lスティック押し込み
 		R_THUMB = XINPUT_GAMEPAD_LEFT_THUMB,//Rスティック押し込み
 	};
-
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// これにより1つしか生成されなくなる
 	/// </summary>
 	/// <returns>KeyInputのシングルトンインスタンス</returns>
 	static Input* GetInstance();
-
 	//初期化
 	void Initialize();
 	//更新
 	void Update();
-
-
 	bool Pushkey(BYTE keyNumber);
-
 	bool Trigerkey(BYTE keyNumber);
-
 	bool Relecekey(BYTE keyNumber);
-
-
 	//→
 	bool PushRight();
 	bool TrigerRight();
@@ -73,12 +64,9 @@ public:
 	//↓
 	bool PushDown();
 	bool TrigerDown();
-
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
 	//コントローラー
-
 	//ボタンが入力されているか
 	bool GetPadButton(UINT button);
 	//ボタンが離された瞬間か
@@ -93,31 +81,22 @@ public:
 	Vector2 GetPadRStick() const;
 
 	bool GetLTriggerDown();
-
 	bool GetRTriggerDown();
-
 	bool GetLTrigger();
-
 	bool GetRTrigger();
-
 	bool GetConnectPad() const { return isConnectPad_; }
 
 private:
 	BYTE key_[256] = {};
 	BYTE prekey_[256] = {};
-
 	const float DeadZone_ = 3.0f;
-
 	bool isConnectPad_ = false;
-
 	WinApp* winapp_ = nullptr;
 
 	XINPUT_STATE xinputState_;
-
 	XINPUT_STATE oldXInputState_;
 
 	ComPtr<IDirectInputDevice8> keyboard_;
-
 	ComPtr<IDirectInput8> directInput_;
 
 };

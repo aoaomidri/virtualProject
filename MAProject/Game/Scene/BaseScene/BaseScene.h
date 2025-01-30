@@ -11,33 +11,26 @@ public:
 		Game,
 		Result,
 	};
-
-
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
 	virtual void Initialize() = 0;
-
 	/// <summary>
 	/// 終了処理
 	/// </summary>
 	virtual void Finalize() = 0;
-
 	/// <summary>
 	/// 更新処理
 	/// </summary>
 	virtual void Update() = 0;
-
 	/// <summary>
 	/// 3D描画処理
 	/// </summary>
 	virtual void AllDraw3D() = 0;
-
 	/// <summary>
 	/// 2D描画処理
 	/// </summary>
 	virtual void AllDraw2D() = 0;
-
 	/// <summary>
 	/// imguiの処理
 	/// </summary>
@@ -47,13 +40,8 @@ public:
 	/// </summary>
 	/// <param name="sceneManager"></param>
 	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
-
 public:
 	virtual ~BaseScene() = default;
-
-protected:
-
-
 private:
 	//シーンマネージャー
 	SceneManager* sceneManager_ = nullptr;

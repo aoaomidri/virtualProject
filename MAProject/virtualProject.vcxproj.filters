@@ -266,9 +266,6 @@
     <ClInclude Include="Engine\3D\Transform.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\ViewProjection.h">
-      <Filter>Engine\3D</Filter>
-    </ClInclude>
     <ClInclude Include="externals\ImGuiManager.h">
       <Filter>external</Filter>
     </ClInclude>
@@ -415,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="Engine\math\Vector4.h">
       <Filter>Engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\ViewProjection.h">
+      <Filter>Engine\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

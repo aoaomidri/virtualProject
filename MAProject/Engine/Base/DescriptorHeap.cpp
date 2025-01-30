@@ -1,6 +1,8 @@
 #include "DescriptorHeap.h"
 #include <cassert>
 
+using namespace MAEngine;
+
 SRVDescriptorHeap* SRVDescriptorHeap::GetInstance(){
 	static SRVDescriptorHeap instance;
 	return &instance;

@@ -16,13 +16,10 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const SceneName sceneName){
 			break;
 		case SceneName::Result:
 			newScene = std::make_unique<ResultScene>();
-			break;
-		
+			break;		
 		}
-
 	}
 	// 振る舞いリクエストをリセット
 	behaviorRequest_ = std::nullopt;
-
 	return newScene;
 }

@@ -27,9 +27,7 @@ public:
     static int GetSecondsOnes() {
         int result = 0;
         result = (int)(inGameTime_) % 60;
-
         result = result % 10;
-
         return result;
     }
 
@@ -41,7 +39,6 @@ public:
         int result = 0;
         result = (int)(inGameTime_) % 60;
         result = result / 10;
-
         return result;
     }
 
@@ -52,7 +49,6 @@ public:
     static int GetMinutes() {
         int result = 0;
         result = (int)(inGameTime_) / 60;
-
         return result;
     }
     /// <summary>
@@ -62,7 +58,6 @@ public:
     static int GetMinutesTens() {
         int result = 0;
         result = (int)(inGameTime_) / 600;
-
         return result;
     }
 

@@ -7,7 +7,6 @@ void TitleScene::TextureLoad() {
 	textureManager_->Load("resources/texture/uvChecker.png");
 	textureManager_->Load("resources/texture/Floor.png");
 	textureManager_->Load("resources/texture/Road.png");
-	//textureManager_->Load("resources/texture/Sky.png");
 	textureManager_->Load("resources/Model/Enemy/EnemyTex.png");
 	textureManager_->Load("resources/Model/EnemyParts/EnemyParts.png");
 	textureManager_->Load("resources/Model/Weapon/Sword.png");
@@ -28,7 +27,6 @@ void TitleScene::TextureLoad() {
 
 void TitleScene::SoundLoad() {
 	titleBGM_ = audio_->LoadAudio("BGM/Game3.mp3");
-
 	gameBGM_ = audio_->LoadAudio("BGM/Result3.mp3");
 }
 
@@ -65,7 +63,6 @@ void TitleScene::SpriteInitialize() {
 	fadeSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/Black.png");
 	fadeSprite_->Initialize(textureHandle);
-
 
 	titleSprite_->position_ = { 640.0f,175.0f };
 	titleSprite_->scale_.x = 850.0f;
@@ -104,37 +101,26 @@ void TitleScene::SpriteInitialize() {
 	fadeSprite_->scale_.y = 720.0f;
 	fadeSprite_->color_ = { 0.0f,0.0f,0.0f,fadeAlpha_ };
 	fadeSprite_->anchorPoint_ = { 0.5f,0.5f };
-
 }
 
 void TitleScene::ObjectInitialize() {
-
-
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("resources/DDS/rostock_laage_airport_4k.dds");
-
 	skyBox_->transform_.scale = { 1000.0f,1000.0f,1000.0f };
-
 	stageObject_->Initialize();
-
 }
 
 void TitleScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
-
 	textureManager_ = TextureManager::GetInstance();
-
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->SetPostEffect(PostEffect::EffectType::None);
 
 	TextureLoad();
 	SoundLoad();
 
-
 	audio_->PlayAudio(titleBGM_, 0.1f, true);
-
-	
 	audio_->SetVolume(titleBGM_, 0.1f);
 
 	SpriteInitialize();
@@ -142,9 +128,7 @@ void TitleScene::Initialize() {
 
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
-
 	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
-
 	floorManager_->AddFloor(firstFloor_);
 
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -155,7 +139,6 @@ void TitleScene::Initialize() {
 	lockOn_->Initialize();
 
 	followCamera_->SetLockOn(lockOn_.get());
-
 }
 
 void TitleScene::Update() {	
@@ -224,7 +207,6 @@ void TitleScene::Update() {
 	floorManager_->Update();
 	fadeSprite_->color_.w = fadeAlpha_;
 
-
 	if (fadeAlpha_ >= 1.0f) {
 		fadeAlpha_ = 1.0f;
 	}
@@ -234,7 +216,6 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Debug() {
-
 }
 
 void TitleScene::DrawParticle() {
@@ -245,21 +226,14 @@ void TitleScene::DrawParticle() {
 
 void TitleScene::DrawSkin3D() {
 	textureManager_->PreDrawSkin3D();
-	
-
 }
 
 void TitleScene::Draw3D() {
-
 	/*描画前処理*/
 	textureManager_->PreDrawMapping3D();
-
-
 	floorManager_->Draw(followCamera_->GetViewProjection());
-
 	textureManager_->PreDraw3D();
 	stageObject_->Draw(followCamera_->GetViewProjection());
-
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
@@ -288,7 +262,6 @@ void TitleScene::Draw2D() {
 }
 
 void TitleScene::Finalize() {
-
 }
 
 void TitleScene::AllDraw3D() {

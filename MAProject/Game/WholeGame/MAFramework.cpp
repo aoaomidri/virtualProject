@@ -27,11 +27,8 @@ void MAFramework::Initialize(){
 
 void MAFramework::Finalize(){
 	CoUninitialize();
-
 	Model::GetInstance()->Finalize();
-
 	audio_->Finalize();
-
 	window_->Finalize();
 }
 
@@ -40,7 +37,6 @@ void MAFramework::Update(){
 	if (window_->ProcessMessage()) {
 		endRequst_ = true;
 	}
-
 	input_->Update();
 }
 
@@ -54,6 +50,5 @@ void MAFramework::Run(){
 		}
 		Draw();
 	}
-
 	Finalize();
 }

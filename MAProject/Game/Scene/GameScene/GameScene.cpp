@@ -31,7 +31,6 @@ void GameScene::TextureLoad() {
 void GameScene::SoundLoad(){
 	//音源読み込み
 	enemyHitSE_ = audio_->LoadAudio("SE/enemyHitSE.mp3");
-
 }
 
 void GameScene::SpriteInitialize(){
@@ -92,11 +91,8 @@ void GameScene::ObjectInitialize() {
 void GameScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
-
-	GameTime::ResetGameTimer();
-
 	textureManager_ = TextureManager::GetInstance();
-
+	GameTime::ResetGameTimer();
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->SetPostEffect(PostEffect::EffectType::Gray);
 	
@@ -108,9 +104,6 @@ void GameScene::Initialize(){
 
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
-
-	//firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
-
 	floorManager_->AddFloor(firstFloor_);
 
 	player_ = std::make_unique<Player>();
@@ -128,18 +121,12 @@ void GameScene::Initialize(){
 	followCamera_->SetTarget(&player_->GetTransform());
 	
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
-
-
-	
-
 	
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
-	//player_->Update();
-
 }
 
 void GameScene::Update(){
@@ -173,17 +160,13 @@ void GameScene::Update(){
 	//現状は倒しきったら遷移
 	if (enemyManager_->GetEnemyNum() == 0) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Result);
-	}	
-	
+	}		
 #ifdef _DEBUG
 	//再読み込み
 	if (input_->Trigerkey(DIK_R)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Game);
 	}
-
-#endif // _DEBUG	
-	
-	
+#endif // _DEBUG		
 }
 
 void GameScene::Debug(){
@@ -281,14 +264,11 @@ void GameScene::DrawImgui(){
 	ImGui::DragFloat3("uvRotate", &timerTexs_[0]->uvTransform_.rotate.x, 0.1f);
 	ImGui::End();
 
-
 	player_->DrawImgui();
 	followCamera_->DrawImgui();
 	lockOn_->DrawImgui();
 	floorManager_->DrawImgui();
-
 	enemyManager_->DrawImgui();
-
 #endif // _DEBUG	
 }
 

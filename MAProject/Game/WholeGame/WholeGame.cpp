@@ -3,7 +3,6 @@
 
 void WholeGame::Initialize(){
 	MAFramework::Initialize();
-
 	imguiManager_ = std::make_unique<ImGuiManager>();
 	imguiManager_->Initialize();
 
@@ -23,7 +22,6 @@ void WholeGame::Initialize(){
 	levelLoader_->LoadLevelData();
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
-
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Title);
@@ -32,16 +30,12 @@ void WholeGame::Initialize(){
 		.scale = 16.0f,
 		.pow = 0.8f,
 	};
-
 	postBlend_ = 1.0f;
-	
 }
 
 void WholeGame::Finalize(){	
 	imguiManager_->Finalize();
-
-	sceneManager_->Finalize();	
-	
+	sceneManager_->Finalize();		
 	MAFramework::Finalize();
 }
 
@@ -54,7 +48,6 @@ void WholeGame::Update(){
 	GameTime::Update();
 	sceneManager_->Update();
 	DrawImgui();
-
 	imguiManager_->End();
 
 	if (input_->Trigerkey(DIK_ESCAPE)) {
@@ -64,7 +57,6 @@ void WholeGame::Update(){
 	if (input_->GetPadButtonTriger(Input::GamePad::BACK)) {
 		endRequst_ = true;
 	}
-
 #endif // DEBUG_
 }
 
@@ -84,8 +76,6 @@ void WholeGame::Draw(){
 
 void WholeGame::DrawImgui(){
 #ifdef _DEBUG
-
-
 	ImGui::Begin("ポストエフェクト");
 	if (ImGui::Button("None")) {
 		postEffect_->SetPostEffect(PostEffect::EffectType::None);
@@ -134,39 +124,30 @@ void WholeGame::DrawImgui(){
 
 	ImGui::Begin("ゲーム内の時間");
 	ImGui::Text("現在のゲーム内経過時間：%d分%d%d秒", GameTime::GetMinutes(), GameTime::GetSecondsTens(), GameTime::GetSecondsOnes());
-
 	ImGui::SliderFloat("時間の速さ", &GameTime::timeScale_, 0.0f, 1.0f, "%.1f");
-
 	if (ImGui::Button("一時的に時間を止める")){
 		GameTime::StopTime(1.0f);
 	}
 	if (ImGui::Button("一時的に時間を遅くする")) {
 		GameTime::SlowDownTime(1.0f, 0.5f);
 	}
-
 	ImGui::End();
 
 	ImGui::Begin("ポストエフェクトの情報");
-
 	ImGui::Text("Vignettingの情報");
 	ImGui::DragFloat("Scale", &vignettingData_.scale, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("Pow", &vignettingData_.pow, 0.01f, 0.0f, 5.0f);
 	postEffect_->SetVignettingData(vignettingData_);
-
 	ImGui::Text("しきい値の設定");
 	ImGui::DragFloat("しきい値", &threshold_, 0.001f, 0.0f, 1.0f);
 	postEffect_->SetThreshold(threshold_);
-
 	ImGui::Text("HSVの値");
 	ImGui::DragFloat("hue", &hsv_.hue, 0.001f, -1.0f, 1.0f);
 	ImGui::DragFloat("saturate", &hsv_.saturation, 0.001f, -1.0f, 1.0f);
 	ImGui::DragFloat("value", &hsv_.value, 0.001f, -1.0f, 1.0f);
 	postEffect_->SetHSVData(hsv_);
-
 	ImGui::Text("ポストエフェクトの補正値");
 	ImGui::SliderFloat("blendFactor", &postBlend_, 0.0f, 1.0f, "%.2f");
-	//postEffect_->SetPostBlend(postBlend_);
-
 	ImGui::End();
 
 	Audio::GetInstance()->AudioDebug();
@@ -176,9 +157,6 @@ void WholeGame::DrawImgui(){
 	ImGui::DragFloat3("ライトの向き", &directionalData_.direction.x, 0.01f, -1.0f, 1.0f);
 	ImGui::DragFloat("ライトの輝き", &directionalData_.intensity, 0.01f, 0.0f, 1.0f);
 	ImGui::End();
-
 #endif // _DEBUG
-
 	directionalLight_->SetLightData(directionalData_);
-
 }

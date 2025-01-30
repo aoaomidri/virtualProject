@@ -1,9 +1,7 @@
 #include "ResultScene.h"
 #include <GameTime.h>
 
-void ResultScene::TextureLoad(){
-	
-	
+void ResultScene::TextureLoad(){	
 }
 
 void ResultScene::SoundLoad(){
@@ -61,7 +59,6 @@ void ResultScene::Initialize(){
 	audio_ = Audio::GetInstance();
 	input_ = Input::GetInstance();
 	textureManager_ = TextureManager::GetInstance();
-
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->SetPostEffect(PostEffect::EffectType::None);
 
@@ -73,9 +70,7 @@ void ResultScene::Initialize(){
 
 	floorManager_ = std::make_unique<FloorManager>();
 	floorManager_->Initialize();
-
 	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
-
 	floorManager_->AddFloor(firstFloor_);
 
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -99,9 +94,7 @@ void ResultScene::Update(){
 	if (input_->GetPadButtonTriger(Input::GamePad::A) || input_->GetPadButtonTriger(Input::GamePad::B)) {
 		SceneManager::GetInstance()->ChangeScene(SceneName::Title);
 	}
-	
-	floorManager_->Update();
-	
+	floorManager_->Update();	
 }
 
 void ResultScene::AllDraw3D(){
@@ -115,7 +108,6 @@ void ResultScene::AllDraw2D(){
 }
 
 void ResultScene::Debug(){
-
 }
 
 void ResultScene::DrawImgui(){
@@ -128,17 +120,14 @@ void ResultScene::DrawImgui(){
 }
 
 void ResultScene::DrawParticle(){
-
 }
 
 void ResultScene::DrawSkin3D(){
-
 }
 
 void ResultScene::Draw3D(){
 	/*描画前処理*/
 	textureManager_->PreDrawMapping3D();
-
 
 	floorManager_->Draw(followCamera_->GetViewProjection());
 
@@ -148,11 +137,7 @@ void ResultScene::Draw3D(){
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
-
-	//textureManager_->PreDrawSkyBox();
-
-	//skyBox_->Update(followCamera_->GetViewProjection());
-	//skyBox_->Draw();
+	/*スカイボックスはここで*/
 
 	textureManager_->PreDrawWorld2D();
 }
@@ -163,11 +148,9 @@ void ResultScene::Draw2D(){
 	///*ここから下に描画処理を書き込む*/
 	clearSprite_->Draw();
 	pressSprite_->Draw();
-
 	for (size_t i = 0; i < timerTexs_.size(); i++) {
 		timerTexs_[i]->Draw();
-	}
-	
+	}	
 
 	/*描画処理はここまで*/
 	/*描画後処理*/

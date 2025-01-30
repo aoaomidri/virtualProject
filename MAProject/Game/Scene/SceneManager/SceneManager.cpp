@@ -3,7 +3,7 @@
 
 void SceneManager::ChangeScene(const AbstractSceneFactory::SceneName nextScene){
 	assert(sceneFactory_);
-	assert(nextScane_ == nullptr)
+	assert(nextScane_ == nullptr);
 	//次のシーンを生成
 	nextScane_ = sceneFactory_->CreateScene(nextScene);
 }

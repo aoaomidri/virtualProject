@@ -48,7 +48,6 @@ public:
 	// 項目の追加(Vector4)
 	void AddItem(const std::string& groupName, const std::string& key, const Vector4& value);
 
-
 	//ファイルに書き出し
 	void SaveFile(const std::string& groupName);
 	//ディレクトリの全ファイル読み込み
@@ -57,19 +56,14 @@ public:
 	//毎フレーム処理
 	void Update();
 
-
 private:
 	//imguiの操作をそのまま続けるかどうかのメッセージボックスを表示
 	bool OperationConfirmation();
 
-
 	using Item = std::variant<int32_t, float, Vector2, Vector3, Vector4>;
-
 	using Group = std::map<std::string, Item>;
-
 	//全データ
 	std::map<std::string, Group> datas_;
-
 	//グローバル変数の保存先ファイルパス
 	const std::string kDirectoryPath_ = "Resources/Datas/Adjustment_Item/";
 };

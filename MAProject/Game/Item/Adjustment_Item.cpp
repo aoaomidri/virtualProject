@@ -168,9 +168,7 @@ void Adjustment_Item::LoadFiles() {
 	if (!std::filesystem::exists(kDirectoryPath_)) {
 		return;
 	}
-
 	std::filesystem::directory_iterator dir_it(kDirectoryPath_);
-
 	for (const std::filesystem::directory_entry& entry : dir_it) {
 		//ファイルパスを取得
 		const std::filesystem::path& filePath = entry.path();
@@ -181,11 +179,9 @@ void Adjustment_Item::LoadFiles() {
 		if (extension.compare(".json") != 0) {
 			continue;
 		}
-
 		//ファイル読み込み
 		LoadFile(filePath.stem().string());
 	}
-
 }
 
 void Adjustment_Item::LoadFile(const std::string& groupName) {
@@ -242,7 +238,6 @@ void Adjustment_Item::LoadFile(const std::string& groupName) {
 			Vector4 value = { itItem->at(0), itItem->at(1), itItem->at(2),itItem->at(3) };
 			SetValue(groupName, itemName, value);
 		}
-
 	}
 }
 

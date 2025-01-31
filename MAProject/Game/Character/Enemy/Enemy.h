@@ -49,8 +49,6 @@ public:
 	void AddRecord(uint32_t number) { hitRecord_.AddRecord(number); }
 	//当たりの記憶をチェックする
 	bool RecordCheck(uint32_t number) { return hitRecord_.RecordCheck(number); }
-
-
 public:
 	//Getter
 	const EulerTransform& GetTransform() const { return transform_; }
@@ -105,11 +103,8 @@ private:
 
 	//敵の体力
 	int32_t enemyLifeMax_ = 0;
-
 	int enemyLife_ = 0;
-
 	int damege_ = 1;
-
 	int strongDamege_ = 3;
 
 	//自機のモデル
@@ -144,25 +139,18 @@ private:
 	Matrix4x4 scaleMatrix_{};
 	Matrix4x4 rotateMatrix_{};
 	Matrix4x4 transformMatrix_{};
-
 	Matrix4x4 collisionMatrix_{};
-
 	Matrix4x4 partsMatrix_{};
-
 	Matrix4x4 dashRotateMatrix_{};
-
 	//スケールを無視したマトリックス
 	Matrix4x4 moveMatrix_{};
-
 	Matrix4x4 playerMat_{};
 
 	//自機の移動
 	Vector3 move_{};
-
 	//姿勢ベクトル
 	Vector3 postureVec_{};
 	Vector3 frontVec_{};
-
 	//パーツ関連
 	Vector3 parts_offset_Base_ = { 0.0f, 1.5f, 0.0f };
 	Vector3 parts_offset_ = { 0.0f, 1.5f, 0.0f };
@@ -174,14 +162,11 @@ private:
 
 	//攻撃のOBB
 	OBB attackOBB_{};
-
 	//自機のOBB
 	OBB bodyOBB_{};
 
 	const Vector3 addOBBSize_ = { 3.0f,2.0f,3.0f };
-
 	Vector3 worldPos_ = {};
-
 	Vector3 deadMoveBase_ = { 0,0.02f,0.1f };
 	Vector3 deadMove_ = { 0,0.02f,0.1f };
 	float deadMoveSpeed_ = 0.5f;
@@ -193,36 +178,28 @@ private:
 	float enemyLimitPos_ = 15.0f;
 	//座標補正
 	float positionCoordinate_ = 69.9f;
-
 	float deadYAngle_ = 0;
-
 	//プレイヤーとの距離を保存する用の変数
 	float playerLength_ = 0;
-
 	//プレイヤーが近くにいるときに溜まる
 	int nearTime_ = 0;
 	//近い条件
 	float nearPlayer_ = 10.0f;
-
 	//プレイヤーが遠くにいるときに溜まる
 	int farTime_ = 0;
 	//遠い条件
 	float farPlayer_ = 30.0f;
-
 	//距離に応じた反応の時間制限
 	int lengthJudgment_ = 180;
 
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
-
 	const float kTranslateHeight_ = 2.5f;
-
 	/// <summary>
 	///倍率
 	/// </summary>
 	float magnification_ = 1.0f;
 	float runMagnification_ = 6.0f;
-
 	//移動スピード
 	float moveSpeed_ = 0.03f;
 	//ダッシュの時間
@@ -291,18 +268,10 @@ private:
 		kDead,				//やられた
 		kLeaningBack		//のけぞり
 	};
-
-
 	Behavior behavior_ = Behavior::kRoot;
-
-
-
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
-
 	std::unique_ptr<Sprite> shadow_;
-
 	float shadowScaleBase_ = 0.9f;
-
 	const float kShadowHeightBase_ = 1.11f;
 
 private:
@@ -315,21 +284,16 @@ private:
 	void RootMotion();
 	//攻撃行動初期化
 	void BehaviorDeadInitialize();
-
 	//死んだときのモーション
 	void DeadMotion();
-
 	//前進行動初期化
 	void BehaviorRunInitialize();
 	//ダッシュモーション
 	void EnemyRun();
-
 	//遊び行動初期化
 	void BehaviorFreeInitialize();
 	//遊び
 	void Free();
-
-
 	//予備動作初期化
 	void BehaviorPreliminalyActionInitialize();
 	//予備動作
@@ -350,21 +314,15 @@ private:
 	};
 
 	AttackBehavior ATBehavior_ = AttackBehavior::kNone;
-
 	std::optional<AttackBehavior> ATBehaviorRequest_ = std::nullopt;
-
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
-
 	//形態ごとにとる行動
 	void AttackMotion();
-
 	//突進攻撃初期化
 	void AttackBehaviorTackleInitialize();
 	//突進攻撃
 	void Tackle();
-
-
 private:
 	//攻撃関係の変数群
 	//間の待ちの時間
@@ -400,28 +358,18 @@ private:
 	float attackLength_ = 20.0f;
 	//攻撃の目標地点
 	Vector3 attackSetPos_{};
-
 	Vector3 attackBasePos_{};
-
 	float easeT_ = 0;
-
 	float attackRotate_ = 0;
-
 	Ease ease_{};
-
-
 	Vector3 slashAngle_{};
-
 private:
 	Vector4 enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	float colorSpeed_ = 0.02f;
-
 	float colorLimit_ = 0.2f;
-
 	//ディゾルブ関係
-	float threshold_ = 0.0f;
-	
+	float threshold_ = 0.0f;	
 	float thresholdSpeed_ = 0.0075f;
 
 	//シリアルナンバー

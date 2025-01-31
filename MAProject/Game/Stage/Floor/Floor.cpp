@@ -11,8 +11,7 @@ void Floor::Initialize(EulerTransform transform){
 	Matrix4x4 floorRotateMatrix = Matrix::MakeRotateMatrix(floorTransform_.rotate);
 	SetOridentatios(floorOBB_, floorRotateMatrix);
 
-	floorObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
-	
+	floorObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());	
 
 	isDelete_ = false;
 }
@@ -27,7 +26,6 @@ void Floor::Update(){
 }
 
 void Floor::Draw(const ViewProjection& viewProjection){
-
 	floorObj_->Update(viewProjection);
 	floorObj_->Draw();
 }

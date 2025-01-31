@@ -49,7 +49,6 @@ void TitleScene::SpriteInitialize() {
 	textureHandle = textureManager_->Load("resources/texture/select.png");
 	selectSprite_->Initialize(textureHandle);
 
-
 	controlSprite_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/control.png");
 	controlSprite_->Initialize(textureHandle);
@@ -110,43 +109,7 @@ void TitleScene::ObjectInitialize() {
 	stageObject_->Initialize();
 }
 
-void TitleScene::Initialize() {
-	audio_ = Audio::GetInstance();
-	input_ = Input::GetInstance();
-	textureManager_ = TextureManager::GetInstance();
-	postEffect_ = PostEffect::GetInstance();
-	postEffect_->SetPostEffect(PostEffect::EffectType::None);
-
-	TextureLoad();
-	SoundLoad();
-
-	audio_->PlayAudio(titleBGM_, 0.1f, true);
-	audio_->SetVolume(titleBGM_, 0.1f);
-
-	SpriteInitialize();
-	ObjectInitialize();
-
-	floorManager_ = std::make_unique<FloorManager>();
-	floorManager_->Initialize();
-	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
-	floorManager_->AddFloor(firstFloor_);
-
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();
-	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));
-
-	lockOn_ = std::make_unique<LockOn>();
-	lockOn_->Initialize();
-
-	followCamera_->SetLockOn(lockOn_.get());
-}
-
-void TitleScene::Update() {	
-	//カメラの更新
-	followCamera_->Update();
-	followCamera_->SetIsMove(false);
-	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
-
+void TitleScene::TitleArrowMove(){
 	if (fadeAlpha_ <= 0.0f) {
 		if ((input_->GetPadLStick().y > 0.8f || input_->GetPadLStick().y < -0.8f) && isStickUpDown_ == false) {
 			isStickUpDown_ = true;
@@ -193,6 +156,47 @@ void TitleScene::Update() {
 			backSprite_->isDraw_ = true;
 		}
 	}
+}
+
+void TitleScene::Initialize() {
+	audio_ = Audio::GetInstance();
+	input_ = Input::GetInstance();
+	textureManager_ = TextureManager::GetInstance();
+	postEffect_ = PostEffect::GetInstance();
+	postEffect_->SetPostEffect(PostEffect::EffectType::None);
+
+	TextureLoad();
+	SoundLoad();
+
+	audio_->PlayAudio(titleBGM_, 0.1f, true);
+	audio_->SetVolume(titleBGM_, 0.1f);
+
+	SpriteInitialize();
+	ObjectInitialize();
+
+	floorManager_ = std::make_unique<FloorManager>();
+	floorManager_->Initialize();
+	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
+	floorManager_->AddFloor(firstFloor_);
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));
+
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+
+	followCamera_->SetLockOn(lockOn_.get());
+}
+
+void TitleScene::Update() {	
+	//カメラの更新
+	followCamera_->Update();
+	followCamera_->SetIsMove(false);
+	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
+
+	TitleArrowMove();
+
 	if (isFade_) {
 		fadeAlpha_ += fadeSpeed_;
 	}

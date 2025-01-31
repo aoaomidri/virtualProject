@@ -1,6 +1,7 @@
 #include "BasePlayerState.h"
 
 void BasePlayerState::Initialize(){
+	//もうすでに読み込んでいたら行わない
 	if (!input_){
 		input_ = Input::GetInstance();
 	}
@@ -13,7 +14,6 @@ void BasePlayerState::Initialize(){
 	if (!context_.trail_) {
 		context_.trail_ = std::make_unique<TrailEffect>();
 	}
-
 }
 
 

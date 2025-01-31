@@ -9,19 +9,14 @@
 class WholeGame : public MAFramework{
 public:
 	//メンバ関数
-
 	//初期化
 	void Initialize()override;
-
 	//終了
 	void Finalize()override;
-
 	//毎フレーム更新
 	void Update()override;
-
 	//描画
 	void Draw()override;
-
 	//ゲーム全体にかかわるImgui
 	void DrawImgui();
 
@@ -32,10 +27,8 @@ private:
 	BaseScene* scene_;
 	//シーンマネージャー
 	SceneManager* sceneManager_;
-
 	//シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_;
-
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item_ = nullptr;
 
@@ -44,18 +37,13 @@ private:
 	PostEffect::Vignetting vignettingData_;
 	//閾値
 	float threshold_ = 0.0f;
-
 	PostEffect::HSVMaterial hsv_{};
 
 	/*ポストエフェクト推移用*/
-
 	float postBlend_ = 0.0f;
-
 	/*光源*/
 	DirectionalLight* directionalLight_ = nullptr;
-
-	DirectionalLight::DirectionalLightData directionalData_;
-		
+	DirectionalLight::DirectionalLightData directionalData_;		
 	LevelLoader* levelLoader_ = nullptr;
 };
 

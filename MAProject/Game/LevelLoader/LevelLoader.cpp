@@ -41,9 +41,6 @@ void LevelLoader::LoadLevelData(){
 	assert(name.compare("scene") == 0);
 
 	LoadJson(deserialized["object"]);
-
-	
-
 }
 
 void LevelLoader::LoadJson(json jData){
@@ -228,8 +225,6 @@ std::vector<Object3D*> LevelLoader::GetStationaryObject()const{
 	for (const auto& stobj : stationaryObjects_){
 		objs.push_back(stobj.get());
 	}
-
-
 	return objs;
 }
 

@@ -79,16 +79,13 @@ void PlayerStateManager::Update(const Vector3& cameraRotate){
 
 void PlayerStateManager::ContextStateUpdate(){
 	//contextから始まるもの以外の物は配置しない
-
 	//ダッシュのクールタイム制御
 	if (context_.dashCoolTime_ != 0) {
 		context_.dashCoolTime_--;
 	}
-
 	//ヒビの更新
 	if (context_.isStopCrush_) {
 		context_.groundCrushTexAlpha_ -= crushColorMinus_;
-
 		if (context_.groundCrushTexAlpha_ <= 0.0f) {
 			context_.isStopCrush_ = false;
 		}

@@ -162,9 +162,6 @@
     <ClCompile Include="Game\Scene\SceneFactory\SceneFactory.cpp">
       <Filter>Game\Scene\SceneFactory</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Character\Player\Attack\IAttack.cpp">
-      <Filter>Game\Character\Player\Attack</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Character\Player\Player.cpp">
       <Filter>Game\Character\Player</Filter>
     </ClCompile>
@@ -347,9 +344,6 @@
     <ClInclude Include="Game\Scene\SceneFactory\SceneFactory.h">
       <Filter>Game\Scene\SceneFactory</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Character\Player\Attack\IAttack.h">
-      <Filter>Game\Character\Player\Attack</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Character\Player\Player.h">
       <Filter>Game\Character\Player</Filter>
     </ClInclude>
@@ -527,9 +521,6 @@
     </Filter>
     <Filter Include="Game\Scene\SceneFactory">
       <UniqueIdentifier>{94e443d8-deb7-4f94-b452-c59a37918c20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Character\Player\Attack">
-      <UniqueIdentifier>{5ae1180a-abab-4064-93a1-df08fd8c33de}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\Character\Player\PlayerState">
       <UniqueIdentifier>{e258284b-0b9c-4d72-af59-4217605a037b}</UniqueIdentifier>

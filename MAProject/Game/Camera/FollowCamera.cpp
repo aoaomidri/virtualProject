@@ -56,7 +56,6 @@ void FollowCamera::Initialize(){
 
 	destinationAngleX_ = 0.0f;
 
-
 	rootOffset_= { 0.0f, height_, distance_ };
 
 	minRotate_ = 0.1f;
@@ -149,12 +148,9 @@ void FollowCamera::Update(){
 				result.z = limitPos_.y;
 			}
 		}
-
 		//座標をコピーしてオフセット分ずらす
 		viewProjection_.translation_ = result;
-
 	}
-
 	//視錐台に値を代入
 	viewingFrustum_.translation_ = viewProjection_.translation_;
 	viewingFrustum_.rotate_ = viewProjection_.rotation_;
@@ -195,7 +191,6 @@ Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{
 	return offset_;
 }
 
-
 void FollowCamera::SetTarget(const EulerTransform* target){
 	target_ = target;
 	Reset();
@@ -203,7 +198,6 @@ void FollowCamera::SetTarget(const EulerTransform* target){
 
 void FollowCamera::DrawImgui(){
 #ifdef _DEBUG
-
 	ImGui::Begin("カメラ関連");
 	ImGui::DragFloat3("カメラ座標", &viewProjection_.translation_.x, 0.1f);
 	ImGui::DragFloat3("カメラ回転", &viewProjection_.rotation_.x, 0.01f);

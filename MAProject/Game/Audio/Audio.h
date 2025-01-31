@@ -91,10 +91,8 @@ public:
 
 	void Finalize();
 
-
 	//音源の手動での再生や停止を行って確認をする
 	void AudioDebug();
-
 
 	/// <summary>
 	/// 音声読み込み

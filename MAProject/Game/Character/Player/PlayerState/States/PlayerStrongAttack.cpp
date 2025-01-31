@@ -31,8 +31,7 @@ void PlayerStrongAttack::Initialize(){
 	}
 	PreStrongAttackInitialize();
 	AllStrongAttackInitialize();
-	PostStrongAttackInitialize();
-	
+	PostStrongAttackInitialize();	
 }
 
 void PlayerStrongAttack::AllStrongAttackInitialize(){
@@ -67,32 +66,29 @@ void PlayerStrongAttack::AllStrongAttackInitialize(){
 	}
 	//各強攻撃の初期化
 	PreStrongAttackInitialize();
-
-	if (context_.workAttack_.comboIndex_ == 1) {
+	switch (context_.workAttack_.comboIndex_) {
+	case 1:
 		StrongAttackInitialize();
-	}
-	else if (context_.workAttack_.comboIndex_ == 2) {
+		break;
+	case 2:
 		SecondStrongAttackInitialize();
-	}
-	else if (context_.workAttack_.comboIndex_ == 3) {
+		break;
+	case 3:
 		ThirdStrongAttackInitialize();
-	}
-	else if (context_.workAttack_.comboIndex_ == 4) {
+		break;
+	case 4:
 		FourthStrongAttackInitialize();
-	}
-	else if (context_.workAttack_.comboIndex_ == 5) {
+		break;
+	case 5:
 		FifthStrongAttackInitialize();
-
-	}
-	else if (context_.workAttack_.comboIndex_ == 6) {
+		break;
+	case 6:
 		SixthStrongAttackInitialize();
-
+		break;
+	default:
+		break;
 	}
-
 	PostStrongAttackInitialize();
-
-	/*particle_->SetIsDraw(true);
-	particle_->AddParticle(emitter_);*/
 }
 
 void PlayerStrongAttack::PreStrongAttackInitialize(){

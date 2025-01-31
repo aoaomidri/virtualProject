@@ -111,10 +111,8 @@ private:
 
     //時間を停止させるか
     static bool isStop_;
-
     //時間を遅くさせるか
     static bool isSlowDown_;
-
     //インゲームの経過時間
     static float inGameTime_;
 

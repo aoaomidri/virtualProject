@@ -6,7 +6,6 @@ void EnemyManager::Initialize(){
 	for (size_t i = 0; i < enemyNum_; i++){
 		enemysPos_[i] = Vector3(random->Distribution(-50.0f, 50.0f), 2.5f, random->Distribution(-50.0f, 50.0f));
 	}
-
 	for (size_t i = 0; i < enemyNum_; i++) {
 		enemy_ = std::make_unique<Enemy>();
 		enemy_->Initialize(enemysPos_[i]);
@@ -71,13 +70,11 @@ void EnemyManager::AddEnemys(){
 	for (size_t i = 0; i < addEnemyNum_; i++) {
 		enemysPos_[i] = Vector3(random->Distribution(-50.0f, 50.0f), 2.5f, random->Distribution(-50.0f, 50.0f));
 	}
-
 	for (size_t i = 0; i < addEnemyNum_; i++) {
 		enemy_ = std::make_unique<Enemy>();
 		enemy_->Initialize(enemysPos_[i]);
 		enemy_->SetTarget(targetTrans_);
-		enemy_->SetTargetMat(targetRotateMat_);
-		
+		enemy_->SetTargetMat(targetRotateMat_);		
 		enemies_.push_back(std::move(enemy_));
 	}
 }

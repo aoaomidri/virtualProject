@@ -13,7 +13,6 @@ public:
 	};
 
 public:
-
 	const PointLightData* GetLightData()const { return lightData_.get(); }
 
 	void SetLightData(PointLightData data){
@@ -23,15 +22,10 @@ public:
 		lightData_->radius = data.radius;
 		lightData_->decay = data.decay;
 	}
-
 public:
 	//初期化処理
 	void Initialize();
-	
-
 private:
 	std::unique_ptr<PointLightData> lightData_;
-
-
 };
 

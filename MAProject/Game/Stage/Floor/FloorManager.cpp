@@ -9,32 +9,21 @@ void FloorManager::Initialize() {
 	
 }
 
-void FloorManager::Update(){
-	
+void FloorManager::Update(){	
 	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 		(*it)->Update();
-	}
-	
+	}	
 }
 
 void FloorManager::Draw(const ViewProjection& viewProjection){
-
 	for (auto it = floors_.begin(); it != floors_.end(); ++it) {
 		(*it)->Draw(viewProjection);
 	}
-
 }
 
 void FloorManager::AddFloor(const EulerTransform& transform){
-	//std::unique_ptr<Object3D> object_ = std::make_unique<Object3D>();
-	//object_->Initialize("Floor");
-	//objects_.emplace_back(std::move(object_));
-
 	std::unique_ptr<Floor> floor = std::make_unique<Floor>();
-	
-
 	floor->Initialize(transform);
-
 	floors_.emplace_back(std::move(floor));
 }
 
@@ -172,11 +161,9 @@ void FloorManager::ChackFiles() {
 		if (extension.compare(".json") != 0) {
 			continue;
 		}
-
 		if (LoadChackItem(filePath.stem().string())) {
 			chackOnlyNumber_ = 1;
 		}
-
 		if (fileName_.size() != 0) {
 			bool noneFail = true;
 			for (size_t i = 0; i < fileName_.size(); i++) {
@@ -187,7 +174,6 @@ void FloorManager::ChackFiles() {
 			if (noneFail) {
 				fileName_.push_back(filePath.stem().string());
 			}
-
 		}
 		else {
 			//ファイルの名前を取得
@@ -206,27 +192,22 @@ void FloorManager::LoadFiles(const std::string& stage) {
 		assert(0);
 		return;
 	}
-
 	std::filesystem::directory_iterator dir_it(kDirectoryPath_);
 
 	for (const std::filesystem::directory_entry& entry : dir_it) {
 		//ファイルパスを取得
 		const std::filesystem::path& filePath = entry.path();
-
 		//ファイル拡張子を取得
 		std::string extension = filePath.extension().string();
 		//.jsonファイル以外はスキップ
 		if (extension.compare(".json") != 0) {
 			continue;
 		}
-
 		if (filePath.stem().string() == kItemName_) {
 			//ファイル読み込み
 			LoadFile(filePath.stem().string(), stage);
 			return;
 		}
-
-
 	}
 }
 
@@ -244,14 +225,11 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 		assert(0);
 		return;
 	}
-
 	nlohmann::json root;
-
 	//json文字列からjsonのデータ構造に展開
 	ifs >> root;
 	//ファイルを閉じる
 	ifs.close();
-
 
 	//グループを検索
 	nlohmann::json::iterator itGroup = root.find(groupName);
@@ -280,18 +258,11 @@ void FloorManager::LoadFile(const std::string& groupName, const std::string& sta
 			}
 			else if (count == 3) {
 				isNewMove = j;
-			}
-			
+			}			
 			count++;
-
 		}
-
-
-		AddFloor(newTrans);
-
-		
+		AddFloor(newTrans);		
 	}
-
 }
 
 bool FloorManager::LoadChackItem(const std::string& itemName) {

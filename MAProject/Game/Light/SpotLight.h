@@ -18,16 +18,10 @@ public:
 		lightData_->direction = data.direction;
 		lightData_->intensity = data.intensity;
 	}
-
 public:
 	//初期化処理
 	void Initialize();
-
-	
-
 private:
 	std::unique_ptr<SpotLightData> lightData_;
-
-
 };
 

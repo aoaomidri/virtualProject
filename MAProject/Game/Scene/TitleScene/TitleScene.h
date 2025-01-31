@@ -21,25 +21,18 @@
 
 
 class TitleScene : public BaseScene {
-	void TextureLoad();
-	void SoundLoad();
-	void SpriteInitialize();
-	void ObjectInitialize();
+public:
+	
 	//初期化
 	void Initialize()override;
-
 	//終了
 	void Finalize()override;
-
 	//毎フレーム更新
 	void Update()override;
-
 	//3D描画
 	void AllDraw3D()override;
-
 	//2D描画
 	void AllDraw2D()override;
-
 	//ゲーム全体にかかわるImgui
 	void Debug() override;
 
@@ -48,6 +41,13 @@ class TitleScene : public BaseScene {
 	void Draw3D();
 	void Draw2D();
 
+private:
+	void TextureLoad();
+	void SoundLoad();
+	void SpriteInitialize();
+	void ObjectInitialize();
+
+	void TitleArrowMove();
 
 private:
 	//テクスチャマネージャー
@@ -103,6 +103,5 @@ private:
 	std::unique_ptr<LockOn> lockOn_;
 
 	std::unique_ptr<StageObject> stageObject_;
-
 };
 

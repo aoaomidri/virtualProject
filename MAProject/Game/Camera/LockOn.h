@@ -23,10 +23,7 @@ public:
 	/// </summary>
 	void Draw();
 
-	void DrawImgui();
-
-
-	
+	void DrawImgui();	
 private:
 	/// <summary>
 	/// 検索
@@ -40,8 +37,6 @@ private:
 	/// 範囲内判定
 	/// </summary>
 	bool InTarget(const OBB enemyOBB, const ViewingFrustum& viewingFrustum);
-	
-
 public:
 	/// <summary>
 /// ターゲットリセット
@@ -53,7 +48,6 @@ public:
 	bool ExistTarget() const { return target_ ? true : false; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
-
 	void SetViewingFrustum(const ViewingFrustum* viewingFrustum) { viewingFrustum_ = viewingFrustum; }
 
 public:

@@ -104,8 +104,7 @@ void Player::Initialize(){
 	trailRender_ = std::make_unique<TrailRender>();
 	trailRender_->Initialize();
 
-	audio_ = Audio::GetInstance();
-	
+	audio_ = Audio::GetInstance();	
 	playerHitSE_ = audio_->LoadAudio("SE/playerHitSE.mp3");
 
 }
@@ -235,7 +234,6 @@ void Player::Update(){
 		if (timeScale_ != 0.0f) {
 			trail_->SetPos(weaponObj_->GetTopAndTailVerTex().head, weaponObj_->GetTopAndTailVerTex().tail);
 		}
-
 	}
 
 	if (timeScale_ != 0.0f){
@@ -382,7 +380,6 @@ const float Player::GetHitStop() {
 	else {
 		return hitStop_;
 	}
-
 }
 
 void Player::OnCollisionEnemyAttack(){	
@@ -401,8 +398,7 @@ void Player::OnCollisionEnemyAttack(){
 			isHitEnemyAttack_ = true;
 			hitTimer_ = hitTimerBase_;
 		}		
-	}
-	
+	}	
 }
 
 void Player::OnCollisionEnemyAttackAvoid(const uint32_t serialNumber){

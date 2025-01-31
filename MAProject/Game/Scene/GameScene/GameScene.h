@@ -71,7 +71,6 @@ private:
 	//時間画像の更新
 	void TimeTexUpdate();
 
-
 	/*分ける予定があるけどひとまずのやつ*/
 	void AllCollision();
 	void FilesSave(const std::vector<std::string>& stages);

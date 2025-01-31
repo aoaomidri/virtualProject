@@ -191,12 +191,9 @@ void GameScene::DrawSkin3D(){
 }
 
 void GameScene::Draw3D(){
-
 	/*描画前処理*/
 	textureManager_->PreDrawMapping3D();
-
 	///*ここから下に描画処理を書き込む*/
-
 	textureManager_->PreDraw3D();
 	player_->Draw(followCamera_->GetViewProjection());
 
@@ -210,17 +207,10 @@ void GameScene::Draw3D(){
 	/*描画後処理*/
 	textureManager_->PostDraw3D();
 
-	//textureManager_->PreDrawSkyBox();
-
-	//skyBox_->Update(followCamera_->GetViewProjection());
-	//skyBox_->Draw();
-
 	textureManager_->PreDrawWorld2D();
 
 	player_->TexDraw(followCamera_->GetViewProjection().matViewProjection_);
-
-	enemyManager_->TexDraw(followCamera_.get());
-	
+	enemyManager_->TexDraw(followCamera_.get());	
 }
 
 void GameScene::Draw2D(){
@@ -232,11 +222,7 @@ void GameScene::Draw2D(){
 
 	for (size_t i = 0; i < timerTexs_.size(); i++){
 		timerTexs_[i]->Draw();
-	}
-	
-		
-	//testTexture_->Draw(textureManager_->SendGPUDescriptorHandle(0));
-	
+	}		
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw2D();
@@ -373,13 +359,10 @@ void GameScene::AllCollision(){
 					GameTime::AddGameTime();
 					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
 					player_->OnCollisionEnemyAttack();
-
 				}
 			}
-		}
-		
+		}		
 	}
-
 }
 
 void GameScene::FilesSave(const std::vector<std::string>& stages) {

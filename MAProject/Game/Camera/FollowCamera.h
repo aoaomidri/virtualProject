@@ -45,8 +45,6 @@ public:
 		cameraShake_.frequency = frequency;
 		cameraShake_.elapsedTime = 0.0f;
 	}
-	
-
 	void DrawImgui();
 public:
 
@@ -101,9 +99,6 @@ private:
 		.nearZ = viewProjection_.nearZ_,
 		.farZ = viewProjection_.farZ_
 	};
-
-
-
 	ViewingFrustum lockViewingFrustum_ = {
 		.translation_ = viewProjection_.translation_,
 		.rotate_ = viewProjection_.rotation_,
@@ -113,7 +108,6 @@ private:
 		.nearZ = viewProjection_.nearZ_,
 		.farZ = 100.0f
 	};
-	//0.45f, (1280.0f / 720.0f), 0.1f, 1000.0f
 
 	Matrix4x4 cameraMatrix_{};
 
@@ -143,13 +137,10 @@ private:
 	const float resetAngle_ = 0.2f;
 	//基準のオフセット
 	Vector3 baseOffset_;
-
 	Vector3 rootOffset_;
 
 	float maxRotate_;
-
 	float minRotate_;
-
 	float rotateSpeed_ = 0.05f;
 
 	//ロックオン
@@ -173,6 +164,5 @@ private:
 	CameraShake cameraShake_{};
 
 	float shakePower_ = 5.0f;
-
 };
 

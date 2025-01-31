@@ -46,6 +46,15 @@ public:
 	/// 更新処理
 	/// </summary>
 	void Update(const Vector3& cameraRotate)override;
+	//攻撃モーション共通の処理
+	void CommonAttackMotion();
+
+	//攻撃時の移動
+	void AttackMove();
+	//攻撃の終了
+	void EndRequest();
+	//振る方角の制御
+	void ShakeDownControl();
 
 	//弱1攻撃のモーション
 	void AttackMotion();

@@ -248,6 +248,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Shape\ViewingFrustum.h" />
     <ClInclude Include="Engine\3D\Transform.h" />
     <ClInclude Include="Engine\3D\ViewProjection.h" />
+    <ClInclude Include="Engine\AbstractSceneFactory\AbstractSceneFactory.h" />
     <ClInclude Include="Engine\Base\DescriptorHeap.h" />
     <ClInclude Include="Engine\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\Base\GraphicsPipeline.h" />
@@ -287,7 +288,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\BaseScene\BaseScene.h" />
     <ClInclude Include="Game\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Game\Scene\ResultScene\ResultScene.h" />
-    <ClInclude Include="Game\Scene\SceneFactory\AbstractSceneFactory.h" />
     <ClInclude Include="Game\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="Game\Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Game\Scene\TitleScene\TitleScene.h" />

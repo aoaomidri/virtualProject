@@ -347,9 +347,6 @@
     <ClInclude Include="Game\Scene\SceneFactory\SceneFactory.h">
       <Filter>Game\Scene\SceneFactory</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneFactory\AbstractSceneFactory.h">
-      <Filter>Game\Scene\SceneFactory</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Character\Player\Attack\IAttack.h">
       <Filter>Game\Character\Player\Attack</Filter>
     </ClInclude>
@@ -415,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\ViewProjection.h">
       <Filter>Engine\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\AbstractSceneFactory\AbstractSceneFactory.h">
+      <Filter>Engine\Scenefactory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -551,6 +551,9 @@
     </Filter>
     <Filter Include="Engine\math\random">
       <UniqueIdentifier>{f9daed1d-5fd6-4324-a250-9fa8fc7a7771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenefactory">
+      <UniqueIdentifier>{56092085-232a-4d95-9029-37a7a294bf13}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

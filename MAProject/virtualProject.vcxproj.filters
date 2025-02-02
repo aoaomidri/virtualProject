@@ -213,6 +213,9 @@
     <ClCompile Include="Engine\math\Vector4.cpp">
       <Filter>Engine\math</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Character\Enemy\EnemyAttackTicket.cpp">
+      <Filter>Game\Character\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -409,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="Engine\AbstractSceneFactory\AbstractSceneFactory.h">
       <Filter>Engine\Scenefactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character\Enemy\EnemyAttackTicket.h">
+      <Filter>Game\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

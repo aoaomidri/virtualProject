@@ -38,7 +38,7 @@ void Enemy::ApplyGlobalVariables(){
 	hitEaseStartCenter_ = adjustment_item->GetVector3Value(groupName, "HitEaseCenter");
 }
 
-void Enemy::Initialize(const Vector3& position){
+void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Enemy";
 	//グループを追加
@@ -60,8 +60,9 @@ void Enemy::Initialize(const Vector3& position){
 	adjustment_item->AddItem(groupName, "HitEaseCenter", hitEaseStartCenter_);
 
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
-
 	enemyLife_ = enemyLifeMax_;
+
+	tickets_ = tickets;
 
 	auto levelLoader = LevelLoader::GetInstance(); 
 
@@ -181,29 +182,19 @@ void Enemy::Update(){
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection){
-
-
 	if (isDead_) {
 		return;
 	}
 	bodyObj_->SetMatrix(matrix_);
 	bodyObj_->Update(viewProjection);
 	bodyObj_->Draw();
-
-	//boxObj_->Update(viewProjection);
-	//boxObj_->Draw();
-
 #ifdef _DEBUG
-	/*collisionObj_->SetMatrix(collisionMatrix_);
-	collisionObj_->Update(viewProjection);
-	collisionObj_->Draw();*/
+	
 #endif // _DEBUG
 	partsObj_->SetMatrix(partsMatrix_);
 	partsObj_->SetTimeScale(timeScale_);
 	partsObj_->Update(viewProjection);
-	partsObj_->Draw();
-
-	
+	partsObj_->Draw();	
 }
 
 void Enemy::TexDraw(const Matrix4x4& viewProjection){
@@ -257,16 +248,11 @@ void Enemy::OnCollisionGuard(){
 const Vector3 Enemy::GetCenterPos()const{
 	const Vector3 offset = { 0.0f,5.0f,0.0f };
 	//ワールドに変換
-	
 	Vector3 world = Matrix::TransformVec(offset, matrix_);
-
 	return world;
-
 }
 
-void Enemy::ParticleMove(){
-
-	
+void Enemy::ParticleMove(){	
 }
 
 void Enemy::MotionUpdate(){
@@ -374,26 +360,28 @@ void Enemy::BehaviorRootInitialize(){
 	else {
 		magnification_ = -1.0f;
 	}
-
+	if (isAttack_ == true) {
+		tickets_->endAttack();
+	}
 	isNearAttack_ = false;
 }
 
-void Enemy::BehaviorDeadInitialize(){
-	
+void Enemy::BehaviorDeadInitialize(){	
 	deadMove_ = Matrix::TransformNormal(deadMoveBase_, rotateMatrix_);
 	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), deadMoveSpeed_);
 	deadMove_.y *= -1.00f;
 	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
 	transform_.rotate.Clear();
+	if (isAttack_ == true){
+		tickets_->endAttack();
+	}
 }
 
 
 void Enemy::RootMotion(){
 	//方向ベクトルの更新
 	frontVec_ = postureVec_;
-
 	Vector3 move = { moveSpeed_ * magnification_ ,0,0 };
-
 	move = Matrix::TransformNormal(move, rotateMatrix_);
 	move.y = 0;
 	/*敵の移動*/
@@ -422,7 +410,6 @@ void Enemy::RootMotion(){
 	}
 	//スクリーンに映っていたら距離に応じての行動を行う
 	if (isOnScreen_) {
-
 		if (playerLength_ > farPlayer_) {
 			farTime_++;
 		}
@@ -431,9 +418,14 @@ void Enemy::RootMotion(){
 		}
 		//指定の秒数近くにいた場合
 		if (nearTime_ > lengthJudgment_) {
-			//攻撃を準備する
-			behaviorRequest_ = Behavior::kPreliminalyAction;			
-
+			isAttack_ = tickets_->requestAttack(serialNumber_);
+			if (isAttack_){
+				//攻撃を準備する
+				behaviorRequest_ = Behavior::kPreliminalyAction;
+			}
+			else {
+				behaviorRequest_ = Behavior::kRun;
+			}
 		}
 		//逆に離れていた場合
 		else if (farTime_ > lengthJudgment_) {
@@ -450,7 +442,14 @@ void Enemy::RootMotion(){
 					behaviorRequest_ = Behavior::kRun;
 				}
 				else {
-					behaviorRequest_ = Behavior::kPreliminalyAction;
+					isAttack_ = tickets_->requestAttack(serialNumber_);
+					if (isAttack_) {
+						//攻撃を準備する
+						behaviorRequest_ = Behavior::kPreliminalyAction;
+					}
+					else {
+						farTime_ = 0;
+					}
 				}
 			}
 		}
@@ -514,6 +513,7 @@ void Enemy::EnemyRun(){
 }
 
 void Enemy::BehaviorFreeInitialize(){
+	
 	freeTime_ = 0;
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 }
@@ -731,6 +731,7 @@ void Enemy::Tackle(){
 			//既定の時間経過で通常状態に戻る
 			if (++dashTimer_ >= kDashTime_) {
 				attackOBB_.size = { 0,0,0 };
+				tickets_->endAttack();
 				behaviorRequest_ = Behavior::kFree;
 			}
 		}

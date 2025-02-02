@@ -1,5 +1,9 @@
 #include "EnemyManager.h"
 
+EnemyManager::EnemyManager() : tickets_(enemyNum_, 3) {
+
+}
+
 void EnemyManager::Initialize(){
 	RandomMaker* random = RandomMaker::GetInstance();
 
@@ -8,7 +12,7 @@ void EnemyManager::Initialize(){
 	}
 	for (size_t i = 0; i < enemyNum_; i++) {
 		enemy_ = std::make_unique<Enemy>();
-		enemy_->Initialize(enemysPos_[i]);
+		enemy_->Initialize(enemysPos_[i],&tickets_);
 		enemy_->SetTarget(targetTrans_);
 		enemy_->SetTargetMat(targetRotateMat_);
 		enemy_->Update();
@@ -58,6 +62,7 @@ void EnemyManager::DrawImgui(){
 
 	ImGui::Begin("敵の数");
 	ImGui::Text("今の敵の数 = %d", enemies_.size());
+	ImGui::Text("今の攻撃の数 = %d", tickets_.GetActiveAttckers());
 	if (ImGui::Button("敵を増やす")){
 		AddEnemys();
 	}	
@@ -72,7 +77,7 @@ void EnemyManager::AddEnemys(){
 	}
 	for (size_t i = 0; i < addEnemyNum_; i++) {
 		enemy_ = std::make_unique<Enemy>();
-		enemy_->Initialize(enemysPos_[i]);
+		enemy_->Initialize(enemysPos_[i], &tickets_);
 		enemy_->SetTarget(targetTrans_);
 		enemy_->SetTargetMat(targetRotateMat_);		
 		enemies_.push_back(std::move(enemy_));

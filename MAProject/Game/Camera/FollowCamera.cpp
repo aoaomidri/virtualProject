@@ -147,12 +147,9 @@ void FollowCamera::Update(){
 	if (target_) {
 		//追従対象からカメラまでのオフセット
 		Vector3 offset = offsetCalculation(baseOffset_);
-
 		//追従座標の補完
 		interTarget_ = Vector3::Lerp(interTarget_, target_->translate, t_);
-
 		Vector3 result = interTarget_ + offset;
-
 		if (result.x >= limitPos_.x or result.x <= limitPos_.y){
 			if (result.x > 0){
 				result.x = limitPos_.x;

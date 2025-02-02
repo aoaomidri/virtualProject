@@ -7,7 +7,7 @@
 #include"Shape/OBB.h"
 #include"Adjustment_Item.h"
 #include"Quaternion.h"
-//#include"../../Engine/3D/Object3D/Particle.h"
+#include"EnemyAttackTicket.h"
 #include"HitRecord.h"
 #include<optional>
 #include <algorithm>
@@ -25,7 +25,7 @@ public:
 	//調整項目
 	void ApplyGlobalVariables();
 	//初期化
-	void Initialize(const Vector3& position);
+	void Initialize(const Vector3& position, EnemyAttackTicket* tickets);
 	//更新処理
 	void Update();
 	//描画
@@ -115,11 +115,8 @@ private:
 	const std::string enemyHitTexPath_ = "resources/Model/Enemy/EnemyHitTex.png";
 	
 	HitRecord hitRecord_;
-
 	std::unique_ptr<ParticleBase> particle_;
-
 	ParticleBase::Emitter emitter_;
-
 	std::unique_ptr<Object3D> collisionObj_;
 
 	//プレイヤーの座標
@@ -127,15 +124,12 @@ private:
 	const EulerTransform* target_ = nullptr;
 	//プレイヤーの回転
 	const Matrix4x4* targetRotateMat_ = nullptr;
-
 	//自機のSRT
 	EulerTransform transform_{};
 	EulerTransform partsTransform_{};
 	EulerTransform collisionTransform_{};
-
 	//プレイヤーのマトリックス
 	Matrix4x4 matrix_{};
-
 	Matrix4x4 scaleMatrix_{};
 	Matrix4x4 rotateMatrix_{};
 	Matrix4x4 transformMatrix_{};
@@ -191,7 +185,6 @@ private:
 	float farPlayer_ = 30.0f;
 	//距離に応じた反応の時間制限
 	int lengthJudgment_ = 180;
-
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
 	const float kTranslateHeight_ = 2.5f;
@@ -216,13 +209,11 @@ private:
 	float timeScale_ = 0.0f;
 	//パーティクルの速度
 	float particleSpeed_ = 0.0f;	
-
 	float rotateEaseT_ = 0.0f;
 
 	const float addRotateEaseT_ = (1.0f / 30.0f);
 	//ダッシュの時間
 	int dashTimer_ = 0;
-
 	//くらった時のジャンプ
 	float jumpPower_ = 0.4f;
 
@@ -241,19 +232,14 @@ private:
 	bool isParticle_ = false;	
 
 	HitRecord::KnockbackType type_;
-
 	//ノックバックイージング
 	Vector3 knockBackEaseStart_{};
-
 	//左から攻撃を受けたときのノックバック
 	Vector3 hitEaseStartLeft_ = { -0.3f,0.0f,-0.3f };
-
 	//左から攻撃を受けたときのノックバック
 	Vector3 hitEaseStartRight_ = { 0.3f,0.0f,-0.3f };
-
 	//左から攻撃を受けたときのノックバック
 	Vector3 hitEaseStartCenter_ = { -0.3f,0.0f,0.0f };
-
 	Vector3 hitEaseStartStrong_ = { -1.57f,0.0f,0.0f };
 
 private:
@@ -277,7 +263,6 @@ private:
 private:
 	//行動全体を制御する
 	void MotionUpdate();
-
 	//攻撃行動初期化
 	void BehaviorRootInitialize();
 	//様子見状態の行動
@@ -298,7 +283,6 @@ private:
 	void BehaviorPreliminalyActionInitialize();
 	//予備動作
 	void PreliminalyAction();
-
 	//のけぞり動作初期化
 	void BehaviorLeaningBackInitialize();
 	//のけぞり動作
@@ -306,13 +290,11 @@ private:
 
 
 private:
-	//攻撃関係の関数群
-	
+	//攻撃関係の関数群	
 	enum class AttackBehavior {
 		kTackle,		//突進攻撃.OK
 		kNone,			//何もしない
 	};
-
 	AttackBehavior ATBehavior_ = AttackBehavior::kNone;
 	std::optional<AttackBehavior> ATBehaviorRequest_ = std::nullopt;
 	//攻撃行動初期化
@@ -330,12 +312,10 @@ private:
 
 	//待ちに入るための
 	bool isAttackEnd_ = false;
-
 	//移動のコンテナがすべて埋まったかどうか
 	bool isMaxContext_ = false;
 
 	const uint32_t distanceTime_ = 20;
-
 	/*突進攻撃*/
 	//突進の向き決めの時間
 	uint32_t directionTimeBase_ = 90;
@@ -347,13 +327,9 @@ private:
 
 	//突進への移行時間
 	uint32_t attackTransitionTimeBase_ = 30;
-
 	uint32_t attackTransitionTime_ = 0;
-
 	const int32_t kDashTime_ = 30;
-
 	/*回転突進攻撃*/
-
 	//攻撃の飛距離
 	float attackLength_ = 20.0f;
 	//攻撃の目標地点
@@ -364,6 +340,9 @@ private:
 	Ease ease_{};
 	Vector3 slashAngle_{};
 private:
+	EnemyAttackTicket* tickets_ = nullptr;
+	bool isAttack_ = false;
+
 	Vector4 enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	float colorSpeed_ = 0.02f;
@@ -376,7 +355,6 @@ private:
 	uint32_t serialNumber_ = 0;
 	//次のシリアルナンバー
 	static uint32_t nextSerialNumber_;
-
 	//敵全体での撃破数
 	static uint32_t enemyDestroyingNumber_;
 };

@@ -23,7 +23,7 @@
 ### ・トレイル
  - 剣を振った感というものを演出するためにトレイルを利用しています。このトレイルをプログラムでは頂点情報を更新するクラスと描画させるクラスに分けて制作しています。 
 
-   - [TrailEffecr](https://github.com/aoaomidri/virtualProject/blob/master/MAProject/Engine/3D/Object3D/Effect/TrailEffect.cpp) 頂点情報を更新するクラス
+   - [TrailEffect](https://github.com/aoaomidri/virtualProject/blob/master/MAProject/Engine/3D/Object3D/Effect/TrailEffect.cpp) 頂点情報を更新するクラス
    - [TrailRender](https://github.com/aoaomidri/virtualProject/blob/master/MAProject/Engine/3D/Object3D/Effect/TrailRender.cpp) トレイルを描画するクラス    
  - トレイルを滑らかに描画するために取得した頂点情報を基に、TrailEffecr内でcatmull-Romを用いて分割を施しています。
 

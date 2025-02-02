@@ -128,10 +128,15 @@ private:
 	float t_ = 0.1f;
 	//アングル補完レート
 	float angle_t = 0.1f;
+	//攻撃時のアングル補完レート
+	float attackAngle_t = 0.01f;
 
 	// 目標角度
 	float destinationAngleY_ = 0.0f;
 	float destinationAngleX_ = 0.0f;
+
+	float attackAngleY_ = 0.0f;
+	float attackAngleX_ = 0.0f;
 
 	const float lockOnAngle_ = 0.15f;
 	const float resetAngle_ = 0.2f;

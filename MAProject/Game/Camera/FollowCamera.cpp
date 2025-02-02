@@ -1,11 +1,13 @@
 #include "FollowCamera.h"
 #include"GameTime.h"
+#include"PlayerStateManager.h"
 #include"LockOn.h"
 void FollowCamera::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Camera";
 
 	angle_t = adjustment_item->GetfloatValue(groupName, "AngleComplement");
+	attackAngle_t = adjustment_item->GetfloatValue(groupName, "AttackAngleComplement");
 	t_ = adjustment_item->GetfloatValue(groupName, "PositionComplement");
 	distance_ = adjustment_item->GetfloatValue(groupName, "distance");
 
@@ -49,6 +51,7 @@ void FollowCamera::Initialize(){
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "AngleComplement", angle_t);
+	adjustment_item->AddItem(groupName, "AttackAngleComplement", attackAngle_t);
 	adjustment_item->AddItem(groupName, "PositionComplement", t_);
 	adjustment_item->AddItem(groupName, "distance", distance_);
 
@@ -72,7 +75,11 @@ void FollowCamera::Initialize(){
 
 void FollowCamera::Update(){
 	frontVec_ = postureVec_;
+
+	PlayerStateManager::StateName nowState;
 	
+	nowState = PlayerStateManager::GetInstance()->GetStateName();
+
 	ApplyGlobalVariables();
 
 	//ロックオンしている場合はターゲットに向くように
@@ -101,10 +108,11 @@ void FollowCamera::Update(){
 			}
 		}
 	}
+	attackAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
+	attackAngleX_ = resetAngle_;
 	//回転を加算
 	destinationAngleX_ += cameraMove_.x;
 	destinationAngleY_ += cameraMove_.y;
-
 	//カメラの限度
 	if (destinationAngleX_ <= minRotate_) {
 		destinationAngleX_ = minRotate_;
@@ -112,11 +120,24 @@ void FollowCamera::Update(){
 	else if (destinationAngleX_ >= maxRotate_) {
 		destinationAngleX_ = maxRotate_;
 	}
-	//回転角の補完
-	viewProjection_.rotation_.y =
-		Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
-	viewProjection_.rotation_.x =
-		Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
+	if (nowState == PlayerStateManager::StateName::Attack or nowState == PlayerStateManager::StateName::StrongAttack){
+		//回転角の補完
+		viewProjection_.rotation_.y =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.y, attackAngleY_, attackAngle_t);
+		viewProjection_.rotation_.x =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.x, attackAngleX_, attackAngle_t);
+
+		destinationAngleX_ = viewProjection_.rotation_.x;
+		destinationAngleY_ = viewProjection_.rotation_.y;
+	}
+	else {
+		//回転角の補完
+		viewProjection_.rotation_.y =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, angle_t);
+		viewProjection_.rotation_.x =
+			Vector3::LerpShortAngle(viewProjection_.rotation_.x, destinationAngleX_, angle_t);
+	}
+	
 	rootOffset_ = { 0.0f, height_, distance_ };
 	//カメラシェイク
 	ShakeUpdate();

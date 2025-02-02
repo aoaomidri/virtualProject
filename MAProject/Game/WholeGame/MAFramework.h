@@ -25,7 +25,6 @@ public:
 
 	//システムの終了をチェック
 	virtual bool IsEndRequst() { return endRequst_; }
-
 	//実行関数
 	void Run();
 

@@ -24,7 +24,7 @@ void WholeGame::Initialize(){
 	sceneFactory_ = std::make_unique<SceneFactory>();
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
-	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Title);
+	sceneManager_->ChangeScene(AbstractSceneFactory::SceneName::Game);
 
 	vignettingData_ = {
 		.scale = 16.0f,

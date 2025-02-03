@@ -294,6 +294,7 @@ void Player::DrawImgui(){
 	ImGui::DragFloat3("OBB座標", &obbPoint_.x, 0.01f);
 	ImGui::DragFloat3("OBB大きさ", &obbAddScale_.x, 0.01f);
 	ImGui::DragFloat3("自機の座標", &playerTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("自機の見た目上の回転", &playerAppearanceTransform_.rotate.x, 0.1f);
 	ImGui::Text("ロックオンしている敵 = %d", enemyNumber_);
 	ImGui::Text("おちているかどうか = %d", isDown_);
 	ImGui::Text("ジャスト回避中か = %d", isJustAvoid_);
@@ -340,8 +341,6 @@ void Player::PlayerCalculation(){
 	weaponOBB_.size = weaponCollisionTransform_.scale;
 	Matrix4x4 weaponRotateMatrix = Matrix::MakeRotateMatrix(weaponCollisionTransform_.rotate);
 	SetOridentatios(weaponOBB_, weaponRotateMatrix);
-	//プレイヤー行列更新
-	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, playerRotateMatrix_, playerTranslateMatrix_);
 	//当たり描画用の行列更新
 	playerOBBScaleMatrix_.MakeScaleMatrix(playerOBB_.size);
 	playerOBBTranslateMatrix_.MakeTranslateMatrix(playerOBB_.center);
@@ -362,6 +361,10 @@ void Player::PlayerCalculation(){
 		}
 	}
 	weaponCollisionMatrix_ = Matrix::MakeAffineMatrix(weaponCollisionTransform_.scale, weaponCollisionTransform_.rotate, weaponCollisionTransform_.translate);
+	//プレイヤー行列更新
+	Matrix4x4 appearanceRotateMat{};
+	appearanceRotateMat = Matrix::MakeRotateMatrix(playerAppearanceTransform_.rotate);
+	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, (appearanceRotateMat * playerRotateMatrix_), playerTranslateMatrix_);
 }
 
 const float Player::GetHitStop() {

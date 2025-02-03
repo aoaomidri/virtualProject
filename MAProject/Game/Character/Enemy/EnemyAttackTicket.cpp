@@ -8,7 +8,7 @@ bool EnemyAttackTicket::requestAttack(int enemyIndex){
     }
 
     // 10体以上攻撃中なら拒否
-    if (activeAttackers_ > maxActiveAttackers_) {
+    if (activeAttackers_ >= maxActiveAttackers_) {
         return false;
     }
 

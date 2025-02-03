@@ -129,6 +129,7 @@ private:
 
 	//自機のSRT
 	EulerTransform playerTransform_{};
+	EulerTransform playerAppearanceTransform_{};
 	//武器のSRT
 	EulerTransform weaponTransform_{};
 	EulerTransform weaponCollisionTransform_{};

@@ -53,11 +53,11 @@ private:
 	//敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;	
 
-	EnemyAttackTicket tickets_;
+	std::unique_ptr<EnemyAttackTicket>tickets_;
 	//敵の初期最大値
-	static const size_t enemyNum_ = 100;
+	static const int32_t enemyNum_ = 100;
 	//追加する敵の数
-	const size_t addEnemyNum_ = 1;
+	const int32_t addEnemyNum_ = 1;
 	//ひとまず手打ちでの敵の初期値座標
 	std::array<Vector3, enemyNum_> enemysPos_{};
 	//プレイヤーの座標

@@ -72,8 +72,6 @@ public:
 private:
 	//地面のヒビを出現させる
 	void SettingGroundCrushTex();
-
-
 public:
 	//InitGlobalVariablesを行ったかどうか
 	static bool isLoad_;
@@ -97,13 +95,16 @@ private:
 	const float kAttackParameterCorection_ = 4.0f;
 	const float kAttackMagnification_ = 1.5f;
 	const float kAttackDivisionMagnification_ = 2.0f;
+	const float kRotateWeaponGround_ = 2.2f;
+	//武器を回転させているかどうか
+	bool isRotated_ = false;
 
 	std::array<float, WorkAttack::conboNum_> weapon_Rotates_ = {
 		-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f
 	};
 
 	std::array<Vector2, WorkAttack::conboNum_> weapon_RotatesMinMax_ = { {
-		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{1.65f,-0.6f}
+		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{7.93f,-0.6f}
 		}
 	};
 

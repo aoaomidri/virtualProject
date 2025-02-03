@@ -101,6 +101,7 @@ void PlayerAttack::FifthAttackInitialize(){
 }
 
 void PlayerAttack::SixthAttackInitialize(){
+	isRotated_ = false;
 	context_.workAttack_.type_ = HitRecord::KnockbackType::Strong;
 	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
 	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[5];
@@ -263,6 +264,10 @@ void PlayerAttack::CommonAttackMotion(){
 }
 
 void PlayerAttack::AttackMove(){
+	if (context_.workAttack_.comboIndex_ > 2 and context_.workAttack_.comboIndex_ != 6){
+		motionSpeed_ *= 2.5f;
+	}
+
 	//攻撃時に移動
 	context_.move_ = { 0.0f,0.0f,context_.moveSpeed_ * kAttackMagnification_ };
 	context_.move_ = Matrix::TransformNormal(context_.move_, context_.playerRotateMatrix_);
@@ -380,10 +385,16 @@ void PlayerAttack::SixthAttackMotion(){
 		SettingGroundCrushTex();
 	}
 	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_RotatesMinMax_[5].y) {
-		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		if (context_.workAttack_.isShakeDown_ == false) {
+			audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		}		
 		context_.workAttack_.isShakeDown_ = true;
 	}
 	else {
+		if ((context_.weaponParameter_.weapon_Rotate_ >= kRotateWeaponGround_) and !isRotated_) {
+			isRotated_ = true;
+			context_.workAttack_.hitRecordRestFlug_ = true;
+		}
 		AttackMove();
 	}
 	CommonAttackMotion();

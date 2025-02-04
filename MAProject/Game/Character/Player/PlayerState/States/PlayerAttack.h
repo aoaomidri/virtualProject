@@ -48,6 +48,8 @@ public:
 	void Update(const Vector3& cameraRotate)override;
 	//攻撃モーション共通の処理
 	void CommonAttackMotion();
+	//見た目の回転
+	void AppearanceRotate(const int combo);
 
 	//攻撃時の移動
 	void AttackMove();
@@ -86,6 +88,12 @@ private:
 	float addEaseSpeed_ = 0.04f;
 	float addEaseSpeedStrong_ = 0.08f;
 	float motionSpeed_ = 1.0f;
+	//見た目の回転関連
+	float maxRotateY_ = -6.28f;
+	float rotateYSpeed_ = 0;
+	float maxRotateX_ = 6.8f;
+	float rotateXSpeed_ = 0;
+
 	//次の攻撃に映るまでの時間
 	//初回
 	float nextAttackTimerFirst_ = 21.0f;
@@ -98,6 +106,7 @@ private:
 	const float kRotateWeaponGround_ = 2.2f;
 	//武器を回転させているかどうか
 	bool isRotated_ = false;
+	
 
 	std::array<float, WorkAttack::conboNum_> weapon_Rotates_ = {
 		-0.5f,-0.4f,-0.4f,0.0f,-0.4f,0.0f

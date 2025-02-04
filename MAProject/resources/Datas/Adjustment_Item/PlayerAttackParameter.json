@@ -2,6 +2,8 @@
     "PlayerAttackParameter": {
         "MotionDistance": 3.0,
         "MotionSpeed": 1.5499999523162842,
+        "RotateXSpeed": 0.25,
+        "RotateYSpeed": 0.800000011920929,
         "WaitTimeBase": 7.0
     }
 }

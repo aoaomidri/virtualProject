@@ -183,6 +183,7 @@ void Player::Update(){
 
 	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
 	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
+	playerAppearanceTransform_ = stateManager_->GetPlayerAppearanceTrnaform();
 	weaponTransform_ = stateManager_->GetWeaponTrnaform();
 	weaponCollisionTransform_ = stateManager_->GetWeaponCollisionTrnaform();
 	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();

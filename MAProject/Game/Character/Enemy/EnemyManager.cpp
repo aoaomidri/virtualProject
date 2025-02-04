@@ -61,7 +61,7 @@ void EnemyManager::DrawImgui(){
 	for (const auto& enemy : enemies_) {
 		enemy->DrawImgui();
 	}
-
+	tickets_->DrawImgui();
 	ImGui::Begin("敵の数");
 	ImGui::Text("今の敵の数 = %d", enemies_.size());
 	ImGui::Text("今の攻撃の数 = %d", tickets_->GetActiveAttckers());

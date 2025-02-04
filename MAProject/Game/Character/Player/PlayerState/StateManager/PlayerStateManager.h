@@ -49,6 +49,7 @@ public:
 	const HitRecord::KnockbackType GetKnockbackType()const { return context_.workAttack_.type_; }
 	
 	const EulerTransform& GetPlayerTrnaform()const { return context_.playerTransform_; }
+	const EulerTransform& GetPlayerAppearanceTrnaform()const { return context_.appearanceTransform_; }
 	const EulerTransform& GetWeaponTrnaform()const { return context_.weaponParameter_.weaponTransform_; }
 	const EulerTransform& GetWeaponCollisionTrnaform()const { return context_.weaponParameter_.weaponCollisionTransform_; }
 

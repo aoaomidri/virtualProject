@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include<array>
+#include"ImGuiManager.h"
 //敵が攻撃するために必要なチケット(攻撃権)を管理する
 
 class EnemyAttackTicket{
@@ -19,6 +20,12 @@ public:
         }
     }
 
+    void DrawImgui() {
+        ImGui::Begin("同時攻撃数");
+        ImGui::SliderInt("攻撃可能数", &maxActiveAttackers_, 0, 15);
+        ImGui::End();
+    }
+    
     const int GetActiveAttckers() {
         return activeAttackers_;
     }
@@ -32,7 +39,7 @@ public:
 private:
     std::vector<int> attackTickets_; // 各敵の攻撃回数
     int maxTickets_;                 // 各敵の最大攻撃回数
-    static int activeAttackers_;            // 現在攻撃している敵の数
-    const int maxActiveAttackers_ = 3; // 最大 10 体まで同時攻撃可能
+    static int activeAttackers_;     // 現在攻撃している敵の数
+    int maxActiveAttackers_ = 0;     // 最大 10 体まで同時攻撃可能
 };
 

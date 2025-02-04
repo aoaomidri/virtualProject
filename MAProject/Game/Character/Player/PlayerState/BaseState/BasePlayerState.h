@@ -116,6 +116,8 @@ public:
 	struct PlayerContext {
 		//自機のトランスフォーム
 		EulerTransform playerTransform_ = {};
+		//自機の見た目のトランスフォーム
+		EulerTransform appearanceTransform_ = {};
 
 		//移動限界 xが+側、yが-側
 		Vector2 limitPos_{ 70.0f,-70.0f };

@@ -10,6 +10,8 @@ void PlayerAttack::ApplyGlobalVariables(){
 	motionSpeed_ = adjustment_item->GetfloatValue(groupName, "MotionSpeed");
 	motionDistance_ = adjustment_item->GetfloatValue(groupName, "MotionDistance");
 	waitTimeBase_ = adjustment_item->GetfloatValue(groupName, "WaitTimeBase");
+	rotateXSpeed_ = adjustment_item->GetfloatValue(groupName, "RotateXSpeed");
+	rotateYSpeed_ = adjustment_item->GetfloatValue(groupName, "RotateYSpeed");
 }
 
 void PlayerAttack::InitGlobalVariables() const{
@@ -21,6 +23,8 @@ void PlayerAttack::InitGlobalVariables() const{
 	adjustment_item->AddItem(groupName, "MotionSpeed", motionSpeed_);
 	adjustment_item->AddItem(groupName, "MotionDistance", motionDistance_);
 	adjustment_item->AddItem(groupName, "WaitTimeBase", waitTimeBase_);
+	adjustment_item->AddItem(groupName, "RotateXSpeed", rotateXSpeed_);
+	adjustment_item->AddItem(groupName, "RotateYSpeed", rotateYSpeed_);
 }
 
 void PlayerAttack::Initialize(){
@@ -45,6 +49,7 @@ void PlayerAttack::PreAttackInitialize(){
 		context_.weaponParameter_.weapon_offset_Base_ = { 0.0f,0.0f,0.0f };
 	}
 	context_.weaponParameter_.weapon_offset_Base_.y = context_.weaponParameter_.kWeapon_offset_;
+	context_.appearanceTransform_.rotate = { 0.0f,0.0f,0.0f };
 }
 
 void PlayerAttack::PostAttackInitialize(){
@@ -221,15 +226,15 @@ void PlayerAttack::Update(const Vector3& cameraRotate){
 		break;
 	case 5:
 		FifthAttackMotion();
-
 		break;
 	case 6:
 		SixthAttackMotion();
-
 		break;
 	default:
 		break;
 	}
+	//見た目を回転させる
+	AppearanceRotate(context_.workAttack_.comboIndex_);
 	//コンボ上限に達していない
 	if (context_.workAttack_.comboIndex_ < context_.workAttack_.conboNum_) {
 		if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_X)) {
@@ -261,6 +266,23 @@ void PlayerAttack::CommonAttackMotion(){
 	ShakeDownControl();
 	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+}
+
+void PlayerAttack::AppearanceRotate(const int combo){
+	if (combo == 3 or combo == 4) {
+		context_.appearanceTransform_.rotate.y -= rotateYSpeed_ * GameTime::timeScale_;
+	}
+	else if (combo == 6) {
+		context_.appearanceTransform_.rotate.x += rotateXSpeed_ * GameTime::timeScale_;
+	}
+
+	if (context_.appearanceTransform_.rotate.x >= maxRotateX_){
+		context_.appearanceTransform_.rotate.x = maxRotateX_;
+	}
+	if (context_.appearanceTransform_.rotate.y <= maxRotateY_) {
+		context_.appearanceTransform_.rotate.y = maxRotateY_;
+	}
+	
 }
 
 void PlayerAttack::AttackMove(){

@@ -7,15 +7,14 @@ bool EnemyAttackTicket::requestAttack(int enemyIndex){
         return false; // 無効なインデックス
     }
 
-    // 10体以上攻撃中なら拒否
+    // 既定以上攻撃中なら拒否
     if (activeAttackers_ >= maxActiveAttackers_) {
         return false;
     }
 
     // チケットが残っていれば攻撃を許可
     if (attackTickets_[enemyIndex] > 0) {
-        attackTickets_[enemyIndex]--;  // チケット消費
-        activeAttackers_++;            // 攻撃中の敵を増やす
+        activeAttackers_++;// 攻撃中の敵を増やす
         return true;
     }
 

@@ -84,6 +84,8 @@ public:
 	void SetLockOnPos(const Vector3& pos) { context_.lockOnPos_ = pos; }
 
 private:
+	void ResetState();
+private:
 	//今の状態の名前
 	StateName nowStateName_{};
 

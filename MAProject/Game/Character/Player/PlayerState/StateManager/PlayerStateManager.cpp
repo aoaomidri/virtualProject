@@ -40,6 +40,7 @@ void PlayerStateManager::InitState() {
 }
 void PlayerStateManager::ChangeState(const StateName nextState){
 	assert(nextState_ == nullptr);
+	ResetState();
 	/*次の状態を生成*/
 	if (nextState == StateName::Root){
 		nextState_ = std::make_unique<PlayerRoot>(context_);
@@ -56,7 +57,7 @@ void PlayerStateManager::ChangeState(const StateName nextState){
 	else if (nextState == StateName::kJustAvoid){
 		nextState_ = std::make_unique<PlayerJustAvoid>(context_);
 	}
-
+	
 	nowStateName_ = nextState;
 }
 
@@ -93,4 +94,8 @@ void PlayerStateManager::ContextStateUpdate(){
 	else {
 		context_.groundCrushTexAlpha_ = 0.0f;
 	}
+}
+
+void PlayerStateManager::ResetState(){
+	context_.appearanceTransform_.rotate = { 0.0f,0.0f,0.0f };
 }

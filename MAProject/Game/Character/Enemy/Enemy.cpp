@@ -289,7 +289,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kRun:
 		EnemyRun();
@@ -362,6 +362,7 @@ void Enemy::BehaviorRootInitialize(){
 	}
 	if (isAttack_ == true) {
 		tickets_->endAttack();
+		isAttack_ = false;
 	}
 	isNearAttack_ = false;
 }
@@ -374,6 +375,7 @@ void Enemy::BehaviorDeadInitialize(){
 	transform_.rotate.Clear();
 	if (isAttack_ == true){
 		tickets_->endAttack();
+		isAttack_ = false;
 	}
 }
 

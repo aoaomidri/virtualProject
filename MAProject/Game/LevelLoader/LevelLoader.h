@@ -80,7 +80,7 @@ private:
 	//アイテムのファイルパス
 	inline static const std::string kDirectoryName_ = "resources/Datas";
 	//名前
-	inline static const std::string kfileName_ = "StageData";
+	inline static const std::string kfileName_ = "scene";
 	//名前
 	inline static const std::string kExtexsion_ = ".json";
 

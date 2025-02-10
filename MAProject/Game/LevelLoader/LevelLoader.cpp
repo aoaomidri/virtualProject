@@ -49,6 +49,14 @@ void LevelLoader::LoadJson(json jData){
 		//種類を取得
 		std::string type = Jobject["type"].get< std::string>();
 
+		if (Jobject.contains("disabled_option")){
+			//無効化フラグ
+			bool isDisabled = Jobject["disabled_option"].get<bool>();
+			if (isDisabled){
+				continue;
+			}
+		}
+
 		//ボーンがあるとき
 		if (type.compare("ARMATURE") == 0) {
 			EulerTransform boneTrans{};

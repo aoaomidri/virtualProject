@@ -150,6 +150,7 @@ private:
 
 	//落下関連
 	float downSpeed_ = -0.01f;
+	float jumpPower_ = 0.15f;
 	Vector3 downVector_ = { 0 };
 
 	const ViewProjection* viewProjection_ = nullptr;
@@ -273,7 +274,7 @@ private:
 	Vector3 obbPoint_ = { -0.02f,0.0f,-0.05f };
 
 	//Obbの補正値
-	Vector3 obbAddScale_ = { -0.5f,0.5f,0.0f };
+	Vector3 obbAddScale_ = { -0.5f,0.53f,0.0f };
 
 	//ジャスト回避用のobbの補正値
 	Vector3 justAvoidObbScale_{};

@@ -26,6 +26,7 @@ void PlayerStateManager::InitGlobalVariables() const{
 void PlayerStateManager::InitState() {
 	context_.postureVec_ = { 0.0f,0.0f,1.0f };
 	context_.frontVec_ = { 0.0f,0.0f,1.0f };
+	context_.jumpPower_ = 0.15f;
 	context_.playerTransform_.translate.y = 5.0f;
 	context_.playerTransform_.scale = { 1.0f,0.5f,0.7f };
 
@@ -40,7 +41,6 @@ void PlayerStateManager::InitState() {
 }
 void PlayerStateManager::ChangeState(const StateName nextState){
 	assert(nextState_ == nullptr);
-	ResetState();
 	/*次の状態を生成*/
 	if (nextState == StateName::Root){
 		nextState_ = std::make_unique<PlayerRoot>(context_);
@@ -70,6 +70,7 @@ void PlayerStateManager::Update(const Vector3& cameraRotate){
 		nowState_->SetStateManager(this);
 		//次の状態を初期化する
 		nowState_->Initialize();
+		ResetState();
 	}
 	ApplyGlobalVariables();
 	//実行中の状態を更新する
@@ -94,6 +95,10 @@ void PlayerStateManager::ContextStateUpdate(){
 	else {
 		context_.groundCrushTexAlpha_ = 0.0f;
 	}
+}
+
+void PlayerStateManager::JumpFlugReset(){
+	context_.isJump_ = false;
 }
 
 void PlayerStateManager::ResetState(){

@@ -113,7 +113,7 @@ private:
 	};
 
 	std::array<Vector2, WorkAttack::conboNum_> weapon_RotatesMinMax_ = { {
-		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{7.93f,-0.6f}
+		{2.4f,-1.0f},{3.16f,-0.9f},{3.16f,-0.9f},{9.44f,0.0f},{3.16f,-0.9f},{14.21f,-0.6f}
 		}
 	};
 

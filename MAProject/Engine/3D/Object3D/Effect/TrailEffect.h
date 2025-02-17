@@ -126,7 +126,7 @@ private:
 	size_t indexNum_ = 0;
 
 	//分割数
-	uint32_t divisionNumber_ = 4;
+	uint32_t divisionNumber_ = 6;
 
 	//最大描画数
 	uint32_t maxSegment_;

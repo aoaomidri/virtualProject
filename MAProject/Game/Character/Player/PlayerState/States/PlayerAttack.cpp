@@ -41,6 +41,7 @@ void PlayerAttack::Initialize(){
 void PlayerAttack::PreAttackInitialize(){
 	context_.isTrail_ = true;
 	context_.workAttack_.trailResetFlug_ = true;
+	context_.workAttack_.isStrongHitStop_ = false;
 	context_.workAttack_.comboNext_ = false;
 	context_.workAttack_.strongComboNext_ = false;
 	context_.workAttack_.attackParameter_= 0;
@@ -72,7 +73,7 @@ void PlayerAttack::PostAttackInitialize(){
 
 void PlayerAttack::AttackInitialize(){
 	context_.workAttack_.type_ = HitRecord::KnockbackType::Left;
-	context_.workAttack_.nextAttackTimer_ = nextAttackTimerFirst_;
+	context_.workAttack_.nextAttackTimer_ = nextAttackTimerFirst_;	
 	context_.weaponParameter_.weaponTransform_.rotate.x = weaponAttackTransformRotates_[0].x;
 	context_.weaponParameter_.weaponTransform_.rotate.z = weaponAttackTransformRotates_[0].z;
 	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[0];
@@ -107,7 +108,9 @@ void PlayerAttack::FifthAttackInitialize(){
 
 void PlayerAttack::SixthAttackInitialize(){
 	isRotated_ = false;
-	context_.workAttack_.type_ = HitRecord::KnockbackType::Strong;
+	context_.isJump_ = true;
+	context_.workAttack_.isStrongHitStop_ = false;
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Center;
 	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
 	context_.weaponParameter_.weaponTransform_.rotate = weaponAttackTransformRotates_[5];
 	context_.weaponParameter_.weapon_Rotate_ = weapon_Rotates_[5];
@@ -414,6 +417,8 @@ void PlayerAttack::SixthAttackMotion(){
 	}
 	else {
 		if ((context_.weaponParameter_.weapon_Rotate_ >= kRotateWeaponGround_) and !isRotated_) {
+			context_.workAttack_.type_ = HitRecord::KnockbackType::Strong;
+			context_.workAttack_.isStrongHitStop_ = true;
 			isRotated_ = true;
 			context_.workAttack_.hitRecordRestFlug_ = true;
 		}

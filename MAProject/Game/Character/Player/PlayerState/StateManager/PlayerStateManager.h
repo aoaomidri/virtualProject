@@ -42,6 +42,8 @@ public:
 	/// </summary>
 	void ContextStateUpdate();
 
+	void JumpFlugReset();
+
 public:
 	//Getter
 	const StateName& GetStateName()const { return nowStateName_; }
@@ -59,8 +61,10 @@ public:
 	const int GetJustAvoidTimer()const { return context_.workAvoidAttack_.justAvoidAttackTimer_; }
 
 	const float GetGroundCrushTexAlpha()const { return context_.groundCrushTexAlpha_; }
+	const float GetJumpPower()const { return context_.jumpPower_; }
 
 	const bool GetIsDash()const { return context_.workDash_.isDash_; }
+	const bool GetIsJump()const { return context_.isJump_; }
 	const bool GetTrailResetFlug()const { return context_.workAttack_.trailResetFlug_; }
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 	const bool GetIsDissolve()const { return context_.isDissolve_; }
@@ -68,6 +72,7 @@ public:
 	const bool GetIsGuard()const { return context_.isGuard_; }
 	const bool GetIsGuardHit()const { return context_.isGuardHit_; }
 	const bool GetIsDrawTrail()const { return context_.isTrail_; }
+	const bool GetIsHitStopFlug()const { return context_.workAttack_.isStrongHitStop_; }
 	//Setter
 	void SetJustAvoidTimer() { context_.workAvoidAttack_.justAvoidAttackTimer_ = context_.workAvoidAttack_.justAvoidAttackTimerBase_; }
 

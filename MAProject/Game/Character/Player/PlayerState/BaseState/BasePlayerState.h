@@ -33,6 +33,7 @@ public:
 		bool trailResetFlug_ = false;
 		bool hitRecordRestFlug_ = false;
 		bool isShakeDown_ = false;
+		bool isStrongHitStop_ = false;
 		//攻撃が終わったかどうか
 		bool isEndAttack_ = false;
 		int32_t comboIndex_ = 0;
@@ -168,6 +169,8 @@ public:
 		bool isDown_ = false;
 		//ダッシュしてるかどうか
 		bool isDash_ = false;
+		//ジャンプするかどうか
+		bool isJump_ = false;
 		//攻撃に回避を合わせたか(ジャスト回避をしているか)
 		bool isJustAvoid_ = false;
 		//回避反撃を行うかどうか

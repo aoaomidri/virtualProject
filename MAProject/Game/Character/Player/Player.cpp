@@ -12,6 +12,7 @@ void Player::ApplyGlobalVariables() {
 	const char* groupName = "Player";
 
 	downSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
+	jumpPower_ = adjustment_item->GetfloatValue(groupName, "JumpPower");
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
 	trailPosData_ = adjustment_item->GetVector2Value(groupName, "TrailPosData");
 	hitStop_ = adjustment_item->GetfloatValue(groupName, "HitStop");
@@ -27,6 +28,7 @@ void Player::Initialize(){
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed_);
+	adjustment_item->AddItem(groupName, "JumpPower", jumpPower_);
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
 	adjustment_item->AddItem(groupName, "TrailPosData", trailPosData_);
 	adjustment_item->AddItem(groupName, "HitStop", hitStop_);
@@ -198,6 +200,10 @@ void Player::Update(){
 		stateManager_->SetTrailResetFlug(false);
 	}
 
+	if (stateManager_->GetIsJump() && !isDown_) {
+		downVector_.y = jumpPower_;
+	}
+
 	/*落下処理*/
 	if (isDown_) {
 		downVector_.y += downSpeed_ * timeScale_;
@@ -289,6 +295,10 @@ void Player::ParticleDraw(const ViewProjection& viewProjection){
 void Player::DrawImgui(){
 #ifdef _DEBUG
 	ImGui::Begin("プレイヤーのステータス");
+	ImGui::SliderFloat("ジャンプ力", &jumpPower_, 0.0f, 1.0f, "%.3f");
+	if (ImGui::Button("ジャンプ")){
+		downVector_.y = jumpPower_;
+	}
 	ImGui::DragFloat3("DownVector", &downVector_.x, 0.01f);
 	ImGui::Text("スティックの縦 = %.4f", input_->GetPadLStick().y);
 	ImGui::Text("スティックの横 = %.4f", input_->GetPadLStick().x);
@@ -323,6 +333,8 @@ void Player::DrawImgui(){
 void Player::OnFlootCollision(OBB obb){
 	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
 	downVector_ = { 0.0f,0.0f,0.0f };
+	isDown_ = false;
+	stateManager_->JumpFlugReset();
 }
 
 void Player::PlayerCalculation(){
@@ -378,7 +390,7 @@ const float Player::GetHitStop() {
 		}
 	}
 
-	if (stateManager_->GetComboIndex() == 6) {
+	if (stateManager_->GetIsHitStopFlug()) {
 		return strongHitStop_;
 	}
 	else {

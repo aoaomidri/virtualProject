@@ -35,6 +35,8 @@ public:
 	void StrongAttackInitialize();
 	//強2攻撃行動初期化
 	void SecondStrongAttackInitialize();
+	//強2派生攻撃初期化
+	void SSAttackWeakVersionInitialize();
 	//強3攻撃行動初期化
 	void ThirdStrongAttackInitialize();
 	//強4攻撃行動初期化
@@ -48,6 +50,8 @@ public:
 	/// 更新処理
 	/// </summary>
 	void Update(const Vector3& cameraRotate)override;
+
+	void DrawImgui();
 	//強1攻撃のモーション
 	void StrongAttackMotion();
 	//強2攻撃のモーション
@@ -65,6 +69,8 @@ public:
 	void FifthStrongAttackMotion();
 	//強6攻撃のモーション
 	void SixthStrongAttackMotion();
+
+	void AppearanceRotate();
 
 	/*地面破壊のテクスチャの配置*/
 	void SettingGroundCrushTex();
@@ -98,8 +104,9 @@ private:
 	float motionSpeed_ = 1.0f;
 	float strongAttackRotateZ_ = 1.57f;
 	float strongSixthAttackRotate_ = 1.6f;
-	float secondWeapon_Rotate_ = -0.4f;
+	float secondWeapon_Rotate_ = -0.4f;	
 	float fifthWeapon_Rotate_ = 0.5f;
+	float maxRotateX_ = 6.78f;
 	/*当たり関係*/
 	float strongAddScale_ = 3.0f;
 	//次の攻撃に映るまでの時間
@@ -114,6 +121,9 @@ private:
 	const float kGuadeMagnification_ = 5.0f;
 	const float kStrongAttackMagnification_ = 3.0f;	
 	
+	//強2弱派生の制限
+	Vector2 strongSecondRotatesMinMax_ = { -0.6f,14.21f };
+
 	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
 	//カウンター時の判定の大きさ
 	Vector3 counterScale_{};

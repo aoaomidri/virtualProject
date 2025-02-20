@@ -128,6 +128,7 @@ void PlayerStrongAttack::SecondStrongAttackInitialize(){
 	context_.workAttack_.nextAttackTimer_ = nextAttackTimer_;
 	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[1];
 	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[1];
+	isNextAttack_ = false;
 
 	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
 	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
@@ -136,6 +137,20 @@ void PlayerStrongAttack::SecondStrongAttackInitialize(){
 	context_.weaponParameter_.weapon_Rotate_ = secondWeapon_Rotate_;
 	context_.isTrail_ = false;
 	context_.workAttack_.isShakeDown_ = false;
+}
+
+void PlayerStrongAttack::SSAttackWeakVersionInitialize(){
+	context_.workAttack_.type_ = HitRecord::KnockbackType::Center;
+	context_.weaponParameter_.weaponTransform_.rotate = weaponStrongAttackTransformRotates_[2];
+	context_.weaponParameter_.weapon_offset_Base_ = weaponStrongAttackOffset_[2];
+	waitTime_ = waitTimeBase_;
+	context_.workAttack_.isEndAttack_ = false;
+	Matrix4x4 weaponCollisionRotateMatrix = Matrix::MakeRotateMatrix(context_.weaponParameter_.weaponTransform_.rotate);
+	context_.weaponParameter_.weapon_offset_ = Matrix::TransformNormal(context_.weaponParameter_.weapon_offset_Base_, weaponCollisionRotateMatrix);
+	context_.weaponParameter_.weaponCollisionTransform_.rotate = { 0.0f,0.00f,context_.weaponParameter_.weaponTransform_.rotate.z };
+	context_.weaponParameter_.weaponCollisionTransform_.translate = context_.playerTransform_.translate + context_.weaponParameter_.weapon_offset_;
+	context_.weaponParameter_.weapon_Rotate_ = -0.0f;
+
 }
 
 void PlayerStrongAttack::ThirdStrongAttackInitialize(){
@@ -213,6 +228,7 @@ void PlayerStrongAttack::SixthStrongAttackInitialize(){
 
 void PlayerStrongAttack::Update(const Vector3& cameraRotate){
 	ApplyGlobalVariables();
+	DrawImgui();
 	context_.cameraRotate_ = cameraRotate;
 	
 	//攻撃が終わったら通常状態へ
@@ -231,7 +247,12 @@ void PlayerStrongAttack::Update(const Vector3& cameraRotate){
 		StrongAttackMotion();
 		break;
 	case 2:
-		SecondStrongAttackMotion();
+		if (isNextAttack_){
+			SSAttackWeakVersion();
+		}
+		else {
+			SecondStrongAttackMotion();
+		}		
 		break;
 	case 3:
 		ThirdStrongAttackMotion();
@@ -262,6 +283,12 @@ void PlayerStrongAttack::Update(const Vector3& cameraRotate){
 	if (input_->GetPadButtonTriger(Input::GamePad::RB)) {
 		PlayerStateManager::GetInstance()->ChangeState(StateName::Dash);
 	}
+}
+
+void PlayerStrongAttack::DrawImgui(){
+	ImGui::Begin("強攻撃時のステータス");
+	ImGui::DragFloat("待ち時間", &waitTime_);
+	ImGui::End();
 }
 
 void PlayerStrongAttack::StrongAttackMotion(){
@@ -340,12 +367,17 @@ void PlayerStrongAttack::SecondStrongAttackMotion(){
 	//限度によって行う処理を変更
 	if (context_.weaponParameter_.weapon_Rotate_ >= weapon_StrongRotatesMinMax_[1].y) {
 		//振り切った後
-		context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[1].y;
-		context_.isAttackJump_ = true;
+		if (input_->GetPadButtonTriger(Input::GamePad::X) and !isNextAttack_) {
+			SSAttackWeakVersionInitialize();
+			isNextAttack_ = true;
+			return;
+		}
+		context_.weaponParameter_.weapon_Rotate_ = weapon_StrongRotatesMinMax_[1].y;		
 		waitTime_ -= 1;
 	}
-	else if (context_.weaponParameter_.weapon_Rotate_ <= weapon_StrongRotatesMinMax_[1].x) {
+	else if ((context_.weaponParameter_.weapon_Rotate_ <= weapon_StrongRotatesMinMax_[1].x)) {
 		//振りかぶった後
+		context_.isAttackJump_ = true;
 		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
 		context_.workAttack_.isShakeDown_ = true;
 		context_.isTrail_ = true;
@@ -354,7 +386,7 @@ void PlayerStrongAttack::SecondStrongAttackMotion(){
 	if (waitTime_ <= 0) {
 		context_.workAttack_.isEndAttack_ = true;
 	}
-	//振り下ろしているかどうかで処理を変更
+	//振り下ろしているかどうかで処理を変更	
 	if (!context_.workAttack_.isShakeDown_) {
 		context_.weaponParameter_.weaponCollisionTransform_.scale = Vector3();
 		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kGuadeMagnification_);
@@ -362,17 +394,45 @@ void PlayerStrongAttack::SecondStrongAttackMotion(){
 	else {
 		context_.weaponParameter_.weaponCollisionTransform_.scale = context_.weaponParameter_.kWeaponCollisionBase_ * strongAddScale_;
 		context_.weaponParameter_.weapon_Rotate_ += context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackDivisionMagnification_ * motionSpeed_;
-	}
+	}	
 	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 }
 
-void PlayerStrongAttack::SSAttackWeakVersion()
-{
+void PlayerStrongAttack::SSAttackWeakVersion(){
+	if ((context_.weaponParameter_.weapon_Rotate_ >= strongSecondRotatesMinMax_.y) or !context_.isAttackJump_) {
+		//振り切った後		
+		context_.weaponParameter_.weapon_Rotate_ = strongSecondRotatesMinMax_.y;
+		context_.appearanceTransform_.rotate.x = maxRotateX_;
+		waitTime_ -= 1;
+		SettingGroundCrushTex();
+	}
+	else if ((context_.weaponParameter_.weapon_Rotate_ <= strongSecondRotatesMinMax_.x)) {
+		//振りかぶった後
+		context_.isAttackJump_ = true;
+		audio_->PlayAudio(attackMotionSE_, seVolume_, false);
+		context_.workAttack_.isShakeDown_ = true;
+		context_.isTrail_ = true;
+	}
+
+	if (waitTime_ <= 0) {
+		context_.workAttack_.isEndAttack_ = true;
+	}
+	//振り下ろしているかどうかで処理を変更	
+	if (!context_.workAttack_.isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ -= (context_.weaponParameter_.kMoveWeapon_ * motionSpeed_ / kAttackDivisionMagnification_);
+	}
+	else if (context_.workAttack_.isShakeDown_) {
+		context_.weaponParameter_.weapon_Rotate_ += (context_.weaponParameter_.kMoveWeaponShakeDown_ * kAttackMagnification_ * motionSpeed_) * GameTime::timeScale_;
+	}
+	context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+
+	AppearanceRotate();
 }
 
-void PlayerStrongAttack::SSAttackStrongVersion()
-{
+void PlayerStrongAttack::SSAttackStrongVersion(){
+
 }
 
 void PlayerStrongAttack::ThirdStrongAttackMotion(){
@@ -606,6 +666,16 @@ void PlayerStrongAttack::SixthStrongAttackMotion(){
 		context_.weaponParameter_.weaponTransform_.rotate.z = Ease::Easing(Ease::EaseName::EaseInCubic, 1.57f, 2.8f, easeT_);
 		context_.weaponParameter_.weaponTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
 		context_.weaponParameter_.weaponCollisionTransform_.rotate.x = context_.weaponParameter_.weapon_Rotate_;
+	}
+}
+
+void PlayerStrongAttack::AppearanceRotate(){
+	//見た目の処理
+	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
+	const char* groupName = "PlayerAttackParameter";
+	context_.appearanceTransform_.rotate.x += adjustment_item->GetfloatValue(groupName, "RotateXSpeed") * GameTime::timeScale_;
+	if (context_.appearanceTransform_.rotate.x >= maxRotateX_) {
+		context_.appearanceTransform_.rotate.x = maxRotateX_;
 	}
 }
 

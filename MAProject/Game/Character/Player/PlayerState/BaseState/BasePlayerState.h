@@ -171,6 +171,8 @@ public:
 		bool isDash_ = false;
 		//ジャンプするかどうか
 		bool isJump_ = false;
+		//攻撃のジャンプするかどうか
+		bool isAttackJump_ = false;
 		//攻撃に回避を合わせたか(ジャスト回避をしているか)
 		bool isJustAvoid_ = false;
 		//回避反撃を行うかどうか

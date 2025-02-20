@@ -13,6 +13,8 @@ void Player::ApplyGlobalVariables() {
 
 	downSpeed_ = adjustment_item->GetfloatValue(groupName, "DownSpeed");
 	jumpPower_ = adjustment_item->GetfloatValue(groupName, "JumpPower");
+	downSpeedAttackVer_ = adjustment_item->GetfloatValue(groupName, "DownSpeedAttackVer");
+	jumpPowerAttackVer_ = adjustment_item->GetfloatValue(groupName, "JumpPowerAttackVer");
 	baseAttackPower_ = adjustment_item->GetIntValue(groupName, "AttackPower");
 	trailPosData_ = adjustment_item->GetVector2Value(groupName, "TrailPosData");
 	hitStop_ = adjustment_item->GetfloatValue(groupName, "HitStop");
@@ -29,6 +31,8 @@ void Player::Initialize(){
 	//アイテムの追加
 	adjustment_item->AddItem(groupName, "DownSpeed", downSpeed_);
 	adjustment_item->AddItem(groupName, "JumpPower", jumpPower_);
+	adjustment_item->AddItem(groupName, "DownSpeedAttackVer", downSpeedAttackVer_);
+	adjustment_item->AddItem(groupName, "JumpPowerAttackVer", jumpPowerAttackVer_);
 	adjustment_item->AddItem(groupName, "AttackPower", baseAttackPower_);
 	adjustment_item->AddItem(groupName, "TrailPosData", trailPosData_);
 	adjustment_item->AddItem(groupName, "HitStop", hitStop_);
@@ -201,12 +205,23 @@ void Player::Update(){
 	}
 
 	if (stateManager_->GetIsJump() && !isDown_) {
+		isJumpAttack_ = false;
 		downVector_.y = jumpPower_;
+	}
+
+	if (stateManager_->GetIsAttackJump() && !isDown_) {
+		isJumpAttack_ = true;
+		downVector_.y = jumpPowerAttackVer_;
 	}
 
 	/*落下処理*/
 	if (isDown_) {
-		downVector_.y += downSpeed_ * timeScale_;
+		if (isJumpAttack_){
+			downVector_.y += downSpeedAttackVer_ * timeScale_;
+		}
+		else {
+			downVector_.y += downSpeed_ * timeScale_;
+		}		
 	}	
 	playerTransform_.translate.y += downVector_.y * timeScale_;
 	//落下処理による修正後の値を代入

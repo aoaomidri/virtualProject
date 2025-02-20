@@ -55,7 +55,7 @@ private:
 
 	std::unique_ptr<EnemyAttackTicket>tickets_;
 	//敵の初期最大値
-	static const int32_t enemyNum_ = 100;
+	static const int32_t enemyNum_ = 10;
 	//追加する敵の数
 	const int32_t addEnemyNum_ = 1;
 	//ひとまず手打ちでの敵の初期値座標

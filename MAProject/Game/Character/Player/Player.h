@@ -149,8 +149,11 @@ private:
 	Matrix4x4 playerMoveMatrix_{};
 
 	//落下関連
+	bool isJumpAttack_ = false;
 	float downSpeed_ = -0.01f;
+	float downSpeedAttackVer_ = -0.01f;
 	float jumpPower_ = 0.15f;
+	float jumpPowerAttackVer_ = 0.15f;
 	Vector3 downVector_ = { 0 };
 
 	const ViewProjection* viewProjection_ = nullptr;

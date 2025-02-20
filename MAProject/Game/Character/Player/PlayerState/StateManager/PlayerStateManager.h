@@ -65,6 +65,7 @@ public:
 
 	const bool GetIsDash()const { return context_.workDash_.isDash_; }
 	const bool GetIsJump()const { return context_.isJump_; }
+	const bool GetIsAttackJump()const { return context_.isAttackJump_; }
 	const bool GetTrailResetFlug()const { return context_.workAttack_.trailResetFlug_; }
 	const bool GetHitRecordResetFlug()const { return context_.workAttack_.hitRecordRestFlug_; }
 	const bool GetIsDissolve()const { return context_.isDissolve_; }

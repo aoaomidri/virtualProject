@@ -2,31 +2,19 @@
 #include"Transform.h"
 #include"Input.h"
 #include"Adjustment_Item.h"
-#include"ViewProjection.h"
-#include"ViewingFrustum.h"
-#include"Matrix.h"
+
+#include"BaseCamera.h"
+
 /*プレイヤーの後ろについて回るカメラ*/
 //前方宣言
 class LockOn;
 
-struct CameraShake {
-	float amplitude;  // シェイクの振幅
-	float duration;   // シェイクの持続時間
-	float frequency;  // シェイクの周波数
-	float elapsedTime; // シェイクの経過時間
-
-	// シェイク中かどうか判定
-	bool IsActive() const {
-		return elapsedTime < duration;
-	}
-};
-
-class FollowCamera{
+class FollowCamera : public BaseCamera{
 public:
 	//初期化処理
-	void Initialize();
+	void Initialize() override;
 	//更新処理
-	void Update();
+	void Update() override;
 	//カメラの位置をリセット
 	void Reset();
 	//カメラの回転角のリセット

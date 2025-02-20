@@ -103,7 +103,7 @@ private:
 	const float kAttackParameterCorection_ = 4.0f;
 	const float kAttackMagnification_ = 1.5f;
 	const float kAttackDivisionMagnification_ = 2.0f;
-	const float kRotateWeaponGround_ = 2.2f;
+	const float kRotateWeaponGround_ = 8.44f;
 	//武器を回転させているかどうか
 	bool isRotated_ = false;
 	

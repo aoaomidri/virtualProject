@@ -52,6 +52,11 @@ public:
 	void StrongAttackMotion();
 	//強2攻撃のモーション
 	void SecondStrongAttackMotion();
+	//強2攻撃弱版派生
+	void SSAttackWeakVersion();
+	//強2攻撃強版派生
+	void SSAttackStrongVersion();
+
 	//強3攻撃のモーション
 	void ThirdStrongAttackMotion();
 	//強4攻撃のモーション
@@ -93,6 +98,7 @@ private:
 	float motionSpeed_ = 1.0f;
 	float strongAttackRotateZ_ = 1.57f;
 	float strongSixthAttackRotate_ = 1.6f;
+	float secondWeapon_Rotate_ = -0.4f;
 	float fifthWeapon_Rotate_ = 0.5f;
 	/*当たり関係*/
 	float strongAddScale_ = 3.0f;
@@ -113,16 +119,18 @@ private:
 	Vector3 counterScale_{};
 	Vector3 collsionScaleGuade_ = { 0.6f,2.0f,0.6f };
 
+
+
 	std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackTransformRotates_ = { {
-			{0.0f,0.0f,2.35f},{ 1.57f,0.0f,0.0f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
+			{0.0f,0.0f,2.35f},{-0.3f,0.0f,2.8f},{-0.3f,0.0f,0.0f},{-0.3f,0.0f,1.85f},{-0.3f,0.0f,-1.5f},{1.0f,0.0f,2.35f}
 			}
 	};
 	std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackOffset_ = { {
-		{0.0f,0.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
+		{0.0f,0.0f,1.0f},{0.0f,2.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
 		}
 	};
 	std::array<Vector2, WorkAttack::conboNum_> weapon_StrongRotatesMinMax_ = { {
-		{4.5f,9.2f},{3.16f,-0.9f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
+		{4.5f,9.2f},{-0.6f,2.35f},{-0.9f,1.35f},{-0.9f,3.16f},{-0.5f,3.0f},{3.3f,-0.3f}
 		}
 	};
 };

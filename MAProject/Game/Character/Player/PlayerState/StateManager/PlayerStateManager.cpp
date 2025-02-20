@@ -99,6 +99,7 @@ void PlayerStateManager::ContextStateUpdate(){
 
 void PlayerStateManager::JumpFlugReset(){
 	context_.isJump_ = false;
+	context_.isAttackJump_ = false;
 }
 
 void PlayerStateManager::ResetState(){

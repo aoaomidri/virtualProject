@@ -181,6 +181,7 @@ void Player::Update(){
 	/*状態によっての処理をここに記述する*/
 	//playerStateManagerなど
 	stateManager_->SetIsJustAvoid(isJustAvoid_);
+	stateManager_->SetIsOnFloor(isOnFloor_);
 	stateManager_->SetLockOnPos(lockOn_->GetTargetPosition());
 	stateManager_->Update(viewProjection_->rotation_);
 
@@ -208,10 +209,15 @@ void Player::Update(){
 		isJumpAttack_ = false;
 		downVector_.y = jumpPower_;
 	}
-
-	if (stateManager_->GetIsAttackJump() && !isDown_) {
+	else if (stateManager_->GetIsAttackJump() && !isDown_) {
 		isJumpAttack_ = true;
 		downVector_.y = jumpPowerAttackVer_;
+	}
+	//例外的にどちらもフラグを読んでいたら状態にかかわらず再度ジャンプを行う
+	else if (stateManager_->GetIsAttackJump() && stateManager_->GetIsJump()) {
+
+		isJumpAttack_ = false;
+		downVector_.y = jumpPower_;
 	}
 
 	/*落下処理*/
@@ -226,7 +232,7 @@ void Player::Update(){
 	playerTransform_.translate.y += downVector_.y * timeScale_;
 	//落下処理による修正後の値を代入
 	stateManager_->SetPlayerTranslateY(playerTransform_.translate.y);
-
+	
 	//影の処理
 	shadow_->position_ = playerTransform_.translate;
 	shadow_->position_.y = shadowHeight_;
@@ -349,6 +355,7 @@ void Player::OnFlootCollision(OBB obb){
 	playerTransform_.translate.y = playerOBB_.size.y + obb.size.y;
 	downVector_ = { 0.0f,0.0f,0.0f };
 	isDown_ = false;
+	isOnFloor_ = true;
 	stateManager_->JumpFlugReset();
 }
 
@@ -441,5 +448,8 @@ void Player::OnCollisionEnemyAttackAvoid(const uint32_t serialNumber){
 
 void Player::SetIsDown(bool isDown){
 	isDown_ = isDown;
+	if (isDown_ == true) {
+		isOnFloor_ = false;
+	}
 }
 

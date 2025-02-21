@@ -178,13 +178,14 @@ private:
 	//プレイヤーが近くにいるときに溜まる
 	int nearTime_ = 0;
 	//近い条件
-	float nearPlayer_ = 10.0f;
+	float nearPlayer_ = 10.0f + (0.2f * serialNumber_);
 	//プレイヤーが遠くにいるときに溜まる
 	int farTime_ = 0;
 	//遠い条件
 	float farPlayer_ = 30.0f;
 	//距離に応じた反応の時間制限
 	int lengthJudgment_ = 180;
+	int lengthJudgmentFar_ = 90;
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
 	const float kTranslateHeight_ = 2.5f;

@@ -179,6 +179,8 @@ public:
 		bool isAvoidAttack_ = false;
 		//敵と衝突しているか
 		bool isCollisionEnemy_ = false;
+		//床と接触しているか
+		bool isOnFloor_ = false;
 		//ディゾルブするかどうか
 		bool isDissolve_ = false;
 		//武器の動きをデバックする

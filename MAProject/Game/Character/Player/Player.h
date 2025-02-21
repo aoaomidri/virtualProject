@@ -213,6 +213,8 @@ private:
 	////////
 	//落下するかどうか
 	bool isDown_ = false;
+	//現在床についているか
+	bool isOnFloor_ = false;
 
 private:
 	//敵と衝突しているか

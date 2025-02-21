@@ -35,8 +35,10 @@ public:
 	void StrongAttackInitialize();
 	//強2攻撃行動初期化
 	void SecondStrongAttackInitialize();
-	//強2派生攻撃初期化
+	//強2弱派生攻撃初期化
 	void SSAttackWeakVersionInitialize();
+	//強2強派生攻撃初期化
+	void SSAttackStrongVersionInitialize();
 	//強3攻撃行動初期化
 	void ThirdStrongAttackInitialize();
 	//強4攻撃行動初期化
@@ -82,6 +84,8 @@ public:
 private:
 	//追撃を出すかどうか
 	bool isNextAttack_ = false;
+	//強派生かどうか
+	bool isStrongVersion_ = false;
 	//初回の攻撃かどうか
 	bool isFirstAttack_ = false;
 	//最後のきめ技を行うかどうか
@@ -105,10 +109,12 @@ private:
 	float strongAttackRotateZ_ = 1.57f;
 	float strongSixthAttackRotate_ = 1.6f;
 	float secondWeapon_Rotate_ = -0.4f;	
+	float secondRotateSpeed_ = 2.0f;
 	float fifthWeapon_Rotate_ = 0.5f;
 	float maxRotateX_ = 6.78f;
 	/*当たり関係*/
 	float strongAddScale_ = 3.0f;
+	float strongSecondAddScale_ = 9.0f;
 	//次の攻撃に映るまでの時間
 	//初回
 	float nextAttackTimerFirst_ = 21.0f;
@@ -123,6 +129,8 @@ private:
 	
 	//強2弱派生の制限
 	Vector2 strongSecondRotatesMinMax_ = { -0.6f,14.21f };
+	//強2強派生の初期回転
+	Vector3 strongSecondRotate_ = { 3.14f,0.0f,0.0f };
 
 	Vector3 fifthWeaponCollisionScale_ = { 0.9f,4.5f,0.9f };
 	//カウンター時の判定の大きさ
@@ -136,7 +144,7 @@ private:
 			}
 	};
 	std::array<Vector3, WorkAttack::conboNum_> weaponStrongAttackOffset_ = { {
-		{0.0f,0.0f,1.0f},{0.0f,2.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
+		{0.0f,-0.5f,1.0f},{0.0f,2.0f,0.0f},{0.0f,2.0f,0.0f},{0.0f,1.5f,0.0f},{0.0f,2.0f,0.0f},{0.0f,0.0f,1.0f}
 		}
 	};
 	std::array<Vector2, WorkAttack::conboNum_> weapon_StrongRotatesMinMax_ = { {

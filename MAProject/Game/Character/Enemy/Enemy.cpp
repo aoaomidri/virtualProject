@@ -289,7 +289,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kRun:
 		EnemyRun();
@@ -430,29 +430,15 @@ void Enemy::RootMotion(){
 			}
 		}
 		//逆に離れていた場合
-		else if (farTime_ > lengthJudgment_) {
+		else if (farTime_ > lengthJudgmentFar_) {
 			if (transform_.translate.x >= limitPos_.x - enemyLimitPos_ or transform_.translate.x <= limitPos_.y + enemyLimitPos_) {
 				behaviorRequest_ = Behavior::kRun;
 			}
 			if (transform_.translate.z >= limitPos_.x - enemyLimitPos_ or transform_.translate.z <= limitPos_.y + enemyLimitPos_) {
 				behaviorRequest_ = Behavior::kRun;
 			}
-			if (behaviorRequest_ == std::nullopt) {
-				int i = RandomMaker::DistributionInt(0, 2);
-				//分岐
-				if (i == 0) {
-					behaviorRequest_ = Behavior::kRun;
-				}
-				else {
-					isAttack_ = tickets_->requestAttack(serialNumber_);
-					if (isAttack_) {
-						//攻撃を準備する
-						behaviorRequest_ = Behavior::kPreliminalyAction;
-					}
-					else {
-						farTime_ = 0;
-					}
-				}
+			if (behaviorRequest_ == std::nullopt) {				
+				behaviorRequest_ = Behavior::kRun;			
 			}
 		}
 	}
@@ -567,6 +553,12 @@ void Enemy::BehaviorLeaningBackInitialize(){
 		downVector_ = { 0.0f };
 		downVector_.y += jumpPower_;
 		break;
+	case HitRecord::Floating:
+		transform_.rotate = hitEaseStartStrong_;
+		knockBackEaseStart_ = hitEaseStartStrong_;
+		downVector_ = { 0.0f };
+		downVector_.y += jumpPower_;
+		break;
 	case HitRecord::Few:
 		transform_.rotate = hitEaseStartCenter_;
 		knockBackEaseStart_ = hitEaseStartCenter_;
@@ -586,6 +578,9 @@ void Enemy::LeaningBack(){
 	}
 	else if (type_ == HitRecord::Few){
 		move_ = { 0, 0, backSpeed_ * fewHitBackSpeed_ };
+	}
+	else if (type_ == HitRecord::Floating) {
+		move_ = { 0, 0, 0 };
 	}
 	else {
 		move_ = { 0, 0, backSpeed_ * hitBackSpeed_ };

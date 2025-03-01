@@ -195,10 +195,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\math\Vector4.cpp" />
     <ClCompile Include="externals\ImGuiManager.cpp" />
     <ClCompile Include="Game\Audio\Audio.cpp" />
-    <ClCompile Include="Game\Camera\ActionCamera.cpp" />
     <ClCompile Include="Game\Camera\BaseCamera.cpp" />
     <ClCompile Include="Game\Camera\FollowCamera.cpp" />
     <ClCompile Include="Game\Camera\LockOn.cpp" />
+    <ClCompile Include="Game\Character\Enemy\BaseEnemy.cpp" />
+    <ClCompile Include="Game\Character\Enemy\BossEnemy.cpp" />
     <ClCompile Include="Game\Character\Enemy\Enemy.cpp" />
     <ClCompile Include="Game\Character\Enemy\EnemyAttackTicket.cpp" />
     <ClCompile Include="Game\Character\Enemy\EnemyManager.cpp" />
@@ -266,10 +267,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\math\Vector4.h" />
     <ClInclude Include="externals\ImGuiManager.h" />
     <ClInclude Include="Game\Audio\Audio.h" />
-    <ClInclude Include="Game\Camera\ActionCamera.h" />
     <ClInclude Include="Game\Camera\BaseCamera.h" />
     <ClInclude Include="Game\Camera\FollowCamera.h" />
     <ClInclude Include="Game\Camera\LockOn.h" />
+    <ClInclude Include="Game\Character\Enemy\BaseEnemy.h" />
+    <ClInclude Include="Game\Character\Enemy\BossEnemy.h" />
     <ClInclude Include="Game\Character\Enemy\Enemy.h" />
     <ClInclude Include="Game\Character\Enemy\EnemyAttackTicket.h" />
     <ClInclude Include="Game\Character\Enemy\EnemyManager.h" />

@@ -1,24 +1,8 @@
-#include "Enemy.h"
+#include "BossEnemy.h"
 #include"ImGuiManager.h"
-#include"RandomMaker.h"
-#include"Adjustment_Item.h"
 #include"LevelLoader/LevelLoader.h"
-#include"PostEffect.h"
 
-
-uint32_t Enemy::nextSerialNumber_ = 0;
-
-uint32_t Enemy::enemyDestroyingNumber_ = 0;
-
-Enemy::Enemy(){
-	serialNumber_ = nextSerialNumber_;
-	++nextSerialNumber_;
-}
-
-Enemy::~Enemy(){
-}
-
-void Enemy::ApplyGlobalVariables(){
+void BossEnemy::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Enemy";
 
@@ -38,7 +22,7 @@ void Enemy::ApplyGlobalVariables(){
 	hitEaseStartCenter_ = adjustment_item->GetVector3Value(groupName, "HitEaseCenter");
 }
 
-void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
+void BossEnemy::Initialize(const Vector3& position){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
 	const char* groupName = "Enemy";
 	//グループを追加
@@ -62,10 +46,6 @@ void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 	enemyLife_ = enemyLifeMax_;
 
-	tickets_ = tickets;
-
-	auto levelLoader = LevelLoader::GetInstance(); 
-
 	bodyObj_ = std::make_unique<Object3D>();
 	bodyObj_->Initialize("Enemy");
 	bodyObj_->SetIsLighting(true);
@@ -76,23 +56,35 @@ void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 	partsObj_->SetIsLighting(true);
 	partsObj_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
+	partsObjRight_ = std::make_unique<Object3D>();
+	partsObjRight_->Initialize("EnemyParts");
+	partsObjRight_->SetIsLighting(true);
+	partsObjRight_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
+
+	partsObjLeft_ = std::make_unique<Object3D>();
+	partsObjLeft_->Initialize("EnemyParts");
+	partsObjLeft_->SetIsLighting(true);
+	partsObjLeft_->SetDirectionalLight(DirectionalLight::GetInstance()->GetLightData());
 
 	collisionObj_ = std::make_unique<Object3D>();
 	collisionObj_->Initialize("box");
-	
+
+	LevelLoader* levelLoader = LevelLoader::GetInstance();
 	transform_ = {
-		levelLoader->GetLevelObjectTransform("Enemy").scale,
+		levelLoader->GetLevelObjectTransform("Enemy").scale * bossScale_,
 		{0.0f,0.0f,0.0f},
 		position
 	};
 	collisionTransform_ = transform_;
 
-	partsTransform_.scale = kPartsScaleBase_;
+	partsTransform_.scale = kPartsScaleBase_ * bossScale_;
 	partsTransform_.rotate.z = kPartsRotateZ_;
+	partsRightTransform_.scale = kPartsScaleBase_ * bossScale_;
+	partsLeftTransform_.scale = kPartsScaleBase_ * bossScale_;
 
 	emitter_.count = 10;
 	emitter_.transform = {
-		levelLoader->GetLevelObjectTransform("Enemy").scale,
+		levelLoader->GetLevelObjectTransform("Enemy").scale* bossScale_,
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f}
 	};
@@ -116,9 +108,11 @@ void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 	freeTime_ = 0;
 
 	collisionTransform_.translate = attackOBB_.center;
-	collisionTransform_.scale = attackOBB_.size;
+	collisionTransform_.scale = attackOBB_.size * bossScale_;
 	bodyOBB_.center = transform_.translate;
-	bodyOBB_.size = transform_.scale + addOBBSize_;
+	bodyOBB_.size = (transform_.scale + addOBBSize_) * bossScale_;
+	parts_offset_Base_ *= bossScale_;
+
 
 	Matrix4x4 enemyRotateMatrix = Matrix::MakeRotateMatrix(transform_.rotate);
 	SetOridentatios(bodyOBB_, enemyRotateMatrix);
@@ -134,7 +128,7 @@ void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 	shadow_ = std::make_unique<Sprite>();
 	shadow_->Initialize(TextureManager::GetInstance()->Load("resources/texture/shadow.png"));
 	shadow_->rotation_.x = 1.57f;
-	shadow_->scale_ = { 1.5f,1.5f };
+	shadow_->scale_ = { 1.5f * bossScale_,1.5f * bossScale_ };
 	shadow_->anchorPoint_ = { 0.5f,0.5f };
 	shadow_->color_.w = 0.5f;
 
@@ -148,14 +142,10 @@ void Enemy::Initialize(const Vector3& position, EnemyAttackTicket* tickets){
 
 }
 
-void Enemy::Update(){
+void BossEnemy::Update(){
 	ApplyGlobalVariables();
-	//オブジェの内部の値をセット
-	bodyObj_->SetDissolve(threshold_);
-	partsObj_->SetDissolve(threshold_);
-
-	bodyObj_->SetColor(enemyColor_);
-	partsObj_->SetColor(enemyColor_);
+	
+	ObjStateSet();
 	//行動の更新
 	MotionUpdate();
 	//影の座標更新
@@ -170,8 +160,14 @@ void Enemy::Update(){
 	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
 	matrix_ = Matrix::MakeAffineMatrix(scaleMatrix_, resultRotateMat, transformMatrix_);
 	//パーツ部分の更新
-	resultRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * resultRotateMat;
-	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultRotateMat, partsTransform_.translate);
+	
+	Matrix4x4 resultPartsRotateMat = Matrix::MakeRotateMatrix(partsTransform_.rotate) * resultRotateMat;
+	partsMatrix_ = Matrix::MakeAffineMatrix(partsTransform_.scale, resultPartsRotateMat, partsTransform_.translate);
+	resultPartsRotateMat = Matrix::MakeRotateMatrix(partsRightTransform_.rotate) * resultRotateMat;
+	partsRightMatrix_ = Matrix::MakeAffineMatrix(partsRightTransform_.scale, resultPartsRotateMat, partsRightTransform_.translate);
+	resultPartsRotateMat = Matrix::MakeRotateMatrix(partsLeftTransform_.rotate) * resultRotateMat;
+	partsLeftMatrix_ = Matrix::MakeAffineMatrix(partsLeftTransform_ .scale, resultPartsRotateMat, partsLeftTransform_.translate);
+
 	//obb更新
 	bodyOBB_.center = transform_.translate;	
 	attackOBB_.center = bodyOBB_.center;	
@@ -181,7 +177,7 @@ void Enemy::Update(){
 	collisionMatrix_ = Matrix::MakeAffineMatrix(attackOBB_.size, rotateMatrix_, attackOBB_.center);
 }
 
-void Enemy::Draw(const ViewProjection& viewProjection){
+void BossEnemy::Draw(const ViewProjection& viewProjection){
 	if (isDead_) {
 		return;
 	}
@@ -195,13 +191,23 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 	partsObj_->SetTimeScale(timeScale_);
 	partsObj_->Update(viewProjection);
 	partsObj_->Draw();	
+
+	partsObjLeft_->SetMatrix(partsLeftMatrix_);
+	partsObjLeft_->SetTimeScale(timeScale_);
+	partsObjLeft_->Update(viewProjection);
+	partsObjLeft_->Draw();
+
+	partsObjRight_->SetMatrix(partsRightMatrix_);
+	partsObjRight_->SetTimeScale(timeScale_);
+	partsObjRight_->Update(viewProjection);
+	partsObjRight_->Draw();
 }
 
-void Enemy::TexDraw(const Matrix4x4& viewProjection){
+void BossEnemy::TexDraw(const Matrix4x4& viewProjection){
 	shadow_->Draw(viewProjection);
 }
 
-void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& color){
+void BossEnemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& color){
 	EulerTransform patTransform = transform_;
 	patTransform.translate.y += 1.0f;
 	particle_->SetOneColor(color);
@@ -209,7 +215,7 @@ void Enemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3& co
 	particle_->Draw();
 }
 
-void Enemy::DrawImgui() {
+void BossEnemy::DrawImgui() {
 #ifdef _DEBUG
 	ImGui::Begin("敵の変数");
 	ImGui::DragFloat3("敵の座標", &transform_.translate.x, 0.1f);
@@ -227,35 +233,65 @@ void Enemy::DrawImgui() {
 #endif
 }
 
-void Enemy::OnCollision(){
+void BossEnemy::OnCollision(){
 	particle_->SetIsDraw(true);
 	enemyLife_ -= damege_;
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
-void Enemy::OnCollisionStrong(){
+void BossEnemy::OnCollisionStrong(){
 	particle_->SetIsDraw(true);
 	enemyLife_ -= strongDamege_;
 	particle_->AddParticle(emitter_);
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
-void Enemy::OnCollisionGuard(){
+void BossEnemy::OnCollisionGuard(){
 	behaviorRequest_ = Behavior::kLeaningBack;
 }
 
-const Vector3 Enemy::GetCenterPos()const{
+const Vector3 BossEnemy::GetCenterPos()const{
 	const Vector3 offset = { 0.0f,5.0f,0.0f };
 	//ワールドに変換
 	Vector3 world = Matrix::TransformVec(offset, matrix_);
 	return world;
 }
 
-void Enemy::ParticleMove(){	
+void BossEnemy::ObjStateSet(){
+	//オブジェの内部の値をセット
+	bodyObj_->SetDissolve(threshold_);
+	partsObj_->SetDissolve(threshold_);
+	partsObjLeft_->SetDissolve(threshold_);
+	partsObjRight_->SetDissolve(threshold_);
+
+	bodyObj_->SetColor(enemyColor_);
+	partsObj_->SetColor(enemyColor_);
+	partsObjLeft_->SetColor(enemyColor_);
+	partsObjRight_->SetColor(enemyColor_);
 }
 
-void Enemy::MotionUpdate(){
+void BossEnemy::PartsCalculation(){
+	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
+	/*エネミーの頭パーツ*/
+	parts_offset_ = Matrix::TransformNormal(parts_offset_Base_, resultRotateMat);
+	partsTransform_.translate = transform_.translate + parts_offset_;
+
+	resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
+	/*エネミーの右側パーツ*/
+	parts_offsetRight_ = Matrix::TransformNormal(parts_offset_BaseRight_, resultRotateMat);
+	partsRightTransform_.translate = transform_.translate + parts_offsetRight_;
+
+	resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
+	/*エネミーの左側パーツ*/
+	parts_offsetLeft_ = Matrix::TransformNormal(parts_offset_BaseLeft_, resultRotateMat);
+	partsLeftTransform_.translate = transform_.translate + parts_offsetLeft_;
+}
+
+void BossEnemy::ParticleMove(){
+}
+
+void BossEnemy::MotionUpdate(){
 	if (behaviorRequest_) {
 		// 振る舞いを変更する
 		behavior_ = behaviorRequest_.value();
@@ -336,11 +372,7 @@ void Enemy::MotionUpdate(){
 
 	playerLength_ = Vector3::Length(sub);
 
-	Matrix4x4 resultRotateMat = Matrix::MakeRotateMatrix(transform_.rotate) * rotateMatrix_;
-
-	/*エネミーのパーツ*/
-	parts_offset_ = Matrix::TransformNormal(parts_offset_Base_, resultRotateMat);
-	partsTransform_.translate = transform_.translate + parts_offset_;
+	PartsCalculation();
 
 	if (enemyLife_ <= 0 && behavior_ != Behavior::kDead) {
 		isNoLife_ = true;
@@ -348,7 +380,7 @@ void Enemy::MotionUpdate(){
 	}
 }
 
-void Enemy::BehaviorRootInitialize(){
+void BossEnemy::BehaviorRootInitialize(){
 	rotateMatrix_ = Matrix::MakeIdentity4x4();
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
@@ -361,26 +393,24 @@ void Enemy::BehaviorRootInitialize(){
 		magnification_ = -1.0f;
 	}
 	if (isAttack_ == true) {
-		tickets_->endAttack();
 		isAttack_ = false;
 	}
 	isNearAttack_ = false;
 }
 
-void Enemy::BehaviorDeadInitialize(){	
+void BossEnemy::BehaviorDeadInitialize(){	
 	deadMove_ = Matrix::TransformNormal(deadMoveBase_, rotateMatrix_);
 	deadMove_ = Vector3::Mutiply(Vector3::Normalize(deadMove_), deadMoveSpeed_);
 	deadMove_.y *= -1.00f;
 	deadYAngle_ = Matrix::RotateAngleYFromMatrix(rotateMatrix_);
 	transform_.rotate.Clear();
 	if (isAttack_ == true){
-		tickets_->endAttack();
 		isAttack_ = false;
 	}
 }
 
 
-void Enemy::RootMotion(){
+void BossEnemy::RootMotion(){
 	//方向ベクトルの更新
 	frontVec_ = postureVec_;
 	Vector3 move = { moveSpeed_ * magnification_ ,0,0 };
@@ -419,15 +449,8 @@ void Enemy::RootMotion(){
 			nearTime_++;
 		}
 		//指定の秒数近くにいた場合
-		if (nearTime_ > lengthJudgment_) {
-			isAttack_ = tickets_->requestAttack(serialNumber_);
-			if (isAttack_){
-				//攻撃を準備する
-				behaviorRequest_ = Behavior::kPreliminalyAction;
-			}
-			else {
-				behaviorRequest_ = Behavior::kRun;
-			}
+		if (nearTime_ > lengthJudgment_) {			
+			behaviorRequest_ = Behavior::kRun;			
 		}
 		//逆に離れていた場合
 		else if (farTime_ > lengthJudgmentFar_) {
@@ -446,7 +469,7 @@ void Enemy::RootMotion(){
 }
 
 
-void Enemy::BehaviorRunInitialize(){
+void BossEnemy::BehaviorRunInitialize(){
 	rotateMatrix_ = Matrix::MakeIdentity4x4();
 	postureVec_ = { 0.0f,0.0f,1.0f };
 	frontVec_ = { 0.0f,0.0f,1.0f };
@@ -455,7 +478,7 @@ void Enemy::BehaviorRunInitialize(){
 	magnification_ = 1.0f;
 }
 
-void Enemy::EnemyRun(){
+void BossEnemy::EnemyRun(){
 	frontVec_ = postureVec_;
 
 	Vector3 move = { 0,0,(magnification_ * dashSpeed_) / runMagnification_ };
@@ -500,29 +523,29 @@ void Enemy::EnemyRun(){
 	}
 }
 
-void Enemy::BehaviorFreeInitialize(){
+void BossEnemy::BehaviorFreeInitialize(){
 	
 	freeTime_ = 0;
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
-void Enemy::Free(){
+void BossEnemy::Free(){
 	if (++freeTime_ > freeTimeMax_) {
 		behaviorRequest_ = Behavior::kRoot;
 	}
 }
 
-void Enemy::BehaviorPreliminalyActionInitialize(){
+void BossEnemy::BehaviorPreliminalyActionInitialize(){
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
-void Enemy::PreliminalyAction(){
+void BossEnemy::PreliminalyAction(){
 	
 	behaviorRequest_ = Behavior::kAttack;
 	
 }
 
-void Enemy::BehaviorLeaningBackInitialize(){
+void BossEnemy::BehaviorLeaningBackInitialize(){
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	attackOBB_.size = { 0.0f,0.0f,0.0f };
@@ -571,7 +594,7 @@ void Enemy::BehaviorLeaningBackInitialize(){
 	rotateEaseT_ = 0.0f;
 }
 
-void Enemy::LeaningBack(){
+void BossEnemy::LeaningBack(){
 	//ヒットバックのタイプによって距離を分岐
 	if (type_ == HitRecord::Center || type_ == HitRecord::Strong) {
 		move_ = { 0, 0, backSpeed_ * strongHitBackSpeed_ };
@@ -624,7 +647,7 @@ void Enemy::LeaningBack(){
 
 }
 
-void Enemy::DeadMotion(){
+void BossEnemy::DeadMotion(){
 
 	//回転しながら吹っ飛ぶ動き
 	transform_.translate -= deadMove_ * timeScale_;
@@ -647,7 +670,7 @@ void Enemy::DeadMotion(){
 	
 }
 
-void Enemy::BehaviorAttackInitialize() {
+void BossEnemy::BehaviorAttackInitialize() {
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	
 	ATBehaviorRequest_ = AttackBehavior::kTackle;
@@ -655,7 +678,7 @@ void Enemy::BehaviorAttackInitialize() {
 
 }
 
-void Enemy::AttackMotion() {
+void BossEnemy::AttackMotion() {
 	if (ATBehaviorRequest_) {
 		// 振る舞いを変更する
 		ATBehavior_ = ATBehaviorRequest_.value();
@@ -682,7 +705,7 @@ void Enemy::AttackMotion() {
 	}
 }
 
-void Enemy::AttackBehaviorTackleInitialize(){
+void BossEnemy::AttackBehaviorTackleInitialize(){
 	directionTime_ = directionTimeBase_;
 
 	attackTransitionTime_ = attackTransitionTimeBase_;
@@ -690,7 +713,7 @@ void Enemy::AttackBehaviorTackleInitialize(){
 	dashTimer_ = 0;
 }
 
-void Enemy::Tackle(){
+void BossEnemy::Tackle(){
 	frontVec_ = postureVec_;
 	//ターゲットに顔を向ける
 	if (target_) {
@@ -728,7 +751,6 @@ void Enemy::Tackle(){
 			//既定の時間経過で通常状態に戻る
 			if (++dashTimer_ >= kDashTime_) {
 				attackOBB_.size = { 0,0,0 };
-				tickets_->endAttack();
 				behaviorRequest_ = Behavior::kFree;
 			}
 		}
@@ -747,4 +769,3 @@ void Enemy::Tackle(){
 	}
 	
 }
-

@@ -9,6 +9,11 @@ void EnemyManager::Initialize(){
 
 	tickets_ = std::make_unique<EnemyAttackTicket>(enemyNum_, 3);
 
+	boss_ = std::make_unique<BossEnemy>();
+	boss_->Initialize(bossPos_);
+	boss_->SetTarget(targetTrans_);
+	boss_->SetTargetMat(targetRotateMat_);
+	boss_->Update();
 	for (size_t i = 0; i < enemyNum_; i++){
 		enemysPos_[i] = Vector3(random->Distribution(-50.0f, 50.0f), 2.5f, random->Distribution(-50.0f, 50.0f));
 	}
@@ -34,33 +39,38 @@ void EnemyManager::Update(){
 	for (const auto& enemy : enemies_) {
 		enemy->SetTimeScale(timeScale_);
 		enemy->SetShininess(enemyShininess_);
-		enemy->Update();
+		//enemy->Update();
 	}
-
+	boss_->SetTimeScale(timeScale_);
+	boss_->SetShininess(enemyShininess_);
+	boss_->Update();
 }
 
 void EnemyManager::Draw(const FollowCamera* camera){
-	for (const auto& enemy : enemies_) {
-		enemy->Draw(camera->GetViewProjection());
-	}
+	//for (const auto& enemy : enemies_) {
+	//	//enemy->Draw(camera->GetViewProjection());
+	//}
+	boss_->Draw(camera->GetViewProjection());
 }
 
 void EnemyManager::TexDraw(const FollowCamera* camera){
-	for (const auto& enemy : enemies_) {
-		enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
-	}
+	//for (const auto& enemy : enemies_) {
+	//	//enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
+	//}
+	boss_->TexDraw(camera->GetViewProjection().matViewProjection_);
 }
 
 void EnemyManager::ParticleDraw(const FollowCamera* camera, const Vector3& color){
-	for (const auto& enemy : enemies_) {
-		enemy->ParticleDraw(camera->GetViewProjection(), color);
-	}
+	//for (const auto& enemy : enemies_) {
+	//	//enemy->ParticleDraw(camera->GetViewProjection(), color);
+	//}
+	boss_->ParticleDraw(camera->GetViewProjection(), color);
 }
 
 void EnemyManager::DrawImgui(){
-	for (const auto& enemy : enemies_) {
-		enemy->DrawImgui();
-	}
+	//for (const auto& enemy : enemies_) {
+	//	//enemy->DrawImgui();
+	//}
 	tickets_->DrawImgui();
 	ImGui::Begin("敵の数");
 	ImGui::Text("今の敵の数 = %d", enemies_.size());

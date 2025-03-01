@@ -18,7 +18,6 @@
 #include"PlayerStateManager.h"
 #include"GameTime.h"
 /*プレイヤーが操作する自機の更新描画*/
-/*現在全処理をまとめてしまっているのでステートパターンによる実装を目指し作成中です*/
 //前方宣言
 class LockOn;
 
@@ -64,6 +63,10 @@ public:
 private:
 	//Matrix等の計算処理
 	void PlayerCalculation();
+	//時間経過による処理
+	void TimeUpdate();
+	//StateManager関連の処理
+	void StateManagerOperations();
 
 public:
 	//Getter
@@ -190,13 +193,10 @@ private:
 	//強攻撃強化時間
 	float counterTimeBase_ = 60.0f;
 	float counterTime_ = 0;
-
-	//カウンター時の判定の大きさ
 	float shiness_ = 0.0f;
 
 	//ディゾルブ関係
 	float weaponThreshold_ = 0.0f;
-
 	float addThresholdSpeed_ = 0.03f;
 	float minusThresholdSpeed_ = 0.01f;
 	//取得する頂点座標を調整する

@@ -1,5 +1,6 @@
 #pragma once
 #include"Enemy.h"
+#include"BossEnemy.h"
 #include<list>
 #include"FollowCamera.h"
 
@@ -50,15 +51,20 @@ private:
 
 	//リストに詰める用
 	std::unique_ptr<Enemy> enemy_;
+
+	std::unique_ptr<BossEnemy> boss_;
 	//敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;	
 
+	
+
 	std::unique_ptr<EnemyAttackTicket>tickets_;
 	//敵の初期最大値
-	static const int32_t enemyNum_ = 150;
+	static const int32_t enemyNum_ = 10;
 	//追加する敵の数
 	const int32_t addEnemyNum_ = 1;
 	//ひとまず手打ちでの敵の初期値座標
+	Vector3 bossPos_ = { 0.0f,2.5f * 1.6f,20.0f };
 	std::array<Vector3, enemyNum_> enemysPos_{};
 	//プレイヤーの座標
 	const EulerTransform* targetTrans_ = nullptr;

@@ -124,101 +124,8 @@ void Player::Update(){
 	weaponObj_->SetDissolve(weaponThreshold_);
 	weaponObj_->SetTrailPos(trailPosData_);
 
-	if (stateManager_->GetIsDissolve()){
-		weaponThreshold_ += addThresholdSpeed_ * timeScale_;
-		if (weaponThreshold_ > 1.0f) {
-			//完全に消えたら
-			weaponThreshold_ = 1.0f;
-			trail_->Reset();
-			stateManager_->SetIsDissolve(false);
-		}
-	}
-	else {
-		//徐々に元に戻す
-		weaponThreshold_ -= minusThresholdSpeed_;
-		if (weaponThreshold_ < 0.0f) {			
-			weaponThreshold_ = 0.0f;
-		}		
-	}
-
-	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
-		weaponThreshold_ = 0.0f;
-	}
-	//カウンター時間経過処理
-	if (counterTime_ > counterTimeBase_){
-		stateManager_->SetIsGuardHit(false);
-	}
-	if (stateManager_->GetIsGuardHit()){
-		counterTime_ += timeScale_;
-	}	
-	//ジャスト回避時間経過処理
-	if (stateManager_->GetJustAvoidTimer() > 0) {
-		postT_ = 0.9f;		
-	}
-	else if (stateManager_->GetJustAvoidTimer() <= 0) {
-		postT_ -= addPostT_;
-		isJustAvoid_ = false;
-	}
-	//値を制限
-	if (postT_ > 1.0f){
-		postT_ = 1.0f;
-	}
-	else if (postT_ < 0.0f){
-		postT_ = 0.0f;
-	}
-
-	postBlend_ = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 1.0f, postT_);
-	PostEffect::GetInstance()->SetPostBlend(postBlend_);
-
-	//被弾無敵の経過処理
-	if (hitTimer_ != 0) {
-		hitTimer_--;
-	}
-	else if (hitTimer_ <= 0) {
-		isHitEnemyAttack_ = false;
-	}
-	
-	/*状態によっての処理をここに記述する*/
-	//playerStateManagerなど
-	stateManager_->SetIsJustAvoid(isJustAvoid_);
-	stateManager_->SetIsOnFloor(isOnFloor_);
-	stateManager_->SetLockOnPos(lockOn_->GetTargetPosition());
-	stateManager_->Update(viewProjection_->rotation_);
-
-	//Stateによって変更が生じた値を代入する
-	type_ = stateManager_->GetKnockbackType();
-
-	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
-	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
-	playerAppearanceTransform_ = stateManager_->GetPlayerAppearanceTrnaform();
-	weaponTransform_ = stateManager_->GetWeaponTrnaform();
-	weaponCollisionTransform_ = stateManager_->GetWeaponCollisionTrnaform();
-	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
-	//当たりの記憶を削除する
-	if (stateManager_->GetHitRecordResetFlug()){
-		hitRecord_.Clear();
-		stateManager_->SetHitRecordResetFlug(false);
-	}
-	//trailの頂点情報を削除する
-	if (stateManager_->GetTrailResetFlug()) {
-		trail_->Reset();
-		stateManager_->SetTrailResetFlug(false);
-	}
-
-	if (stateManager_->GetIsJump() && !isDown_) {
-		isJumpAttack_ = false;
-		downVector_.y = jumpPower_;
-	}
-	else if (stateManager_->GetIsAttackJump() && !isDown_) {
-		isJumpAttack_ = true;
-		downVector_.y = jumpPowerAttackVer_;
-	}
-	//例外的にどちらもフラグを読んでいたら状態にかかわらず再度ジャンプを行う
-	else if (stateManager_->GetIsAttackJump() && stateManager_->GetIsJump()) {
-
-		isJumpAttack_ = false;
-		downVector_.y = jumpPower_;
-	}
+	TimeUpdate();	
+	StateManagerOperations();	
 
 	/*落下処理*/
 	if (isDown_) {
@@ -288,7 +195,6 @@ void Player::Draw(const ViewProjection& viewProjection){
 		weaponObj_->SetShininess(shiness_);
 		weaponObj_->Update(viewProjection);
 		weaponObj_->Draw();
-
 	}
 
 #ifdef _DEBUG
@@ -300,17 +206,14 @@ void Player::Draw(const ViewProjection& viewProjection){
 
 void Player::SkinningDraw(const ViewProjection& viewProjection){
 	/*昔は使っていたが現状はスキニングモデルを使っていないので放置*/
-	viewProjection;
-	
+	viewProjection;	
 }
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
 	EulerTransform newTrans = playerTransform_;
-
 	particle_->SetOneColor(trailRender_->GetTrailColor());
 	particle_->Update(newTrans, viewProjection);	
 	particle_->Draw();
-
 }
 
 void Player::DrawImgui(){
@@ -400,6 +303,106 @@ void Player::PlayerCalculation(){
 	Matrix4x4 appearanceRotateMat{};
 	appearanceRotateMat = Matrix::MakeRotateMatrix(playerAppearanceTransform_.rotate);
 	playerMatrix_ = Matrix::MakeAffineMatrix(playerScaleMatrix_, (appearanceRotateMat * playerRotateMatrix_), playerTranslateMatrix_);
+}
+
+void Player::TimeUpdate(){
+	if (stateManager_->GetIsDissolve()) {
+		weaponThreshold_ += addThresholdSpeed_ * timeScale_;
+		if (weaponThreshold_ > 1.0f) {
+			//完全に消えたら
+			weaponThreshold_ = 1.0f;
+			trail_->Reset();
+			stateManager_->SetIsDissolve(false);
+		}
+	}
+	else {
+		//徐々に元に戻す
+		weaponThreshold_ -= minusThresholdSpeed_;
+		if (weaponThreshold_ < 0.0f) {
+			weaponThreshold_ = 0.0f;
+		}
+	}
+
+	if (stateManager_->GetStateName() == PlayerStateManager::StateName::Attack or stateManager_->GetStateName() == PlayerStateManager::StateName::StrongAttack) {
+		weaponThreshold_ = 0.0f;
+	}
+	//カウンター時間経過処理
+	if (counterTime_ > counterTimeBase_) {
+		stateManager_->SetIsGuardHit(false);
+	}
+	if (stateManager_->GetIsGuardHit()) {
+		counterTime_ += timeScale_;
+	}
+	//ジャスト回避時間経過処理
+	if (stateManager_->GetJustAvoidTimer() > 0) {
+		postT_ = 0.9f;
+	}
+	else if (stateManager_->GetJustAvoidTimer() <= 0) {
+		postT_ -= addPostT_;
+		isJustAvoid_ = false;
+	}
+	//値を制限
+	if (postT_ > 1.0f) {
+		postT_ = 1.0f;
+	}
+	else if (postT_ < 0.0f) {
+		postT_ = 0.0f;
+	}
+
+	postBlend_ = Ease::Easing(Ease::EaseName::EaseInBack, 0.0f, 1.0f, postT_);
+	PostEffect::GetInstance()->SetPostBlend(postBlend_);
+
+	//被弾無敵の経過処理
+	if (hitTimer_ != 0) {
+		hitTimer_--;
+	}
+	else if (hitTimer_ <= 0) {
+		isHitEnemyAttack_ = false;
+	}
+}
+
+void Player::StateManagerOperations(){
+	/*状態によっての処理をここに記述する*/
+	//playerStateManagerなど
+	stateManager_->SetIsJustAvoid(isJustAvoid_);
+	stateManager_->SetIsOnFloor(isOnFloor_);
+	stateManager_->SetLockOnPos(lockOn_->GetTargetPosition());
+	stateManager_->Update(viewProjection_->rotation_);
+
+	//Stateによって変更が生じた値を代入する
+	type_ = stateManager_->GetKnockbackType();
+
+	playerTransform_.translate.x = stateManager_->GetPlayerTrnaform().translate.x;
+	playerTransform_.translate.z = stateManager_->GetPlayerTrnaform().translate.z;
+	playerAppearanceTransform_ = stateManager_->GetPlayerAppearanceTrnaform();
+	weaponTransform_ = stateManager_->GetWeaponTrnaform();
+	weaponCollisionTransform_ = stateManager_->GetWeaponCollisionTrnaform();
+	playerRotateMatrix_ = stateManager_->GetPlayerRotateMatrix();
+	//当たりの記憶を削除する
+	if (stateManager_->GetHitRecordResetFlug()) {
+		hitRecord_.Clear();
+		stateManager_->SetHitRecordResetFlug(false);
+	}
+	//trailの頂点情報を削除する
+	if (stateManager_->GetTrailResetFlug()) {
+		trail_->Reset();
+		stateManager_->SetTrailResetFlug(false);
+	}
+
+	if (stateManager_->GetIsJump() && !isDown_) {
+		isJumpAttack_ = false;
+		downVector_.y = jumpPower_;
+	}
+	else if (stateManager_->GetIsAttackJump() && !isDown_) {
+		isJumpAttack_ = true;
+		downVector_.y = jumpPowerAttackVer_;
+	}
+	//例外的にどちらもフラグを読んでいたら状態にかかわらず再度ジャンプを行う
+	else if (stateManager_->GetIsAttackJump() && stateManager_->GetIsJump()) {
+
+		isJumpAttack_ = false;
+		downVector_.y = jumpPower_;
+	}
 }
 
 const float Player::GetHitStop() {

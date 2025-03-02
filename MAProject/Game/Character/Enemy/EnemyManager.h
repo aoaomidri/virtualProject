@@ -30,6 +30,8 @@ public:
 	//ゲッター
 	std::list<std::unique_ptr<Enemy>> &GetEnemies() { return enemies_; }
 
+	BossEnemy* GetBossEnemy() { return boss_.get(); }
+
 	const size_t GetEnemyNum()const { return enemies_.size(); }
 
 	//セッター
@@ -60,7 +62,7 @@ private:
 
 	std::unique_ptr<EnemyAttackTicket>tickets_;
 	//敵の初期最大値
-	static const int32_t enemyNum_ = 10;
+	static const int32_t enemyNum_ = 80;
 	//追加する敵の数
 	const int32_t addEnemyNum_ = 1;
 	//ひとまず手打ちでの敵の初期値座標

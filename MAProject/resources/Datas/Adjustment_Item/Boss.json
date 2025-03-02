@@ -1,0 +1,31 @@
+{
+    "Boss": {
+        "BackSpeed": -2.0,
+        "DownSpeed": 3.0,
+        "EnemyLifeMax": 40,
+        "FarPlayer": 21.0,
+        "FreeTimeMax": 40,
+        "HitBackSpeed": -0.05000000074505806,
+        "HitEaseCenter": [
+            -1.00000001192092896,
+            0.0,
+            0.0
+        ],
+        "HitEaseLeft": [
+            -0.44999998807907104,
+            0.0,
+            -0.44999998807907104
+        ],
+        "HitEaseRight": [
+            -0.44999998807907104,
+            0.0,
+            0.44999998807907104
+        ],
+        "LengthJudgment": 80,
+        "MoveSpeed": 0.029999999329447746,
+        "NearPlayer": 20.0,
+        "RotateNum": 10.0,
+        "RotateSpeed": 0.008,
+        "StrongHitBackSpeed": -0.15000000596046448
+    }
+}

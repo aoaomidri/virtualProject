@@ -5,6 +5,7 @@
 #include"PlayerAttack.h"
 #include"PlayerStrongAttack.h"
 #include"PlayerJustAvoid.h"
+#include"PlayerLeaningBack.h"
 #include<memory>
 
 class PlayerStateManager{

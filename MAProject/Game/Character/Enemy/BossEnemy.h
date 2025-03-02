@@ -137,7 +137,12 @@ private:
 	Vector3 parts_offset_Base_ = { 0.0f, 1.5f, 0.0f };
 	Vector3 parts_offset_ = { 0.0f, 1.5f, 0.0f };
 
+	float partsRotateRootPos_ = 2.5f;
+	float partsRotateAttackPos_ = 6.5f;
+	float partsRotateAttackRotateZ_ = 1.57f;
+
 	float partsLRPos_ = 2.5f;
+	float partsLRRotateZ_ = 0.0f;
 	//パーツ関連
 	Vector3 parts_offset_BaseRight_ = { partsLRPos_, 0.0f, 0.0f };
 	Vector3 parts_offsetRight_ = { 0.0f, 0.0f, 0.0f };
@@ -185,7 +190,7 @@ private:
 	int lengthJudgmentFar_ = 90;
 	int freeTime_ = 0;
 	int	freeTimeMax_ = 40;
-	const float kTranslateHeight_ = 2.5f;
+	const float kTranslateHeight_ = 4.0f;
 	/// <summary>
 	///倍率
 	/// </summary>
@@ -299,12 +304,22 @@ private:
 	std::optional<AttackBehavior> ATBehaviorRequest_ = std::nullopt;
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
+	//攻撃の予約
+	void NextAttack(const AttackBehavior attack);
 	//形態ごとにとる行動
 	void AttackMotion();
 	//突進攻撃初期化
 	void AttackBehaviorTackleInitialize();
 	//突進攻撃
 	void Tackle();
+	//回転攻撃初期化
+	void AttackBehaviorRotateAttackInitialize();
+	//回転攻撃
+	void RotateAttack();
+	//遠距離攻撃初期化
+	void AttackBehaviorShotInitialize();
+	//遠距離攻撃
+	void PartsShot();
 private:
 	//攻撃関係の変数群
 	//間の待ちの時間
@@ -333,13 +348,20 @@ private:
 	/*回転突進攻撃*/
 	//攻撃の飛距離
 	float attackLength_ = 20.0f;
-	//攻撃の目標地点
-	Vector3 attackSetPos_{};
-	Vector3 attackBasePos_{};
-	float easeT_ = 0;
+	//回転数
+	float rotateNum_ = 1.0f;
+	//回転角の最大値
+	float rotateAttackMax_ = 31.4f;
+	//補完
+	float rotateAttackEaseT_ = 0;
+	//補完速度
+	float rotateSpeed_ = 0.01f;
+	//遅くする位置
+	float slowPoint_ = 0.8f;
+	float slow_ = 0.5f;
+	//代入する変数
 	float attackRotate_ = 0;
 	Ease ease_{};
-	Vector3 slashAngle_{};
 private:
 	bool isAttack_ = false;
 

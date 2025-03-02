@@ -4,7 +4,7 @@
 
 void BossEnemy::ApplyGlobalVariables(){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "Enemy";
+	const char* groupName = "Boss";
 
 	nearPlayer_ = adjustment_item->GetfloatValue(groupName, "NearPlayer");
 	farPlayer_ = adjustment_item->GetfloatValue(groupName, "FarPlayer");
@@ -20,11 +20,14 @@ void BossEnemy::ApplyGlobalVariables(){
 	hitEaseStartLeft_ = adjustment_item->GetVector3Value(groupName, "HitEaseLeft");
 	hitEaseStartRight_ = adjustment_item->GetVector3Value(groupName, "HitEaseRight");
 	hitEaseStartCenter_ = adjustment_item->GetVector3Value(groupName, "HitEaseCenter");
+	/*攻撃関連*/
+	rotateNum_ = adjustment_item->GetfloatValue(groupName, "RotateNum");
+	rotateSpeed_ = adjustment_item->GetfloatValue(groupName, "RotateSpeed");
 }
 
 void BossEnemy::Initialize(const Vector3& position){
 	Adjustment_Item* adjustment_item = Adjustment_Item::GetInstance();
-	const char* groupName = "Enemy";
+	const char* groupName = "Boss";
 	//グループを追加
 	adjustment_item->CreateGroup(groupName);
 	//アイテムの追加
@@ -42,6 +45,9 @@ void BossEnemy::Initialize(const Vector3& position){
 	adjustment_item->AddItem(groupName, "HitEaseLeft", hitEaseStartLeft_);
 	adjustment_item->AddItem(groupName, "HitEaseRight", hitEaseStartRight_);
 	adjustment_item->AddItem(groupName, "HitEaseCenter", hitEaseStartCenter_);
+	/*攻撃関連*/
+	adjustment_item->AddItem(groupName, "RotateNum", rotateNum_);
+	adjustment_item->AddItem(groupName, "RotateSpeed", rotateSpeed_);
 
 	enemyLifeMax_ = adjustment_item->GetIntValue(groupName, "EnemyLifeMax");
 	enemyLife_ = enemyLifeMax_;
@@ -217,18 +223,29 @@ void BossEnemy::ParticleDraw(const ViewProjection& viewProjection, const Vector3
 
 void BossEnemy::DrawImgui() {
 #ifdef _DEBUG
-	ImGui::Begin("敵の変数");
+	ImGui::Begin("ボス");
+	
 	ImGui::DragFloat3("敵の座標", &transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("敵の回転", &transform_.rotate.x, 0.01f);
 	ImGui::Text("%.2f", rotateMatrix_.RotateAngleYFromMatrix());
+	ImGui::Text("体力 = %d", enemyLife_);
 	ImGui::DragFloat("プレイヤーとの距離", &playerLength_, 0.1f);
 	ImGui::DragFloat("ディゾルブの変数", &threshold_, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("回転攻撃の射程補正変数", &attackLength_, 0.1f, 0.0f, 100.0f);
-	ImGui::DragFloat3("回転", &slashAngle_.x, 0.01f, 0.0f, 3.14f);
 	ImGui::DragFloat4("色", &enemyColor_.x, 0.01f, 0.0f, 1.0f);
 	if (ImGui::Button("敵被弾ボタン")){
 		OnCollision();
 	}
+	if (ImGui::Button("敵近接攻撃ボタン")) {
+		NextAttack(AttackBehavior::kRotate);
+		behaviorRequest_ = Behavior::kAttack;
+	}
+	ImGui::DragFloat("左右のパーツの位置", &partsLRPos_, 0.1f, 0.0f, 10.0f);
+	parts_offset_BaseRight_ = { partsLRPos_, 0.0f, 0.0f };
+	parts_offset_BaseLeft_ = { -partsLRPos_, 0.0f, 0.0f };
+	ImGui::DragFloat("左右のパーツの角度", &partsLRRotateZ_, 0.01f, 0.0f, 3.14f);
+	partsRightTransform_.rotate.z = partsLRRotateZ_;
+	partsLeftTransform_.rotate.z = partsLRRotateZ_;
 	ImGui::End();
 #endif
 }
@@ -237,7 +254,7 @@ void BossEnemy::OnCollision(){
 	particle_->SetIsDraw(true);
 	enemyLife_ -= damege_;
 	particle_->AddParticle(emitter_);
-	behaviorRequest_ = Behavior::kLeaningBack;
+	//behaviorRequest_ = Behavior::kLeaningBack;
 }
 
 void BossEnemy::OnCollisionStrong(){
@@ -325,7 +342,7 @@ void BossEnemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		//RootMotion();
+		RootMotion();
 		break;
 	case Behavior::kRun:
 		EnemyRun();
@@ -396,6 +413,14 @@ void BossEnemy::BehaviorRootInitialize(){
 		isAttack_ = false;
 	}
 	isNearAttack_ = false;
+
+	partsLRPos_ = partsRotateRootPos_;
+	parts_offset_BaseRight_ = { partsLRPos_, 0.0f, 0.0f };
+	parts_offset_BaseLeft_ = { -partsLRPos_, 0.0f, 0.0f };
+	partsLRRotateZ_ = 0.0f;
+	partsRightTransform_.rotate.z = partsLRRotateZ_;
+	partsLeftTransform_.rotate.z = partsLRRotateZ_;
+	transform_.rotate.y = 0.0f;
 }
 
 void BossEnemy::BehaviorDeadInitialize(){	
@@ -450,7 +475,8 @@ void BossEnemy::RootMotion(){
 		}
 		//指定の秒数近くにいた場合
 		if (nearTime_ > lengthJudgment_) {			
-			behaviorRequest_ = Behavior::kRun;			
+			behaviorRequest_ = Behavior::kAttack;
+			NextAttack(AttackBehavior::kRotate);
 		}
 		//逆に離れていた場合
 		else if (farTime_ > lengthJudgmentFar_) {
@@ -512,14 +538,8 @@ void BossEnemy::EnemyRun(){
 	}
 	//一定距離近づいたら別の行動
 	if (playerLength_ < nearPlayer_) {
-		int i = 0;
-		
-		if (i == 0) {
-			behaviorRequest_ = Behavior::kFree;
-		}
-		else {
-			behaviorRequest_ = Behavior::kPreliminalyAction;
-		}
+		behaviorRequest_ = Behavior::kPreliminalyAction;
+		NextAttack(AttackBehavior::kTackle);
 	}
 }
 
@@ -527,6 +547,13 @@ void BossEnemy::BehaviorFreeInitialize(){
 	
 	freeTime_ = 0;
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
+	partsLRPos_ = partsRotateRootPos_;
+	parts_offset_BaseRight_ = { partsLRPos_, 0.0f, 0.0f };
+	parts_offset_BaseLeft_ = { -partsLRPos_, 0.0f, 0.0f };
+	partsLRRotateZ_ = 0.0f;
+	partsRightTransform_.rotate.z = partsLRRotateZ_;
+	partsLeftTransform_.rotate.z = partsLRRotateZ_;
+	transform_.rotate.y = 0.0f;
 }
 
 void BossEnemy::Free(){
@@ -672,10 +699,11 @@ void BossEnemy::DeadMotion(){
 
 void BossEnemy::BehaviorAttackInitialize() {
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
-	
-	ATBehaviorRequest_ = AttackBehavior::kTackle;
-	
 
+}
+
+void BossEnemy::NextAttack(const AttackBehavior attack){
+	ATBehaviorRequest_ = attack;
 }
 
 void BossEnemy::AttackMotion() {
@@ -686,6 +714,12 @@ void BossEnemy::AttackMotion() {
 		switch (ATBehavior_) {
 		case AttackBehavior::kTackle:
 			AttackBehaviorTackleInitialize();
+			break;
+		case AttackBehavior::kRotate:
+			AttackBehaviorRotateAttackInitialize();
+			break;
+		case AttackBehavior::kShot:
+			AttackBehaviorShotInitialize();
 			break;
 		case AttackBehavior::kNone:
 			BehaviorRootInitialize();
@@ -698,6 +732,12 @@ void BossEnemy::AttackMotion() {
 	switch (ATBehavior_) {
 	case AttackBehavior::kTackle:
 		Tackle();
+		break;
+	case AttackBehavior::kRotate:
+		RotateAttack();
+		break;
+	case AttackBehavior::kShot:
+		PartsShot();
 		break;
 	case AttackBehavior::kNone:
 		behaviorRequest_ = Behavior::kFree;
@@ -768,4 +808,43 @@ void BossEnemy::Tackle(){
 		//directionTime_--;
 	}
 	
+}
+
+void BossEnemy::AttackBehaviorRotateAttackInitialize(){
+	partsLRPos_ = partsRotateAttackPos_;
+	parts_offset_BaseRight_ = { partsLRPos_, 0.0f, 0.0f };
+	parts_offset_BaseLeft_ = { -partsLRPos_, 0.0f, 0.0f };
+	partsLRRotateZ_ = partsRotateAttackRotateZ_;
+	partsRightTransform_.rotate.z = partsLRRotateZ_;
+	partsLeftTransform_.rotate.z = partsLRRotateZ_;
+	transform_.rotate.y = 0.0f;
+	rotateAttackMax_ = (float)(std::numbers::pi)*rotateNum_;
+	rotateAttackEaseT_ = 0.0f;
+	attackRotate_ = 0;
+}
+
+void BossEnemy::RotateAttack(){
+	transform_.rotate.y = ease_.Easing(Ease::EaseName::EaseInOutBack, 0.0f, rotateAttackMax_, rotateAttackEaseT_);
+	if (rotateAttackEaseT_ > slowPoint_) {
+		rotateAttackEaseT_ += rotateSpeed_ * slow_;
+		attackOBB_.size = { 0,0,0 };
+	}
+	else {
+		rotateAttackEaseT_ += rotateSpeed_;
+		attackOBB_.size = bodyOBB_.size * collisionScale_;
+	}
+	
+	if (rotateAttackEaseT_ > 1.0f){
+		rotateAttackEaseT_ = 1.0f;
+		behaviorRequest_ = Behavior::kFree;
+	}
+
+}
+
+void BossEnemy::AttackBehaviorShotInitialize(){
+
+}
+
+void BossEnemy::PartsShot(){
+
 }

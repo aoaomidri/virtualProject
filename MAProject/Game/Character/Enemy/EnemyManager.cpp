@@ -39,7 +39,7 @@ void EnemyManager::Update(){
 	for (const auto& enemy : enemies_) {
 		enemy->SetTimeScale(timeScale_);
 		enemy->SetShininess(enemyShininess_);
-		//enemy->Update();
+		enemy->Update();
 	}
 	boss_->SetTimeScale(timeScale_);
 	boss_->SetShininess(enemyShininess_);
@@ -47,30 +47,31 @@ void EnemyManager::Update(){
 }
 
 void EnemyManager::Draw(const FollowCamera* camera){
-	//for (const auto& enemy : enemies_) {
-	//	//enemy->Draw(camera->GetViewProjection());
-	//}
+	for (const auto& enemy : enemies_) {
+		enemy->Draw(camera->GetViewProjection());
+	}
 	boss_->Draw(camera->GetViewProjection());
 }
 
 void EnemyManager::TexDraw(const FollowCamera* camera){
-	//for (const auto& enemy : enemies_) {
-	//	//enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
-	//}
+	for (const auto& enemy : enemies_) {
+		enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
+	}
 	boss_->TexDraw(camera->GetViewProjection().matViewProjection_);
 }
 
 void EnemyManager::ParticleDraw(const FollowCamera* camera, const Vector3& color){
-	//for (const auto& enemy : enemies_) {
-	//	//enemy->ParticleDraw(camera->GetViewProjection(), color);
-	//}
+	for (const auto& enemy : enemies_) {
+		enemy->ParticleDraw(camera->GetViewProjection(), color);
+	}
 	boss_->ParticleDraw(camera->GetViewProjection(), color);
 }
 
 void EnemyManager::DrawImgui(){
-	//for (const auto& enemy : enemies_) {
-	//	//enemy->DrawImgui();
-	//}
+	for (const auto& enemy : enemies_) {
+		enemy->DrawImgui();
+	}
+	boss_->DrawImgui();
 	tickets_->DrawImgui();
 	ImGui::Begin("敵の数");
 	ImGui::Text("今の敵の数 = %d", enemies_.size());

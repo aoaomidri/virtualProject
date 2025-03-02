@@ -13,6 +13,12 @@ void PlayerRoot::Initialize(){
 }
 
 void PlayerRoot::Update(const Vector3& cameraRotate){
+	if (context_.isJump_){
+		context_.isJump_ = false;
+	}
+	if (context_.isAttackJump_) {
+		context_.isAttackJump_ = false;
+	}
 	context_.cameraRotate_ = cameraRotate;
 	context_.frontVec_ = context_.postureVec_;
 

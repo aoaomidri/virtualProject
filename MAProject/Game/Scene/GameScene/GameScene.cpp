@@ -363,6 +363,93 @@ void GameScene::AllCollision(){
 			}
 		}		
 	}
+	//ボスとの当たり判定
+	
+	const auto& enemy = enemyManager_->GetBossEnemy();
+	uint32_t serialNumber = enemy->GetSerialNumber();
+	//敵がカメラに写っているか
+	if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), followCamera_->GetLockViewingFrustum())) {
+		enemy->SetIsOnScreen(true);
+	}
+	else {
+		enemy->SetIsOnScreen(false);
+	}
+	//敵が映っていなかったらこの後は処理しない
+	if (!enemy->GetIsOnScreen()) {
+			
+	}
+	else {
+		//ガード判定と敵の攻撃判定との処理
+		if (player_->GetIsGuard()) {
+			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
+				if (player_->RecordCheck(serialNumber)) {
+					return;
+				}
+				player_->OnCollisionEnemyAttack();
+				//ノックバックの種類を指定
+				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
+				//ヒット音の再生
+				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
+				//当たったときの処理
+				enemy->OnCollisionGuard();
+			}
+		}
+		//武器の判定と敵の体の判定との処理
+		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
+			if (player_->RecordCheck(serialNumber)) {
+				return;
+			}
+			if (player_->GetIsGuard()) {
+
+			}
+			else {
+				//ノックバックの種類を指定
+				enemy->SetKnockBackType(player_->GetKnockbackType());
+				//接触履歴に登録
+				player_->AddRecord(serialNumber);
+				//ヒット音の再生
+				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
+				//ヒットストップ
+				GameTime::StopTime(player_->GetHitStop());
+				//当たったときの処理
+				if (player_->ChackStrongBack()) {
+					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
+					enemy->OnCollisionStrong();
+				}
+				else {
+					enemy->OnCollision();
+				}
+			}
+		}
+
+		//プレイヤー自身と敵の体の判定
+		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
+			player_->SetCollisionEnemy(true);
+			return;
+		}
+		else {
+			player_->SetCollisionEnemy(false);
+		}
+		//回避と敵の攻撃との判定
+		if (player_->GetIsDash()) {
+			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
+
+				player_->OnCollisionEnemyAttackAvoid(serialNumber);
+			}
+		}
+		else {
+			if (!player_->GetIsGuard()) {
+				//ガードをしていなかったら敵の攻撃とプレイヤーとの判定
+				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
+					GameTime::AddGameTime();
+					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
+					player_->OnCollisionEnemyAttack();
+				}
+			}
+		}
+	}
+		
+	
 }
 
 void GameScene::FilesSave(const std::vector<std::string>& stages) {

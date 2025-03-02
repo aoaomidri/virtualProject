@@ -203,6 +203,7 @@ public:
 		StrongAttack,/*強攻撃時*/
 		Dash,/*ダッシュ時*/
 		kJustAvoid,/*ジャスト回避中*/
+		kLeaningBack,/*被弾モーション*/
 	};
 
 	/// <summary>

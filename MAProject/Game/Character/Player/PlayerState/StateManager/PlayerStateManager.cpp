@@ -57,6 +57,9 @@ void PlayerStateManager::ChangeState(const StateName nextState){
 	else if (nextState == StateName::kJustAvoid){
 		nextState_ = std::make_unique<PlayerJustAvoid>(context_);
 	}
+	else if (nextState == StateName::kLeaningBack) {
+		nextState_ = std::make_unique<PlayerLeaningBack>(context_);
+	}
 	
 	nowStateName_ = nextState;
 }

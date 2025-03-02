@@ -438,6 +438,7 @@ void Player::OnCollisionEnemyAttack(){
 			audio_->PlayAudio(playerHitSE_, seVolume_, false);
 			isHitEnemyAttack_ = true;
 			hitTimer_ = hitTimerBase_;
+			stateManager_->ChangeState(BasePlayerState::StateName::kLeaningBack);
 		}		
 	}	
 }

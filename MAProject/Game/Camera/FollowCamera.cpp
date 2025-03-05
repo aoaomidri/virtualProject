@@ -108,8 +108,10 @@ void FollowCamera::Update(){
 			}
 		}
 	}
-	attackAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
-	attackAngleX_ = resetAngle_;
+	if (targetRotateMatrix_) {
+		attackAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
+		attackAngleX_ = resetAngle_;
+	}
 	//回転を加算
 	destinationAngleX_ += cameraMove_.x;
 	destinationAngleY_ += cameraMove_.y;
@@ -190,14 +192,18 @@ void FollowCamera::Reset(){
 }
 
 void FollowCamera::RotateReset(){
-	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
-	destinationAngleX_ = 0.2f;
+	if (targetRotateMatrix_) {
+		destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
+		destinationAngleX_ = 0.2f;
+	}
 }
 
 void FollowCamera::CameraPosInit(){
-	destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
-	destinationAngleX_ = 0.2f;
-	cameraMove_ = { 0,0,0 };
+	if (targetRotateMatrix_) {
+		destinationAngleY_ = Matrix::RotateAngleYFromMatrix(*targetRotateMatrix_);
+		destinationAngleX_ = 0.2f;
+		cameraMove_ = { 0,0,0 };
+	}
 }
 
 Vector3 FollowCamera::offsetCalculation(const Vector3& offset) const{

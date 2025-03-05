@@ -181,7 +181,7 @@ void TitleScene::Initialize() {
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
-	followCamera_->SetPosition(Vector3(0.0f, 20.0f, 0.0f));
+	followCamera_->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();

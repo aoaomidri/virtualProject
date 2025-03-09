@@ -228,6 +228,9 @@
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerLeaningBack.cpp">
       <Filter>Game\Character\Player\PlayerState\States</Filter>
     </ClCompile>
+    <ClCompile Include="Game\UI\GameUIManager.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -440,6 +443,9 @@
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerLeaningBack.h">
       <Filter>Game\Character\Player\PlayerState\States</Filter>
     </ClInclude>
+    <ClInclude Include="Game\UI\GameUIManager.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object2d.hlsli">
@@ -575,6 +581,9 @@
     </Filter>
     <Filter Include="Engine\Scenefactory">
       <UniqueIdentifier>{56092085-232a-4d95-9029-37a7a294bf13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{2e812b49-43e3-497b-858b-62a961509a5e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

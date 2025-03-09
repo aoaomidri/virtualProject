@@ -6,6 +6,7 @@ EnemyManager::EnemyManager(){
 
 void EnemyManager::Initialize(){
 	RandomMaker* random = RandomMaker::GetInstance();
+	isTutoria_ = true;
 
 	tickets_ = std::make_unique<EnemyAttackTicket>(enemyNum_, 3);
 
@@ -25,46 +26,93 @@ void EnemyManager::Initialize(){
 		enemy_->Update();
 		enemies_.push_back(std::move(enemy_));
 	}
+
+	for (size_t i = 0; i < tutorialEnemyNum_; i++) {
+		enemy_ = std::make_unique<Enemy>();
+		enemy_->Initialize(enemysPos_[i], tickets_.get());
+		enemy_->SetTarget(targetTrans_);
+		enemy_->SetTargetMat(targetRotateMat_);
+		enemy_->Update();
+		tutorialEnemies_.push_back(std::move(enemy_));
+	}
 }
 
 void EnemyManager::Update(){
-	//条件が合致したらリストから排除
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
-		if (enemy->GetIsDead()) {
-			return true;
+	if (isTutoria_){
+		tutorialEnemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+			if (enemy->GetIsDead()) {
+				return true;
+			}
+			return false;
+		});
+		for (const auto& enemy : tutorialEnemies_) {
+			enemy->SetTimeScale(timeScale_);
+			enemy->SetShininess(enemyShininess_);
+			enemy->Update();
 		}
-		return false;
-	});
-
-	for (const auto& enemy : enemies_) {
-		enemy->SetTimeScale(timeScale_);
-		enemy->SetShininess(enemyShininess_);
-		enemy->Update();
 	}
-	boss_->SetTimeScale(timeScale_);
-	boss_->SetShininess(enemyShininess_);
-	boss_->Update();
+	else {
+		//条件が合致したらリストから排除
+		enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+			if (enemy->GetIsDead()) {
+				return true;
+			}
+			return false;
+		});
+
+		for (const auto& enemy : enemies_) {
+			enemy->SetTimeScale(timeScale_);
+			enemy->SetShininess(enemyShininess_);
+			enemy->Update();
+		}
+		boss_->SetTimeScale(timeScale_);
+		boss_->SetShininess(enemyShininess_);
+		boss_->Update();
+	}
+
+	
 }
 
 void EnemyManager::Draw(const FollowCamera* camera){
-	for (const auto& enemy : enemies_) {
-		enemy->Draw(camera->GetViewProjection());
+	if (isTutoria_){
+		for (const auto& enemy : tutorialEnemies_) {
+			enemy->Draw(camera->GetViewProjection());
+		}
 	}
-	boss_->Draw(camera->GetViewProjection());
+	else {
+		for (const auto& enemy : enemies_) {
+			enemy->Draw(camera->GetViewProjection());
+		}
+		boss_->Draw(camera->GetViewProjection());
+	}
 }
 
 void EnemyManager::TexDraw(const FollowCamera* camera){
-	for (const auto& enemy : enemies_) {
-		enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
+	if (isTutoria_) {
+		for (const auto& enemy : tutorialEnemies_) {
+			enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
+		}
 	}
-	boss_->TexDraw(camera->GetViewProjection().matViewProjection_);
+	else {
+		for (const auto& enemy : enemies_) {
+			enemy->TexDraw(camera->GetViewProjection().matViewProjection_);
+		}
+		boss_->TexDraw(camera->GetViewProjection().matViewProjection_);
+	}	
 }
 
 void EnemyManager::ParticleDraw(const FollowCamera* camera, const Vector3& color){
-	for (const auto& enemy : enemies_) {
-		enemy->ParticleDraw(camera->GetViewProjection(), color);
+	if (isTutoria_) {
+		for (const auto& enemy : tutorialEnemies_) {
+			enemy->ParticleDraw(camera->GetViewProjection(), color);
+		}
 	}
-	boss_->ParticleDraw(camera->GetViewProjection(), color);
+	else {
+		for (const auto& enemy : enemies_) {
+			enemy->ParticleDraw(camera->GetViewProjection(), color);
+		}
+		boss_->ParticleDraw(camera->GetViewProjection(), color);
+	}	
 }
 
 void EnemyManager::DrawImgui(){

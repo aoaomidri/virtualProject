@@ -30,9 +30,16 @@ public:
 	//ゲッター
 	std::list<std::unique_ptr<Enemy>> &GetEnemies() { return enemies_; }
 
+	//ゲッター
+	std::list<std::unique_ptr<Enemy>>& GetTutorialEnemies() { return tutorialEnemies_; }
+
 	BossEnemy* GetBossEnemy() { return boss_.get(); }
 
+	const bool GetIsTutorial() const { return isTutoria_; }
+
 	const size_t GetEnemyNum()const { return enemies_.size(); }
+
+	const size_t GetTutorialEnemyNum()const { return tutorialEnemies_.size(); }
 
 	//セッター
 	void SetTarget(const EulerTransform* target) { targetTrans_ = target; }
@@ -45,7 +52,8 @@ public:
 
 	void SetTimeScale(const float scale) { timeScale_ = scale; }
 
-
+	//セッター
+	void SetTutorialFlug(const bool flug) { isTutoria_ = flug; }
 private:
 	float timeScale_ = 0.0f;
 	//敵の反射強度
@@ -57,12 +65,18 @@ private:
 	std::unique_ptr<BossEnemy> boss_;
 	//敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;	
-
-	
+	//チュートリアル用敵のリスト
+	std::list<std::unique_ptr<Enemy>> tutorialEnemies_;
 
 	std::unique_ptr<EnemyAttackTicket>tickets_;
 	//敵の初期最大値
 	static const int32_t enemyNum_ = 80;
+	//チュートリアル用敵の初期最大値
+	static const int32_t tutorialEnemyNum_ = 30;
+
+	//チュートリアル用のフラグ
+	bool isTutoria_ = true;
+
 	//追加する敵の数
 	const int32_t addEnemyNum_ = 1;
 	//ひとまず手打ちでの敵の初期値座標

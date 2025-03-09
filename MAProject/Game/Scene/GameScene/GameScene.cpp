@@ -42,33 +42,20 @@ void GameScene::SpriteInitialize(){
 	backSprite_->Initialize(textureHandle);
 	backSprite_->isDraw_ = false;
 
-	actionTextSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/actionText.png");
-	actionTextSprite_->Initialize(textureHandle);
-
-	attackSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/STAttack.png");
-	attackSprite_->Initialize(textureHandle);
-
 	for (size_t i = 0; i < timerTexs_.size(); i++){
 		timerTexs_[i] = std::make_unique<Sprite>();
 		textureHandle = textureManager_->Load("resources/texture/number/number.png");
 		timerTexs_[i]->Initialize(textureHandle);
 	}
 
+	uiManager_ = std::make_unique<GameUIManager>();
+	uiManager_->Initialize();
+
 	backSprite_->position_ = { 640.0f,360.0f };
 	backSprite_->anchorPoint_ = { 0.5f,0.5f };
 	backSprite_->scale_.x = 1280.0f;
 	backSprite_->scale_.y = 720.0f;
 	backSprite_->color_ = { 0.0f,0.0f,0.0f,0.85f };
-
-	actionTextSprite_->position_ = { 1072.0f,500.0f };
-	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
-	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	attackSprite_->position_ = { 1072.0f,650.0f };
-	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
-	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	for (size_t i = 0; i < timerTexs_.size(); i++) {
 		timerTexs_[i]->scale_ = { 96.0f,96.0f };
@@ -135,6 +122,7 @@ void GameScene::Update(){
 	//インゲーム用の時間更新
 	GameTime::InGameUpdate();
 	//時間のテクスチャの更新
+	uiManager_->Update();
 	TimeTexUpdate();
 	//timeScaleをそれぞれに渡す
 	enemyManager_->SetTimeScale(GameTime::timeScale_);
@@ -217,12 +205,10 @@ void GameScene::Draw2D(){
 	/*描画前処理*/
 	textureManager_->PreDraw2D();
 	///*ここから下に描画処理を書き込む*/
-	actionTextSprite_->Draw();
-	attackSprite_->Draw();
-
 	for (size_t i = 0; i < timerTexs_.size(); i++){
 		timerTexs_[i]->Draw();
-	}		
+	}
+	uiManager_->Draw();
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw2D();

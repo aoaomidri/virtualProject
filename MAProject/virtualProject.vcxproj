@@ -230,6 +230,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Stage\Floor\FloorManager.cpp" />
     <ClCompile Include="Game\Stage\StageObject\StageObject.cpp" />
     <ClCompile Include="Game\Time\GameTime.cpp" />
+    <ClCompile Include="Game\UI\GameUIManager.cpp" />
     <ClCompile Include="Game\WholeGame\MAFramework.cpp" />
     <ClCompile Include="Game\WholeGame\WholeGame.cpp" />
     <ClCompile Include="main.cpp" />
@@ -303,6 +304,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Stage\Floor\FloorManager.h" />
     <ClInclude Include="Game\Stage\StageObject\StageObject.h" />
     <ClInclude Include="Game\Time\GameTime.h" />
+    <ClInclude Include="Game\UI\GameUIManager.h" />
     <ClInclude Include="Game\WholeGame\MAFramework.h" />
     <ClInclude Include="Game\WholeGame\WholeGame.h" />
   </ItemGroup>

@@ -20,6 +20,7 @@
 #include"SceneManager/SceneManager.h"
 #include"StageObject.h"
 #include"PostEffect.h"
+#include"UI/GameUIManager.h"
 /*インゲーム部分の初期化、更新、描画*/
 
 class GameScene : public BaseScene{
@@ -92,8 +93,8 @@ private:
 	std::unique_ptr<Sprite> backSprite_;
 	std::array<std::unique_ptr<Sprite>, 4> timerTexs_;
 	std::unique_ptr<Sprite> slushTex_;
-	std::unique_ptr<Sprite> actionTextSprite_;
-	std::unique_ptr<Sprite> attackSprite_;
+
+	std::unique_ptr<GameUIManager> uiManager_;
 
 	/*ロックオン*/
 	std::unique_ptr<LockOn> lockOn_;

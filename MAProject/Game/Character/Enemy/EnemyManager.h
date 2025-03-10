@@ -28,18 +28,27 @@ public:
 
 public:
 	//ゲッター
-	std::list<std::unique_ptr<Enemy>> &GetEnemies() { return enemies_; }
-
-	//ゲッター
-	std::list<std::unique_ptr<Enemy>>& GetTutorialEnemies() { return tutorialEnemies_; }
+	std::list<std::unique_ptr<Enemy>>& GetEnemies() {
+		if (isTutoria_){
+			return tutorialEnemies_;
+		}
+		else {
+			return enemies_;
+		}
+	}
 
 	BossEnemy* GetBossEnemy() { return boss_.get(); }
 
 	const bool GetIsTutorial() const { return isTutoria_; }
 
-	const size_t GetEnemyNum()const { return enemies_.size(); }
-
-	const size_t GetTutorialEnemyNum()const { return tutorialEnemies_.size(); }
+	const size_t GetEnemyNum()const {
+		if (isTutoria_) {
+			return tutorialEnemies_.size();
+		}
+		else {
+			return enemies_.size();
+		}
+	}
 
 	//セッター
 	void SetTarget(const EulerTransform* target) { targetTrans_ = target; }

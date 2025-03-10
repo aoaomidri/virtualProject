@@ -50,7 +50,7 @@ void TitleScene::SpriteInitialize() {
 	selectSprite_->Initialize(textureHandle);
 
 	controlSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/control.png");
+	textureHandle = textureManager_->Load("resources/texture/combo/control.png");
 	controlSprite_->Initialize(textureHandle);
 	controlSprite_->isDraw_ = false;
 	//////ここから修正

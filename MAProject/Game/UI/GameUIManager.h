@@ -32,13 +32,16 @@ private:
 	const char* groupName_ = "UI";
 
 	static const int comboMax_ = 6;
+	int titorialLevel_ = 1;
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
 	//プレイヤーの状態
 	PlayerStateManager* plStateManager_ = nullptr;
-
+	//コンボ描画用
 	std::unique_ptr<Sprite> weakComboTex_;
+	std::unique_ptr<Sprite> strong2ComboTex_;
+
 	std::unique_ptr<Sprite> actionTextSprite_;
 	std::unique_ptr<Sprite> attackSprite_;
 

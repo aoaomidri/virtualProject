@@ -231,6 +231,9 @@
     <ClCompile Include="Game\UI\GameUIManager.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Game\UI\TutorialUI.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DescriptorHeap.h">
@@ -444,6 +447,9 @@
       <Filter>Game\Character\Player\PlayerState\States</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\GameUIManager.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\TutorialUI.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
   </ItemGroup>

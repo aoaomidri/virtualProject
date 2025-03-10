@@ -3,6 +3,8 @@
 void GameUIManager::ApplyGlobalVariables(){
 	weakComboTex_->position_ = adjustment_item_->GetVector3Value(groupName_, "weakTexPos");
 	weakComboTex_->scale_=adjustment_item_->GetVector2Value(groupName_, "weakTexScale");
+	strong2ComboTex_->position_ = adjustment_item_->GetVector3Value(groupName_, "strong2TexPos");
+	strong2ComboTex_->scale_ = adjustment_item_->GetVector2Value(groupName_, "strong2TexScale");
 	checkMarkTex_[0]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark1Pos");
 	checkMarkTex_[1]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark2Pos");
 	checkMarkTex_[2]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark3Pos");
@@ -19,6 +21,8 @@ void GameUIManager::ExportGlobalVariables(){
 	//アイテムの追加
 	adjustment_item_->AddItem(groupName_, "weakTexPos", weakComboTex_->position_);
 	adjustment_item_->AddItem(groupName_, "weakTexScale", weakComboTex_->scale_);
+	adjustment_item_->AddItem(groupName_, "strong2TexPos", strong2ComboTex_->position_);
+	adjustment_item_->AddItem(groupName_, "strong2TexScale", strong2ComboTex_->scale_);
 	adjustment_item_->AddItem(groupName_, "checkMark1Pos", checkMarkTex_[0]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark2Pos", checkMarkTex_[1]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark3Pos", checkMarkTex_[2]->position_);
@@ -46,6 +50,9 @@ void GameUIManager::Initialize(){
 
 	weakComboTex_->anchorPoint_ = { 0.5f,0.5f };
 	weakComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	strong2ComboTex_->anchorPoint_ = { 0.5f,0.5f };
+	strong2ComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
 void GameUIManager::TextureInitialize(){
@@ -62,8 +69,12 @@ void GameUIManager::TextureInitialize(){
 	attackSprite_->Initialize(textureHandle);
 
 	weakComboTex_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/controlWeak.png");
+	textureHandle = textureManager_->Load("resources/texture/combo/controlWeak.png");
 	weakComboTex_->Initialize(textureHandle);
+
+	strong2ComboTex_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/combo/Strong2Attack.png");
+	strong2ComboTex_->Initialize(textureHandle);
 
 	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i] = std::make_unique<Sprite>();
@@ -116,6 +127,8 @@ void GameUIManager::TutorialUpdate(){
 void GameUIManager::Draw(){
 
 	weakComboTex_->Draw();
+	strong2ComboTex_->Draw();
+
 	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i]->Draw();
 	}

@@ -16,8 +16,13 @@ public:
 
 	//初期化
 	void Initialize();
+	//テクスチャを呼び出したり等の初期化
+	void TextureInitialize();
 	//更新処理
 	void Update();
+	//チュートリアルのUI更新
+	void TutorialUpdate();
+
 	//描画処理
 	void Draw();
 
@@ -29,6 +34,9 @@ private:
 	static const int comboMax_ = 6;
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
+
+	//プレイヤーの状態
+	PlayerStateManager* plStateManager_ = nullptr;
 
 	std::unique_ptr<Sprite> weakComboTex_;
 	std::unique_ptr<Sprite> actionTextSprite_;

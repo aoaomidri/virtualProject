@@ -29,7 +29,26 @@ void GameUIManager::ExportGlobalVariables(){
 }
 
 void GameUIManager::Initialize(){
+	plStateManager_ = PlayerStateManager::GetInstance();
+
 	//テクスチャの初期化
+	TextureInitialize();
+	ExportGlobalVariables();
+
+	actionTextSprite_->position_ = { 1117.0f,531.0f };
+	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
+	actionTextSprite_->scale_ = { 242.0f,137.0f };
+	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	attackSprite_->position_ = { 1072.0f,650.0f };
+	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
+	attackSprite_->color_ = { 1.0f,1.0f,1.0f,0.0f };
+
+	weakComboTex_->anchorPoint_ = { 0.5f,0.5f };
+	weakComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+}
+
+void GameUIManager::TextureInitialize(){
 	uint32_t textureHandle = 0;
 
 	textureManager_ = TextureManager::GetInstance();
@@ -46,29 +65,17 @@ void GameUIManager::Initialize(){
 	textureHandle = textureManager_->Load("resources/texture/controlWeak.png");
 	weakComboTex_->Initialize(textureHandle);
 
-	for (size_t i = 0; i < comboMax_; i++){
+	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i] = std::make_unique<Sprite>();
 		textureHandle = textureManager_->Load("resources/texture/Mark/checkMark.png");
 		checkMarkTex_[i]->Initialize(textureHandle);
 	}
-
-	ExportGlobalVariables();
-
-	actionTextSprite_->position_ = { 1117.0f,531.0f };
-	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
-	actionTextSprite_->scale_ = { 242.0f,137.0f };
-	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
-
-	attackSprite_->position_ = { 1072.0f,650.0f };
-	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
-	attackSprite_->color_ = { 1.0f,1.0f,1.0f,0.0f };
-
-	weakComboTex_->anchorPoint_ = { 0.5f,0.5f };
-	weakComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 }
 
 void GameUIManager::Update(){
 	ApplyGlobalVariables();
+
+	TutorialUpdate();
 
 	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i]->scale_ = { checkScale_,checkScale_ };
@@ -83,6 +90,27 @@ void GameUIManager::Update(){
 		ImGui::DragFloat2("X攻撃の大きさ", &actionTextSprite_->scale_.x, 1.0f);
 		ImGui::End();
 #endif
+}
+
+void GameUIManager::TutorialUpdate(){
+	PlayerStateManager::StateName nowStateName = plStateManager_->GetStateName();
+	//攻撃状態であれば描画
+	if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack){
+		//強攻撃時はコンボを参照しない
+		if (nowStateName != PlayerStateManager::StateName::StrongAttack) {
+			int combo = plStateManager_->GetComboIndex();
+			for (size_t i = 0; i < combo; i++) {
+				checkMarkTex_[i]->color_.w = 1.0f;
+			}
+		}
+	}
+	else {
+		for (size_t i = 0; i < comboMax_; i++) {
+			checkMarkTex_[i]->color_.w = 0.0f;
+		}
+	}
+
+	
 }
 
 void GameUIManager::Draw(){

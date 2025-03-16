@@ -26,6 +26,10 @@ public:
 	//描画処理
 	void Draw();
 
+	const bool GetIsTutorial() const { return isTutorial_; }
+	//セッター
+	void SetTutorialFlug(const bool flug) { isTutorial_ = flug; }
+
 private:
 	//外部ファイルとやり取りする
 	Adjustment_Item* adjustment_item_ = nullptr;
@@ -33,6 +37,11 @@ private:
 
 	static const int comboMax_ = 6;
 	int titorialLevel_ = 1;
+
+	bool isTutorial_ = true;
+
+	bool CheckStrong_ = false;
+	bool CheckWeak_ = false;
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
@@ -46,6 +55,10 @@ private:
 	std::unique_ptr<Sprite> attackSprite_;
 
 	std::array<std::unique_ptr<Sprite>, comboMax_> checkMarkTex_;
-	std::array<Vector2, comboMax_> checkPos_;
+	std::array<Vector3, comboMax_> checkPos_;
+
+	std::array<Vector3, comboMax_> checkPosStrong_;
 	float checkScale_;
+
+	 
 };

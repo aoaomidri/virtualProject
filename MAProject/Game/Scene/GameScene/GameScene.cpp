@@ -135,6 +135,9 @@ void GameScene::Update(){
 
 	frontFlag = player_->GetIsJustAvoid();	
 	player_->Update();
+	if (uiManager_->GetIsTutorial() == false){
+		enemyManager_->SetTutorialFlug(false);
+	}
 	enemyManager_->Update();
 	lockOn_->Update(enemyManager_->GetEnemies(), followCamera_->GetViewProjection(), input_, followCamera_->GetLockViewingFrustum(), player_->GetIsJustAvoid(), player_->GetSerialNumber());
 	//当たり判定
@@ -350,7 +353,11 @@ void GameScene::AllCollision(){
 		}		
 	}
 	//ボスとの当たり判定
-	
+	//チュートリアル時はスキップ
+	if (enemyManager_->GetIsTutorial()){
+		return;
+	}
+
 	const auto& enemy = enemyManager_->GetBossEnemy();
 	uint32_t serialNumber = enemy->GetSerialNumber();
 	//敵がカメラに写っているか

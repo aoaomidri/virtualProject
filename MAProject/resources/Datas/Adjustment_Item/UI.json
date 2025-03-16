@@ -5,9 +5,19 @@
             620.0,
             -0.05000000074505806
         ],
+        "checkMark1PosStrong": [
+            506.5,
+            556.5,
+            0.0
+        ],
         "checkMark2Pos": [
             435.0,
             620.0,
+            0.0
+        ],
+        "checkMark2PosStrong": [
+            616.5,
+            556.5,
             0.0
         ],
         "checkMark3Pos": [
@@ -15,9 +25,19 @@
             620.0,
             0.0
         ],
+        "checkMark3PosStrong": [
+            726.5,
+            556.5,
+            0.0
+        ],
         "checkMark4Pos": [
             655.0,
             620.0,
+            0.0
+        ],
+        "checkMark4PosStrong": [
+            726.5,
+            640.0,
             0.0
         ],
         "checkMark5Pos": [
@@ -25,20 +45,30 @@
             620.0,
             0.0
         ],
+        "checkMark5PosStrong": [
+            0.0,
+            0.0,
+            0.0
+        ],
         "checkMark6Pos": [
             875.0,
             620.0,
             0.0
         ],
+        "checkMark6PosStrong": [
+            0.0,
+            0.0,
+            0.0
+        ],
         "checkMarkScale": 64.0,
         "strong2TexPos": [
-            632.0,
             650.0,
+            629.3699951171875,
             0.0
         ],
         "strong2TexScale": [
-            189.97000122070313,
-            82.55000305175781
+            300.0,
+            160.0
         ],
         "weakTexPos": [
             632.0,

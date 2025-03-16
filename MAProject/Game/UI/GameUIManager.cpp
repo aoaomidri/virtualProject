@@ -11,6 +11,12 @@ void GameUIManager::ApplyGlobalVariables(){
 	checkMarkTex_[3]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark4Pos");
 	checkMarkTex_[4]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark5Pos");
 	checkMarkTex_[5]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark6Pos");
+	checkPosStrong_[0] = adjustment_item_->GetVector3Value(groupName_, "checkMark1PosStrong");
+	checkPosStrong_[1] = adjustment_item_->GetVector3Value(groupName_, "checkMark2PosStrong");
+	checkPosStrong_[2] = adjustment_item_->GetVector3Value(groupName_, "checkMark3PosStrong");
+	checkPosStrong_[3] = adjustment_item_->GetVector3Value(groupName_, "checkMark4PosStrong");
+	checkPosStrong_[4] = adjustment_item_->GetVector3Value(groupName_, "checkMark5PosStrong");
+	checkPosStrong_[5] = adjustment_item_->GetVector3Value(groupName_, "checkMark6PosStrong");
 	checkScale_ = adjustment_item_->GetfloatValue(groupName_, "checkMarkScale");
 }
 
@@ -29,12 +35,19 @@ void GameUIManager::ExportGlobalVariables(){
 	adjustment_item_->AddItem(groupName_, "checkMark4Pos", checkMarkTex_[3]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark5Pos", checkMarkTex_[4]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark6Pos", checkMarkTex_[5]->position_);
+
+	adjustment_item_->AddItem(groupName_, "checkMark1PosStrong", checkPosStrong_[0]);
+	adjustment_item_->AddItem(groupName_, "checkMark2PosStrong", checkPosStrong_[1]);
+	adjustment_item_->AddItem(groupName_, "checkMark3PosStrong", checkPosStrong_[2]);
+	adjustment_item_->AddItem(groupName_, "checkMark4PosStrong", checkPosStrong_[3]);
+	adjustment_item_->AddItem(groupName_, "checkMark5PosStrong", checkPosStrong_[4]);
+	adjustment_item_->AddItem(groupName_, "checkMark6PosStrong", checkPosStrong_[5]);
 	adjustment_item_->AddItem(groupName_, "checkMarkScale", checkScale_);
 }
 
 void GameUIManager::Initialize(){
 	plStateManager_ = PlayerStateManager::GetInstance();
-
+	titorialLevel_ = 1;
 	//テクスチャの初期化
 	TextureInitialize();
 	ExportGlobalVariables();
@@ -73,7 +86,7 @@ void GameUIManager::TextureInitialize(){
 	weakComboTex_->Initialize(textureHandle);
 
 	strong2ComboTex_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/combo/Strong2Attack.png");
+	textureHandle = textureManager_->Load("resources/texture/combo/Strong2AttackTex.png");
 	strong2ComboTex_->Initialize(textureHandle);
 
 	for (size_t i = 0; i < comboMax_; i++) {
@@ -105,34 +118,79 @@ void GameUIManager::Update(){
 
 void GameUIManager::TutorialUpdate(){
 	PlayerStateManager::StateName nowStateName = plStateManager_->GetStateName();
-	//攻撃状態であれば描画
-	if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack){
-		//強攻撃時はコンボを参照しない
-		if (nowStateName != PlayerStateManager::StateName::StrongAttack) {
-			int combo = plStateManager_->GetComboIndex();
-			for (size_t i = 0; i < combo; i++) {
-				checkMarkTex_[i]->color_.w = 1.0f;
+	if (titorialLevel_ == 1){
+		//攻撃状態であれば描画
+		if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack) {
+			//強攻撃時はコンボを参照しない
+			if (nowStateName != PlayerStateManager::StateName::StrongAttack) {
+				int combo = plStateManager_->GetComboIndex();
+				for (size_t i = 0; i < combo; i++) {
+					checkMarkTex_[i]->color_.w = 1.0f;
+				}
+				if (checkMarkTex_[5]->color_.w == 1.0) {
+					titorialLevel_++;
+				}
+			}
+		}
+		else {
+			for (size_t i = 0; i < comboMax_; i++) {
+				checkMarkTex_[i]->color_.w = 0.0f;
 			}
 		}
 	}
 	else {
 		for (size_t i = 0; i < comboMax_; i++) {
-			checkMarkTex_[i]->color_.w = 0.0f;
+			checkMarkTex_[i]->position_ = checkPosStrong_[i];
+		}
+		//攻撃状態であれば描画
+		if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack) {
+			int combo = plStateManager_->GetComboIndex();
+			if (combo>1){
+				//弱攻撃連打であれば早期リターン
+				if (nowStateName == PlayerStateManager::StateName::Attack) {
+					return;
+				}
+			}
+			if (combo == 2){
+				if (Input::GetInstance()->GetPadButtonTriger(Input::GamePad::X)) {
+					checkMarkTex_[2]->color_.w = 1.0f;
+					CheckWeak_ = true;
+				}
+				else if(Input::GetInstance()->GetPadButtonTriger(Input::GamePad::Y)) {
+					checkMarkTex_[3]->color_.w = 1.0f;
+					CheckStrong_ = true;
+				}
+			}
+			
+			for (size_t i = 0; i < combo; i++) {
+				checkMarkTex_[i]->color_.w = 1.0f;
+			}			
+		}
+		else {
+			for (size_t i = 0; i < comboMax_; i++) {
+				checkMarkTex_[i]->color_.w = 0.0f;
+			}
 		}
 	}
-
-	
+	if (CheckWeak_ and CheckStrong_){
+		isTutorial_ = false;
+	}
 }
 
 void GameUIManager::Draw(){
+	
+	if (isTutorial_) {
+		if (titorialLevel_ == 1) {
+			weakComboTex_->Draw();
+		}
+		else {
+			strong2ComboTex_->Draw();
+		}
 
-	weakComboTex_->Draw();
-	strong2ComboTex_->Draw();
-
-	for (size_t i = 0; i < comboMax_; i++) {
-		checkMarkTex_[i]->Draw();
+		for (size_t i = 0; i < comboMax_; i++) {
+			checkMarkTex_[i]->Draw();
+		}
 	}
-
 	actionTextSprite_->Draw();
 	attackSprite_->Draw();
 }

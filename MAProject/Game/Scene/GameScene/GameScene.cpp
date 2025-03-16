@@ -120,7 +120,9 @@ void GameScene::Update(){
 	bool frontFlag = false;
 	DrawImgui();
 	//インゲーム用の時間更新
-	GameTime::InGameUpdate();
+	if (!uiManager_->GetIsTutorial()) {
+		GameTime::InGameUpdate();
+	}
 	//時間のテクスチャの更新
 	uiManager_->Update();
 	TimeTexUpdate();

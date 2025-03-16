@@ -40,6 +40,6 @@ private:
     std::vector<int> attackTickets_; // 各敵の攻撃回数
     int maxTickets_;                 // 各敵の最大攻撃回数
     static int activeAttackers_;     // 現在攻撃している敵の数
-    int maxActiveAttackers_ = 3;     // 最大 10 体まで同時攻撃可能
+    int maxActiveAttackers_ = 5;     // 最大 10 体まで同時攻撃可能
 };
 

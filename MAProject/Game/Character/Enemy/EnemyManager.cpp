@@ -8,7 +8,7 @@ void EnemyManager::Initialize(){
 	RandomMaker* random = RandomMaker::GetInstance();
 	isTutoria_ = true;
 
-	tickets_ = std::make_unique<EnemyAttackTicket>(enemyNum_, 3);
+	tickets_ = std::make_unique<EnemyAttackTicket>(enemyNum_, 20);
 
 	boss_ = std::make_unique<BossEnemy>();
 	boss_->Initialize(bossPos_);

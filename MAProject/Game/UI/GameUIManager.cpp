@@ -104,76 +104,74 @@ void GameUIManager::Update(){
 	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i]->scale_ = { checkScale_,checkScale_ };
 	}
-
-#ifdef _DEBUG
-		ImGui::Begin("テクスチャの座標など");
-		ImGui::DragFloat2("座標", &weakComboTex_->position_.x, 1.0f);
-		ImGui::DragFloat2("大きさ", &weakComboTex_->scale_.x, 1.0f);
-
-		ImGui::DragFloat2("X攻撃の座標", &actionTextSprite_->position_.x, 1.0f);
-		ImGui::DragFloat2("X攻撃の大きさ", &actionTextSprite_->scale_.x, 1.0f);
-		ImGui::End();
-#endif
 }
 
 void GameUIManager::TutorialUpdate(){
 	PlayerStateManager::StateName nowStateName = plStateManager_->GetStateName();
 	if (titorialLevel_ == 1){
-		//攻撃状態であれば描画
-		if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack) {
-			//強攻撃時はコンボを参照しない
-			if (nowStateName != PlayerStateManager::StateName::StrongAttack) {
-				int combo = plStateManager_->GetComboIndex();
-				for (size_t i = 0; i < combo; i++) {
-					checkMarkTex_[i]->color_.w = 1.0f;
-				}
-				if (checkMarkTex_[5]->color_.w == 1.0) {
-					titorialLevel_++;
-				}
+		Tutorial1Update(nowStateName);
+	}
+	else if (titorialLevel_ == 2){
+		Tutorial2Update(nowStateName);
+	}
+	if (CheckWeak_ and CheckStrong_){
+		isTutorial_ = false;
+	}
+}
+
+void GameUIManager::Tutorial1Update(const PlayerStateManager::StateName state){
+	//攻撃状態であれば描画
+	if (state == PlayerStateManager::StateName::Attack or state == PlayerStateManager::StateName::StrongAttack) {
+		//強攻撃時はコンボを参照しない
+		if (state != PlayerStateManager::StateName::StrongAttack) {
+			int combo = plStateManager_->GetComboIndex();
+			for (size_t i = 0; i < combo; i++) {
+				checkMarkTex_[i]->color_.w = 1.0f;
 			}
-		}
-		else {
-			for (size_t i = 0; i < comboMax_; i++) {
-				checkMarkTex_[i]->color_.w = 0.0f;
+			if (checkMarkTex_[5]->color_.w == 1.0) {
+				titorialLevel_++;
 			}
 		}
 	}
 	else {
 		for (size_t i = 0; i < comboMax_; i++) {
-			checkMarkTex_[i]->position_ = checkPosStrong_[i];
-		}
-		//攻撃状態であれば描画
-		if (nowStateName == PlayerStateManager::StateName::Attack or nowStateName == PlayerStateManager::StateName::StrongAttack) {
-			int combo = plStateManager_->GetComboIndex();
-			if (combo>1){
-				//弱攻撃連打であれば早期リターン
-				if (nowStateName == PlayerStateManager::StateName::Attack) {
-					return;
-				}
-			}
-			if (combo == 2){
-				if (Input::GetInstance()->GetPadButtonTriger(Input::GamePad::X)) {
-					checkMarkTex_[2]->color_.w = 1.0f;
-					CheckWeak_ = true;
-				}
-				else if(Input::GetInstance()->GetPadButtonTriger(Input::GamePad::Y)) {
-					checkMarkTex_[3]->color_.w = 1.0f;
-					CheckStrong_ = true;
-				}
-			}
-			
-			for (size_t i = 0; i < combo; i++) {
-				checkMarkTex_[i]->color_.w = 1.0f;
-			}			
-		}
-		else {
-			for (size_t i = 0; i < comboMax_; i++) {
-				checkMarkTex_[i]->color_.w = 0.0f;
-			}
+			checkMarkTex_[i]->color_.w = 0.0f;
 		}
 	}
-	if (CheckWeak_ and CheckStrong_){
-		isTutorial_ = false;
+}
+
+void GameUIManager::Tutorial2Update(const PlayerStateManager::StateName state){
+	for (size_t i = 0; i < comboMax_; i++) {
+		checkMarkTex_[i]->position_ = checkPosStrong_[i];
+	}
+	//攻撃状態であれば描画
+	if (state == PlayerStateManager::StateName::Attack or state == PlayerStateManager::StateName::StrongAttack) {
+		int combo = plStateManager_->GetComboIndex();
+		if (combo > 1) {
+			//弱攻撃連打であれば早期リターン
+			if (state == PlayerStateManager::StateName::Attack) {
+				return;
+			}
+		}
+		if (combo == 2) {
+			if (Input::GetInstance()->GetPadButtonTriger(Input::GamePad::X)) {
+				checkMarkTex_[2]->color_.w = 1.0f;
+				CheckWeak_ = true;
+			}
+			else if (Input::GetInstance()->GetPadButtonTriger(Input::GamePad::Y)) {
+				checkMarkTex_[3]->color_.w = 1.0f;
+				CheckStrong_ = true;
+			}
+		}
+
+		for (size_t i = 0; i < combo; i++) {
+			checkMarkTex_[i]->color_.w = 1.0f;
+		}
+	}
+	else {
+		for (size_t i = 0; i < comboMax_; i++) {
+			checkMarkTex_[i]->color_.w = 0.0f;
+		}
 	}
 }
 

@@ -489,7 +489,7 @@ void Enemy::EnemyRun(){
 	}
 	//一定距離近づいたら別の行動
 	if (playerLength_ < nearPlayer_) {
-		int i = 0;
+		int i = RandomMaker::GetInstance()->DistributionInt(0, 1);
 		
 		if (i == 0) {
 			behaviorRequest_ = Behavior::kFree;

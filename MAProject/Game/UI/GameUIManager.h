@@ -22,6 +22,9 @@ public:
 	void Update();
 	//チュートリアルのUI更新
 	void TutorialUpdate();
+	//チュートリアルのそれぞれの更新処理
+	void Tutorial1Update(const PlayerStateManager::StateName state);
+	void Tutorial2Update(const PlayerStateManager::StateName state);
 
 	//描画処理
 	void Draw();

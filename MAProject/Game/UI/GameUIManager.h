@@ -56,6 +56,7 @@ private:
 
 	std::unique_ptr<Sprite> actionTextSprite_;
 	std::unique_ptr<Sprite> attackSprite_;
+	std::unique_ptr<Sprite> attackSTSprite_;
 
 	std::array<std::unique_ptr<Sprite>, comboMax_> checkMarkTex_;
 	std::array<Vector3, comboMax_> checkPos_;

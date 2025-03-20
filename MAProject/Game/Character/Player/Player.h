@@ -79,6 +79,8 @@ public:
 
 	const Matrix4x4& GetRotateMatrix()const { return playerRotateMatrix_; };
 
+	const BasePlayerState::StateName& GetNowState()const { return stateManager_->GetStateName(); }
+
 	const bool GetIsDown() const { return isDown_; }
 	const bool GetIsHitEnemyAttack() const { return isHitEnemyAttack_; }
 	const bool GetIsJustAvoid() const { return isJustAvoid_; }

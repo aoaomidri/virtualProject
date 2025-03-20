@@ -123,6 +123,9 @@ void GameScene::Update(){
 	if (!uiManager_->GetIsTutorial()) {
 		GameTime::InGameUpdate();
 	}
+	else{
+		GameTime::ResetGameTimer();
+	}
 	//時間のテクスチャの更新
 	uiManager_->Update();
 	TimeTexUpdate();
@@ -273,6 +276,11 @@ void GameScene::AllCollision(){
 	}
 	//敵との当たり判定
 	for (const auto& enemy : enemyManager_->GetEnemies()) {
+		//自機キャラがのけぞり中であればこれ以上判定しない
+		if (player_->GetNowState() == BasePlayerState::StateName::kLeaningBack) {
+			break;
+		}
+
 		uint32_t serialNumber = enemy->GetSerialNumber();
 		//敵がカメラに写っているか
 		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
@@ -281,10 +289,11 @@ void GameScene::AllCollision(){
 		else {
 			enemy->SetIsOnScreen(false);
 		}
-		//敵が映っていなかったらこの後は処理しない
+		//敵が映っていなかったらこの敵は処理しない
 		if (!enemy->GetIsOnScreen()) {
 			continue;
 		} 
+		
 		//ガード判定と敵の攻撃判定との処理
 		if (player_->GetIsGuard()){
 			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {				

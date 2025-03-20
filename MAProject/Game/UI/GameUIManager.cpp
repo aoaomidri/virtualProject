@@ -5,6 +5,8 @@ void GameUIManager::ApplyGlobalVariables(){
 	weakComboTex_->scale_=adjustment_item_->GetVector2Value(groupName_, "weakTexScale");
 	strong2ComboTex_->position_ = adjustment_item_->GetVector3Value(groupName_, "strong2TexPos");
 	strong2ComboTex_->scale_ = adjustment_item_->GetVector2Value(groupName_, "strong2TexScale");
+	attackSprite_->position_ = adjustment_item_->GetVector3Value(groupName_, "attackSTTexPos");
+	attackSprite_->scale_ = adjustment_item_->GetVector2Value(groupName_, "attackSTTexScale");
 	checkMarkTex_[0]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark1Pos");
 	checkMarkTex_[1]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark2Pos");
 	checkMarkTex_[2]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark3Pos");
@@ -27,8 +29,13 @@ void GameUIManager::ExportGlobalVariables(){
 	//アイテムの追加
 	adjustment_item_->AddItem(groupName_, "weakTexPos", weakComboTex_->position_);
 	adjustment_item_->AddItem(groupName_, "weakTexScale", weakComboTex_->scale_);
+
 	adjustment_item_->AddItem(groupName_, "strong2TexPos", strong2ComboTex_->position_);
 	adjustment_item_->AddItem(groupName_, "strong2TexScale", strong2ComboTex_->scale_);
+
+	adjustment_item_->AddItem(groupName_, "attackSTTexPos", attackSprite_->position_);
+	adjustment_item_->AddItem(groupName_, "attackSTTexScale", attackSprite_->scale_);
+
 	adjustment_item_->AddItem(groupName_, "checkMark1Pos", checkMarkTex_[0]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark2Pos", checkMarkTex_[1]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark3Pos", checkMarkTex_[2]->position_);
@@ -57,9 +64,9 @@ void GameUIManager::Initialize(){
 	actionTextSprite_->scale_ = { 242.0f,137.0f };
 	actionTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	attackSprite_->position_ = { 1072.0f,650.0f };
+	attackSprite_->position_ = { 1122.0f,650.0f };
 	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
-	attackSprite_->color_ = { 1.0f,1.0f,1.0f,0.0f };
+	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	weakComboTex_->anchorPoint_ = { 0.5f,0.5f };
 	weakComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -130,6 +137,9 @@ void GameUIManager::Tutorial1Update(const PlayerStateManager::StateName state){
 			}
 			if (checkMarkTex_[5]->color_.w == 1.0) {
 				titorialLevel_++;
+				for (size_t i = 0; i < comboMax_; i++) {
+					checkMarkTex_[i]->color_.w = 0.0f;
+				}
 			}
 		}
 	}

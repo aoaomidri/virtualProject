@@ -24,6 +24,9 @@ public:
 	void DrawImgui();
 
 private:
+	//テクスチャマネージャー
+	TextureManager* textureManager_ = nullptr;
+
 	//外部ファイルとやり取りする
 	Adjustment_Item* adjustment_item_ = nullptr;
 	const char* groupName_ = "PLSpecialGauge";

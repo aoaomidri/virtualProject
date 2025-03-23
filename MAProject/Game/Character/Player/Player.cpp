@@ -124,7 +124,7 @@ void Player::Update(){
 	weaponObj_->SetDissolve(weaponThreshold_);
 	weaponObj_->SetTrailPos(trailPosData_);
 
-	TimeUpdate();	
+	TimeUpdate();
 	StateManagerOperations();	
 
 	/*落下処理*/

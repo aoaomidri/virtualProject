@@ -59,6 +59,9 @@ void GameUIManager::Initialize(){
 	TextureInitialize();
 	ExportGlobalVariables();
 
+	spGauge_ = std::make_unique<PlayerSpecialGauge>();
+	spGauge_->Initialize();
+
 	actionTextSprite_->position_ = { 1117.0f,531.0f };
 	actionTextSprite_->anchorPoint_ = { 0.5f,0.5f };
 	actionTextSprite_->scale_ = { 242.0f,137.0f };
@@ -105,6 +108,7 @@ void GameUIManager::TextureInitialize(){
 
 void GameUIManager::Update(){
 	ApplyGlobalVariables();
+	spGauge_->Update();
 
 	TutorialUpdate();
 
@@ -199,6 +203,7 @@ void GameUIManager::Draw(){
 			checkMarkTex_[i]->Draw();
 		}
 	}
+	spGauge_->Draw();
 	actionTextSprite_->Draw();
 	attackSprite_->Draw();
 }

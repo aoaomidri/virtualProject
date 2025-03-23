@@ -147,6 +147,8 @@ public:
 
 	//テクスチャ左上座標
 	Vector2 textureLeftTop_ = { 0.0f,0.0f };
+	//テクスチャ右側に補正を掛け伸ばす
+	Vector2 textureAddRightPos_ = { 0.0f,0.0f };
 	//テクスチャ切り出しサイズ
 	Vector2 textureSize_ = { 100.0f,100.0f };
 

@@ -103,8 +103,9 @@ void Sprite::Update(){
 	//頂点データ
 	vertexDataSprite_[0].position = { left,bottom,0.0f,1.0f };//左下
 	vertexDataSprite_[1].position = { left,top,0.0f,1.0f };//左上
-	vertexDataSprite_[2].position = { right,bottom,0.0f,1.0f };//右下
-	vertexDataSprite_[3].position = { right,top,0.0f,1.0f };//右上
+	vertexDataSprite_[2].position = { right + textureAddRightPos_.x,bottom + textureAddRightPos_.y,0.0f,1.0f };//右下
+	vertexDataSprite_[3].position = { right + textureAddRightPos_.x,top + textureAddRightPos_.y,0.0f,1.0f };//右上
+
 
 	materialDate_->color = color_;
 

@@ -289,7 +289,7 @@ void Enemy::MotionUpdate(){
 
 	switch (behavior_) {
 	case Behavior::kRoot:
-		RootMotion();
+		//RootMotion();
 		break;
 	case Behavior::kRun:
 		EnemyRun();
@@ -500,8 +500,7 @@ void Enemy::EnemyRun(){
 	}
 }
 
-void Enemy::BehaviorFreeInitialize(){
-	
+void Enemy::BehaviorFreeInitialize(){	
 	freeTime_ = 0;
 	enemyColor_ = { 1.0f,1.0f,1.0f,1.0f };
 }

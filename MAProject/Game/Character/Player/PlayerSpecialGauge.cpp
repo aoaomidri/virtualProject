@@ -19,26 +19,50 @@ void PlayerSpecialGauge::ExportGlobalVariables(){
 	adjustment_item_->AddItem(groupName_, "specialAttackConsumption", specialAttackConsumption_);
 }
 
+void PlayerSpecialGauge::TextureInitialize(){
+	uint32_t textureHandle = 0;
+
+	textureManager_ = TextureManager::GetInstance();
+
+	gaugeFrameTex_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/PlayerStatesTex/Gauge.png");
+	gaugeFrameTex_->Initialize(textureHandle);
+
+	gaugeTex_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/Whitex64.png");
+	gaugeTex_->Initialize(textureHandle);
+}
+
 void PlayerSpecialGauge::Initialize(){
 	ExportGlobalVariables();
+	TextureInitialize();
 
 }
+
 
 void PlayerSpecialGauge::Update(){
 	ApplyGlobalVariables();
-
 	DrawImgui();
+
+	
+
 }
 
 void PlayerSpecialGauge::Draw(){
-
+	gaugeFrameTex_->Draw();
+	gaugeTex_->Draw();
 }
 
 void PlayerSpecialGauge::DrawImgui(){
 #ifdef _DEBUG
-	ImGui::Begin("ゲージの色味");
+	ImGui::Begin("ゲージ関連");
+	ImGui::DragFloat2("必殺ゲージ(中身)の座標", &gaugeTex_->position_.x, 1.0f);
+	ImGui::DragFloat2("必殺ゲージ(中身)の長さ", &gaugeTex_->textureAddRightPos_.x, 1.0f);
+	ImGui::Text("ゲージの色");
 	ImGui::ColorEdit4("不透明の色", &opaqueColor_.x);
 	ImGui::ColorEdit4("半透明の色", &translucentColor_.x);
 	ImGui::End();
+
+	
 #endif
 }

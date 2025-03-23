@@ -64,5 +64,7 @@ private:
 	std::array<Vector3, comboMax_> checkPosStrong_;
 	float checkScale_;
 
-	 
+	//必殺ゲージ
+	std::unique_ptr<PlayerSpecialGauge> spGauge_;
+
 };

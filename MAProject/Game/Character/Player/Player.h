@@ -17,6 +17,7 @@
 #include"Audio.h"
 #include"PlayerStateManager.h"
 #include"GameTime.h"
+#include"PlayerSpecialGauge.h"
 /*プレイヤーが操作する自機の更新描画*/
 //前方宣言
 class LockOn;

@@ -1,0 +1,26 @@
+{
+    "PLSpecialGauge": {
+        "gaugeFrameTexPos": [
+            26.049999237060547,
+            600.0,
+            0.0
+        ],
+        "gaugeFrameTexScale": [
+            288.0,
+            32.0
+        ],
+        "gaugeMax": 0.0,
+        "gaugeTexPos": [
+            28.0,
+            600.0,
+            0.0
+        ],
+        "gaugeTexScale": [
+            32.0,
+            32.0
+        ],
+        "hitAddGauge": 0.0,
+        "knockDownAddGauge": 0.0,
+        "specialAttackConsumption": 0.0
+    }
+}

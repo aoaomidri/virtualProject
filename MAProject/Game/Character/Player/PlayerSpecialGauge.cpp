@@ -6,6 +6,11 @@ void PlayerSpecialGauge::ApplyGlobalVariables(){
 	hitAddGauge_ = adjustment_item_->GetfloatValue(groupName_, "hitAddGauge");
 	knockDownAddGauge_ = adjustment_item_->GetfloatValue(groupName_, "knockDownAddGauge");
 	specialAttackConsumption_ = adjustment_item_->GetfloatValue(groupName_, "specialAttackConsumption");
+
+	gaugeFrameTex_->position_ = adjustment_item_->GetVector3Value(groupName_, "gaugeFrameTexPos");
+	gaugeFrameTex_->scale_ = adjustment_item_->GetVector2Value(groupName_, "gaugeFrameTexScale");
+	gaugeTex_->position_ = adjustment_item_->GetVector3Value(groupName_, "gaugeTexPos");
+	gaugeTex_->scale_ = adjustment_item_->GetVector2Value(groupName_, "gaugeTexScale");
 }
 
 void PlayerSpecialGauge::ExportGlobalVariables(){
@@ -17,6 +22,12 @@ void PlayerSpecialGauge::ExportGlobalVariables(){
 	adjustment_item_->AddItem(groupName_, "hitAddGauge", hitAddGauge_);
 	adjustment_item_->AddItem(groupName_, "knockDownAddGauge", knockDownAddGauge_);
 	adjustment_item_->AddItem(groupName_, "specialAttackConsumption", specialAttackConsumption_);
+	//テクスチャ関連
+	adjustment_item_->AddItem(groupName_, "gaugeFrameTexPos", gaugeFrameTex_->position_);
+	adjustment_item_->AddItem(groupName_, "gaugeFrameTexScale", gaugeFrameTex_->scale_);
+
+	adjustment_item_->AddItem(groupName_, "gaugeTexPos", gaugeTex_->position_);
+	adjustment_item_->AddItem(groupName_, "gaugeTexScale", gaugeTex_->scale_);
 }
 
 void PlayerSpecialGauge::TextureInitialize(){
@@ -34,8 +45,8 @@ void PlayerSpecialGauge::TextureInitialize(){
 }
 
 void PlayerSpecialGauge::Initialize(){
-	ExportGlobalVariables();
 	TextureInitialize();
+	ExportGlobalVariables();
 
 }
 

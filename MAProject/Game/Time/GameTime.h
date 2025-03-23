@@ -1,4 +1,6 @@
 #pragma once
+#include <cmath>
+#include <iostream>
 //ゲーム内の時間を管理するクラス
 
 class GameTime{
@@ -18,8 +20,11 @@ public:
     static bool GetIsSlow() {
         return isSlowDown_;
     } 
-
-    
+    //小数部分を5以上かどうか調べる
+    static bool isDecimalAboveFive() {
+        int firstDecimal = static_cast<int>(std::fabs(inGameTime_) * 10) % 10;
+        return firstDecimal > 5;
+    }
     /// <summary>
     /// インゲームで経過秒数の一の位を取得(0～59まで)
     /// </summary>

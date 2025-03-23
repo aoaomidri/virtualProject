@@ -1,5 +1,14 @@
 {
     "PLSpecialGauge": {
+        "buttonTexPos": [
+            70.4000015258789,
+            591.9600219726563,
+            0.0
+        ],
+        "buttonTexScale": [
+            48.0,
+            48.0
+        ],
         "gaugeFrameTexPos": [
             26.049999237060547,
             600.0,
@@ -9,7 +18,7 @@
             288.0,
             32.0
         ],
-        "gaugeMax": 0.0,
+        "gaugeMax": 2.0,
         "gaugeTexPos": [
             28.0,
             600.0,
@@ -19,8 +28,8 @@
             32.0,
             32.0
         ],
-        "hitAddGauge": 0.0,
-        "knockDownAddGauge": 0.0,
+        "hitAddGauge": 0.019999999552965164,
+        "knockDownAddGauge": 0.029999999329447746,
         "specialAttackConsumption": 0.0
     }
 }

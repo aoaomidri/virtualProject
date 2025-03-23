@@ -28,6 +28,10 @@ public:
 
 	//描画処理
 	void Draw();
+	//ヒット時ゲージを規定値増加させる
+	void AddSPGauge() {
+		spGauge_->AddSPGauge();
+	}
 
 	const bool GetIsTutorial() const { return isTutorial_; }
 	//セッター

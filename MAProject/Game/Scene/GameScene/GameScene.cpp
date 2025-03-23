@@ -326,6 +326,11 @@ void GameScene::AllCollision(){
 				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//ヒットストップ
 				GameTime::StopTime(player_->GetHitStop());
+				//チュートリアル以外ではゲージ増加を適応
+				if (!enemyManager_->GetIsTutorial()) {
+					//ヒット時に必殺ゲージを伸ばす
+					uiManager_->AddSPGauge();
+				}				
 				//当たったときの処理
 				if (player_->ChackStrongBack()){
 					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
@@ -415,6 +420,8 @@ void GameScene::AllCollision(){
 				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//ヒットストップ
 				GameTime::StopTime(player_->GetHitStop());
+				//ヒット時に必殺ゲージを伸ばす
+				uiManager_->AddSPGauge();
 				//当たったときの処理
 				if (player_->ChackStrongBack()) {
 					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);

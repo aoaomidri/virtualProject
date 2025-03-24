@@ -11,11 +11,11 @@ void ResultScene::SpriteInitialize(){
 	uint32_t textureHandle = 0;
 	//クリア
 	clearSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/Clear.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/Clear.png");
 	clearSprite_->Initialize(textureHandle);
 
 	pressSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/Press.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/Press.png");
 	pressSprite_->Initialize(textureHandle);
 
 	for (size_t i = 0; i < timerTexs_.size(); i++) {

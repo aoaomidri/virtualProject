@@ -14,14 +14,14 @@ void TitleScene::TextureLoad() {
 	textureManager_->Load("resources/texture/Black.png");
 	textureManager_->Load("resources/texture/circle.png");
 	textureManager_->Load("resources/texture/monsterBall.png");
-	textureManager_->Load("resources/texture/title.png");
-	textureManager_->Load("resources/texture/pressA.png");
-	textureManager_->Load("resources/texture/Clear.png");
+	textureManager_->Load("resources/texture/Text/title.png");
+	textureManager_->Load("resources/texture/Text/pressA.png");
+	textureManager_->Load("resources/texture/Text/Clear.png");
 	textureManager_->Load("resources/texture/Whitex64.png");
-	textureManager_->Load("resources/texture/STAttack.png");
-	textureManager_->Load("resources/texture/dash.png");
-	textureManager_->Load("resources/texture/RB.png");
-	textureManager_->Load("resources/texture/actionText.png");
+	textureManager_->Load("resources/texture/Text/STAttack.png");
+	textureManager_->Load("resources/texture/Text/dash.png");
+	textureManager_->Load("resources/texture/Text/RB.png");
+	textureManager_->Load("resources/texture/Text/actionText.png");
 	textureManager_->Load("resources/DDS/rostock_laage_airport_4k.dds");
 }
 
@@ -34,15 +34,15 @@ void TitleScene::SpriteInitialize() {
 	uint32_t textureHandle = 0;
 
 	titleSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/title.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/title.png");
 	titleSprite_->Initialize(textureHandle);
 
 	startSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/start.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/start.png");
 	startSprite_->Initialize(textureHandle);
 
 	comboSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/combo.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/combo.png");
 	comboSprite_->Initialize(textureHandle);
 
 	selectSprite_ = std::make_unique<Sprite>();

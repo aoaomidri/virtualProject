@@ -84,11 +84,11 @@ void GameUIManager::TextureInitialize(){
 	textureManager_ = TextureManager::GetInstance();
 
 	actionTextSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/actionText.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/actionText.png");
 	actionTextSprite_->Initialize(textureHandle);
 
 	attackSprite_ = std::make_unique<Sprite>();
-	textureHandle = textureManager_->Load("resources/texture/STAttack.png");
+	textureHandle = textureManager_->Load("resources/texture/Text/STAttack.png");
 	attackSprite_->Initialize(textureHandle);
 
 	weakComboTex_ = std::make_unique<Sprite>();

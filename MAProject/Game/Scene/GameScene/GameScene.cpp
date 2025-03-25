@@ -262,111 +262,16 @@ void GameScene::TimeTexUpdate(){
 
 void GameScene::AllCollision(){
 	//床の当たり判定
-	for (const auto& floor : floorManager_->GetFloors()) {
-		if (IsCollisionOBBOBB(floor->GetOBB(), player_->GetOBB())) {
-			chackCollision = 1;
-			player_->OnFlootCollision(floor->GetOBB());
-			player_->SetIsDown(false);
-			break;
-		}
-		else {
-			chackCollision = 0;
-			player_->SetIsDown(true);
-		}
-	}
+	PlayerFloorCollision(player_.get(), floorManager_.get());
 	//敵との当たり判定
-	for (const auto& enemy : enemyManager_->GetEnemies()) {
-		//自機キャラがのけぞり中であればこれ以上判定しない
-		if (player_->GetNowState() == BasePlayerState::StateName::kLeaningBack) {
-			break;
-		}
+	
+	//プレイヤーがノックバック中であれば被弾しないように
+	if (player_->GetNowState() == BasePlayerState::StateName::kLeaningBack) {
+		return;
+	}
 
-		uint32_t serialNumber = enemy->GetSerialNumber();
-		//敵がカメラに写っているか
-		if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(),followCamera_->GetLockViewingFrustum())){
-			enemy->SetIsOnScreen(true);
-		}
-		else {
-			enemy->SetIsOnScreen(false);
-		}
-		//敵が映っていなかったらこの敵は処理しない
-		if (!enemy->GetIsOnScreen()) {
-			continue;
-		} 
-		
-		//ガード判定と敵の攻撃判定との処理
-		if (player_->GetIsGuard()){
-			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {				
-				if (player_->RecordCheck(serialNumber)) {
-					return;
-				}				
-				player_->OnCollisionEnemyAttack();
-				//ノックバックの種類を指定
-				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
-				//ヒット音の再生
-				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
-				//当たったときの処理
-				enemy->OnCollisionGuard();				
-			}
-		}
-		//武器の判定と敵の体の判定との処理
-		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
-			if (player_->RecordCheck(serialNumber)) {
-				return;
-			}
-			if (player_->GetIsGuard()) {
-				
-			}
-			else {
-				//ノックバックの種類を指定
-				enemy->SetKnockBackType(player_->GetKnockbackType());
-				//接触履歴に登録
-				player_->AddRecord(serialNumber);
-				//ヒット音の再生
-				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
-				//ヒットストップ
-				GameTime::StopTime(player_->GetHitStop());
-				//チュートリアル以外ではゲージ増加を適応
-				if (!enemyManager_->GetIsTutorial()) {
-					//ヒット時に必殺ゲージを伸ばす
-					uiManager_->AddSPGauge();
-				}				
-				//当たったときの処理
-				if (player_->ChackStrongBack()){
-					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
-					enemy->OnCollisionStrong();
-				}
-				else {
-					enemy->OnCollision();
-				}				
-			}
-		}
-		
-		//プレイヤー自身と敵の体の判定
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
-			player_->SetCollisionEnemy(true);
-			break;
-		}
-		else {
-			player_->SetCollisionEnemy(false);
-		}
-		//回避と敵の攻撃との判定
-		if (player_->GetIsDash()){
-			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
-				
-				player_->OnCollisionEnemyAttackAvoid(serialNumber);
-			}
-		}
-		else {
-			if (!player_->GetIsGuard()) {
-				//ガードをしていなかったら敵の攻撃とプレイヤーとの判定
-				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
-					GameTime::AddGameTime();
-					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
-					player_->OnCollisionEnemyAttack();
-				}
-			}
-		}		
+	for (const auto& enemy : enemyManager_->GetEnemies()) {
+		PlayerEnemyCollision(player_.get(), enemy.get());
 	}
 	//ボスとの当たり判定
 	//チュートリアル時はスキップ
@@ -375,7 +280,111 @@ void GameScene::AllCollision(){
 	}
 
 	const auto& enemy = enemyManager_->GetBossEnemy();
+	PlayerBossCollision(player_.get(), enemy);
+		
+	
+}
+
+void GameScene::PlayerEnemyCollision(Player* player, Enemy* enemy){	
+
 	uint32_t serialNumber = enemy->GetSerialNumber();
+	//敵がカメラに写っているか
+	if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), followCamera_->GetLockViewingFrustum())) {
+		enemy->SetIsOnScreen(true);
+	}
+	else {
+		enemy->SetIsOnScreen(false);
+	}
+	//敵が映っていなかったらこの敵は処理しない
+	if (!enemy->GetIsOnScreen()) {
+		return;
+	}
+
+	//ガード判定と敵の攻撃判定との処理
+	if (player->GetIsGuard()) {
+		if (IsCollisionOBBOBB(player->GetWeaponOBB(), enemy->GetAttackOBB())) {
+			if (player->RecordCheck(serialNumber)) {
+				return;
+			}
+			player->OnCollisionEnemyAttack();
+			//ノックバックの種類を指定
+			enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
+			//ヒット音の再生
+			audio_->PlayAudio(enemyHitSE_, seVolume_, false);
+			//当たったときの処理
+			enemy->OnCollisionGuard();
+		}
+	}
+	//武器の判定と敵の体の判定との処理
+	if (IsCollisionOBBOBB(player->GetWeaponOBB(), enemy->GetBodyOBB())) {
+		if (player->RecordCheck(serialNumber)) {
+			return;
+		}
+		if (player->GetIsGuard()) {
+
+		}
+		else {
+			//ノックバックの種類を指定
+			enemy->SetKnockBackType(player->GetKnockbackType());
+			//接触履歴に登録
+			player->AddRecord(serialNumber);
+			//ヒット音の再生
+			audio_->PlayAudio(enemyHitSE_, seVolume_, false);
+			//ヒットストップ
+			GameTime::StopTime(player->GetHitStop());
+			//チュートリアル以外ではゲージ増加を適応
+			if (!enemyManager_->GetIsTutorial()) {
+				//ヒット時に必殺ゲージを伸ばす
+				uiManager_->AddSPGauge();
+			}
+			//当たったときの処理
+			if (player->ChackStrongBack()) {
+				followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
+				enemy->OnCollisionStrong();
+			}
+			else {
+				enemy->OnCollision();
+			}
+		}
+	}
+
+	//プレイヤー自身と敵の体の判定
+	if (IsCollisionOBBOBB(player->GetOBB(), enemy->GetBodyOBB())) {
+		player->SetCollisionEnemy(true);
+		return;
+	}
+	else {
+		player->SetCollisionEnemy(false);
+	}
+	//回避と敵の攻撃との判定
+	if (player->GetIsDash()) {
+		if (IsCollisionOBBOBB(player->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
+
+			player->OnCollisionEnemyAttackAvoid(serialNumber);
+		}
+	}
+	else {
+		if (!player->GetIsGuard()) {
+			//ガードをしていなかったら敵の攻撃とプレイヤーとの判定
+			if (IsCollisionOBBOBB(player->GetOBB(), enemy->GetAttackOBB())) {
+				GameTime::AddGameTime();
+				followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
+				player->OnCollisionEnemyAttack();
+			}
+		}
+	}
+
+
+}
+
+void GameScene::PlayerBossCollision(Player* player, BossEnemy* enemy){
+	uint32_t serialNumber = enemy->GetSerialNumber();
+
+	//自機キャラがのけぞり中であればこれ以上判定しない
+	if (player->GetNowState() == BasePlayerState::StateName::kLeaningBack) {
+		return;
+	}
+
 	//敵がカメラに写っているか
 	if (IsCollisionOBBViewFrustum(enemy->GetBodyOBB(), followCamera_->GetLockViewingFrustum())) {
 		enemy->SetIsOnScreen(true);
@@ -385,16 +394,16 @@ void GameScene::AllCollision(){
 	}
 	//敵が映っていなかったらこの後は処理しない
 	if (!enemy->GetIsOnScreen()) {
-			
+
 	}
 	else {
 		//ガード判定と敵の攻撃判定との処理
-		if (player_->GetIsGuard()) {
-			if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetAttackOBB())) {
-				if (player_->RecordCheck(serialNumber)) {
+		if (player->GetIsGuard()) {
+			if (IsCollisionOBBOBB(player->GetWeaponOBB(), enemy->GetAttackOBB())) {
+				if (player->RecordCheck(serialNumber)) {
 					return;
 				}
-				player_->OnCollisionEnemyAttack();
+				player->OnCollisionEnemyAttack();
 				//ノックバックの種類を指定
 				enemy->SetKnockBackType(HitRecord::KnockbackType::Guard);
 				//ヒット音の再生
@@ -404,26 +413,26 @@ void GameScene::AllCollision(){
 			}
 		}
 		//武器の判定と敵の体の判定との処理
-		if (IsCollisionOBBOBB(player_->GetWeaponOBB(), enemy->GetBodyOBB())) {
-			if (player_->RecordCheck(serialNumber)) {
+		if (IsCollisionOBBOBB(player->GetWeaponOBB(), enemy->GetBodyOBB())) {
+			if (player->RecordCheck(serialNumber)) {
 				return;
 			}
-			if (player_->GetIsGuard()) {
+			if (player->GetIsGuard()) {
 
 			}
 			else {
 				//ノックバックの種類を指定
-				enemy->SetKnockBackType(player_->GetKnockbackType());
+				enemy->SetKnockBackType(player->GetKnockbackType());
 				//接触履歴に登録
-				player_->AddRecord(serialNumber);
+				player->AddRecord(serialNumber);
 				//ヒット音の再生
 				audio_->PlayAudio(enemyHitSE_, seVolume_, false);
 				//ヒットストップ
-				GameTime::StopTime(player_->GetHitStop());
+				GameTime::StopTime(player->GetHitStop());
 				//ヒット時に必殺ゲージを伸ばす
 				uiManager_->AddSPGauge();
 				//当たったときの処理
-				if (player_->ChackStrongBack()) {
+				if (player->ChackStrongBack()) {
 					followCamera_->StartShake(playerAttackShake_.x, playerAttackShake_.y);
 					enemy->OnCollisionStrong();
 				}
@@ -434,51 +443,46 @@ void GameScene::AllCollision(){
 		}
 
 		//プレイヤー自身と敵の体の判定
-		if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetBodyOBB())) {
-			player_->SetCollisionEnemy(true);
+		if (IsCollisionOBBOBB(player->GetOBB(), enemy->GetBodyOBB())) {
+			player->SetCollisionEnemy(true);
 			return;
 		}
 		else {
-			player_->SetCollisionEnemy(false);
+			player->SetCollisionEnemy(false);
 		}
 		//回避と敵の攻撃との判定
-		if (player_->GetIsDash()) {
-			if (IsCollisionOBBOBB(player_->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
-
-				player_->OnCollisionEnemyAttackAvoid(serialNumber);
+		if (player->GetIsDash()) {
+			if (IsCollisionOBBOBB(player->GetJustAvoidOBB(), enemy->GetAttackOBB())) {
+				player->OnCollisionEnemyAttackAvoid(serialNumber);
 			}
 		}
 		else {
-			if (!player_->GetIsGuard()) {
+			if (!player->GetIsGuard()) {
 				//ガードをしていなかったら敵の攻撃とプレイヤーとの判定
-				if (IsCollisionOBBOBB(player_->GetOBB(), enemy->GetAttackOBB())) {
+				if (IsCollisionOBBOBB(player->GetOBB(), enemy->GetAttackOBB())) {
 					GameTime::AddGameTime();
 					followCamera_->StartShake(enemyAttackShake_.x, enemyAttackShake_.y);
-					player_->OnCollisionEnemyAttack();
+					player->OnCollisionEnemyAttack();
 				}
 			}
 		}
 	}
-		
+
+}
+
+void GameScene::PlayerFloorCollision(Player* player, const FloorManager* floorManager){
+	for (const auto& floor : floorManager->GetFloors()) {
+		if (IsCollisionOBBOBB(floor->GetOBB(), player->GetOBB())) {
+			chackCollision = 1;
+			player->OnFlootCollision(floor->GetOBB());
+			player->SetIsDown(false);
+			break;
+		}
+		else {
+			chackCollision = 0;
+			player->SetIsDown(true);
+		}
+	}
 	
 }
-
-void GameScene::FilesSave(const std::vector<std::string>& stages) {
-	floorManager_->SaveFile(stages);
-	std::string message = std::format("{}.json created.", "all");
-	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-}
-
-void GameScene::FilesOverWrite(const std::string& stage) {
-	floorManager_->FileOverWrite(stage);
-	std::string message = std::format("{}.json OverWrite.", "all");
-	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-}
-
-void GameScene::FilesLoad(const std::string& stage) {
-	floorManager_->LoadFiles(stage);
-	std::string message = std::format("{}.json loaded.", "all");
-	MessageBoxA(nullptr, message.c_str(), "StagesObject", 0);
-}
-
 

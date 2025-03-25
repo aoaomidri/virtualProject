@@ -66,9 +66,9 @@ void PlayerSpecialGauge::Update(){
 }
 
 void PlayerSpecialGauge::Draw(){
-	gaugeTex_->Draw();
+	/*gaugeTex_->Draw();
 	gaugeFrameTex_->Draw();
-	buttonTex_->Draw();
+	buttonTex_->Draw();*/
 }
 
 void PlayerSpecialGauge::DrawImgui(){

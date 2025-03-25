@@ -72,12 +72,14 @@ private:
 	//時間画像の更新
 	void TimeTexUpdate();
 
-	/*分ける予定があるけどひとまずのやつ*/
+	//当たり判定
 	void AllCollision();
-	void FilesSave(const std::vector<std::string>& stages);
-	void FilesOverWrite(const std::string& stage);
-	void FilesLoad(const std::string& stage);
-
+	//プレイヤーと敵との当たり判定
+	void PlayerEnemyCollision(Player* player, Enemy* enemy);
+	//プレイヤーと敵との当たり判定
+	void PlayerBossCollision(Player* player, BossEnemy* enemy);
+	//床との当たり判定
+	void PlayerFloorCollision(Player* player, const FloorManager* floorManager);
 
 private:
 	//クラス内変数

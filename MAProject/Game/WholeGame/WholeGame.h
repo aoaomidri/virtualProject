@@ -29,6 +29,8 @@ private:
 	SceneManager* sceneManager_;
 	//シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_;
+	//アプリケーション開始時のシーン
+	AbstractSceneFactory::SceneName firstScene_ = AbstractSceneFactory::SceneName::Title;
 	//グローバル変数関連
 	Adjustment_Item* adjustment_item_ = nullptr;
 

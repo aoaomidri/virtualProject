@@ -204,6 +204,7 @@ public:
 		Dash,/*ダッシュ時*/
 		kJustAvoid,/*ジャスト回避中*/
 		kLeaningBack,/*被弾モーション*/
+		SpecialAttack,/*必殺攻撃*/
 	};
 
 	/// <summary>

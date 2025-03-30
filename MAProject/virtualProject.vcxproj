@@ -212,6 +212,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerJustAvoid.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerLeaningBack.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerRoot.cpp" />
+    <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerSpecialAttack.cpp" />
     <ClCompile Include="Game\Character\Player\PlayerState\States\PlayerStrongAttack.cpp" />
     <ClCompile Include="Game\HitRecord\HitRecord.cpp" />
     <ClCompile Include="Game\Input\Input.cpp" />
@@ -288,6 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerJustAvoid.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerLeaningBack.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerRoot.h" />
+    <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerSpecialAttack.h" />
     <ClInclude Include="Game\Character\Player\PlayerState\States\PlayerStrongAttack.h" />
     <ClInclude Include="Game\HitRecord\HitRecord.h" />
     <ClInclude Include="Game\Input\Input.h" />

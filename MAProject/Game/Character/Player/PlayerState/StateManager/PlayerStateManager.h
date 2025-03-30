@@ -6,8 +6,10 @@
 #include"PlayerStrongAttack.h"
 #include"PlayerJustAvoid.h"
 #include"PlayerLeaningBack.h"
+#include"PlayerSpecialAttack.h"
 #include<memory>
 
+/*プレイヤーの状態遷移を管理する*/
 class PlayerStateManager{
 public:
 	using StateName = BasePlayerState::StateName;

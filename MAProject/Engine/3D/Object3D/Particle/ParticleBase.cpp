@@ -190,8 +190,6 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 					Matrix::MakeTranslateMatrix((*particleIterator).transform.translate));
 			}
 		}
-		
-
 
 		Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix_, viewProjection.matViewProjection_);
 		if (numInstance_ < particleMaxNum_) {
@@ -203,9 +201,6 @@ void ParticleBase::Update(const EulerTransform& transform, const ViewProjection&
 		}
 		++particleIterator;
 	}
-
-
-
 }
 
 void ParticleBase::Draw() {

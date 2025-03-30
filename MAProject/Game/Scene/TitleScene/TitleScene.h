@@ -103,5 +103,10 @@ private:
 	std::unique_ptr<LockOn> lockOn_;
 
 	std::unique_ptr<StageObject> stageObject_;
+
+	std::unique_ptr<Object3D> weaponObj_;
+	EulerTransform weaponTransform_{};
+	Matrix4x4 weaponMatrix_{};
+
 };
 

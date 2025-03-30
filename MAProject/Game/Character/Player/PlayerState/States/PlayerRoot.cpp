@@ -44,6 +44,13 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 		context_.weaponParameter_.weaponThreshold_ = 0.0f;
 		return;
 	}
+	//必殺攻撃を発動
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
+		PlayerStateManager::GetInstance()->ChangeState(StateName::SpecialAttack);
+		context_.isDissolve_ = false;
+		context_.weaponParameter_.weaponThreshold_ = 0.0f;
+		return;
+	}
 
 	/*自機の移動*/	
 	context_.move_.z = input_->GetPadLStick().y * context_.moveSpeed_;

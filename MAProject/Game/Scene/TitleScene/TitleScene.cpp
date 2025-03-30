@@ -179,6 +179,15 @@ void TitleScene::Initialize() {
 	firstFloor_ = LevelLoader::GetInstance()->GetLevelObjectTransform("Cube");
 	floorManager_->AddFloor(firstFloor_);
 
+	weaponObj_ = std::make_unique<Object3D>();
+	weaponObj_->Initialize("Weapon");
+	weaponObj_->SetIsGetTop(true);
+	weaponObj_->SetIsLighting(false);
+
+	weaponTransform_.translate = { 0.0,7.0f,10.0f };
+	weaponTransform_.scale= { 0.3f,0.3f,0.3f };
+	weaponTransform_.rotate= { 0.0,0.0f,0.0f };
+
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	followCamera_->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
@@ -190,6 +199,7 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {	
+	Debug();
 	//カメラの更新
 	followCamera_->Update();
 	followCamera_->SetIsMove(false);
@@ -208,8 +218,12 @@ void TitleScene::Update() {
 		
 	}
 	
+	weaponMatrix_ = Matrix::MakeAffineMatrix(weaponTransform_);
+
 	floorManager_->Update();
 	fadeSprite_->color_.w = fadeAlpha_;
+
+	weaponTransform_.rotate.y += 0.05f;
 
 	if (fadeAlpha_ >= 1.0f) {
 		fadeAlpha_ = 1.0f;
@@ -220,6 +234,13 @@ void TitleScene::Update() {
 }
 
 void TitleScene::Debug() {
+#ifdef _DEBUG
+	ImGui::Begin("武器");
+	ImGui::DragFloat3("座標", &weaponTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("回転", &weaponTransform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("大きさ", &weaponTransform_.scale.x, 0.1f);
+	ImGui::End();
+#endif
 }
 
 void TitleScene::DrawParticle() {
@@ -238,6 +259,10 @@ void TitleScene::Draw3D() {
 	floorManager_->Draw(followCamera_->GetViewProjection());
 	textureManager_->PreDraw3D();
 	stageObject_->Draw(followCamera_->GetViewProjection());
+	weaponObj_->SetMatrix(weaponMatrix_);
+	weaponObj_->Update(followCamera_->GetViewProjection());
+	weaponObj_->Draw();
+
 	/*描画処理はここまで*/
 	/*描画後処理*/
 	textureManager_->PostDraw3D();

@@ -111,11 +111,11 @@ public:
 	void OnCollisionEnemyAttackAvoid(const uint32_t serialNumber);
 
 	//Setter
-	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; stateManager_->SetIsCollisionEnemy(collisionEnemy); }
-
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
+	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; stateManager_->SetIsCollisionEnemy(collisionEnemy); }
 	void SetIsDown(bool isDown);
+	void SetIsSPAttackUse(bool isSPAttackUse) { stateManager_->SetIsSPAttackUse(isSPAttackUse); }
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
@@ -218,6 +218,8 @@ private:
 	bool isDown_ = false;
 	//現在床についているか
 	bool isOnFloor_ = false;
+	//必殺が使えるかどうか
+	bool isUse_ = false;
 
 private:
 	//敵と衝突しているか

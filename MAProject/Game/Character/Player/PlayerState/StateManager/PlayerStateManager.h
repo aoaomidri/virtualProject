@@ -90,6 +90,7 @@ public:
 	void SetIsStopCrush(const bool flug) { context_.isStopCrush_ = flug; }
 	void SetIsGuardHit(const bool flug) { context_.isGuardHit_ = flug; }
 	void SetIsOnFloor(const bool flug) { context_.isOnFloor_ = flug; }
+	void SetIsSPAttackUse(const bool flug) { context_.isSPAttackUse_ = flug; }
 
 	void SetLockOnPos(const Vector3& pos) { context_.lockOnPos_ = pos; }
 

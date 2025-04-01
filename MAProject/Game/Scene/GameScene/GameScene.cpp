@@ -138,7 +138,8 @@ void GameScene::Update(){
 	followCamera_->SetIsMove(true);	
 	postEffect_->SetMatProjectionInverse(followCamera_->GetProjectionInverse());
 
-	frontFlag = player_->GetIsJustAvoid();	
+	frontFlag = player_->GetIsJustAvoid();
+	player_->SetIsSPAttackUse(uiManager_->GetIsUse());
 	player_->Update();
 	if (uiManager_->GetIsTutorial() == false){
 		enemyManager_->SetTutorialFlug(false);

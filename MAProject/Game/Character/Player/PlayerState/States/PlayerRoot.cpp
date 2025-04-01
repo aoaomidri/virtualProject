@@ -45,7 +45,7 @@ void PlayerRoot::Update(const Vector3& cameraRotate){
 		return;
 	}
 	//必殺攻撃を発動
-	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_B)) {
+	if (input_->GetPadButtonTriger(XINPUT_GAMEPAD_B) && context_.isSPAttackUse_) {
 		PlayerStateManager::GetInstance()->ChangeState(StateName::SpecialAttack);
 		context_.isDissolve_ = false;
 		context_.weaponParameter_.weaponThreshold_ = 0.0f;

@@ -40,6 +40,9 @@ void PlayerStateManager::InitState() {
 	context_.isTrail_ = true;
 }
 void PlayerStateManager::ChangeState(const StateName nextState){
+	//事前に消しておく
+	nextState_ = nullptr;
+	//空でなければ止める
 	assert(nextState_ == nullptr);
 	/*次の状態を生成*/
 	if (nextState == StateName::Root){
@@ -62,8 +65,8 @@ void PlayerStateManager::ChangeState(const StateName nextState){
 	}
 	else if (nextState == StateName::SpecialAttack) {
 		nextState_ = std::make_unique<PlayerSpecialAttack>(context_);
-	}
-	
+	}	
+
 	nowStateName_ = nextState;
 }
 

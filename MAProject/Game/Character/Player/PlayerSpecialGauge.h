@@ -27,6 +27,10 @@ public:
 		nowGauge_ += hitAddGauge_;
 	}
 
+public:
+	//ゲッター
+	const bool GetIsUse() const { return isUse_; }
+
 private:
 	//ゲージ自体の更新処理
 	void GaugeUpdate();

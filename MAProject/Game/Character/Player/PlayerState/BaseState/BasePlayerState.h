@@ -193,6 +193,8 @@ public:
 		bool isGuard_ = false;
 		//強攻撃中に攻撃を受けたかどうか
 		bool isGuardHit_ = false;
+		//必殺が使えるかどうか
+		bool isSPAttackUse_ = false;
 
 		std::unique_ptr<TrailEffect> trail_;
 	};

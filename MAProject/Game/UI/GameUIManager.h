@@ -33,6 +33,8 @@ public:
 		spGauge_->AddSPGauge();
 	}
 
+	const bool GetIsUse() const { return spGauge_->GetIsUse(); }
+
 	const bool GetIsTutorial() const { return isTutorial_; }
 	//セッター
 	void SetTutorialFlug(const bool flug) { isTutorial_ = flug; }

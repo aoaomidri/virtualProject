@@ -11,6 +11,7 @@ void PlayerLeaningBack::InitGlobalVariables() const{
 void PlayerLeaningBack::Initialize(){
 	BasePlayerState::Initialize();
 	context_.isAttackJump_ = true;
+	context_.isJump_ = false;
 	isHit_ = false;
 }
 

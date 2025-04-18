@@ -63,7 +63,7 @@ void PlayerStateManager::ChangeState(const StateName nextState){
 	else if (nextState == StateName::kLeaningBack) {
 		nextState_ = std::make_unique<PlayerLeaningBack>(context_);
 	}
-	else if (nextState == StateName::SpecialAttack) {
+	else if (nextState == StateName::SpecialAttack) {		
 		nextState_ = std::make_unique<PlayerSpecialAttack>(context_);
 	}	
 

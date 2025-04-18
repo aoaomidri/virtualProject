@@ -36,6 +36,7 @@ void PlayerSpecialAttack::InitializeMove() {
 void PlayerSpecialAttack::InitializeAttack() {
 	/*武器や攻撃関連の初期化*/
 	/*剣を引いて突くような動作*/
+	
 	context_.workAttack_.attackParameter_ = 0;
 	context_.weaponParameter_.weaponTransform_.rotate = justAvoidWeaponRotate_;
 	context_.weaponParameter_.weaponTransform_.translate = context_.playerTransform_.translate;

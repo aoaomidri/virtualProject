@@ -34,6 +34,7 @@ void PlayerJustAvoid::InitializeMove(){
 	context_.workAvoidAttack_.avoidTimer_ = 0.0f;
 	context_.workAvoidAttack_.isChangeEndAttack_ = false;
 	context_.workDash_.isDash_ = false;
+	context_.isSuperArmor_ = true;
 }
 
 void PlayerJustAvoid::InitializeAttack(){

@@ -54,7 +54,7 @@ void Player::Initialize(){
 
 	weaponObj_ = std::make_unique<Object3D>();
 	weaponObj_->Initialize("Weapon");
-	weaponObj_->SetIsGetTop(true);	
+	weaponObj_->SetIsGetTop(true);
 	weaponObj_->SetIsLighting(false);
 
 	collisionObj_ = std::make_unique<Object3D>();
@@ -80,7 +80,8 @@ void Player::Initialize(){
 	weaponCollisionObj_ = std::make_unique<Object3D>();
 	weaponCollisionObj_->Initialize("box");
 
-	emitter_.count = 27;
+	emitter_.count = 2;
+	emitter_.frequency = 0.06f;
 	emitter_.transform = {
 		playerObj_->transform_.scale,
 		{0.0f,0.0f,0.0f},
@@ -89,13 +90,12 @@ void Player::Initialize(){
 	emitter_.transform.scale /= 5.0f;
 
 	particle_ = std::make_unique<ParticleBase>();
-	particle_->Initialize(emitter_, false);
-	particle_->SetIsDraw(false);
+	particle_->Initialize(emitter_, true);
+	particle_->SetIsDraw(true);
 	particle_->SetBlend(BlendMode::kBlendModeNormal);
 	particle_->SetIsBillborad(true);
-	particle_->SetIsUpper(true);
 	particle_->SetLifeTime(0.4f);
-	particle_->SetVelocityRange(Vector2(-10.0f, 10.0f));
+	particle_->SetVelocityRange(Vector2(-5.0f, 5.0f));
 
 	playerTransform_ = stateManager_->GetPlayerTrnaform();
 	particleTrans_ = playerTransform_;
@@ -175,6 +175,12 @@ void Player::Update(){
 		trail_->Update();
 	}
 	
+	if (isUse_){
+		particle_->SetIsDraw(true);
+	}
+	else {
+		particle_->SetIsDraw(false);
+	}
 }
 
 void Player::TexDraw(const Matrix4x4& viewProjection){
@@ -211,7 +217,7 @@ void Player::SkinningDraw(const ViewProjection& viewProjection){
 
 void Player::ParticleDraw(const ViewProjection& viewProjection){
 	EulerTransform newTrans = playerTransform_;
-	particle_->SetOneColor(trailRender_->GetTrailColor());
+	particle_->SetOneColor(paticleColor_);
 	particle_->Update(newTrans, viewProjection);	
 	particle_->Draw();
 }
@@ -250,7 +256,7 @@ void Player::DrawImgui(){
 	playerObj_->DrawImgui("プレイヤー");
 
 	trail_->DrawImgui("トレイル");
-	//particle_->DrawImgui("プレイヤーパーティクル");
+	particle_->DrawImgui("プレイヤーパーティクル");
 #endif
 }
 

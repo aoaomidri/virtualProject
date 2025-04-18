@@ -4,6 +4,7 @@
 void PlayerRoot::Initialize(){
 	BasePlayerState::Initialize();
 	context_.workDash_.isDash_ = false;
+	context_.isSuperArmor_ = false;
 	GameTime::ReverseTimeChange();
 	context_.move_ = { 0.0f,0.0f,0.0f };
 	context_.workAttack_.comboIndex_ = 0;

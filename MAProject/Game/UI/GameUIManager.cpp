@@ -7,6 +7,8 @@ void GameUIManager::ApplyGlobalVariables(){
 	strong2ComboTex_->scale_ = adjustment_item_->GetVector2Value(groupName_, "strong2TexScale");
 	attackSprite_->position_ = adjustment_item_->GetVector3Value(groupName_, "attackSTTexPos");
 	attackSprite_->scale_ = adjustment_item_->GetVector2Value(groupName_, "attackSTTexScale");
+	skipTextSprite_->position_ = adjustment_item_->GetVector3Value(groupName_, "SkipTexPos");
+	skipTextSprite_->scale_ = adjustment_item_->GetVector2Value(groupName_, "SkipTexScale");
 	checkMarkTex_[0]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark1Pos");
 	checkMarkTex_[1]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark2Pos");
 	checkMarkTex_[2]->position_ = adjustment_item_->GetVector3Value(groupName_, "checkMark3Pos");
@@ -35,6 +37,9 @@ void GameUIManager::ExportGlobalVariables(){
 
 	adjustment_item_->AddItem(groupName_, "attackSTTexPos", attackSprite_->position_);
 	adjustment_item_->AddItem(groupName_, "attackSTTexScale", attackSprite_->scale_);
+
+	adjustment_item_->AddItem(groupName_, "SkipTexPos", skipTextSprite_->position_);
+	adjustment_item_->AddItem(groupName_, "SkipTexScale", skipTextSprite_->scale_);
 
 	adjustment_item_->AddItem(groupName_, "checkMark1Pos", checkMarkTex_[0]->position_);
 	adjustment_item_->AddItem(groupName_, "checkMark2Pos", checkMarkTex_[1]->position_);
@@ -71,6 +76,10 @@ void GameUIManager::Initialize(){
 	attackSprite_->anchorPoint_ = { 0.5f,0.5f };
 	attackSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
+	skipTextSprite_->position_ = { 1122.0f,650.0f };
+	skipTextSprite_->anchorPoint_ = { 0.5f,0.5f };
+	skipTextSprite_->color_ = { 1.0f,1.0f,1.0f,1.0f };
+
 	weakComboTex_->anchorPoint_ = { 0.5f,0.5f };
 	weakComboTex_->color_ = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -91,6 +100,10 @@ void GameUIManager::TextureInitialize(){
 	textureHandle = textureManager_->Load("resources/texture/Text/STAttack.png");
 	attackSprite_->Initialize(textureHandle);
 
+	skipTextSprite_ = std::make_unique<Sprite>();
+	textureHandle = textureManager_->Load("resources/texture/Text/skip.png");
+	skipTextSprite_->Initialize(textureHandle);
+
 	weakComboTex_ = std::make_unique<Sprite>();
 	textureHandle = textureManager_->Load("resources/texture/combo/controlWeak.png");
 	weakComboTex_->Initialize(textureHandle);
@@ -109,9 +122,19 @@ void GameUIManager::TextureInitialize(){
 void GameUIManager::Update(){
 	ApplyGlobalVariables();
 	spGauge_->Update();
+	//ゲージを一回分だけ消費するための制御
+	if (plStateManager_->GetStateName() == PlayerStateManager::StateName::SpecialAttack and spGauge_->GetIsUse()){
+		//一回も消費していなければ
+		if (!isUsedGauge_){
+			spGauge_->GaugeConsumption();
+		}
+		isUsedGauge_ = true;
+	}
+	else {
+		isUsedGauge_ = false;
+	}
 
 	TutorialUpdate();
-
 	for (size_t i = 0; i < comboMax_; i++) {
 		checkMarkTex_[i]->scale_ = { checkScale_,checkScale_ };
 	}
@@ -126,6 +149,11 @@ void GameUIManager::TutorialUpdate(){
 		Tutorial2Update(nowStateName);
 	}
 	if (CheckWeak_ and CheckStrong_){
+		isTutorial_ = false;
+	}
+
+	//ボタンを押したらスキップ
+	if (Input::GetInstance()->GetPadButtonTriger(XINPUT_GAMEPAD_START)) {
 		isTutorial_ = false;
 	}
 }
@@ -202,8 +230,17 @@ void GameUIManager::Draw(){
 		for (size_t i = 0; i < comboMax_; i++) {
 			checkMarkTex_[i]->Draw();
 		}
+		skipTextSprite_->Draw();
 	}
 	spGauge_->Draw();
 	actionTextSprite_->Draw();
 	attackSprite_->Draw();
+	
+}
+
+void GameUIManager::AddSPGauge(){
+	//必殺技以外では溜まるように
+	if (plStateManager_->GetStateName() != PlayerStateManager::StateName::SpecialAttack){
+		spGauge_->AddSPGauge();
+	}
 }

@@ -195,6 +195,10 @@ public:
 		bool isGuardHit_ = false;
 		//必殺が使えるかどうか
 		bool isSPAttackUse_ = false;
+		//必殺を使っているかどうか
+		bool isSPAttacknow_ = false;
+		//スーパーアーマー状態か
+		bool isSuperArmor_ = false;
 
 		std::unique_ptr<TrailEffect> trail_;
 	};

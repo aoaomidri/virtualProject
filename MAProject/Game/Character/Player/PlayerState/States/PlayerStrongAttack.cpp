@@ -29,6 +29,7 @@ void PlayerStrongAttack::Initialize(){
 		InitGlobalVariables();
 		isLoad_ = true;
 	}
+	context_.isSuperArmor_ = true;
 	PreStrongAttackInitialize();
 	AllStrongAttackInitialize();
 	PostStrongAttackInitialize();	

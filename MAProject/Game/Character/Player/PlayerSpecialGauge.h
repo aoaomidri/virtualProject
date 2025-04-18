@@ -23,10 +23,9 @@ public:
 	//imguiの表示
 	void DrawImgui();
 	//ヒット時ゲージを規定値増加させる
-	void AddSPGauge() {
-		nowGauge_ += hitAddGauge_;
-	}
-
+	void AddSPGauge();
+	//攻撃時のゲージ消費
+	void GaugeConsumption();
 public:
 	//ゲッター
 	const bool GetIsUse() const { return isUse_; }

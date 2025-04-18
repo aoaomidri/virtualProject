@@ -114,6 +114,7 @@ void GameScene::Initialize(){
 
 	followCamera_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
+
 }
 
 void GameScene::Update(){
@@ -141,6 +142,7 @@ void GameScene::Update(){
 	frontFlag = player_->GetIsJustAvoid();
 	player_->SetIsSPAttackUse(uiManager_->GetIsUse());
 	player_->Update();
+
 	if (uiManager_->GetIsTutorial() == false){
 		enemyManager_->SetTutorialFlug(false);
 	}
@@ -349,6 +351,10 @@ void GameScene::PlayerEnemyCollision(Player* player, Enemy* enemy){
 		}
 	}
 
+	if (player->GetNowState() == BasePlayerState::StateName::SpecialAttack) {
+		return;
+	}
+
 	//プレイヤー自身と敵の体の判定
 	if (IsCollisionOBBOBB(player->GetOBB(), enemy->GetBodyOBB())) {
 		player->SetCollisionEnemy(true);
@@ -441,6 +447,10 @@ void GameScene::PlayerBossCollision(Player* player, BossEnemy* enemy){
 					enemy->OnCollision();
 				}
 			}
+		}
+
+		if (player->GetNowState() == BasePlayerState::StateName::SpecialAttack) {
+			return;
 		}
 
 		//プレイヤー自身と敵の体の判定

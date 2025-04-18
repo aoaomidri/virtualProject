@@ -108,6 +108,7 @@ void PlayerAttack::FifthAttackInitialize(){
 
 void PlayerAttack::SixthAttackInitialize(){
 	isRotated_ = false;
+	context_.isSuperArmor_ = true;
 	context_.isJump_ = true;
 	context_.workAttack_.isStrongHitStop_ = false;
 	context_.workAttack_.type_ = HitRecord::KnockbackType::Center;

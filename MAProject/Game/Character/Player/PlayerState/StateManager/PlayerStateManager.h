@@ -77,6 +77,8 @@ public:
 	const bool GetIsGuardHit()const { return context_.isGuardHit_; }
 	const bool GetIsDrawTrail()const { return context_.isTrail_; }
 	const bool GetIsHitStopFlug()const { return context_.workAttack_.isStrongHitStop_; }
+	const bool GetIsSPAttackNow()const { return context_.isSPAttacknow_; }
+	const bool GetIsSuperArmor()const { return context_.isSuperArmor_; }
 	//Setter
 	void SetJustAvoidTimer() { context_.workAvoidAttack_.justAvoidAttackTimer_ = context_.workAvoidAttack_.justAvoidAttackTimerBase_; }
 
@@ -91,9 +93,10 @@ public:
 	void SetIsGuardHit(const bool flug) { context_.isGuardHit_ = flug; }
 	void SetIsOnFloor(const bool flug) { context_.isOnFloor_ = flug; }
 	void SetIsSPAttackUse(const bool flug) { context_.isSPAttackUse_ = flug; }
+	void SetIsSPAttackNow(const bool flug) { context_.isSPAttacknow_ = flug; }
+	void SetIsSuperArmor(const bool flug) { context_.isSuperArmor_ = flug; }
 
 	void SetLockOnPos(const Vector3& pos) { context_.lockOnPos_ = pos; }
-
 private:
 	void ResetState();
 private:

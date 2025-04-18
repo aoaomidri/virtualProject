@@ -55,6 +55,7 @@ void PlayerSpecialGauge::Initialize(){
 	TextureInitialize();
 	ExportGlobalVariables();
 
+	nowGauge_ = 0;
 	gaugelengthMax_ = -kGaugeMinMax_.x + kGaugeMinMax_.y;	
 }
 
@@ -83,6 +84,15 @@ void PlayerSpecialGauge::DrawImgui(){
 	ImGui::ColorEdit4("半透明の色", &translucentColor_.x);
 	ImGui::End();	
 #endif
+}
+
+void PlayerSpecialGauge::AddSPGauge(){
+	nowGauge_ += hitAddGauge_;
+}
+
+void PlayerSpecialGauge::GaugeConsumption(){
+	//今のゲージから引いていく
+	nowGauge_ -= specialAttackConsumption_;
 }
 
 void PlayerSpecialGauge::GaugeUpdate(){
@@ -140,5 +150,5 @@ void PlayerSpecialGauge::GaugeUpdate(){
 		buttonTex_->color_.w = 0.0f;
 	}
 
-
+	
 }

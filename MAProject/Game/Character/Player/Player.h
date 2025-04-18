@@ -18,6 +18,7 @@
 #include"PlayerStateManager.h"
 #include"GameTime.h"
 #include"PlayerSpecialGauge.h"
+#include"Game/UI/GameUIManager.h"
 /*プレイヤーが操作する自機の更新描画*/
 //前方宣言
 class LockOn;
@@ -115,11 +116,13 @@ public:
 
 	void SetCollisionEnemy(bool collisionEnemy) { isCollisionEnemy_ = collisionEnemy; stateManager_->SetIsCollisionEnemy(collisionEnemy); }
 	void SetIsDown(bool isDown);
-	void SetIsSPAttackUse(bool isSPAttackUse) { stateManager_->SetIsSPAttackUse(isSPAttackUse); }
+	void SetIsSPAttackUse(bool isSPAttackUse) { stateManager_->SetIsSPAttackUse(isSPAttackUse); isUse_ = isSPAttackUse; }
 
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
 	void SetTimeScale(const float scale) { timeScale_ = scale; }
+
+
 
 private:
 	//状態を管理
@@ -208,6 +211,8 @@ private:
 	//取得する頂点座標を調整する
 	Vector2 trailPosDataGuard_ = { 7.0f,0.5f };
 
+	Vector3 paticleColor_ = { 1.0f,1.0f,0.0f };
+
 	bool isDissolve_ = false;
 	//トレイルを描画するかどうか
 	bool isTrail_ = false;
@@ -282,10 +287,8 @@ private:
 
 	//Obbの補正値
 	Vector3 obbPoint_ = { -0.02f,0.0f,-0.05f };
-
 	//Obbの補正値
 	Vector3 obbAddScale_ = { -0.5f,0.53f,0.0f };
-
 	//ジャスト回避用のobbの補正値
 	Vector3 justAvoidObbScale_{};
 

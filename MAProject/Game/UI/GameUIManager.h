@@ -29,8 +29,10 @@ public:
 	//描画処理
 	void Draw();
 	//ヒット時ゲージを規定値増加させる
-	void AddSPGauge() {
-		spGauge_->AddSPGauge();
+	void AddSPGauge();
+	//攻撃時のゲージ消費
+	void GaugeConsumption() {
+		spGauge_->GaugeConsumption();
 	}
 
 	const bool GetIsUse() const { return spGauge_->GetIsUse(); }
@@ -51,6 +53,7 @@ private:
 
 	bool CheckStrong_ = false;
 	bool CheckWeak_ = false;
+	bool isUsedGauge_ = false;
 	//テクスチャマネージャー
 	TextureManager* textureManager_ = nullptr;
 
@@ -63,6 +66,8 @@ private:
 	std::unique_ptr<Sprite> actionTextSprite_;
 	std::unique_ptr<Sprite> attackSprite_;
 	std::unique_ptr<Sprite> attackSTSprite_;
+
+	std::unique_ptr<Sprite> skipTextSprite_;
 
 	std::array<std::unique_ptr<Sprite>, comboMax_> checkMarkTex_;
 	std::array<Vector3, comboMax_> checkPos_;

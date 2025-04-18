@@ -10,12 +10,19 @@ void PlayerLeaningBack::InitGlobalVariables() const{
 
 void PlayerLeaningBack::Initialize(){
 	BasePlayerState::Initialize();
-	context_.isAttackJump_ = true;
-	context_.isJump_ = false;
+	if (context_.isSuperArmor_ != true) {
+		context_.isAttackJump_ = true;
+		context_.isJump_ = false;
+	}
+	
 	isHit_ = false;
 }
 
 void PlayerLeaningBack::Update(const Vector3& cameraRotate){
+	if (context_.isSuperArmor_ == true){
+		PlayerStateManager::GetInstance()->ChangeState(StateName::Root);
+		return;
+	}
 	cameraRotate;
 	//床に着地
 	if (isHit_){
